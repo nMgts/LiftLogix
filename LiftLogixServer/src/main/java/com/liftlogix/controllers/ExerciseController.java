@@ -28,19 +28,14 @@ public class ExerciseController {
         return ResponseEntity.ok(exerciseService.getAllExercises());
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Exercise> addExercise(
             @RequestParam("name") String name,
             @RequestParam("description") String description,
             @RequestParam("url") String url,
             @RequestParam("image") MultipartFile image
     ) throws IOException {
-        Exercise exercise = new Exercise();
-        exercise.setName(name);
-        exercise.setDescription(description);
-        exercise.setUrl(url);
-        exercise.setImage(image.getBytes());
-        return ResponseEntity.ok(exerciseService.addExercise(exercise));
+        return ResponseEntity.ok(exerciseService.addExercise(name, description, url, image));
     }
 
     @GetMapping("/image/{id}")
