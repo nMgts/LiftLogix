@@ -15,7 +15,7 @@ public class RetrofitService {
 
     public void initializedRetrofit() {
         retrofit = new Retrofit.Builder()
-                .baseUrl("https://liftlogix-w8or.onrender.com") // http://192.168.1.17:8080
+                .baseUrl("http://192.168.1.17:8080") // http://192.168.1.17:8080  "https://liftlogix-w8or.onrender.com"
                 .addConverterFactory(GsonConverterFactory.create(new Gson()))
                 .build();
     }

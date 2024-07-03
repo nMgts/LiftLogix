@@ -52,7 +52,7 @@ import java.util.HashMap;
         }
 
         RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
-        String url = "https://liftlogix-w8or.onrender.com/api/auth/login";
+        String url = "http://192.168.1.17:8080/api/auth/login";  //http://192.168.1.17:8080 https://liftlogix-w8or.onrender.com/api/auth/login
 
         HashMap<String, String> params = new HashMap<>();
         params.put("email", email_et.getText().toString());
