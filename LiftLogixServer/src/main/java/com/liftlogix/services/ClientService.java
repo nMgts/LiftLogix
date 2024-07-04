@@ -2,13 +2,12 @@ package com.liftlogix.services;
 
 import com.liftlogix.models.Client;
 import com.liftlogix.models.Coach;
-import com.liftlogix.models.User;
 import com.liftlogix.repositories.ClientRepository;
 import com.liftlogix.repositories.CoachRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,7 +15,10 @@ import java.util.Optional;
 public class ClientService {
     private final ClientRepository clientRepository;
     private final CoachRepository coachRepository;
-    private final PasswordEncoder passwordEncoder;
+
+    public List<Client> findAllClients() {
+        return clientRepository.findAll();
+    }
 
     public String assignClientToCoach(long client_id, long coach_id) {
         Optional<Coach> optCoach = coachRepository.findById(coach_id);
@@ -55,29 +57,4 @@ public class ClientService {
         }
         return "Client not found";
     }
-
-    /*
-        public User registerUser(UserRegisterDTO userDTO) {
-        User user = userRegisterMapper.mapDTOToEntity(userDTO);
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        long currentTime = System.currentTimeMillis();
-        user.setCreated_at(new Date(currentTime));
-        user.setUpdated_at(new Date(currentTime));
-        return userRepository.save(user);
-    }
-
-    public List<String> checkUserEmail(String email) {
-        return userRepository.checkUserEmail(email);
-    }
-
-    public String checkUserPasswordByEmail(String email) {
-        return userRepository.checkUserPasswordByEmail(email);
-    }
-
-    public User getUserDetailsByEmail(String email) {
-        User user = userRepository.getUserDetailsByEmail(email);
-        user.setAssignedToCoach(user.getCoach() != null);
-        return userRepository.getUserDetailsByEmail(email);
-    }
-     */
 }

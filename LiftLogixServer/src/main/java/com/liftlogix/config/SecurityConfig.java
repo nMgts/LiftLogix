@@ -35,10 +35,14 @@ public class SecurityConfig {
                         .hasAuthority("ADMIN")
                         .requestMatchers("/api/test2")
                         .hasAuthority("COACH")
+                        .requestMatchers("/api/exercise/add",
+                                "/api/client/all")
+                        .hasAnyAuthority("ADMIN", "COACH")
                         .requestMatchers("/api/client/assign/{client_id}/{coach_id}", "/api/client/unsubscribe/{client_id}",
-                                "/api/coach/all")
+                                "/api/coach/all", "api/coach/{id}")
                         .hasAuthority("CLIENT")
-                        .requestMatchers("/api/user/details")
+                        .requestMatchers("/api/user/details",
+                                "/api/exercise/{id}", "/api/exercise/all", "/api/exercise/image/{id}")
                         .hasAnyAuthority("ADMIN", "COACH", "CLIENT")
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

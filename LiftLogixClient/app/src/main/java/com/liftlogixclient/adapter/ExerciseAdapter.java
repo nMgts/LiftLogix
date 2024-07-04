@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.liftlogixclient.ExerciseDetailsActivity;
 import com.liftlogixclient.R;
 import com.liftlogixclient.models.Exercise;
@@ -37,12 +39,16 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseHolder> {
 
         String base64Image = exercise.getImage();
         if (base64Image != null && base64Image.startsWith("/9j/")) {
-            // Dodanie nagłówka do danych base64
             String imageData = "data:image/jpeg;base64," + base64Image;
+
+            RequestOptions requestOptions = new RequestOptions()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .downsample(DownsampleStrategy.AT_MOST) // Ustaw jakość obrazu
+                    .override(600, 600); // Ustaw preferowane wymiary obrazu
 
             Glide.with(holder.itemView.getContext())
                     .load(imageData)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE) // Opcjonalnie wyłącz cache
+                    .apply(requestOptions)
                     .into(holder.imageView);
         } else {
             // Obsługa przypadku, gdy dane base64 są nieprawidłowe

@@ -1,7 +1,9 @@
 package com.liftlogixclient;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
@@ -29,11 +31,15 @@ import retrofit2.Response;
 
 public class ExerciseListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
+    private String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise_list);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        token = preferences.getString("accessToken", "");
 
         recyclerView = findViewById(R.id.exerciseList_rv);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
@@ -50,7 +56,7 @@ public class ExerciseListActivity extends AppCompatActivity {
     private void fetchExercises() {
         RetrofitService retrofitService = new RetrofitService();
         ExerciseApi exerciseApi = retrofitService.getRetrofit().create(ExerciseApi.class);
-        exerciseApi.getAllExercises()
+        exerciseApi.getAllExercises("Bearer " + token)
                 .enqueue(new Callback<List<Exercise>>() {
             @Override
             public void onResponse(Call<List<Exercise>> call, Response<List<Exercise>> response) {

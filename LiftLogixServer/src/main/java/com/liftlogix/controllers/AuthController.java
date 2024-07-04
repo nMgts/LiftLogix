@@ -36,39 +36,4 @@ public class AuthController {
     public ResponseEntity<ReqRes> refreshToken(@RequestBody ReqRes req) {
         return ResponseEntity.ok(userManagementService.refreshToken(req));
     }
-/*
-    @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody UserLoginDTO login) {
-        List<String> userEmail = userService.checkUserEmail(login.getEmail());
-
-        if (userEmail.isEmpty() || userEmail == null) {
-            String errorMessage = "Failed to login";
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
-        }
-
-        String hashed_password = userService.checkUserPasswordByEmail(login.getEmail());
-
-        if (!BCrypt.checkpw(login.getPassword(), hashed_password)) {
-            String errorMessage = "Incorrect email or password";
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
-        }
-
-        User user = userService.getUserDetailsByEmail(login.getEmail());
-
-        return ResponseEntity.ok(user);
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody UserRegisterDTO user) {
-        try {
-            User registeredUser = userService.registerUser(user);
-            //return ResponseEntity.ok(registeredUser);
-            return ResponseEntity.status(HttpStatus.OK).body("success");
-        } catch (Exception e) {
-            String errorMessage = "Failed to register user";
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
-        }
-    }
-
- */
 }

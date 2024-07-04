@@ -1,14 +1,14 @@
 package com.liftlogix.controllers;
 
+import com.liftlogix.models.Client;
+import com.liftlogix.models.Coach;
 import com.liftlogix.services.ClientService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -16,6 +16,11 @@ import java.util.Objects;
 @AllArgsConstructor
 public class ClientController {
     private final ClientService clientService;
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Client>> findAllCoaches() {
+        return ResponseEntity.ok(clientService.findAllClients());
+    }
 
     @PostMapping("/assign/{client_id}/{coach_id}")
     public ResponseEntity<String> assignUserToCoach(@PathVariable long client_id, @PathVariable long coach_id) {
