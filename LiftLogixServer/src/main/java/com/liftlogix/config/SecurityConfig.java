@@ -35,7 +35,7 @@ public class SecurityConfig {
                         .hasAuthority("ADMIN")
                         .requestMatchers("/api/test2")
                         .hasAuthority("COACH")
-                        .requestMatchers("/api/test3")
+                        .requestMatchers("/api/client/assign/{client_id}/{coach_id}", "/api/client/unsubscribe/{client_id}")
                         .hasAuthority("CLIENT")
                         .requestMatchers("/api/test4")
                         .hasAnyAuthority("ADMIN", "COACH", "USER")
