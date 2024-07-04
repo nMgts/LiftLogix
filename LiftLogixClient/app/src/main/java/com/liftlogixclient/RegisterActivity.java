@@ -63,7 +63,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
-        String url = "http://192.168.1.17:8080"; //http://192.168.1.17:8080 https://liftlogix-w8or.onrender.com/api/auth/register
+        String url = "http://192.168.1.17:8080/api/auth/register/client"; //http://192.168.1.17:8080 https://liftlogix-w8or.onrender.com/api/auth/register
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
 

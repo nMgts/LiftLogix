@@ -46,7 +46,7 @@ public class UserManagementService {
             user.setCreated_at(new Date(currentTime));
             user.setUpdated_at(new Date(currentTime));
             User userResult = userRepository.save(user);
-            UserDTO userDTO = userDTOMapper.mapEntityToDTO(userResult);
+            UserDTO userDTO = userDTOMapper.mapUserToDTO(userResult);
             if (userResult.getId() > 0) {
                 resp.setUser(userDTO);
                 resp.setMessage("User saved successfully");

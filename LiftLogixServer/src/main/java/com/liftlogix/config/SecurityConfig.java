@@ -37,8 +37,8 @@ public class SecurityConfig {
                         .hasAuthority("COACH")
                         .requestMatchers("/api/client/assign/{client_id}/{coach_id}", "/api/client/unsubscribe/{client_id}")
                         .hasAuthority("CLIENT")
-                        .requestMatchers("/api/test4")
-                        .hasAnyAuthority("ADMIN", "COACH", "USER")
+                        .requestMatchers("/api/user/details")
+                        .hasAnyAuthority("ADMIN", "COACH", "CLIENT")
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
