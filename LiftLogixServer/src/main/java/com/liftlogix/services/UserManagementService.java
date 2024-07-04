@@ -3,6 +3,8 @@ package com.liftlogix.services;
 import com.liftlogix.convert.UserDTOMapper;
 import com.liftlogix.dto.ReqRes;
 import com.liftlogix.dto.UserDTO;
+import com.liftlogix.models.Client;
+import com.liftlogix.models.Coach;
 import com.liftlogix.models.User;
 import com.liftlogix.repositories.UserRepository;
 import com.liftlogix.util.JWTUtils;
@@ -25,16 +27,21 @@ public class UserManagementService {
     private final UserDTOMapper userDTOMapper;
 
     //@Transactional
-    public ReqRes register(ReqRes registrationRequest) {
+    public ReqRes register(ReqRes registrationRequest, String role) {
         ReqRes resp = new ReqRes();
 
         try {
-            User user = new User();
+            User user;
+            if ("COACH".equals(role)) {
+                user = new Coach();
+            } else {
+                user = new Client();
+            }
             user.setEmail(registrationRequest.getEmail());
             user.setFirst_name(registrationRequest.getFirst_name());
             user.setLast_name(registrationRequest.getLast_name());
             user.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-            user.setRole("COACH");
+            user.setRole(role);
             long currentTime = System.currentTimeMillis();
             user.setCreated_at(new Date(currentTime));
             user.setUpdated_at(new Date(currentTime));

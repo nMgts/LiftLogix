@@ -8,16 +8,7 @@ import lombok.Setter;
 @Table(name = "coaches")
 @Getter
 @Setter
-public class Coach {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @Column(nullable = false)
-    private String first_name;
-    @Column(nullable = false)
-    private String last_name;
-    @Column(nullable = false, unique = true)
-    private String email;
-    @Column(nullable = false)
+public class Coach extends User {
+    @Column(columnDefinition = "TEXT")
     private String description;
 }

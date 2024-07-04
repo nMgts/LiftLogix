@@ -17,9 +17,14 @@ import java.util.List;
 public class AuthController {
     private final UserManagementService userManagementService;
 
-    @PostMapping("/register")
-    public ResponseEntity<ReqRes> register(@RequestBody ReqRes req) {
-        return ResponseEntity.ok(userManagementService.register(req));
+    @PostMapping("/register/coach")
+    public ResponseEntity<ReqRes> registerCoach(@RequestBody ReqRes req) {
+        return ResponseEntity.ok(userManagementService.register(req, "COACH"));
+    }
+
+    @PostMapping("/register/client")
+    public ResponseEntity<ReqRes> registerClient(@RequestBody ReqRes req) {
+        return ResponseEntity.ok(userManagementService.register(req, "CLIENT"));
     }
 
     @PostMapping("/login")

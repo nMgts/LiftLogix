@@ -1,7 +1,6 @@
 package com.liftlogix.models;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,8 +15,9 @@ import java.util.List;
 @Table(name = "users")
 @Getter
 @Setter
-@Data
-public class User implements UserDetails {
+@Inheritance(strategy = InheritanceType.JOINED)
+//@Data ?
+public abstract class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -33,14 +33,8 @@ public class User implements UserDetails {
     private Date created_at;
     @Column(nullable = false)
     private Date updated_at;
+    @Column(nullable = false)
     private String role;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "coach_id", referencedColumnName = "id")
-    private Coach coach;
-
-    @Transient
-    private boolean assignedToCoach;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
