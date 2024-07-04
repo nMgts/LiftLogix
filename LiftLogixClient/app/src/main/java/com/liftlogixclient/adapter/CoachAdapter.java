@@ -26,12 +26,14 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachHolder> {
     private List<Coach> coachList;
     private long user_id, assignedCoachId;
     private boolean isAssigned;
+    private String token;
 
-    public CoachAdapter(List<Coach> coachList, long user_id, boolean isAssigned, long assignedCoachId) {
+    public CoachAdapter(List<Coach> coachList, long user_id, boolean isAssigned, long assignedCoachId, String token) {
         this.coachList = coachList;
         this.user_id = user_id;
         this.isAssigned = isAssigned;
         this.assignedCoachId = assignedCoachId;
+        this.token = token;
     }
 
     @NonNull
@@ -74,7 +76,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachHolder> {
     private void signUpToCoach(Context context, long coachId) {
         RetrofitService retrofitService = new RetrofitService();
         CoachApi coachApi = retrofitService.getRetrofit().create(CoachApi.class);
-        coachApi.assignUserToCoach(user_id, coachId).enqueue(new Callback<Void>() {
+        coachApi.assignUserToCoach("Bearer " + token, user_id, coachId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
@@ -104,7 +106,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachHolder> {
     private void unsubscribeFromCoach(Context context) {
         RetrofitService retrofitService = new RetrofitService();
         CoachApi coachApi = retrofitService.getRetrofit().create(CoachApi.class);
-        coachApi.unsubscribeFromCoach(user_id).enqueue(new Callback<Void>() {
+        coachApi.unsubscribeFromCoach("Bearer " + token, user_id).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {

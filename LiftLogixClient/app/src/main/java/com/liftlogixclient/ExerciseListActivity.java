@@ -65,7 +65,7 @@ public class ExerciseListActivity extends AppCompatActivity {
     }
 
     private void populateGridView(List<Exercise> exerciseList) {
-        ExerciseAdapter coachAdapter = new ExerciseAdapter(exerciseList);
-        recyclerView.setAdapter(coachAdapter);
+        ExerciseAdapter exerciseAdapter = new ExerciseAdapter(exerciseList);
+        recyclerView.setAdapter(exerciseAdapter);
     }
 }

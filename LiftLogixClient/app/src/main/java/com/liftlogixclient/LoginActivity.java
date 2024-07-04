@@ -114,6 +114,8 @@ import java.util.Map;
                             String lastName = jsonObject.getString("last_name");
                             String email = jsonObject.getString("email");
                             String role = jsonObject.getString("role");
+                            boolean isAssigned = jsonObject.getBoolean("assignedToCoach");
+                            long coachId = jsonObject.getLong("coach_id");
 
                             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
                             SharedPreferences.Editor editor = preferences.edit();
@@ -122,6 +124,8 @@ import java.util.Map;
                             editor.putString("last_name", lastName);
                             editor.putString("email", email);
                             editor.putString("role", role);
+                            editor.putBoolean("isAssigned", isAssigned);
+                            editor.putLong("coach_id", coachId);
                             editor.apply();
 
                             Toast.makeText(getApplicationContext(), "Welcome " + firstName, Toast.LENGTH_SHORT).show();
