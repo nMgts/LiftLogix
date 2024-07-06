@@ -1,0 +1,15 @@
+<div class="container">
+  <h3>Zaloguj</h3>
+  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+  <form (submit)="handleSubmit()">
+    <div class="form-group">
+      <label class="for-group">Email:</label>
+      <input type="text" placeholder="Enter" [(ngModel)]="email" name="email" required>
+      <label class="for-group">Password:</label>
+      <input type="password" placeholder="Enter" [(ngModel)]="password" name="password" required>
+      <button type="submit">Zaloguj</button>
+    </div>
+
+  </form>
+  <p>Nie posiadasz konta? <a routerLink="/register"><button>Zarejestruj się</button></a></p>
+</div>

@@ -3,10 +3,11 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "LiftLogix": {
+    "LiftLogixCoach": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
+          "style": "scss",
           "standalone": false
         },
         "@schematics/angular:directive": {
@@ -23,13 +24,14 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/lift-logix",
+            "outputPath": "dist/lift-logix-coach",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
@@ -37,14 +39,9 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.scss"
             ],
-            "scripts": [],
-            "server": "src/main.server.ts",
-            "prerender": true,
-            "ssr": {
-              "entry": "server.ts"
-            }
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -74,10 +71,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "LiftLogix:build:production"
+              "buildTarget": "LiftLogixCoach:build:production"
             },
             "development": {
-              "buildTarget": "LiftLogix:build:development"
+              "buildTarget": "LiftLogixCoach:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -93,6 +90,7 @@
               "zone.js/testing"
             ],
             "tsConfig": "tsconfig.spec.json",
+            "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
@@ -100,7 +98,7 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": []
           }
