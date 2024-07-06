@@ -13,19 +13,16 @@ export class UserService {
   constructor(private http: HttpClient, private readonly router: Router) {}
 
   async register(userData: any): Promise<any> {
-    const url = this.registerUrl;
     try {
-      return await firstValueFrom(this.http.post<any>(url, userData));
+      return await firstValueFrom(this.http.post<any>(this.registerUrl, userData));
     } catch (error) {
       throw error;
     }
   }
 
   async login(email: string, password: string): Promise<any> {
-    const url = this.loginUrl;
-
     try {
-      const response = await this.http.post<any>(this.loginUrl, { email, password }).toPromise();
+      const response = await firstValueFrom(this.http.post<any>(this.loginUrl, { email, password }));
       if (response.statusCode === 200 && (response.role === "COACH" || response.role === "ADMIN")) {
         return { success: true, token: response.token, role: response.role };
       } else {
@@ -41,7 +38,18 @@ export class UserService {
       localStorage.removeItem('token');
       localStorage.removeItem('role');
     }
-    this.router.navigate(['/']);
+
+    this.router.navigate(['/'])
+      .then(success => {
+        if (success) {
+          console.log('Navigation to home successful');
+        } else {
+          console.error('Navigation to home failed');
+        }
+      })
+      .catch(err => {
+        console.error('Error during navigation', err);
+      });
   }
 
   /***AUTHENTICATION METHODS***/

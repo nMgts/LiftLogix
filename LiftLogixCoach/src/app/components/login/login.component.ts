@@ -25,7 +25,7 @@ export class LoginComponent {
       if (success) {
         localStorage.setItem('token', token)
         localStorage.setItem('role', role)
-        this.router.navigate(['/dashboard']);
+        await this.router.navigate(['/dashboard']);
       } else {
         this.showError(message)
       }
