@@ -36,10 +36,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/test2")
                         .hasAuthority("COACH")
                         .requestMatchers("/api/exercise/add",
-                                "/api/client/all")
+                                "/api/client/all",
+                                "/api/application/updateStatus")
                         .hasAnyAuthority("ADMIN", "COACH")
                         .requestMatchers("/api/client/assign/{client_id}/{coach_id}", "/api/client/unsubscribe/{client_id}",
-                                "/api/coach/all", "api/coach/{id}")
+                                "/api/coach/all", "api/coach/{id}",
+                                "/api/application/create")
                         .hasAuthority("CLIENT")
                         .requestMatchers("/api/user/details",
                                 "/api/exercise/{id}", "/api/exercise/all", "/api/exercise/image/{id}")

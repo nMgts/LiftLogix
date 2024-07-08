@@ -1,14 +1,20 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 .hero {
-  background-image:  url('/images/home-background.jpg'); /* Ścieżka do tła obrazu */
-  background-size: cover; /* Dopasowanie tła do rozmiaru kontenera */
-  background-position: center; /* Wyśrodkowanie tła */
-  height: 100vh; /* Wysokość całego hero section */
+  background-image: url('/images/home-background.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 50px; /* Wewnętrzny odstęp */
+  padding: 50px;
 }
 
 .navbar {
@@ -17,12 +23,18 @@
   justify-content: space-between;
   width: 100%;
   padding: 20px;
-  background-color: rgba(255, 255, 255, 0.8); /* Tło półprzezroczyste dla nawigacji */
+  background-color: transparent;
+  position: fixed; /* lub sticky */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000; /* ustawić odpowiednią wartość z-index, aby nawigacja była na wierzchu */
 }
 
 .nav-links {
   list-style-type: none;
   display: flex;
+  margin-left: auto;
 }
 
 .nav-links li {
@@ -31,24 +43,29 @@
 
 .nav-links li a {
   text-decoration: none;
-  color: #333;
+  color: white;
+  font-size: 20px;
+  margin-right: 25px;
 }
 
 .hero-content {
-  background-color: rgba(255, 255, 255, 0.8); /* Tło półprzezroczyste dla treści */
+  background-color: transparent;
   padding: 20px;
   border-radius: 10px;
   margin-top: 20px;
+  color: white;
+  font-size: 20px;
 }
 
 .btn {
-  background-color: #007bff;
+  background-color: darkviolet;
   color: white;
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   margin-top: 10px;
+  font-size: 16px;
 }
 
 .btn:hover {
