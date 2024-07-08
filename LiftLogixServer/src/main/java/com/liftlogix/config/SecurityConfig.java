@@ -31,19 +31,22 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request.requestMatchers("/api/", "/api/auth/**")
                         .permitAll()
-                        .requestMatchers("/api/test1")
+                        .requestMatchers("/api/application/updateStatus")
                         .hasAuthority("ADMIN")
-                        .requestMatchers("/api/test2")
+                        .requestMatchers("/api/client/assign/{client_id}/{coach_id}")
                         .hasAuthority("COACH")
-                        .requestMatchers("/api/exercise/add",
-                                "/api/client/all",
-                                "/api/application/updateStatus")
+                        .requestMatchers(
+                                "/api/exercise/add",
+                                "/api/client/all")
                         .hasAnyAuthority("ADMIN", "COACH")
-                        .requestMatchers("/api/client/assign/{client_id}/{coach_id}", "/api/client/unsubscribe/{client_id}",
+                        .requestMatchers(
                                 "/api/coach/all", "api/coach/{id}",
                                 "/api/application/create")
                         .hasAuthority("CLIENT")
-                        .requestMatchers("/api/user/details",
+                        .requestMatchers("/api/client/unsubscribe/{client_id}")
+                        .hasAnyAuthority("CLIENT", "COACH")
+                        .requestMatchers(
+                                "/api/user/details",
                                 "/api/exercise/{id}", "/api/exercise/all", "/api/exercise/image/{id}")
                         .hasAnyAuthority("ADMIN", "COACH", "CLIENT")
                         .anyRequest().authenticated())

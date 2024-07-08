@@ -1,7 +1,6 @@
 package com.liftlogix.controllers;
 
 import com.liftlogix.models.Client;
-import com.liftlogix.models.Coach;
 import com.liftlogix.services.ClientService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,8 +22,8 @@ public class ClientController {
     }
 
     @PostMapping("/assign/{client_id}/{coach_id}")
-    public ResponseEntity<String> assignUserToCoach(@PathVariable long client_id, @PathVariable long coach_id) {
-        String result = clientService.assignClientToCoach(client_id, coach_id);
+    public ResponseEntity<String> assignUserToCoach(@PathVariable long client_id, @PathVariable long coach_id, @RequestHeader("Authorization") String token) {
+        String result = clientService.assignClientToCoach(client_id, coach_id, token);
         if (Objects.equals(result, "success")) {
             return ResponseEntity.ok(result);
         } else {
@@ -33,8 +32,9 @@ public class ClientController {
     }
 
     @PostMapping("unsubscribe/{client_id}")
-    public ResponseEntity<String> unsubscribeUserFromCoach(@PathVariable long client_id) {
-        String result = clientService.unsubscribeClientFromCoach(client_id);
+    public ResponseEntity<String> unsubscribeUserFromCoach(@PathVariable long client_id, @RequestHeader("Authorization") String token) {
+        String result = clientService.unsubscribeClientFromCoach(client_id, token);
+
         if (Objects.equals(result, "success")) {
             return ResponseEntity.ok(result);
         } else {
