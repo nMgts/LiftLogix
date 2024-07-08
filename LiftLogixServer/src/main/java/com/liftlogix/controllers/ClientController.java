@@ -1,6 +1,6 @@
 package com.liftlogix.controllers;
 
-import com.liftlogix.models.Client;
+import com.liftlogix.dto.ClientDTO;
 import com.liftlogix.services.ClientService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,7 @@ public class ClientController {
     private final ClientService clientService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<Client>> findAllCoaches() {
+    public ResponseEntity<List<ClientDTO>> findAllClients() {
         return ResponseEntity.ok(clientService.findAllClients());
     }
 

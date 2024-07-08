@@ -2,6 +2,7 @@ package com.liftlogix.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.liftlogix.types.Role;
 import lombok.Data;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class ReqRes {
     private String first_name;
     private String last_name;
     private String email;
-    private String role;
+    private Role role;
     private String password;
     private UserDTO user;
     private List<UserDTO> userList;

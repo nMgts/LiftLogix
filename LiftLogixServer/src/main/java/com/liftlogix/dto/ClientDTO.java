@@ -10,4 +10,5 @@ public class ClientDTO {
     private String first_name;
     private String last_name;
     private String email;
+    private boolean assignedToCoach;
 }

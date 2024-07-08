@@ -1,7 +1,8 @@
 package com.liftlogix.controllers;
 
-import com.liftlogix.models.Coach;
+import com.liftlogix.dto.CoachDTO;
 import com.liftlogix.services.CoachService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,16 @@ public class CoachController {
     private final CoachService coachService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Coach> findCoachById(@PathVariable long id) throws Exception {
-        return ResponseEntity.ok(coachService.findCoachById(id));
+    public ResponseEntity<?> findCoachById(@PathVariable long id) {
+        try {
+            return ResponseEntity.ok(coachService.findCoachById(id));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Coach>> findAllCoaches() {
+    public ResponseEntity<List<CoachDTO>> findAllCoaches() {
         return ResponseEntity.ok(coachService.findAllCoaches());
     }
 }

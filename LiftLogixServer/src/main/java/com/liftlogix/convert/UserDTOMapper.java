@@ -1,6 +1,7 @@
 package com.liftlogix.convert;
 
 import com.liftlogix.dto.UserDTO;
+import com.liftlogix.models.Admin;
 import com.liftlogix.models.Client;
 import com.liftlogix.models.Coach;
 import com.liftlogix.models.User;
@@ -24,11 +25,12 @@ public interface UserDTOMapper {
             } else {
                 userDTO.setCoach_id(-1L);
             }
-        } else if (user instanceof Coach) {
+        } else {
             userDTO.setAssignedToCoach(null);
         }
     }
 
     Client mapDTOToClient(UserDTO dto);
     Coach mapDTOToCoach(UserDTO dto);
+    Admin mapDTOtoAdmin(UserDTO dto);
 }

@@ -29,27 +29,49 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(request -> request.requestMatchers("/api/", "/api/auth/**")
+                .authorizeHttpRequests(request -> request
+
+                        // Public endpoints
+                        .requestMatchers(
+                                "/api/",
+                                "/api/auth/login", "/api/auth/register/client", "/api/auth/register/coach", "/api/auth/refresh")
                         .permitAll()
-                        .requestMatchers("/api/application/updateStatus")
+
+                        // Admin endpoints
+                        .requestMatchers(
+                                "/api/auth/register/admin",
+                                "/api/application/updateStatus",
+                                "/api/client/all", "/api/client/assign/{client_id}/{coach_id}")
                         .hasAuthority("ADMIN")
-                        .requestMatchers("/api/client/assign/{client_id}/{coach_id}")
+
+                        // Coach endpoints
+                        .requestMatchers("/api/test1")
                         .hasAuthority("COACH")
+
+                        // Client endpoints
+                        .requestMatchers("/api/application/create")
+                        .hasAuthority("CLIENT")
+
+                        // Admin and coach endpoints
                         .requestMatchers(
                                 "/api/exercise/add",
                                 "/api/client/all")
                         .hasAnyAuthority("ADMIN", "COACH")
-                        .requestMatchers(
-                                "/api/coach/all", "api/coach/{id}",
-                                "/api/application/create")
-                        .hasAuthority("CLIENT")
-                        .requestMatchers("/api/client/unsubscribe/{client_id}")
-                        .hasAnyAuthority("CLIENT", "COACH")
+
+                        // Admin and client endpoints
+                        .requestMatchers("api/coach/{id}", "/api/coach/all")
+                        .hasAnyAuthority("ADMIN", "CLIENT")
+
+                        // All users endpoints
                         .requestMatchers(
                                 "/api/user/details",
+                                "/api/client/unsubscribe/{client_id}",
                                 "/api/exercise/{id}", "/api/exercise/all", "/api/exercise/image/{id}")
-                        .hasAnyAuthority("ADMIN", "COACH", "CLIENT")
+                        .authenticated()
+
+                        // Other endpoints
                         .anyRequest().authenticated())
+
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
                         jwtAuthFilter, UsernamePasswordAuthenticationFilter.class

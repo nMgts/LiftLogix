@@ -1,5 +1,6 @@
 package com.liftlogix.models;
 
+import com.liftlogix.types.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +17,6 @@ import java.util.List;
 @Getter
 @Setter
 @Inheritance(strategy = InheritanceType.JOINED)
-//@Data ?
 public abstract class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,12 +33,14 @@ public abstract class User implements UserDetails {
     private Date created_at;
     @Column(nullable = false)
     private Date updated_at;
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String role;
+    private Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role));
+        return List.of(new SimpleGrantedAuthority(role.toString()));
     }
 
     @Override

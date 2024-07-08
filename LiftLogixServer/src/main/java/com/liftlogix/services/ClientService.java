@@ -1,11 +1,11 @@
 package com.liftlogix.services;
 
+import com.liftlogix.convert.ClientDTOMapper;
+import com.liftlogix.dto.ClientDTO;
 import com.liftlogix.models.Client;
 import com.liftlogix.models.Coach;
-import com.liftlogix.models.User;
 import com.liftlogix.repositories.ClientRepository;
 import com.liftlogix.repositories.CoachRepository;
-import com.liftlogix.repositories.UserRepository;
 import com.liftlogix.util.JWTUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,17 +13,21 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class ClientService {
     private final ClientRepository clientRepository;
     private final CoachRepository coachRepository;
-    private final UserRepository userRepository;
+    private final ClientDTOMapper clientDTOMapper;
     private final JWTUtils jwtUtils;
 
-    public List<Client> findAllClients() {
-        return clientRepository.findAll();
+    public List<ClientDTO> findAllClients() {
+        List<Client> clients = clientRepository.findAll();
+        return clients.stream()
+                .map(clientDTOMapper::mapEntityToDTO)
+                .collect(Collectors.toList());
     }
 
     public String assignClientToCoach(long client_id, long coach_id, String token) {
@@ -39,7 +43,7 @@ public class ClientService {
             String username = jwtUtils.extractUsername(token);
             String role = jwtUtils.extractRole(token);
 
-            if (!Objects.equals(username, coach.getUsername()) && Objects.equals(role, "ADMIN")) {
+            if (!Objects.equals(username, coach.getUsername()) && !Objects.equals(role, "ADMIN")) {
                 return "You can't assign to different coach";
             }
 
@@ -70,7 +74,11 @@ public class ClientService {
                     token = token.substring(7);
                 }
                 String username = jwtUtils.extractUsername(token);
-                if (!Objects.equals(username, client.getUsername()) && !Objects.equals(username, client.getCoach().getUsername())) {
+                String role = jwtUtils.extractRole(token);
+                if (
+                        !Objects.equals(username, client.getUsername()) &&
+                        !Objects.equals(username, client.getCoach().getUsername()) &&
+                        !Objects.equals(role, "ADMIN")) {
                     return "This is not your subscription";
                 }
 

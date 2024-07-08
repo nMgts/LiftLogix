@@ -3,10 +3,12 @@ package com.liftlogix.services;
 import com.liftlogix.convert.UserDTOMapper;
 import com.liftlogix.dto.ReqRes;
 import com.liftlogix.dto.UserDTO;
+import com.liftlogix.models.Admin;
 import com.liftlogix.models.Client;
 import com.liftlogix.models.Coach;
 import com.liftlogix.models.User;
 import com.liftlogix.repositories.UserRepository;
+import com.liftlogix.types.Role;
 import com.liftlogix.util.JWTUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,14 +28,15 @@ public class UserManagementService {
     private final PasswordEncoder passwordEncoder;
     private final UserDTOMapper userDTOMapper;
 
-    //@Transactional
-    public ReqRes register(ReqRes registrationRequest, String role) {
+    public ReqRes register(ReqRes registrationRequest, Role role) {
         ReqRes resp = new ReqRes();
 
         try {
             User user;
-            if ("COACH".equals(role)) {
+            if (role.equals(Role.COACH)) {
                 user = new Coach();
+            } else if (role.equals(Role.ADMIN)) {
+                user = new Admin();
             } else {
                 user = new Client();
             }
