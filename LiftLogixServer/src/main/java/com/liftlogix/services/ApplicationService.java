@@ -3,6 +3,7 @@ package com.liftlogix.services;
 import com.liftlogix.convert.ApplicationDTOMapper;
 import com.liftlogix.dto.ApplicationDTO;
 import com.liftlogix.exceptions.AuthorizationException;
+import com.liftlogix.exceptions.ClientAlreadyAssignedException;
 import com.liftlogix.models.Application;
 import com.liftlogix.models.Client;
 import com.liftlogix.models.Coach;
@@ -14,10 +15,14 @@ import com.liftlogix.util.JWTUtils;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -27,6 +32,26 @@ public class ApplicationService {
     private final CoachRepository coachRepository;
     private final ApplicationDTOMapper applicationDTOMapper;
     private final JWTUtils jwtUtils;
+    private final ClientService clientService;
+
+    public List<ApplicationDTO> getMyApplications(Authentication authentication) {
+        String username = authentication.getName();
+        Coach coach = coachRepository.findByEmail(username)
+                .orElse(null);
+
+        if (coach == null) {
+            Client client = clientRepository.findByEmail(username)
+                    .orElseThrow(() -> new EntityNotFoundException("Client not found"));
+
+            return client.getApplications().stream()
+                    .map(applicationDTOMapper::mapEntityToDTO)
+                    .collect(Collectors.toList());
+        } else {
+            return coach.getApplications().stream()
+                    .map(applicationDTOMapper::mapEntityToDTO)
+                    .collect(Collectors.toList());
+        }
+    }
 
     public ApplicationDTO create(ApplicationDTO request, String token) {
         Optional<Client> optClient = clientRepository.findById(request.getClient().getId());
@@ -36,6 +61,10 @@ public class ApplicationService {
             if (optCoach.isPresent()) {
                 Client client = optClient.get();
                 Coach coach = optCoach.get();
+
+                if (client.isAssignedToCoach()) {
+                    throw new ClientAlreadyAssignedException("Client already assigned");
+                }
 
                 if (token.startsWith("Bearer ")) {
                     token = token.substring(7);
@@ -57,6 +86,7 @@ public class ApplicationService {
                 application.setCoach(coach);
                 application.setDescription(request.getDescription());
                 application.setStatus(ApplicationStatus.PENDING);
+                application.setSubmitted_date(LocalDateTime.now());
 
                 applicationRepository.save(application);
                 return applicationDTOMapper.mapEntityToDTO(application);
@@ -75,5 +105,40 @@ public class ApplicationService {
         } else {
             throw new EntityNotFoundException("Application with ID " + application_id + " not found");
         }
+    }
+
+    public void acceptApplication(long application_id, Authentication authentication) {
+        Application application = applicationRepository.findById(application_id)
+                .orElseThrow(() -> new EntityNotFoundException("Application not found"));
+
+        String username = authentication.getName();
+        Coach coach = coachRepository.findByEmail(username)
+                .orElseThrow(() -> new EntityNotFoundException("Coach not found"));
+
+        if (!Objects.equals(application.getCoach(), coach)) {
+            throw new AuthorizationException("You are not authorized to accept this application");
+        }
+
+        application.setStatus(ApplicationStatus.ACCEPTED);
+        applicationRepository.save(application);
+
+        Client client = application.getClient();
+        clientService.assignClientToCoach(client.getId(), coach.getId(), authentication);
+    }
+
+    public void rejectApplication(long application_id, Authentication authentication) {
+        Application application = applicationRepository.findById(application_id)
+                .orElseThrow(() -> new EntityNotFoundException("Application not found"));
+
+        String username = authentication.getName();
+        Coach coach = coachRepository.findByEmail(username)
+                .orElseThrow(() -> new EntityNotFoundException("Coach not found"));
+
+        if (!Objects.equals(application.getCoach(), coach)) {
+            throw new AuthorizationException("You are not authorized to reject this application");
+        }
+
+        application.setStatus(ApplicationStatus.REJECTED);
+        applicationRepository.save(application);
     }
 }

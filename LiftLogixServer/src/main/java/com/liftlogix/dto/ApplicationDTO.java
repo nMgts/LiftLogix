@@ -3,6 +3,8 @@ package com.liftlogix.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 public class ApplicationDTO {
@@ -11,4 +13,5 @@ public class ApplicationDTO {
     private CoachDTO coach;
     private String description;
     private String status;
+    private LocalDateTime submitted_date;
 }

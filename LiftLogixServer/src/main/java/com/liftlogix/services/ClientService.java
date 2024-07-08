@@ -2,12 +2,18 @@ package com.liftlogix.services;
 
 import com.liftlogix.convert.ClientDTOMapper;
 import com.liftlogix.dto.ClientDTO;
+import com.liftlogix.exceptions.AuthorizationException;
+import com.liftlogix.exceptions.ClientAlreadyAssignedException;
+import com.liftlogix.exceptions.ClientIsNotAssignedException;
 import com.liftlogix.models.Client;
 import com.liftlogix.models.Coach;
 import com.liftlogix.repositories.ClientRepository;
 import com.liftlogix.repositories.CoachRepository;
 import com.liftlogix.util.JWTUtils;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,21 +36,20 @@ public class ClientService {
                 .collect(Collectors.toList());
     }
 
-    public String assignClientToCoach(long client_id, long coach_id, String token) {
+    public void assignClientToCoach(long client_id, long coach_id, Authentication authentication) {
         Optional<Coach> optCoach = coachRepository.findById(coach_id);
         if (optCoach.isPresent()) {
             Optional<Client> optClient = clientRepository.findById(client_id);
             Coach coach = optCoach.get();
 
-            if (token.startsWith("Bearer ")) {
-                token = token.substring(7);
-            }
-
-            String username = jwtUtils.extractUsername(token);
-            String role = jwtUtils.extractRole(token);
+            String username = authentication.getName();
+            String role = authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .findFirst()
+                    .orElse("");
 
             if (!Objects.equals(username, coach.getUsername()) && !Objects.equals(role, "ADMIN")) {
-                return "You can't assign to different coach";
+                throw new AuthorizationException("You are not authorized to assign this client");
             }
 
             if (optClient.isPresent()) {
@@ -53,43 +58,42 @@ public class ClientService {
                     client.setCoach(coach);
                     client.setAssignedToCoach(true);
                     clientRepository.save(client);
-                    return "success";
                 } else {
-                    return "Client already assigned";
+                    throw new ClientAlreadyAssignedException("Client already assigned");
                 }
             } else {
-                return "Client not found";
+                throw new EntityNotFoundException("Client not found");
             }
         }
-        return "Coach not found";
+        throw new EntityNotFoundException("Coach not found");
     }
 
-    public String unsubscribeClientFromCoach(long client_id, String token) {
+    public void unsubscribeClientFromCoach(long client_id, Authentication authentication) {
         Optional<Client> opt = clientRepository.findById(client_id);
         if (opt.isPresent()) {
             Client client = opt.get();
             if (client.getCoach() != null) {
 
-                if (token.startsWith("Bearer ")) {
-                    token = token.substring(7);
-                }
-                String username = jwtUtils.extractUsername(token);
-                String role = jwtUtils.extractRole(token);
+                String username = authentication.getName();
+                String role = authentication.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .findFirst()
+                        .orElse("");
+
                 if (
                         !Objects.equals(username, client.getUsername()) &&
                         !Objects.equals(username, client.getCoach().getUsername()) &&
                         !Objects.equals(role, "ADMIN")) {
-                    return "This is not your subscription";
+                    throw new AuthorizationException("This is not your subscription");
                 }
 
                 client.setCoach(null);
                 client.setAssignedToCoach(false);
                 clientRepository.save(client);
-                return "success";
             } else {
-                return "Client is not assigned";
+                throw new ClientIsNotAssignedException("Client is not assigned");
             }
         }
-        return "Client not found";
+        throw new EntityNotFoundException("Client not found");
     }
 }

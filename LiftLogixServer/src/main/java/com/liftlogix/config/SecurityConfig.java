@@ -45,7 +45,7 @@ public class SecurityConfig {
                         .hasAuthority("ADMIN")
 
                         // Coach endpoints
-                        .requestMatchers("/api/test1")
+                        .requestMatchers("/api/application/accept/{application_id}", "/api/application/reject/{application_id}")
                         .hasAuthority("COACH")
 
                         // Client endpoints
@@ -59,8 +59,12 @@ public class SecurityConfig {
                         .hasAnyAuthority("ADMIN", "COACH")
 
                         // Admin and client endpoints
-                        .requestMatchers("api/coach/{id}", "/api/coach/all")
+                        .requestMatchers("/api/coach/{id}", "/api/coach/all")
                         .hasAnyAuthority("ADMIN", "CLIENT")
+
+                        // Client and coach endpoints
+                        .requestMatchers("/api/application/mine")
+                        .hasAnyAuthority("COACH", "CLIENT")
 
                         // All users endpoints
                         .requestMatchers(

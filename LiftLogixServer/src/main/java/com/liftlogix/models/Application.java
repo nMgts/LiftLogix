@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "applications",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"client_id", "coach_id"})})
@@ -28,5 +30,8 @@ public class Application {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ApplicationStatus status; // pending, accepted, rejected
+    private ApplicationStatus status;
+
+    @Column(nullable = false)
+    private LocalDateTime submitted_date;
 }

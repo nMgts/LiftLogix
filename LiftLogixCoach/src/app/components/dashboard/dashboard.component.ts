@@ -1,16 +1,44 @@
-import { Component } from '@angular/core';
-import {UserService} from "../../services/user.service";
+import {Component, OnInit} from '@angular/core';
+import {Application} from "../../interfaces/Application";
+import {Client} from "../../interfaces/Client";
+import {ApplicationService} from "../../services/application.service";
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
+  applications: Application[] = [];
 
-  constructor(private userService: UserService) {}
+  constructor(private applicationService: ApplicationService) {}
 
-  logOut(): void {
-    this.userService.logOut();
+  ngOnInit(): void {
+    this.loadApplications();
   }
+
+  async loadApplications(): Promise<void> {
+    try {
+      this.applications = await this.applicationService.getMyApplications();
+    } catch (error) {
+      console.error('Error loading applications', error);
+    }
+  }
+
+  viewMore(applicationId: number): void {
+
+  }
+
+  accept(applicationId: number): void {
+
+  }
+
+  reject(applicationId: number): void {
+
+  }
+
+  redirectToAllApplications(): void {
+
+  }
+
 }

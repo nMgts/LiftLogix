@@ -40,11 +40,13 @@ public class ExerciseController {
             @RequestParam("description") String description,
             @RequestParam("url") String url,
             @RequestParam("image") MultipartFile image
-    ) throws IOException {
+    ) {
         try {
             return ResponseEntity.ok(exerciseService.addExercise(name, description, url, image));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
 
@@ -58,6 +60,8 @@ public class ExerciseController {
                     .body(exercise.getImage());
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
 }
