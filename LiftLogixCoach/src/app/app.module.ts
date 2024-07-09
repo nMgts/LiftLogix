@@ -18,6 +18,7 @@ import { ApplicationDetailsDialogComponent } from './components/application-deta
 import {MatDialogActions, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
 import {MatButton} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
+import {MatPaginator} from "@angular/material/paginator";
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import {MatIconModule} from "@angular/material/icon";
     MatDialogContent,
     MatDialogActions,
     MatButton,
-    MatIconModule
+    MatIconModule,
+    MatPaginator
   ],
   providers: [
     provideAnimationsAsync()

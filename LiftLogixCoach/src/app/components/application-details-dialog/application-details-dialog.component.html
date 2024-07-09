@@ -1,6 +1,7 @@
 <h2 mat-dialog-title>{{ data.client.first_name }} {{ data.client.last_name }}</h2>
 <div mat-dialog-content>
   <p>{{ data.description }}</p>
+  <p>Zgłoszono: {{ data.submitted_date | date:'short' }}</p>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="sendMessage()">
@@ -8,6 +9,7 @@
     Wyślij wiadomość
   </button>
   <span class="spacer"></span>
-  <button mat-button color="warn">Reject</button>
-  <button mat-button color="primary">Accept</button>
+  <button mat-button color="warn" *ngIf="data.status == 'PENDING'">Reject</button>
+  <button mat-button color="primary" *ngIf="data.status == 'PENDING'">Accept</button>
 </div>
+

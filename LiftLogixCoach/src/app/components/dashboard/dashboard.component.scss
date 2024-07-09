@@ -12,11 +12,22 @@
   grid-gap: 10px;
   padding: 10px 100px 50px 100px;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
 }
 
 .wrapper div{
   border: 3px solid darkviolet;
   border-radius: 10px;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.grid1,
+.grid2,
+.grid3,
+.grid4,
+.grid6 {
+  opacity: 1;
 }
 
 .grid1{
@@ -39,9 +50,92 @@
   grid-row: 3/6;
 }
 
-.grid5{
-  grid-column: 3/4;
-  grid-row: 6/8;
+.grid5 {
+  font-size: 9px;
+  grid-column: 3 / 4;
+  grid-row: 6 / 8;
+  cursor: pointer;
+  position: relative;
+  padding: 10px;
+}
+
+.grid5 h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.grid5.expanded {
+  grid-column: 1 / 5;
+  grid-row: 1 / 8;
+  padding: 20px;
+}
+
+.grid5 .application-container{
+  border: 1px solid darkviolet;
+}
+
+.application-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: none;
+}
+
+.grid5 .application-info {
+  flex-grow: 1;
+  text-align: left;
+  border: none;
+  margin-left: 5px;
+  gap: 0;
+  flex-wrap: nowrap; /* Zapobiega przeskakiwaniu do kolejnej linii */
+  justify-content: space-between;
+}
+
+.application-info{
+  flex-wrap: nowrap;
+  text-align: justify;
+}
+
+.grid5 .button-container {
+  display: flex;
+  flex-direction: row;
+  gap: 3px;
+  border: none;
+}
+
+.app_btn{
+  margin-right: 5px;
+  background: none;
+  border: none;
+  color: aliceblue;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.app_btn:hover {
+  color: green;
+}
+
+.app_btn.rejected:hover {
+  color: red;
+}
+
+.grid5 .description {
+  margin-left: auto;
+  margin-right: 50px;
+  margin-top: 0;
+  border: none;
+  max-width: 1000px;
+  text-align: justify;
+}
+
+.show-archived-container {
+  border: none;
+}
+
+.grid5 .show-archived-container {
+  border: none;
+  margin: 5px;
 }
 
 .grid6{
@@ -49,14 +143,7 @@
   grid-row: 6/8;
 }
 
-.more-applications {
-  margin-top: 5px;
-}
-
-.more-applications button {
-  background: none;
-  border: none;
-  color: aliceblue;
-  cursor: pointer;
-  font-size: 24px;
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
 }
