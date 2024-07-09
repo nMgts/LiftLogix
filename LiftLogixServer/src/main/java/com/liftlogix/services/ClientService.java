@@ -64,8 +64,9 @@ public class ClientService {
             } else {
                 throw new EntityNotFoundException("Client not found");
             }
+        } else {
+            throw new EntityNotFoundException("Coach not found");
         }
-        throw new EntityNotFoundException("Coach not found");
     }
 
     public void unsubscribeClientFromCoach(long client_id, Authentication authentication) {

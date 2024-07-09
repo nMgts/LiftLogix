@@ -2,6 +2,7 @@ package com.liftlogix.services;
 
 import com.liftlogix.convert.ApplicationDTOMapper;
 import com.liftlogix.dto.ApplicationDTO;
+import com.liftlogix.exceptions.ApplicationIsNotActiveException;
 import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.exceptions.ClientAlreadyAssignedException;
 import com.liftlogix.models.Application;
@@ -111,6 +112,10 @@ public class ApplicationService {
         Application application = applicationRepository.findById(application_id)
                 .orElseThrow(() -> new EntityNotFoundException("Application not found"));
 
+        if (!application.getStatus().equals(ApplicationStatus.PENDING)) {
+            throw new ApplicationIsNotActiveException("Application is not active");
+        }
+
         String username = authentication.getName();
         Coach coach = coachRepository.findByEmail(username)
                 .orElseThrow(() -> new EntityNotFoundException("Coach not found"));
@@ -119,16 +124,20 @@ public class ApplicationService {
             throw new AuthorizationException("You are not authorized to accept this application");
         }
 
-        application.setStatus(ApplicationStatus.ACCEPTED);
-        applicationRepository.save(application);
-
         Client client = application.getClient();
         clientService.assignClientToCoach(client.getId(), coach.getId(), authentication);
+
+        application.setStatus(ApplicationStatus.ACCEPTED);
+        applicationRepository.save(application);
     }
 
     public void rejectApplication(long application_id, Authentication authentication) {
         Application application = applicationRepository.findById(application_id)
                 .orElseThrow(() -> new EntityNotFoundException("Application not found"));
+
+        if (!application.getStatus().equals(ApplicationStatus.PENDING)) {
+            throw new ApplicationIsNotActiveException("Application is not active");
+        }
 
         String username = authentication.getName();
         Coach coach = coachRepository.findByEmail(username)

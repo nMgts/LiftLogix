@@ -18,11 +18,14 @@ export class DashboardComponent implements OnInit {
   }
 
   async loadApplications(): Promise<void> {
-    try {
-      this.applications = await this.applicationService.getMyApplications();
-    } catch (error) {
-      console.error('Error loading applications', error);
-    }
+    this.applicationService.getMyApplications().subscribe(
+      (applications: Application[]) => {
+        this.applications = applications.filter(app => app.status === 'PENDING');
+      },
+      (error: any) => {
+        console.error('Error loading applicaitons', error);
+      }
+    );
   }
 
   viewMore(applicationId: number): void {
@@ -30,11 +33,17 @@ export class DashboardComponent implements OnInit {
   }
 
   accept(applicationId: number): void {
-
+    this.applicationService.acceptApplication(applicationId).subscribe(
+      () => this.loadApplications(),
+      (error: any) => console.error("Error accepting application", error)
+    );
   }
 
   reject(applicationId: number): void {
-
+    this.applicationService.rejectApplication(applicationId).subscribe(
+      () => this.loadApplications(),
+      (error: any) => console.error("Error rejecting application", error)
+    );
   }
 
   redirectToAllApplications(): void {

@@ -1,12 +1,11 @@
 package com.liftlogix.controllers;
 
 import com.liftlogix.dto.ApplicationDTO;
+import com.liftlogix.exceptions.ApplicationIsNotActiveException;
 import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.exceptions.ClientAlreadyAssignedException;
-import com.liftlogix.models.Application;
 import com.liftlogix.services.ApplicationService;
 import com.liftlogix.types.ApplicationStatus;
-import com.liftlogix.util.JWTUtils;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -53,7 +52,7 @@ public class ApplicationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (AuthorizationException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        } catch (ClientAlreadyAssignedException e) {
+        } catch (ClientAlreadyAssignedException | ApplicationIsNotActiveException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
@@ -69,6 +68,8 @@ public class ApplicationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (AuthorizationException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (ApplicationIsNotActiveException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
