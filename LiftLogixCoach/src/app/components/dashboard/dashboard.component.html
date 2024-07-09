@@ -1,45 +1,15 @@
 <app-navbar></app-navbar>
 
-  <div class="wrapper">
-    <div class="grid1">1</div>
-    <div class="grid2">2</div>
-    <div class="grid3">3</div>
-    <div class="grid4">4</div>
-    <div class="grid5" [ngClass]="{ 'expanded': isGrid5Expanded }"
-         (click)="toggleGrid5Expanded($event)">
-      <h3>5Zgłoszenia</h3>
-      <div *ngFor="let application of displayedApplications; let i = index" (click)="openApplicationDialog($event, application)"
-           (change)="showArchivedApps($event)" class="application-container">
-        <div class="application-info">
-          <p>{{i + 1}}. {{application.client.first_name}} {{application.client.last_name}}</p>
-          <p>Zgłoszono: {{application.submitted_date | date:'short'}}</p>
-        </div>
-        <div *ngIf="isGrid5Expanded" class="description">
-          <p><strong>Opis:</strong> {{ application.description }}</p>
-        </div>
-        <div class="button-container" *ngIf="application.status === 'PENDING'">
-          <button class="app_btn" (click)="accept($event, application.id)"><i class="fas fa-check"></i></button>
-          <button class="app_btn rejected" (click)="reject($event, application.id)"><i class="fas fa-times"></i></button>
-        </div>
-      </div>
-
-      <mat-paginator *ngIf="isGrid5Expanded"
-                     [length]="totalApplications"
-                     [pageSize]="pageSize"
-                     [pageIndex]="pageIndex"
-                     (page)="onPageChange($event)"
-                     (click)="$event.stopPropagation()"
-                     class="paginator">
-      </mat-paginator>
-
-      <div *ngIf="isGrid5Expanded" class="show-archived-container">
-        <label>
-          <input type="checkbox" (click)="showArchivedApps($event)">
-          Pokaż archiwalne
-        </label>
-      </div>
-    </div>
-    <div class="grid6">6</div>
+<div class="wrapper">
+  <div class="grid1">1</div>
+  <div class="grid2">2</div>
+  <div class="grid3">3</div>
+  <div class="grid4">4</div>
+  <div class="grid5" [ngClass]="{ 'expanded': isGrid5Expanded }"
+       (click)="toggleGrid5Expanded($event)">
+    <app-applications [isGrid5Expanded]="isGrid5Expanded"></app-applications>
   </div>
+  <div class="grid6">6</div>
+</div>
 
 <app-footer></app-footer>

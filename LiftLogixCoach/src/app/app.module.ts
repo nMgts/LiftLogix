@@ -19,6 +19,7 @@ import {MatDialogActions, MatDialogContent, MatDialogTitle} from "@angular/mater
 import {MatButton} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatPaginator} from "@angular/material/paginator";
+import { ApplicationsComponent } from './components/applications/applications.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import {MatPaginator} from "@angular/material/paginator";
     NavbarComponent,
     FooterComponent,
     AdminDashboardComponent,
-    ApplicationDetailsDialogComponent
+    ApplicationDetailsDialogComponent,
+    ApplicationsComponent
   ],
   imports: [
     BrowserModule,

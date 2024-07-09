@@ -1,0 +1,79 @@
+.grid5 {
+  font-size: 9px;
+  cursor: pointer;
+  position: relative;
+  padding: 0
+}
+
+.grid5 h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.grid5 .application-container{
+  border: 1px solid darkviolet;
+}
+
+.application-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 3px solid darkviolet;
+}
+
+.grid5 .application-info {
+  flex-grow: 1;
+  text-align: left;
+  border: none;
+  margin-left: 5px;
+  gap: 0;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+.application-info{
+  flex-wrap: nowrap;
+  text-align: justify;
+}
+
+.grid5 .button-container {
+  display: flex;
+  flex-direction: row;
+  gap: 3px;
+  border: none;
+}
+
+.app_btn{
+  margin-right: 5px;
+  background: none;
+  border: none;
+  color: aliceblue;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.app_btn:hover {
+  color: green;
+}
+
+.app_btn.rejected:hover {
+  color: red;
+}
+
+.grid5 .description {
+  margin-left: auto;
+  margin-right: 50px;
+  margin-top: 0;
+  border: none;
+  max-width: 1000px;
+  text-align: justify;
+}
+
+.show-archived-container {
+  border: none;
+}
+
+.grid5 .show-archived-container {
+  border: none;
+  margin: 5px;
+}
