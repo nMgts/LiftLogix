@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Application} from "../../interfaces/Application";
-import {Client} from "../../interfaces/Client";
 import {ApplicationService} from "../../services/application.service";
+import {ApplicationDetailsDialogComponent} from "../application-details-dialog/application-details-dialog.component";
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,7 +12,7 @@ import {ApplicationService} from "../../services/application.service";
 export class DashboardComponent implements OnInit {
   applications: Application[] = [];
 
-  constructor(private applicationService: ApplicationService) {}
+  constructor(private applicationService: ApplicationService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.loadApplications();
@@ -28,10 +29,12 @@ export class DashboardComponent implements OnInit {
     );
   }
 
-  viewMore(applicationId: number): void {
-
+  openApplicationDialog(application: Application): void {
+    this.dialog.open(ApplicationDetailsDialogComponent, {
+      data: application,
+      width: '600px'
+    });
   }
-
   accept(applicationId: number): void {
     this.applicationService.acceptApplication(applicationId).subscribe(
       () => this.loadApplications(),

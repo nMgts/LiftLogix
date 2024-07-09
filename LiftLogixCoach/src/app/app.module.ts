@@ -13,6 +13,11 @@ import { LoginComponent } from './components/login/login.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { ApplicationDetailsDialogComponent } from './components/application-details-dialog/application-details-dialog.component';
+import {MatDialogActions, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
+import {MatButton} from "@angular/material/button";
+import {MatIconModule} from "@angular/material/icon";
 
 @NgModule({
   declarations: [
@@ -23,16 +28,24 @@ import { AdminDashboardComponent } from './components/admin-dashboard/admin-dash
     LoginComponent,
     NavbarComponent,
     FooterComponent,
-    AdminDashboardComponent
+    AdminDashboardComponent,
+    ApplicationDetailsDialogComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     NgOptimizedImage,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatButton,
+    MatIconModule
   ],
-  providers: [],
+  providers: [
+    provideAnimationsAsync()
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

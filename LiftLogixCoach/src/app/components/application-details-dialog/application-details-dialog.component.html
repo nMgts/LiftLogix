@@ -1,0 +1,13 @@
+<h2 mat-dialog-title>{{ data.client.first_name }} {{ data.client.last_name }}</h2>
+<div mat-dialog-content>
+  <p>{{ data.description }}</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="sendMessage()">
+    <mat-icon>email</mat-icon>
+    Wyślij wiadomość
+  </button>
+  <span class="spacer"></span>
+  <button mat-button color="warn">Reject</button>
+  <button mat-button color="primary">Accept</button>
+</div>
