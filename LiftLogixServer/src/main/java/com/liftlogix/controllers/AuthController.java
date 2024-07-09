@@ -1,22 +1,22 @@
 package com.liftlogix.controllers;
 
 import com.liftlogix.dto.ReqRes;
+import com.liftlogix.services.EmailService;
 import com.liftlogix.services.UserManagementService;
 import com.liftlogix.types.Role;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
 public class AuthController {
     private final UserManagementService userManagementService;
+    private final EmailService emailService;
 
     @PostMapping("/register/coach")
     public ResponseEntity<ReqRes> registerCoach(@RequestBody ReqRes req) {
@@ -41,5 +41,24 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<ReqRes> refreshToken(@RequestBody ReqRes req) {
         return ResponseEntity.ok(userManagementService.refreshToken(req));
+    }
+
+    @GetMapping("/confirm")
+    public ResponseEntity<String> confirmEmail(@RequestParam("token") String token) {
+        try {
+            return ResponseEntity.ok(emailService.confirmEmail(token));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/resend-confirmation")
+    public ResponseEntity<String> resendConfirmationEmail(@RequestBody Map<String, String> request) {
+        try {
+            emailService.resendConfirmationEmail(request);
+            return ResponseEntity.ok().body("{\"message\": \"Email sent successfully\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 }

@@ -38,6 +38,10 @@ public abstract class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
+    @Column(nullable = false)
+    private boolean email_confirmed = false;
+    private String confirmationToken;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.toString()));

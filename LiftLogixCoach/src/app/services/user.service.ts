@@ -7,6 +7,7 @@ import { firstValueFrom } from 'rxjs';
   providedIn: 'root'
 })
 export class UserService {
+  private baseUrl = 'http://localhost:8080/api/auth';
   private registerUrl = 'http://localhost:8080/api/auth/register/coach';
   private loginUrl = 'http://localhost:8080/api/auth/login';
 
@@ -26,11 +27,15 @@ export class UserService {
       if (response.statusCode === 200 && (response.role === "COACH" || response.role === "ADMIN")) {
         return { success: true, token: response.token, role: response.role };
       } else {
-        return { success: false, message: "Nie udało się zalogować"};
+        return { success: false, message: response.message};
       }
     } catch (error) {
       throw error;
     }
+  }
+
+  resendConfirmationEmail(email: string): Promise<any> {
+    return this.http.post<any>(`${this.baseUrl}/resend-confirmation`, { email }).toPromise();
   }
 
   logOut(): void {

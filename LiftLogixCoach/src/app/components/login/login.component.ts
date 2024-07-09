@@ -8,15 +8,16 @@ import {Router} from "@angular/router";
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
-  email: string = ''
-  password: string = ''
-  errorMessage: string = ''
+  email: string = '';
+  password: string = '';
+  errorMessage: string = '';
+  showResendConfirmation: boolean = false;
 
   constructor(private readonly  userService: UserService, private router: Router) {}
 
   async handleSubmit() {
     if (!this.email || !this.password) {
-      this.showError("Email and Password is required");
+      this.showError("Email i hasło są wymagane");
       return
     }
 
@@ -27,11 +28,16 @@ export class LoginComponent {
         localStorage.setItem('role', role)
         if (role === "COACH") {
           await this.router.navigate(['/dashboard']);
-        } else {
+        } else if (role === "ADMIN") {
           await this.router.navigate(['/dashboard-admin']);
         }
       } else {
-        this.showError(message)
+        if (message === "User is not confirmed") {
+          this.showResendConfirmation = true;
+          this.showError("Proszę potwierdzić adres e-mail.");
+        } else {
+          this.showError(message);
+        }
       }
     } catch (error: any) {
       this.showError(error.message)
@@ -43,5 +49,14 @@ export class LoginComponent {
     setTimeout(()=>{
       this.errorMessage = ''
     }, 3000)
+  }
+
+  async resendConfirmationEmail() {
+    try {
+      await this.userService.resendConfirmationEmail(this.email);
+      this.showError("E-mail potwierdzający został ponownie wysłany.");
+    } catch (error: any) {
+      this.showError("Wystąpił błąd podczas wysyłania e-maila potwierdzającego.");
+    }
   }
 }

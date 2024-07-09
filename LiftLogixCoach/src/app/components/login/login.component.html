@@ -9,7 +9,9 @@
       <input type="password" placeholder="Enter" [(ngModel)]="password" name="password" required>
       <button type="submit">Zaloguj</button>
     </div>
-
   </form>
+  <div *ngIf="showResendConfirmation" class="resend-confirmation">
+    <button (click)="resendConfirmationEmail()">Wyślij ponownie e-mail potwierdzający</button>
+  </div>
   <p>Nie posiadasz konta? <a routerLink="/register"><button>Zarejestruj się</button></a></p>
 </div>

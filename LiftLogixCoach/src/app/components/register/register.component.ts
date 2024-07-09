@@ -16,6 +16,7 @@ export class RegisterComponent {
     confirm_password: ''
   };
   errorMessage: string = '';
+  successMessage: string = '';
 
   constructor(private readonly userService: UserService, private readonly router: Router) {}
 
@@ -44,7 +45,10 @@ export class RegisterComponent {
     try {
       const response = await this.userService.register(userData);
       if (response.statusCode === 200) {
-        this.router.navigate(['/login']);
+        this.showSuccess('Rejestracja zakończona sukcesem! Proszę potwierdzić adres e-mail.')
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 3000);
       } else {
         this.showError(response.message())
       }
@@ -57,6 +61,13 @@ export class RegisterComponent {
     this.errorMessage = message;
     setTimeout(() => {
       this.errorMessage = '';
+    }, 3000);
+  }
+
+  showSuccess(message: string) {
+    this.successMessage = message;
+    setTimeout(() => {
+      this.successMessage = '';
     }, 3000);
   }
 }
