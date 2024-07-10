@@ -45,7 +45,8 @@ public class SecurityConfig {
                         .hasAuthority("ADMIN")
 
                         // Coach endpoints
-                        .requestMatchers("/api/application/accept/{application_id}", "/api/application/reject/{application_id}")
+                        .requestMatchers("/api/application/accept/{application_id}", "/api/application/reject/{application_id}",
+                                "/api/coach/profile")
                         .hasAuthority("COACH")
 
                         // Client endpoints
@@ -70,7 +71,9 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/user/details",
                                 "/api/client/unsubscribe/{client_id}",
-                                "/api/exercise/{id}", "/api/exercise/all", "/api/exercise/image/{id}")
+                                "/api/exercise/{id}", "/api/exercise/all", "/api/exercise/image/{id}",
+                                "/api/auth/send-verification-code", "/api/auth/update-email",
+                                "/api/verification/verify")
                         .authenticated()
 
                         // Other endpoints

@@ -1,0 +1,59 @@
+<h2>Edycja Profilu</h2>
+
+<form [formGroup]="profileForm" (ngSubmit)="saveChanges()" *ngIf="!showVerificationCodeInput && !showNewEmailInput">
+  <div>
+    <label for="firstName">Imię:</label>
+    <input id="firstName" type="text" formControlName="firstName">
+  </div>
+
+  <div>
+    <label for="lastName">Nazwisko:</label>
+    <input id="lastName" type="text" formControlName="lastName">
+  </div>
+
+  <div>
+    <label for="description">Opis:</label>
+    <textarea id="description" formControlName="description"></textarea>
+  </div>
+
+  <button type="submit">Zapisz zmiany</button>
+</form>
+
+<h2>Zmień e-mail</h2>
+<div *ngIf="!showVerificationCodeInput && !showNewEmailInput">
+  <label for="email">Email:</label>
+  <input id="email" [value]="email" readonly type="text">
+  <button type="button" (click)="changeEmail()">Zmień</button>
+</div>
+
+<form [formGroup]="emailForm" *ngIf="showVerificationCodeInput && !showNewEmailInput" (ngSubmit)="verifyCode()">
+  <div>
+    <label for="verificationCode">Kod weryfikacyjny:</label>
+    <input id="verificationCode" formControlName="verificationCode" type="text">
+    <div *ngIf="verificationError" class="error">
+      {{ verificationError }}
+    </div>
+  </div>
+  <button type="button" (click)="cancelEmailChange()">Anuluj</button>
+  <button type="submit">Dalej</button>
+</form>
+
+<form [formGroup]="emailForm" *ngIf="showNewEmailInput" (ngSubmit)="updateEmail()">
+  <div>
+    <label for="newEmail">Nowy Email:</label>
+    <input id="newEmail" formControlName="newEmail" type="email">
+    <div *ngIf="emailForm.get('newEmail')?.invalid && (emailForm.get('newEmail')?.dirty || emailForm.get('newEmail')?.touched)">
+      <div *ngIf="emailForm.get('newEmail')?.errors?.['required']">
+        Email jest wymagany.
+      </div>
+      <div *ngIf="emailForm.get('newEmail')?.errors?.['invalidEmail']">
+        Wprowadź poprawny adres email.
+      </div>
+      <div *ngIf="emailForm.get('newEmail')?.hasError('emailAvailabilityError')" class="error">
+        Adres email jest zajęty lub nie istnieje.
+      </div>
+    </div>
+  </div>
+  <button type="button" (click)="cancelEmailChange()">Anuluj</button>
+  <button type="submit" [disabled]="emailForm.invalid">Zatwierdź</button>
+</form>

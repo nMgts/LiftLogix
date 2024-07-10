@@ -4,9 +4,12 @@ import com.liftlogix.dto.ReqRes;
 import com.liftlogix.services.EmailService;
 import com.liftlogix.services.UserManagementService;
 import com.liftlogix.types.Role;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -61,4 +64,30 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
+
+    @PostMapping("/send-verification-code")
+    public ResponseEntity<Void> sendVerificationCode(@RequestBody Map<String, String> emailPayload) {
+        String email = emailPayload.get("email");
+        String code = emailService.sendVerificationCode(email);
+        emailService.saveVerificationCode(email, code);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/update-email")
+    public ResponseEntity<Void> updateEmail(@RequestBody Map<String, String> request, HttpServletRequest httpRequest, Authentication authentication) {
+        String currentEmail = request.get("currentEmail");
+        String newEmail = request.get("newEmail");
+        String verificationCode = request.get("verificationCode");
+
+        try {
+            emailService.updateEmail(currentEmail, newEmail, verificationCode, authentication);
+
+            httpRequest.getSession().invalidate();
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
 }
