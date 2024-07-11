@@ -69,11 +69,11 @@ public class SecurityConfig {
 
                         // All users endpoints
                         .requestMatchers(
-                                "/api/user/details",
+                                "/api/user/details", "/api/user/change-password",
                                 "/api/client/unsubscribe/{client_id}",
                                 "/api/exercise/{id}", "/api/exercise/all", "/api/exercise/image/{id}",
                                 "/api/auth/send-verification-code", "/api/auth/update-email",
-                                "/api/verification/verify")
+                                "/api/verification/verify", "/api/verification/check")
                         .authenticated()
 
                         // Other endpoints

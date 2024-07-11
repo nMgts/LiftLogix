@@ -1,6 +1,7 @@
 <h2>Edycja Profilu</h2>
 
-<form [formGroup]="profileForm" (ngSubmit)="saveChanges()" *ngIf="!showVerificationCodeInput && !showNewEmailInput">
+<form [formGroup]="profileForm" (ngSubmit)="saveChanges()"
+      *ngIf="!showVerificationCodeInput && !showNewEmailInput && !showVerifyPasswordInput">
   <div>
     <label for="firstName">Imię:</label>
     <input id="firstName" type="text" formControlName="firstName">
@@ -20,13 +21,14 @@
 </form>
 
 <h2>Zmień e-mail</h2>
-<div *ngIf="!showVerificationCodeInput && !showNewEmailInput">
+<div *ngIf="!showVerificationCodeInput && !showNewEmailInput && !showVerifyPasswordInput">
   <label for="email">Email:</label>
   <input id="email" [value]="email" readonly type="text">
   <button type="button" (click)="changeEmail()">Zmień</button>
 </div>
 
-<form [formGroup]="emailForm" *ngIf="showVerificationCodeInput && !showNewEmailInput" (ngSubmit)="verifyCode()">
+<form [formGroup]="emailForm"
+      *ngIf="showVerificationCodeInput && !showNewEmailInput" (ngSubmit)="verifyCode()">
   <div>
     <label for="verificationCode">Kod weryfikacyjny:</label>
     <input id="verificationCode" formControlName="verificationCode" type="text">
@@ -49,11 +51,45 @@
       <div *ngIf="emailForm.get('newEmail')?.errors?.['invalidEmail']">
         Wprowadź poprawny adres email.
       </div>
-      <div *ngIf="emailForm.get('newEmail')?.hasError('emailAvailabilityError')" class="error">
-        Adres email jest zajęty lub nie istnieje.
-      </div>
+    </div>
+    <div *ngIf="updateError" class="error">
+      {{ updateError }}
     </div>
   </div>
   <button type="button" (click)="cancelEmailChange()">Anuluj</button>
   <button type="submit" [disabled]="emailForm.invalid">Zatwierdź</button>
+</form>
+
+<button type="button" (click)="changePassword()"
+        *ngIf="!showVerificationCodeInput && !showNewEmailInput && !showVerifyPasswordInput">Zmień hasło</button>
+
+<form [formGroup]="passwordForm" *ngIf="showVerifyPasswordInput && !showNewPasswordInput">
+  <div>
+    <label for="password">Hasło:</label>
+    <input id="password" formControlName="password" type="password">
+  </div>
+  <div *ngIf="wrongPasswordError" class="error">
+    {{ wrongPasswordError }}
+  </div>
+  <button type="button" (click)="cancelPasswordChange()">Anuluj</button>
+  <button type="submit" (click)="checkPassword()">Dalej</button>
+</form>
+
+<form [formGroup]="passwordForm" *ngIf="showNewPasswordInput">
+  <div>
+    <label for="newPassword">Nowe hasło:</label>
+    <input id="newPassword" formControlName="newPassword" type="password">
+  </div>
+  <div>
+    <label for="confirmPassword">Potwierdź hasło:</label>
+    <input id="confirmPassword" formControlName="confirmPassword" type="password">
+  </div>
+  <div *ngIf="passwordForm.hasError('passwordMismatch') && (passwordForm.get('confirmPassword')?.dirty || passwordForm.get('confirmPassword')?.touched)">
+    <div class="error">Hasła nie są identyczne.</div>
+  </div>
+  <div *ngIf="updatePasswordError" class="error">
+    {{ updatePasswordError }}
+  </div>
+  <button type="button" (click)="cancelPasswordChange()">Anuluj</button>
+  <button type="submit" (click)="updatePassword()">Dalej</button>
 </form>

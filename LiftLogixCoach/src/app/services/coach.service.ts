@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Coach} from "../interfaces/Coach";
 import {Application} from "../interfaces/Application";
@@ -12,6 +12,8 @@ export class CoachService {
   private sendCodeUrl = 'http://localhost:8080/api/auth/send-verification-code'
   private verifyUrl = 'http://localhost:8080/api/verification/verify';
   private updateEmailUrl = 'http://localhost:8080/api/auth/update-email';
+  private checkPasswordUrl = 'http://localhost:8080/api/verification/check';
+  private updatePasswordUrl = 'http://localhost:8080/api/user/change-password'
   private readonly headers;
 
   constructor(private http: HttpClient) {
@@ -41,8 +43,21 @@ export class CoachService {
     return this.http.post<void>(url, { email, code }, { headers: this.headers })
   }
 
-  updateEmail(currentEmail: string, newEmail: string, verificationCode: string): Observable<any> {
+  updateEmail(currentEmail: string, newEmail: string, verificationCode: string): Observable<void> {
     const url = `${this.updateEmailUrl}`;
-    return this.http.put<any>(url, { currentEmail, newEmail, verificationCode }, { headers: this.headers });
+    return this.http.put<void>(url, { currentEmail, newEmail, verificationCode }, { headers: this.headers });
+  }
+
+  checkPassword(password: string): Observable<void> {
+    const url = `${this.checkPasswordUrl}`;
+    let params = new HttpParams().set('password', password);
+    return this.http.get<void>(url, { headers: this.headers, params: params });
+  }
+
+  updatePassword(password: string): Observable<void> {
+    let params = new HttpParams().set('password', password);
+    const url = `${this.updatePasswordUrl}`;
+    console.log(url);
+    return this.http.put<void>(url, {}, {  headers: this.headers, params: params });
   }
 }
