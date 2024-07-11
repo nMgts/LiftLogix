@@ -21,6 +21,8 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatPaginator} from "@angular/material/paginator";
 import { ApplicationsComponent } from './components/applications/applications.component';
 import { EditProfileDialogComponent } from './components/edit-profile-dialog/edit-profile-dialog.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,9 @@ import { EditProfileDialogComponent } from './components/edit-profile-dialog/edi
     AdminDashboardComponent,
     ApplicationDetailsDialogComponent,
     ApplicationsComponent,
-    EditProfileDialogComponent
+    EditProfileDialogComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent
   ],
   imports: [
     BrowserModule,

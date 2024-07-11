@@ -120,4 +120,12 @@ public class EmailService {
             throw new MailSendException("Email address is not available");
         }
     }
+
+    public void sendPasswordResetEmail(String to, String resetUrl) {
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setTo(to);
+        email.setSubject("Password Reset Request");
+        email.setText("To reset your password, click the link below:\n" + resetUrl);
+        mailSender.send(email);
+    }
 }

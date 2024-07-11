@@ -66,7 +66,10 @@
 <form [formGroup]="passwordForm" *ngIf="showVerifyPasswordInput && !showNewPasswordInput">
   <div>
     <label for="password">Hasło:</label>
-    <input id="password" formControlName="password" type="password">
+    <input id="password" formControlName="password" [type]="passwordFieldType">
+    <span class="toggle-password" (click)="togglePasswordField()">
+      <i class="fa fa-eye" aria-hidden="true"></i>
+    </span>
   </div>
   <div *ngIf="wrongPasswordError" class="error">
     {{ wrongPasswordError }}
@@ -78,11 +81,17 @@
 <form [formGroup]="passwordForm" *ngIf="showNewPasswordInput">
   <div>
     <label for="newPassword">Nowe hasło:</label>
-    <input id="newPassword" formControlName="newPassword" type="password">
+    <input id="newPassword" formControlName="newPassword" [type]="passwordFieldType">
+    <span class="toggle-password" (click)="togglePasswordField()">
+      <i class="fa fa-eye" aria-hidden="true"></i>
+    </span>
   </div>
   <div>
     <label for="confirmPassword">Potwierdź hasło:</label>
-    <input id="confirmPassword" formControlName="confirmPassword" type="password">
+    <input id="confirmPassword" formControlName="confirmPassword" [type]="passwordFieldType">
+    <span class="toggle-password" (click)="togglePasswordField()">
+      <i class="fa fa-eye" aria-hidden="true"></i>
+    </span>
   </div>
   <div *ngIf="passwordForm.hasError('passwordMismatch') && (passwordForm.get('confirmPassword')?.dirty || passwordForm.get('confirmPassword')?.touched)">
     <div class="error">Hasła nie są identyczne.</div>

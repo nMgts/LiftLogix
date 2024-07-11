@@ -57,7 +57,6 @@ export class CoachService {
   updatePassword(password: string): Observable<void> {
     let params = new HttpParams().set('password', password);
     const url = `${this.updatePasswordUrl}`;
-    console.log(url);
     return this.http.put<void>(url, {}, {  headers: this.headers, params: params });
   }
 }

@@ -6,10 +6,17 @@
       <label class="for-group">Email:</label>
       <input type="text" placeholder="Enter" [(ngModel)]="email" name="email" required>
       <label class="for-group">Password:</label>
-      <input type="password" placeholder="Enter" [(ngModel)]="password" name="password" required>
+      <input [type]="passwordFieldType" placeholder="Enter" [(ngModel)]="password" name="password" required>
+      <span class="toggle-password" (click)="togglePasswordField()">
+      <i class="fa fa-eye" aria-hidden="true"></i>
+      </span>
       <button type="submit">Zaloguj</button>
     </div>
   </form>
+  <div *ngIf="showRedirect" class="forgot-password-link" (click)="redirectToForgotPassword()">
+    <p>Nie pamiętasz hasła?</p>
+  </div>
+
   <div *ngIf="showResendConfirmation" class="resend-confirmation">
     <button (click)="resendConfirmationEmail()">Wyślij ponownie e-mail potwierdzający</button>
   </div>

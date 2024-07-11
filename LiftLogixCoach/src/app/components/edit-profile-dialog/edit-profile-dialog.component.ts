@@ -23,6 +23,7 @@ export class EditProfileDialogComponent implements OnInit {
   updateError: string = '';
   updatePasswordError: string = '';
   wrongPasswordError: string = '';
+  passwordFieldType: string = 'password';
 
   constructor(
     public dialogRef: MatDialogRef<EditProfileDialogComponent>,
@@ -66,6 +67,10 @@ export class EditProfileDialogComponent implements OnInit {
         console.error('Error loading profile', error);
       }
     )
+  }
+
+  togglePasswordField(): void {
+    this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
   }
 
   saveChanges(): void {
@@ -164,17 +169,18 @@ export class EditProfileDialogComponent implements OnInit {
     this.coachService.checkPassword(password).subscribe(
       () => {
         this.wrongPasswordError = '';
+        this.passwordFieldType = 'password';
         this.showNewPasswordInput = true;
       },
       (error) => {
-        console.error("Złe hasło", error);
+        console.error('Złe hasło', error);
         this.wrongPasswordError = "Złe hasło";
       }
     );
   }
 
   updatePassword(): void {
-    const password = this.passwordForm.get("newPassword")?.value;
+    const password = this.passwordForm.get('newPassword')?.value;
 
     this.coachService.updatePassword(password).subscribe(
       () => {
@@ -184,8 +190,8 @@ export class EditProfileDialogComponent implements OnInit {
         this.router.navigate(['/login']);
       },
       (error) => {
-        console.error("Nie udało się zmienić hasła", error);
-        this.updatePasswordError = "Nie udało się zmienić hasła"
+        console.error('Nie udało się zmienić hasła', error);
+        this.updatePasswordError = 'Nie udało się zmienić hasła';
       }
     );
   }
@@ -193,6 +199,7 @@ export class EditProfileDialogComponent implements OnInit {
   cancelPasswordChange(): void {
     this.showVerifyPasswordInput = false;
     this.showNewPasswordInput = false;
+    this.passwordFieldType = 'password';
     this.passwordForm.reset();
   }
 

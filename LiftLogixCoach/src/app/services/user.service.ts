@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import { Router } from "@angular/router";
-import { firstValueFrom } from 'rxjs';
+import {firstValueFrom, Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +10,8 @@ export class UserService {
   private baseUrl = 'http://localhost:8080/api/auth';
   private registerUrl = 'http://localhost:8080/api/auth/register/coach';
   private loginUrl = 'http://localhost:8080/api/auth/login';
+  private forgotPasswordUrl = 'http://localhost:8080/api/auth/forgot-password';
+  private resetPasswordUrl = 'http://localhost:8080/api/auth/reset-password';
 
   constructor(private http: HttpClient, private readonly router: Router) {}
 
@@ -36,6 +38,17 @@ export class UserService {
 
   resendConfirmationEmail(email: string): Promise<any> {
     return this.http.post<any>(`${this.baseUrl}/resend-confirmation`, { email }).toPromise();
+  }
+
+  forgotPassword(email: string): Observable<void> {
+    const url = `${this.forgotPasswordUrl}`;
+    let params = new HttpParams().set('email', email);
+    return this.http.post<void>(url, {}, { params: params });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<void> {
+    const url = `${this.resetPasswordUrl}`;
+    return this.http.put<void>(url, { token, newPassword });
   }
 
   logOut(): void {

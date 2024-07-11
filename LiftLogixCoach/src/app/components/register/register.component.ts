@@ -17,6 +17,7 @@ export class RegisterComponent {
   };
   errorMessage: string = '';
   successMessage: string = '';
+  passwordFieldType = 'password';
 
   constructor(private readonly userService: UserService, private readonly router: Router) {}
 
@@ -55,6 +56,10 @@ export class RegisterComponent {
     } catch (error) {
       this.showError('Wystąpił błąd podczas rejestracji.');
     }
+  }
+
+  togglePasswordField(): void {
+    this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
   }
 
   showError(message: string) {

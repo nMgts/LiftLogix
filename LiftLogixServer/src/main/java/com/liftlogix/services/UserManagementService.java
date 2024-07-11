@@ -3,11 +3,10 @@ package com.liftlogix.services;
 import com.liftlogix.convert.UserDTOMapper;
 import com.liftlogix.dto.ReqRes;
 import com.liftlogix.dto.UserDTO;
+import com.liftlogix.exceptions.InvalidTokenException;
 import com.liftlogix.exceptions.UserIsNotConfirmed;
-import com.liftlogix.models.Admin;
-import com.liftlogix.models.Client;
-import com.liftlogix.models.Coach;
-import com.liftlogix.models.User;
+import com.liftlogix.models.*;
+import com.liftlogix.repositories.TokenRepository;
 import com.liftlogix.repositories.UserRepository;
 import com.liftlogix.types.Role;
 import com.liftlogix.util.JWTUtils;
@@ -18,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
@@ -31,6 +31,7 @@ public class UserManagementService {
     private final PasswordEncoder passwordEncoder;
     private final UserDTOMapper userDTOMapper;
     private final EmailService emailService;
+    private final TokenRepository tokenRepository;
 
     public ReqRes register(ReqRes registrationRequest, Role role) {
         ReqRes resp = new ReqRes();
@@ -119,5 +120,30 @@ public class UserManagementService {
             resp.setMessage(e.getMessage());
             return resp;
         }
+    }
+
+    public void generatePasswordResetToken(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow();
+
+        String token = UUID.randomUUID().toString();
+        PasswordResetToken resetToken = new PasswordResetToken(token, user);
+
+        tokenRepository.save(resetToken);
+
+        String resetUrl = "http://localhost:4200/reset-password?token=" + token;
+        emailService.sendPasswordResetEmail(user.getEmail(), resetUrl);
+    }
+
+    public void resetPassword(String token, String newPassword) {
+        PasswordResetToken resetToken = tokenRepository.findByToken(token);
+        if (resetToken == null || resetToken.isExpired()) {
+            throw new InvalidTokenException("Invalid or expired token");
+        }
+
+        User user = resetToken.getUser();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        tokenRepository.delete(resetToken);
     }
 }

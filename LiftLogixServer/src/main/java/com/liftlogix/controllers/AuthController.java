@@ -1,5 +1,6 @@
 package com.liftlogix.controllers;
 
+import com.liftlogix.dto.PasswordResetRequest;
 import com.liftlogix.dto.ReqRes;
 import com.liftlogix.services.EmailService;
 import com.liftlogix.services.UserManagementService;
@@ -90,4 +91,15 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+        userManagementService.generatePasswordResetToken(email);
+        return ResponseEntity.ok("Email with reset instruction sent");
+    }
+
+    @PutMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest request) {
+        userManagementService.resetPassword(request.getToken(), request.getNewPassword());
+        return ResponseEntity.ok("Password has been reset");
+    }
 }

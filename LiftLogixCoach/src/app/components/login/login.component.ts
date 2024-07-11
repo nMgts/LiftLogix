@@ -12,6 +12,8 @@ export class LoginComponent {
   password: string = '';
   errorMessage: string = '';
   showResendConfirmation: boolean = false;
+  showRedirect: boolean = false;
+  passwordFieldType = 'password';
 
   constructor(private readonly  userService: UserService, private router: Router) {}
 
@@ -37,11 +39,20 @@ export class LoginComponent {
           this.showError("Proszę potwierdzić adres e-mail.");
         } else {
           this.showError(message);
+          this.showRedirect = true;
         }
       }
     } catch (error: any) {
-      this.showError(error.message)
+      this.showError(error.message);
     }
+  }
+
+  redirectToForgotPassword(): void {
+    this.router.navigate(['/forgot-password']);
+  }
+
+  togglePasswordField(): void {
+    this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
   }
 
   showError(mess: string) {
