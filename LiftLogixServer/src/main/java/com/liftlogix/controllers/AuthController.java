@@ -1,56 +1,105 @@
 package com.liftlogix.controllers;
 
-import com.liftlogix.dto.UserLoginDTO;
-import com.liftlogix.dto.UserRegisterDTO;
-import com.liftlogix.models.User;
-import com.liftlogix.services.UserService;
+import com.liftlogix.dto.PasswordResetRequest;
+import com.liftlogix.dto.ReqRes;
+import com.liftlogix.services.EmailService;
+import com.liftlogix.services.UserManagementService;
+import com.liftlogix.types.Role;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
 public class AuthController {
-    private final UserService userService;
+    private final UserManagementService userManagementService;
+    private final EmailService emailService;
 
-    @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody UserLoginDTO login) {
-        List<String> userEmail = userService.checkUserEmail(login.getEmail());
-
-        if (userEmail.isEmpty() || userEmail == null) {
-            String errorMessage = "Failed to login";
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
-        }
-
-        String hashed_password = userService.checkUserPasswordByEmail(login.getEmail());
-
-        if (!BCrypt.checkpw(login.getPassword(), hashed_password)) {
-            String errorMessage = "Incorrect email or password";
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
-        }
-
-        User user = userService.getUserDetailsByEmail(login.getEmail());
-
-        return ResponseEntity.ok(user);
+    @PostMapping("/register/coach")
+    public ResponseEntity<ReqRes> registerCoach(@RequestBody ReqRes req) {
+        return ResponseEntity.ok(userManagementService.register(req, Role.COACH));
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody UserRegisterDTO user) {
+    @PostMapping("/register/client")
+    public ResponseEntity<ReqRes> registerClient(@RequestBody ReqRes req) {
+        return ResponseEntity.ok(userManagementService.register(req, Role.CLIENT));
+    }
+
+    @PostMapping("/register/admin")
+    public ResponseEntity<ReqRes> registerAdmin(@RequestBody ReqRes req) {
+        return ResponseEntity.ok(userManagementService.register(req, Role.ADMIN));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ReqRes> login(@RequestBody ReqRes req) {
+        return ResponseEntity.ok(userManagementService.login(req));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ReqRes> refreshToken(@RequestBody ReqRes req) {
+        return ResponseEntity.ok(userManagementService.refreshToken(req));
+    }
+
+    @GetMapping("/confirm")
+    public ResponseEntity<String> confirmEmail(@RequestParam("token") String token) {
         try {
-            User registeredUser = userService.registerUser(user);
-            //return ResponseEntity.ok(registeredUser);
-            return ResponseEntity.status(HttpStatus.OK).body("success");
+            return ResponseEntity.ok(emailService.confirmEmail(token));
         } catch (Exception e) {
-            String errorMessage = "Failed to register user";
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    @PostMapping("/resend-confirmation")
+    public ResponseEntity<String> resendConfirmationEmail(@RequestBody Map<String, String> request) {
+        try {
+            emailService.resendConfirmationEmail(request);
+            return ResponseEntity.ok().body("{\"message\": \"Email sent successfully\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/send-verification-code")
+    public ResponseEntity<Void> sendVerificationCode(@RequestBody Map<String, String> emailPayload) {
+        String email = emailPayload.get("email");
+        String code = emailService.sendVerificationCode(email);
+        emailService.saveVerificationCode(email, code);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/update-email")
+    public ResponseEntity<Void> updateEmail(@RequestBody Map<String, String> request, HttpServletRequest httpRequest, Authentication authentication) {
+        String currentEmail = request.get("currentEmail");
+        String newEmail = request.get("newEmail");
+        String verificationCode = request.get("verificationCode");
+
+        try {
+            emailService.updateEmail(currentEmail, newEmail, verificationCode, authentication);
+
+            httpRequest.getSession().invalidate();
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+        userManagementService.generatePasswordResetToken(email);
+        return ResponseEntity.ok("Email with reset instruction sent");
+    }
+
+    @PutMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest request) {
+        userManagementService.resetPassword(request.getToken(), request.getNewPassword());
+        return ResponseEntity.ok("Password has been reset");
     }
 }

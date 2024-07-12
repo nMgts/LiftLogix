@@ -1,0 +1,68 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;;
+  background-color: black;
+  color: white;
+
+  .navbar-left {
+    display: flex;
+    align-items: center;
+
+    .logo {
+      margin-right: 10px;
+    }
+
+    .app-name {
+      font-size: 24px;
+      font-weight: bold;
+    }
+  }
+
+  .navbar-right {
+    display: flex;
+    align-items: center;
+
+    .icon {
+      margin-left: 20px;
+      cursor: pointer;
+      font-size: 24px;
+    }
+
+    .profile-menu {
+      position: relative;
+
+      .profile-icon {
+        border-radius: 50%;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        top: 50px;
+        right: 0;
+        background-color: white;
+        color: black;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        overflow: hidden;
+        z-index: 1000;
+
+        a {
+          display: block;
+          padding: 10px 20px;
+          cursor: pointer;
+          text-decoration: none;
+          color: black;
+
+          &:hover {
+            background-color: #f1f1f1;
+          }
+        }
+      }
+    }
+  }
+}

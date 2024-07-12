@@ -1,0 +1,52 @@
+h2 {
+  text-align: center;
+}
+
+form {
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+label {
+  flex: 1;
+}
+
+input, textarea {
+  flex: 2;
+  padding: 5px;
+}
+
+button[type="submit"] {
+  align-self: center;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button[type="button"] {
+  padding: 5px 10px;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}

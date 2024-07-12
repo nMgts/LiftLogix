@@ -1,0 +1,27 @@
+<div class="container">
+  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+  <p *ngIf="successMessage" class="success-message">{{ successMessage }}</p>
+  <h3>Rejestracja</h3>
+  <form (submit)="handleSubmit($event)">
+    <div class="form-group">
+      <label>Imię: </label>
+      <input type="text" name="first_name" [(ngModel)]="formData.first_name" required>
+      <label>Nazwisko: </label>
+      <input type="text" name="last_name" [(ngModel)]="formData.last_name" required>
+      <label>Email: </label>
+      <input type="email" name="email" [(ngModel)]="formData.email" required>
+      <label>Hasło: </label>
+      <input [type]="passwordFieldType" name="password" [(ngModel)]="formData.password" required>
+      <span class="toggle-password" (click)="togglePasswordField()">
+      <i class="fa fa-eye" aria-hidden="true"></i>
+      </span>
+      <label>Powtórz hasło: </label>
+      <input [type]="passwordFieldType" name="confirm_password" [(ngModel)]="formData.confirm_password" required>
+      <span class="toggle-password" (click)="togglePasswordField()">
+      <i class="fa fa-eye" aria-hidden="true"></i>
+      </span>
+      <button type="submit">Zarejestruj</button>
+    </div>
+  </form>
+  <p>Posiadasz już konto? <a routerLink="/login"><button>Zaloguj się</button></a></p>
+</div>

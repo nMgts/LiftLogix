@@ -27,6 +27,7 @@ public class CoachesActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private long user_id, coach_id;
     private boolean isAssigned;
+    private String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,7 @@ public class CoachesActivity extends AppCompatActivity {
         user_id = preferences.getLong("id", -1);
         isAssigned = preferences.getBoolean("isAssigned", false);
         coach_id = preferences.getLong("coach_id", -1);
+        token = preferences.getString("accessToken", "");
 
         //Toast.makeText(CoachesActivity.this, user_id + " " + isAssigned + " " + coach_id, Toast.LENGTH_SHORT).show();
 
@@ -56,7 +58,7 @@ public class CoachesActivity extends AppCompatActivity {
     private void loadCoaches() {
         RetrofitService retrofitService = new RetrofitService();
         CoachApi coachApi = retrofitService.getRetrofit().create(CoachApi.class);
-        coachApi.getAllCoaches()
+        coachApi.getAllCoaches("Bearer " + token)
                 .enqueue(new Callback<List<Coach>>() {
                     @Override
                     public void onResponse(Call<List<Coach>> call, Response<List<Coach>> response) {
@@ -71,7 +73,7 @@ public class CoachesActivity extends AppCompatActivity {
     }
 
     private void populateListView(List<Coach> coachList) {
-        CoachAdapter coachAdapter = new CoachAdapter(coachList, user_id, isAssigned, coach_id);
+        CoachAdapter coachAdapter = new CoachAdapter(coachList, user_id, isAssigned, coach_id, token);
         recyclerView.setAdapter(coachAdapter);
     }
 

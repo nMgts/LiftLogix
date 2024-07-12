@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Map;
 
  public class LoginActivity extends AppCompatActivity {
     EditText email_et, password_et;
@@ -35,7 +36,6 @@ import java.util.HashMap;
 
         email_et = findViewById(R.id.email_et);
         password_et = findViewById(R.id.password_et);
-
         login_button = findViewById(R.id.login_button);
 
         login_button.setOnClickListener(new View.OnClickListener() {
@@ -52,7 +52,7 @@ import java.util.HashMap;
         }
 
         RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
-        String url = "https://liftlogix-w8or.onrender.com/api/auth/login";
+        String url = "http://192.168.1.17:8080/api/auth/login";  //http://192.168.1.17:8080 https://liftlogix-w8or.onrender.com/api/auth/login
 
         HashMap<String, String> params = new HashMap<>();
         params.put("email", email_et.getText().toString());
@@ -62,43 +62,29 @@ import java.util.HashMap;
             @Override
             public void onResponse(JSONObject jsonObject) {
                 try {
-                    String first_name = (String) jsonObject.get("first_name");
-                    String last_name = (String) jsonObject.get("last_name");
-                    String email = (String) jsonObject.get("email");
-                    long id = jsonObject.getLong("id");
-                    boolean isAssigned = jsonObject.getBoolean("assignedToCoach");
-                    long coachId = -1;
-                    if (isAssigned) {
-                        JSONObject coachObject = jsonObject.getJSONObject("coach");
-                        coachId = coachObject.getLong("id");
-                    }
+                    String role = jsonObject.getString("role");
+                    String accessToken = jsonObject.getString("token");
+                    String refreshToken = jsonObject.getString("refreshToken");
 
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
                     SharedPreferences.Editor editor = preferences.edit();
 
-                    editor.putString("first_name", first_name);
-                    editor.putString("last_name", last_name);
-                    editor.putString("email", email);
-                    editor.putLong("id", id);
-                    editor.putBoolean("isAssigned", isAssigned);
-                    editor.putLong("coach_id", coachId);
+                    editor.putString("role", role);
+                    editor.putString("accessToken", accessToken);
+                    editor.putString("refreshToken", refreshToken);
 
                     editor.apply();
 
-                    Toast.makeText(getApplicationContext(), "Welcome " + first_name, Toast.LENGTH_SHORT).show();
+                    if (isValidRole(role)) {
+                        getUserDetails();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Login failed", Toast.LENGTH_SHORT).show();
+                        editor.clear();
+                        editor.apply();
+                    }
 
-                    Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-                    //intent.putExtra("first_name", first_name);
-                    //intent.putExtra("last_name", last_name);
-                    //intent.putExtra("email", email);
-                    //intent.putExtra("id", id);
-                    //intent.putExtra("isAssigned", isAssigned);
-                    //intent.putExtra("coach_id", coachId);
-                    startActivity(intent);
-                    finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    System.out.println(e.getMessage());
                 }
             }
         }, new Response.ErrorListener() {
@@ -109,6 +95,63 @@ import java.util.HashMap;
                 Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_LONG).show();
             }
         });
+        queue.add(jsonObjectRequest);
+    }
+
+    private void getUserDetails() {
+        String url = "http://192.168.1.17:8080/api/user/details";
+
+        String accessToken = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this)
+                .getString("accessToken", "");
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
+                        try {
+                            long id = jsonObject.getLong("id");
+                            String firstName = jsonObject.getString("first_name");
+                            String lastName = jsonObject.getString("last_name");
+                            String email = jsonObject.getString("email");
+                            String role = jsonObject.getString("role");
+                            boolean isAssigned = jsonObject.getBoolean("assignedToCoach");
+                            long coachId = jsonObject.getLong("coach_id");
+
+                            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putLong("id", id);
+                            editor.putString("first_name", firstName);
+                            editor.putString("last_name", lastName);
+                            editor.putString("email", email);
+                            editor.putString("role", role);
+                            editor.putBoolean("isAssigned", isAssigned);
+                            editor.putLong("coach_id", coachId);
+                            editor.apply();
+
+                            Toast.makeText(getApplicationContext(), "Welcome " + firstName, Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                return headers;
+            }
+        };
+
+        RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
         queue.add(jsonObjectRequest);
     }
 
@@ -143,5 +186,9 @@ import java.util.HashMap;
              password_et.setError(null);
              return true;
          }
+     }
+
+     private boolean isValidRole(String role) {
+         return role.equals("CLIENT");
      }
 }

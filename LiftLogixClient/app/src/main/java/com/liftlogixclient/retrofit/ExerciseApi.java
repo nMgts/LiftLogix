@@ -9,6 +9,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -16,20 +17,11 @@ import retrofit2.http.Path;
 
 public interface ExerciseApi {
     @GET("/api/exercise/all")
-    Call<List<Exercise>> getAllExercises();
+    Call<List<Exercise>> getAllExercises(@Header("Authorization") String token);
 
     @GET("/api/exercise/{id}")
-    Call<Exercise> getExerciseDetails(@Path("id") Long id);
-
-    @Multipart
-    @POST("/api/exercise")
-    Call<Exercise> addExercise(
-            @Part("name") RequestBody name,
-            @Part("description") RequestBody description,
-            @Part("url") RequestBody url,
-            @Part MultipartBody.Part image
-    );
+    Call<Exercise> getExerciseDetails(@Header("Authorization") String token, @Path("id") Long id);
 
     @GET("exercises/image/{id}")
-    Call<ResponseBody> getImage(@Path("id") Long id);
+    Call<ResponseBody> getImage(@Header("Authorization") String token, @Path("id") Long id);
 }

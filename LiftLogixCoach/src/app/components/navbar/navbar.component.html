@@ -1,0 +1,18 @@
+<nav class="navbar">
+  <div class="navbar-left">
+    <img ngSrc="/images/logo-light.svg" alt="LiftLogixCoach Logo" class="logo" height="80" width="80">
+    <span class="app-name">LiftLogixCoach</span>
+  </div>
+  <div class="navbar-right">
+    <i class="icon notifications-icon">🔔</i>
+    <i class="icon messages-icon">✉️</i>
+    <i class="icon settings-icon">⚙️</i>
+    <div class="profile-menu">
+      <img src="/assets/images/profile.jpg" alt="Profile" class="profile-icon" (click)="toggleMenu()">
+      <div class="dropdown-menu" *ngIf="menuOpen">
+        <a (click)="goToProfile()">Profil</a>
+        <a (click)="logOut()">Wyloguj</a>
+      </div>
+    </div>
+  </div>
+</nav>

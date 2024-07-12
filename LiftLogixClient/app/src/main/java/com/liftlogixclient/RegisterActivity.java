@@ -20,6 +20,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.liftlogixclient.dto.UserRegisterDTO;
 import com.liftlogixclient.helpers.StringHelper;
+import com.liftlogixclient.models.User;
 
 import java.lang.ref.ReferenceQueue;
 import java.nio.charset.StandardCharsets;
@@ -63,13 +64,16 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
-        String url = "https://liftlogix-w8or.onrender.com/api/auth/register";
+        String url = "http://192.168.1.17:8080/api/auth/register/client"; //http://192.168.1.17:8080 https://liftlogix-w8or.onrender.com/api/auth/register
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
 
             @Override
-            public void onResponse(String s) {
-                if (s.equalsIgnoreCase("success")) {
+            public void onResponse(String response) {
+                Gson gson = new Gson();
+                RegisterResponse registerResponse = gson.fromJson(response, RegisterResponse.class);
+
+                if (registerResponse.getStatusCode() == 200) {
                     first_name.setText(null);
                     last_name.setText(null);
                     email.setText(null);
@@ -77,7 +81,8 @@ public class RegisterActivity extends AppCompatActivity {
                     confirm.setText(null);
                     Toast.makeText(RegisterActivity.this, "Register Successful", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(RegisterActivity.this, "Registration Un-Successful: " + s, Toast.LENGTH_LONG).show();
+                    String errorMessage = registerResponse.getMessage();
+                    Toast.makeText(RegisterActivity.this, "Registration Un-Successful: " + errorMessage, Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -172,5 +177,22 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
+    private static class RegisterResponse {
+        private int statusCode;
+        private String message;
+        private User user;
+
+        public int getStatusCode() {
+            return statusCode;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public User getUser() {
+            return user;
+        }
+    }
 
 }

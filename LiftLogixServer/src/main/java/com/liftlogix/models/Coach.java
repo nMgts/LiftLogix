@@ -4,20 +4,16 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "coaches")
 @Getter
 @Setter
-public class Coach {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @Column(nullable = false)
-    private String first_name;
-    @Column(nullable = false)
-    private String last_name;
-    @Column(nullable = false, unique = true)
-    private String email;
-    @Column(nullable = false)
+public class Coach extends User {
+    @Column(columnDefinition = "TEXT")
     private String description;
+
+    @OneToMany(mappedBy = "coach")
+    private List<Application> applications;
 }
