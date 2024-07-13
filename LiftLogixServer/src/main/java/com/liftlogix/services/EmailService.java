@@ -34,9 +34,8 @@ public class EmailService {
         mailMessage.setTo(user.getEmail());
         mailMessage.setSubject("Potwierdź swój adres e-mail");
         mailMessage.setText("Aby potwierdzić swój adres e-mail, proszę kliknąć tutaj:\n"
-                + "http://localhost:8080/api/auth/confirm?token=" + user.getConfirmationToken());
+                + "http://localhost:4200/confirm-mail?token=" + user.getConfirmationToken());
         mailSender.send(mailMessage);
-        System.out.println("Email sent successfully.");
     }
 
     public String confirmEmail(String token) {

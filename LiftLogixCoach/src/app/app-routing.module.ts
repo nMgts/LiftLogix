@@ -8,6 +8,7 @@ import { adminGuard, usersGuard } from "./guard/guard";
 import { AdminDashboardComponent } from "./components/admin-dashboard/admin-dashboard.component";
 import { ForgotPasswordComponent } from "./components/forgot-password/forgot-password.component";
 import {ResetPasswordComponent} from "./components/reset-password/reset-password.component";
+import {ConfirmEmailComponent} from "./components/confirm-email/confirm-email.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'dashboard', component: AdminDashboardComponent, canActivate: [adminGuard]},
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'confirm-mail', component: ConfirmEmailComponent },
 ];
 
 @NgModule({

@@ -3,24 +3,22 @@ package com.liftlogix.services;
 import com.liftlogix.convert.UserDTOMapper;
 import com.liftlogix.dto.ReqRes;
 import com.liftlogix.dto.UserDTO;
+import com.liftlogix.exceptions.EmailIsTakenException;
 import com.liftlogix.exceptions.InvalidTokenException;
-import com.liftlogix.exceptions.UserIsNotConfirmed;
+import com.liftlogix.exceptions.UserIsNotConfirmedException;
 import com.liftlogix.models.*;
 import com.liftlogix.repositories.TokenRepository;
 import com.liftlogix.repositories.UserRepository;
 import com.liftlogix.types.Role;
 import com.liftlogix.util.JWTUtils;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -45,6 +43,12 @@ public class UserManagementService {
             } else {
                 user = new Client();
             }
+
+            Optional<User> opt = userRepository.findByEmail(registrationRequest.getEmail());
+            if (opt.isPresent()) {
+                throw new EmailIsTakenException("Email is taken");
+            }
+
             user.setEmail(registrationRequest.getEmail());
             user.setFirst_name(registrationRequest.getFirst_name());
             user.setLast_name(registrationRequest.getLast_name());
@@ -78,13 +82,13 @@ public class UserManagementService {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
-                            loginRequest.getPassword()));
+                    loginRequest.getPassword()));
             var user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
             var jwt = jwtUtils.generateToken(user);
             var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
 
             if (!user.isEmail_confirmed()) {
-                throw new UserIsNotConfirmed("User is not confirmed");
+                throw new UserIsNotConfirmedException("User is not confirmed");
             }
 
             resp.setStatusCode(200);
@@ -95,7 +99,7 @@ public class UserManagementService {
             resp.setMessage("Successfully logged in");
         } catch (Exception e) {
             resp.setStatusCode(500);
-            resp.setMessage(e.getMessage());
+            resp.setError(e.getMessage());
         }
         return resp;
     }
@@ -117,33 +121,68 @@ public class UserManagementService {
             return resp;
         } catch (Exception e) {
             resp.setStatusCode(500);
-            resp.setMessage(e.getMessage());
+            resp.setError(e.getMessage());
             return resp;
         }
     }
 
-    public void generatePasswordResetToken(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow();
+    public ReqRes generatePasswordResetToken(String email) {
+        ReqRes resp = new ReqRes();
+        try {
 
-        String token = UUID.randomUUID().toString();
-        PasswordResetToken resetToken = new PasswordResetToken(token, user);
+            Optional<User> opt = userRepository.findByEmail(email);
+            if (opt.isEmpty()) {
+                throw new EntityNotFoundException("User not exists");
+            }
 
-        tokenRepository.save(resetToken);
+            User user = opt.get();
+            String token = UUID.randomUUID().toString();
+            PasswordResetToken resetToken = new PasswordResetToken(token, user);
 
-        String resetUrl = "http://localhost:4200/reset-password?token=" + token;
-        emailService.sendPasswordResetEmail(user.getEmail(), resetUrl);
+            try {
+                tokenRepository.save(resetToken);
+            } catch (Exception e) {
+                Date expiryDate = resetToken.getExpiryDate();
+                resetToken = tokenRepository.findByUser(user);;
+                resetToken.setToken(token);
+                resetToken.setExpiryDate(expiryDate);
+                tokenRepository.save(resetToken);
+            }
+
+            String resetUrl = "http://localhost:4200/reset-password?token=" + token;
+            emailService.sendPasswordResetEmail(user.getEmail(), resetUrl);
+
+            resp.setStatusCode(200);
+            resp.setMessage("Email reset token sent successfully");
+
+        } catch (Exception e) {
+            resp.setStatusCode(500);
+            resp.setError(e.getMessage());
+        }
+        return resp;
     }
 
-    public void resetPassword(String token, String newPassword) {
-        PasswordResetToken resetToken = tokenRepository.findByToken(token);
-        if (resetToken == null || resetToken.isExpired()) {
-            throw new InvalidTokenException("Invalid or expired token");
+    public ReqRes resetPassword(String token, String newPassword) {
+        ReqRes resp = new ReqRes();
+
+        try {
+            PasswordResetToken resetToken = tokenRepository.findByToken(token);
+            if (resetToken == null || resetToken.isExpired()) {
+                throw new InvalidTokenException("Invalid or expired token");
+            }
+
+            User user = resetToken.getUser();
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+
+            tokenRepository.delete(resetToken);
+
+            resp.setStatusCode(200);
+            resp.setMessage("Password has been reset successfully");
+        } catch (Exception e) {
+            resp.setStatusCode(500);
+            resp.setError(e.getMessage());
         }
-
-        User user = resetToken.getUser();
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
-
-        tokenRepository.delete(resetToken);
+        return resp;
     }
 }

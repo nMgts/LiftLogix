@@ -23,6 +23,7 @@ import { ApplicationsComponent } from './components/applications/applications.co
 import { EditProfileDialogComponent } from './components/edit-profile-dialog/edit-profile-dialog.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { ConfirmEmailComponent } from './components/confirm-email/confirm-email.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
     ApplicationsComponent,
     EditProfileDialogComponent,
     ForgotPasswordComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    ConfirmEmailComponent
   ],
   imports: [
     BrowserModule,

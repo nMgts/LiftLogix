@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse, HttpParams} from "@angular/common/http";
 import { Router } from "@angular/router";
 import {firstValueFrom, Observable} from 'rxjs';
 
@@ -7,48 +7,59 @@ import {firstValueFrom, Observable} from 'rxjs';
   providedIn: 'root'
 })
 export class UserService {
-  private baseUrl = 'http://localhost:8080/api/auth';
   private registerUrl = 'http://localhost:8080/api/auth/register/coach';
   private loginUrl = 'http://localhost:8080/api/auth/login';
+  private resendUrl = 'http://localhost:8080/api/auth/resend-confirmation';
   private forgotPasswordUrl = 'http://localhost:8080/api/auth/forgot-password';
   private resetPasswordUrl = 'http://localhost:8080/api/auth/reset-password';
+  private confirmEmailUrl = 'http://localhost:8080/api/auth/confirm';
 
   constructor(private http: HttpClient, private readonly router: Router) {}
 
   async register(userData: any): Promise<any> {
-    try {
-      return await firstValueFrom(this.http.post<any>(this.registerUrl, userData));
-    } catch (error) {
-      throw error;
+    const response = await firstValueFrom(this.http.post<any>(this.registerUrl, userData));
+    if (response.statusCode === 200) {
+      return { success: true }
+    } else {
+      return { success: false, error: response.error }
     }
   }
 
   async login(email: string, password: string): Promise<any> {
-    try {
-      const response = await firstValueFrom(this.http.post<any>(this.loginUrl, { email, password }));
-      if (response.statusCode === 200 && (response.role === "COACH" || response.role === "ADMIN")) {
-        return { success: true, token: response.token, role: response.role };
-      } else {
-        return { success: false, message: response.message};
-      }
-    } catch (error) {
-      throw error;
+    const response = await firstValueFrom(this.http.post<any>(this.loginUrl, { email, password }));
+    if (response.statusCode === 200 && (response.role === "COACH" || response.role === "ADMIN")) {
+      return { success: true, token: response.token, role: response.role };
+    } else {
+      return { success: false, error: response.error};
     }
   }
 
-  resendConfirmationEmail(email: string): Promise<any> {
-    return this.http.post<any>(`${this.baseUrl}/resend-confirmation`, { email }).toPromise();
+  async resendConfirmationEmail(email: string): Promise<any> {
+    return await firstValueFrom(this.http.post<any>(this.resendUrl, { email }));
   }
 
-  forgotPassword(email: string): Observable<void> {
-    const url = `${this.forgotPasswordUrl}`;
+  async forgotPassword(email: string): Promise<any> {
     let params = new HttpParams().set('email', email);
-    return this.http.post<void>(url, {}, { params: params });
+    const response = await firstValueFrom(this.http.post<any>(this.forgotPasswordUrl, {}, {params: params}));
+    if (response.statusCode === 200) {
+      return { success: true };
+    } else {
+      return { success: false };
+    }
   }
 
-  resetPassword(token: string, newPassword: string): Observable<void> {
-    const url = `${this.resetPasswordUrl}`;
-    return this.http.put<void>(url, { token, newPassword });
+  async resetPassword(token: string, newPassword: string): Promise<any> {
+    const response = await firstValueFrom(this.http.put<any>(this.resetPasswordUrl, { token, newPassword }));
+    if (response.statusCode === 200) {
+      return { success: true };
+    } else {
+     return { success: false }
+    }
+  }
+
+  confirmEmail(token: string): Observable<string> {
+    let params = new HttpParams().set('token', token);
+    return this.http.put(this.confirmEmailUrl, {}, { params: params, responseType: 'text' });
   }
 
   logOut(): void {

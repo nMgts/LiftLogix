@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -47,7 +48,7 @@ public class AuthController {
         return ResponseEntity.ok(userManagementService.refreshToken(req));
     }
 
-    @GetMapping("/confirm")
+    @PutMapping("/confirm")
     public ResponseEntity<String> confirmEmail(@RequestParam("token") String token) {
         try {
             return ResponseEntity.ok(emailService.confirmEmail(token));
@@ -92,14 +93,12 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
-        userManagementService.generatePasswordResetToken(email);
-        return ResponseEntity.ok("Email with reset instruction sent");
+    public ResponseEntity<ReqRes> forgotPassword(@RequestParam String email) {
+        return ResponseEntity.ok(userManagementService.generatePasswordResetToken(email));
     }
 
     @PutMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest request) {
-        userManagementService.resetPassword(request.getToken(), request.getNewPassword());
-        return ResponseEntity.ok("Password has been reset");
+    public ResponseEntity<ReqRes> resetPassword(@RequestBody PasswordResetRequest request) {
+        return ResponseEntity.ok(userManagementService.resetPassword(request.getToken(), request.getNewPassword()));
     }
 }

@@ -16,20 +16,26 @@ export class ForgotPasswordComponent {
 
   async handleSubmit() {
     if (!this.email) {
-      this.showError("Email jest wymagany");
+      this.showError('Email jest wymagany');
       return;
     }
-
-    this.userService.forgotPassword(this.email).subscribe(
-      () => {
-        this.showSuccess("E-mail z instrukcjami resetowania hasła został wysłany.");
-      },
-      (error) => {
-        this.showError(error.message);
-      }
-    );
-    this.showSuccess("E-mail z instrukcjami resetowania hasła został wysłany.");
+    try {
+      const { success } = await this.userService.forgotPassword(this.email)
+        if (success) {
+          this.showSuccess('Email z dalszymi instrukcjami został wysłany')
+          this.email = '';
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 3000);
+        } else {
+          this.showError('Użytkownik z podanym adresem email nie istnieje')
+        }
+    } catch (error) {
+      this.showError('Nie udało się wysłać wiadomości e-mail'); // If server is not responding
+    }
   }
+
+  /** Methods for displaying success/error messages */
 
   showError(message: string) {
     this.errorMessage = message;

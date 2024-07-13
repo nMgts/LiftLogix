@@ -11,20 +11,21 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
   errorMessage: string = '';
+  successMessage: string = '';
   showResendConfirmation: boolean = false;
-  showRedirect: boolean = false;
   passwordFieldType = 'password';
 
   constructor(private readonly  userService: UserService, private router: Router) {}
 
   async handleSubmit() {
     if (!this.email || !this.password) {
-      this.showError("Email i hasło są wymagane");
+      this.showError('Email i hasło są wymagane');
       return
     }
-
     try {
-      const { success, token, role, message } = await this.userService.login(this.email, this.password);
+
+      const { success, token, role, error } = await this.userService.login(this.email, this.password);
+
       if (success) {
         localStorage.setItem('token', token)
         localStorage.setItem('role', role)
@@ -34,40 +35,47 @@ export class LoginComponent {
           await this.router.navigate(['/dashboard-admin']);
         }
       } else {
-        if (message === "User is not confirmed") {
+        if (error === 'User is not confirmed') {
           this.showResendConfirmation = true;
-          this.showError("Proszę potwierdzić adres e-mail.");
+          this.showError('Proszę potwierdzić adres e-mail.');
         } else {
-          this.showError(message);
-          this.showRedirect = true;
+          this.showError('Błędne dane');
         }
       }
-    } catch (error: any) {
-      this.showError(error.message);
+    } catch (error) {
+      this.showError('Nie udało się zalogować'); // If server is not responding
     }
   }
 
-  redirectToForgotPassword(): void {
-    this.router.navigate(['/forgot-password']);
+  async resendConfirmationEmail() {
+    try {
+      await this.userService.resendConfirmationEmail(this.email);
+      this.showSuccess('E-mail potwierdzający został ponownie wysłany.');
+    } catch (error: any) {
+      this.showError('Wystąpił błąd podczas wysyłania e-maila potwierdzającego.');
+    }
   }
 
   togglePasswordField(): void {
     this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
   }
 
+  /** Methods for displaying success/error messages */
+
   showError(mess: string) {
     this.errorMessage = mess;
-    setTimeout(()=>{
+    this.successMessage = '';
+    setTimeout(() => {
       this.errorMessage = ''
-    }, 3000)
+    }, 3000);
   }
 
-  async resendConfirmationEmail() {
-    try {
-      await this.userService.resendConfirmationEmail(this.email);
-      this.showError("E-mail potwierdzający został ponownie wysłany.");
-    } catch (error: any) {
-      this.showError("Wystąpił błąd podczas wysyłania e-maila potwierdzającego.");
-    }
+  showSuccess(mess: string) {
+    this.successMessage = mess;
+    this.showResendConfirmation = false;
+    this.errorMessage = '';
+    setTimeout(() => {
+      this.successMessage = '';
+    }, 3000);
   }
 }
