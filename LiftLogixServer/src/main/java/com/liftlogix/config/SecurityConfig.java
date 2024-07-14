@@ -55,8 +55,7 @@ public class SecurityConfig {
 
                         // Admin and coach endpoints
                         .requestMatchers(
-                                "/api/exercise/add",
-                                "/api/client/all")
+                                "/api/exercise/add")
                         .hasAnyAuthority("ADMIN", "COACH")
 
                         // Admin and client endpoints

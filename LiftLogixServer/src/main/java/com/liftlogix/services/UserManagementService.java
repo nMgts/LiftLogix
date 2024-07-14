@@ -12,9 +12,11 @@ import com.liftlogix.repositories.UserRepository;
 import com.liftlogix.types.Role;
 import com.liftlogix.util.JWTUtils;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -84,8 +86,8 @@ public class UserManagementService {
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
                     loginRequest.getPassword()));
             var user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
-            var jwt = jwtUtils.generateToken(user);
-            var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
+            var jwt = jwtUtils.generateAccessToken(user);
+            var refreshToken = jwtUtils.generateRefreshToken(user);
 
             if (!user.isEmail_confirmed()) {
                 throw new UserIsNotConfirmedException("User is not confirmed");
@@ -104,20 +106,43 @@ public class UserManagementService {
         return resp;
     }
 
-    public ReqRes refreshToken(ReqRes refreshTokenRequest) {
+    public void logout(HttpServletRequest request) {
+        final String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String accessToken = authHeader.substring(7);
+            jwtUtils.invalidateToken(accessToken);
+        }
+
+        final String refreshTokenHeader = request.getHeader("Refresh-Token");
+        System.out.println(refreshTokenHeader);
+        if (refreshTokenHeader != null && refreshTokenHeader.startsWith("Bearer ")) {
+            String refreshToken = refreshTokenHeader.substring(7);
+            jwtUtils.invalidateToken(refreshToken);
+        }
+
+        SecurityContextHolder.clearContext();
+    }
+
+    public ReqRes refreshToken(String refreshToken) {
         ReqRes resp = new ReqRes();
         try {
-            String email = jwtUtils.extractUsername(refreshTokenRequest.getToken());
+            String email = jwtUtils.extractUsername(refreshToken);
             User user = userRepository.findByEmail(email).orElseThrow();
-            if (jwtUtils.isTokenValid(refreshTokenRequest.getToken(), user)) {
-                var jwt = jwtUtils.generateToken(user);
+            if (jwtUtils.isTokenValid(refreshToken, user) && jwtUtils.isRefreshToken(refreshToken)) {
+                var newAccessToken = jwtUtils.generateAccessToken(user);
+                var newRefreshToken = jwtUtils.generateRefreshToken(user);
                 resp.setStatusCode(200);
-                resp.setToken(jwt);
-                resp.setRefreshToken(refreshTokenRequest.getToken());
+                resp.setToken(newAccessToken);
+                resp.setRefreshToken(newRefreshToken);
                 resp.setExpirationTime("24Hrs");
                 resp.setMessage("Successfully refreshed token");
+
+                jwtUtils.invalidateToken(refreshToken);
+            } else {
+                resp.setStatusCode(500);
+                resp.setError("Refresh token is not valid");
             }
-            resp.setStatusCode(200);
+
             return resp;
         } catch (Exception e) {
             resp.setStatusCode(500);

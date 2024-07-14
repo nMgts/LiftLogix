@@ -28,7 +28,7 @@ export class UserService {
   async login(email: string, password: string): Promise<any> {
     const response = await firstValueFrom(this.http.post<any>(this.loginUrl, { email, password }));
     if (response.statusCode === 200 && (response.role === "COACH" || response.role === "ADMIN")) {
-      return { success: true, token: response.token, role: response.role };
+      return { success: true, token: response.token, refreshToken: response.refreshToken, role: response.role };
     } else {
       return { success: false, error: response.error};
     }

@@ -5,12 +5,15 @@ import com.liftlogix.dto.ReqRes;
 import com.liftlogix.services.EmailService;
 import com.liftlogix.services.UserManagementService;
 import com.liftlogix.types.Role;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -39,13 +42,45 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ReqRes> login(@RequestBody ReqRes req) {
-        return ResponseEntity.ok(userManagementService.login(req));
+    public ResponseEntity<ReqRes> login(@RequestBody ReqRes req, HttpServletResponse response) {
+        ReqRes loginResponse = userManagementService.login(req);
+
+        if (loginResponse.getStatusCode() == 200) {
+            Cookie cookieRefreshToken = new Cookie("refreshToken", loginResponse.getRefreshToken());
+            cookieRefreshToken.setHttpOnly(true);
+            cookieRefreshToken.setPath("/");
+            response.addCookie(cookieRefreshToken);
+
+            System.out.println(cookieRefreshToken.getName());
+            System.out.println(cookieRefreshToken.getValue());
+            System.out.println(cookieRefreshToken.getPath());
+        }
+
+        return ResponseEntity.ok(loginResponse);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        userManagementService.logout(request);
+        return ResponseEntity.ok("Logged out successfully");
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<ReqRes> refreshToken(@RequestBody ReqRes req) {
-        return ResponseEntity.ok(userManagementService.refreshToken(req));
+    public ResponseEntity<ReqRes> refreshToken(@CookieValue(value = "refreshToken") String refreshToken, HttpServletResponse response) {
+        ReqRes refreshResponse = userManagementService.refreshToken(refreshToken);
+        if (refreshResponse.getStatusCode() == 200) {
+            Cookie cookieRefreshToken = new Cookie("refreshToken", refreshResponse.getRefreshToken());
+            cookieRefreshToken.setHttpOnly(true);
+            cookieRefreshToken.setPath("/");
+            response.addCookie(cookieRefreshToken);
+
+            Cookie oldCookieRefreshToken = new Cookie("refreshToken", "");
+            oldCookieRefreshToken.setMaxAge(0);
+            oldCookieRefreshToken.setHttpOnly(true);
+            oldCookieRefreshToken.setPath("/");
+            response.addCookie(oldCookieRefreshToken);
+        }
+        return ResponseEntity.ok(refreshResponse);
     }
 
     @PutMapping("/confirm")
