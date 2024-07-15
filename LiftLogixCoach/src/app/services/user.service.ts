@@ -1,67 +1,19 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Router } from "@angular/router";
-import {firstValueFrom, Observable} from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private registerUrl = 'http://localhost:8080/api/auth/register/coach';
-  private loginUrl = 'http://localhost:8080/api/auth/login';
-  private refreshUrl = 'http://localhost:8080/api/auth/refresh';
-  private resendUrl = 'http://localhost:8080/api/auth/resend-confirmation';
-  private forgotPasswordUrl = 'http://localhost:8080/api/auth/forgot-password';
-  private resetPasswordUrl = 'http://localhost:8080/api/auth/reset-password';
-  private confirmEmailUrl = 'http://localhost:8080/api/auth/confirm';
-  private logoutUrl = 'http://localhost:8080/api/auth/logout';
+  private forgotPasswordUrl = 'http://localhost:8080/api/user/forgot-password';
+  private resetPasswordUrl = 'http://localhost:8080/api/user/reset-password';
+  private verifyUrl = 'http://localhost:8080/api/user/verify';
+  private checkPasswordUrl = 'http://localhost:8080/api/user/check';
+  private updatePasswordUrl = 'http://localhost:8080/api/user/change-password'
 
   constructor(private http: HttpClient, private readonly router: Router) {}
-
-  async register(userData: any): Promise<any> {
-    const response = await firstValueFrom(this.http.post<any>(this.registerUrl, userData));
-    if (response.statusCode === 200) {
-      return { success: true }
-    } else {
-      return { success: false, error: response.error }
-    }
-  }
-
-  async login(email: string, password: string, rememberMeChecked: boolean): Promise<any> {
-    const response = await firstValueFrom(this.http.post<any>(this.loginUrl, { email, password, rememberMeChecked }, { withCredentials: true }));
-    if (response.statusCode === 200 && (response.role === "COACH" || response.role === "ADMIN")) {
-      return { success: true, token: response.token, role: response.role };
-    } else {
-      return { success: false, error: response.error};
-    }
-  }
-
-  refreshToken(): Observable<any> {
-    const rememberMeChecked = localStorage.getItem('rememberMe') === 'true';
-    return this.http.post<any>(this.refreshUrl, { rememberMeChecked }, { withCredentials: true });
-  }
-
-  logOut(): void {
-    const token: string = localStorage.getItem('token') || '';
-    const headers = this.createHeaders(token);
-    if (typeof localStorage !== 'undefined') {
-      localStorage.clear();
-    }
-    this.router.navigate(['/']);
-
-    this.http.post(this.logoutUrl, {}, { headers: headers, withCredentials: true }).subscribe(
-      () => {
-        console.log('Logged out successfully from backend');
-      },
-      (error) => {
-        console.log('Failed to log out from backend', error);
-      }
-    )
-  }
-
-  async resendConfirmationEmail(email: string): Promise<any> {
-    return await firstValueFrom(this.http.post<any>(this.resendUrl, { email }));
-  }
 
   async forgotPassword(email: string): Promise<any> {
     let params = new HttpParams().set('email', email);
@@ -82,39 +34,26 @@ export class UserService {
     }
   }
 
-  confirmEmail(token: string): Observable<string> {
-    let params = new HttpParams().set('token', token);
-    return this.http.put(this.confirmEmailUrl, {}, { params: params, responseType: 'text' });
+  verifyCode(email: string, code: string, token: string): Observable<void> {
+    const headers = this.createHeaders(token);
+    return this.http.post<void>(this.verifyUrl, { email, code }, { headers: headers })
+  }
+
+  checkPassword(password: string, token: string): Observable<void> {
+    const headers = this.createHeaders(token);
+    let params = new HttpParams().set('password', password);
+    return this.http.get<void>(this.checkPasswordUrl, { headers: headers, params: params });
+  }
+
+  updatePassword(password: string, token: string): Observable<void> {
+    const headers = this.createHeaders(token);
+    let params = new HttpParams().set('password', password);
+    return this.http.put<void>(this.updatePasswordUrl, {}, {  headers: headers, params: params, withCredentials: true });
   }
 
   private createHeaders(token: string) {
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
-  }
-
-  /***AUTHENTICATION METHODS***/
-  isAuthenticated(): boolean {
-    if (typeof localStorage !== 'undefined') {
-      const token = localStorage.getItem('token');
-      return !!token;
-    }
-    return false;
-  }
-
-  isAdmin(): boolean {
-    if (typeof localStorage !== 'undefined') {
-      const role = localStorage.getItem('role');
-      return role === 'ADMIN';
-    }
-    return false;
-  }
-
-  isUser(): boolean {
-    if (typeof localStorage !== 'undefined') {
-      const role = localStorage.getItem('role');
-      return role === 'COACH';
-    }
-    return false;
   }
 }

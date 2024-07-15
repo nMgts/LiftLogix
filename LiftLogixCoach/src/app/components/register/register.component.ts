@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import {Router} from "@angular/router";
-import {UserService} from "../../services/user.service";
+import { Router } from "@angular/router";
+import { AuthService } from "../../services/auth.service";
 
 @Component({
   selector: 'app-register',
@@ -19,7 +19,7 @@ export class RegisterComponent {
   successMessage: string = '';
   passwordFieldType = 'password';
 
-  constructor(private readonly userService: UserService, private readonly router: Router) {}
+  constructor(private readonly authService: AuthService, private readonly router: Router) {}
 
   async handleSubmit(event: Event) {
     event.preventDefault();
@@ -31,12 +31,10 @@ export class RegisterComponent {
     const { confirm_password, ...userData } = this.formData;
 
     try {
-      const { success, error } = await this.userService.register(userData);
-
-      console.log(this.userService.register(userData));
+      const { success } = await this.authService.register(userData);
         if (success) {
-          this.showSuccess('Rejestracja zakończona sukcesem! Proszę potwierdzić adres e-mail.')
           this.formData.clear;
+          this.showSuccess('Rejestracja zakończona sukcesem! Proszę potwierdzić adres e-mail.')
           setTimeout(() => {
             this.router.navigate(['/login']);
           }, 3000);

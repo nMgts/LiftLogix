@@ -1,9 +1,11 @@
-import {Component, OnInit} from '@angular/core';
-import {MatDialogRef} from "@angular/material/dialog";
-import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
-import {CoachService} from "../../services/coach.service";
-import {Coach} from "../../interfaces/Coach";
-import {Router} from "@angular/router";
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from "@angular/material/dialog";
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from "@angular/forms";
+import { CoachService } from "../../services/coach.service";
+import { Coach } from "../../interfaces/Coach";
+import { Router } from "@angular/router";
+import { EmailService } from "../../services/email.service";
+import { UserService } from "../../services/user.service";
 
 @Component({
   selector: 'app-edit-profile-dialog',
@@ -29,6 +31,8 @@ export class EditProfileDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<EditProfileDialogComponent>,
     private fb: FormBuilder,
     private coachService: CoachService,
+    private emailService: EmailService,
+    private userService: UserService,
     private router: Router
   ) {
     this.profileForm = this.fb.group({
@@ -98,7 +102,7 @@ export class EditProfileDialogComponent implements OnInit {
 
   changeEmail(): void {
     const token = localStorage.getItem('token') || '';
-    this.coachService.sendVerificationCode(this.email, token).subscribe(
+    this.emailService.sendVerificationCode(this.email, token).subscribe(
       () => {
         this.showVerificationCodeInput = true;
       },
@@ -113,7 +117,7 @@ export class EditProfileDialogComponent implements OnInit {
     const code = this.emailForm.get('verificationCode')?.value;
 
     const token = localStorage.getItem('token') || '';
-    this.coachService.verifyCode(email, code, token).subscribe(
+    this.userService.verifyCode(email, code, token).subscribe(
       () => {
         this.showNewEmailInput = true
         this.verificationError = '';
@@ -135,7 +139,7 @@ export class EditProfileDialogComponent implements OnInit {
     const verificationCode = this.emailForm.get('verificationCode')?.value;
 
     const token = localStorage.getItem('token') || '';
-    this.coachService.updateEmail(this.email, newEmail, verificationCode, token).subscribe(
+    this.emailService.updateEmail(this.email, newEmail, verificationCode, token).subscribe(
       () => {
         console.log('Email updated successfully');
         this.updateError = '';
@@ -172,7 +176,7 @@ export class EditProfileDialogComponent implements OnInit {
     const password = this.passwordForm.get("password")?.value;
 
     const token = localStorage.getItem('token') || '';
-    this.coachService.checkPassword(password, token).subscribe(
+    this.userService.checkPassword(password, token).subscribe(
       () => {
         this.wrongPasswordError = '';
         this.passwordFieldType = 'password';
@@ -186,21 +190,26 @@ export class EditProfileDialogComponent implements OnInit {
   }
 
   updatePassword(): void {
-    const password = this.passwordForm.get('newPassword')?.value;
+    const newPassword = this.passwordForm.get('newPassword')?.value;
+    const confirmPassword = this.passwordForm.get('confirmPassword')?.value;
 
-    const token = localStorage.getItem('token') || '';
-    this.coachService.updatePassword(password, token).subscribe(
-      () => {
-        this.updatePasswordError = '';
-        this.dialogRef.close();
-        localStorage.clear();
-        this.router.navigate(['/login']);
-      },
-      (error) => {
-        console.error('Nie udało się zmienić hasła', error);
-        this.updatePasswordError = 'Nie udało się zmienić hasła';
-      }
-    );
+    if (newPassword === confirmPassword){
+      const token = localStorage.getItem('token') || '';
+      this.userService.updatePassword(newPassword, token).subscribe(
+        () => {
+          this.updatePasswordError = '';
+          this.dialogRef.close();
+          localStorage.clear();
+          this.router.navigate(['/login']);
+        },
+        (error) => {
+          console.error('Nie udało się zmienić hasła', error);
+          this.updatePasswordError = 'Nie udało się zmienić hasła';
+        }
+      );
+    } else {
+      console.log('Złe hasła');
+    }
   }
 
   cancelPasswordChange(): void {

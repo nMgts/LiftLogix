@@ -65,8 +65,7 @@ import {UserService} from "./services/user.service";
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptorService,
       multi: true
-    },
-    UserService
+    }
   ],
   bootstrap: [AppComponent]
 })

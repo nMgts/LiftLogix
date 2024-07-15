@@ -23,8 +23,14 @@ public class ApplicationController {
     private final ApplicationService applicationService;
 
     @GetMapping("/mine")
-    public ResponseEntity<List<ApplicationDTO>> getMyApplications(Authentication authentication) {
-        return ResponseEntity.ok(applicationService.getMyApplications(authentication));
+    public ResponseEntity<?> getMyApplications(Authentication authentication) {
+        try {
+            return ResponseEntity.ok(applicationService.getMyApplications(authentication));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
     }
 
     @PostMapping("/create")

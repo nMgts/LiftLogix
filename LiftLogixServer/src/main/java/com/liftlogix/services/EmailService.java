@@ -15,6 +15,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CookieValue;
 
 import java.security.SecureRandom;
 import java.util.Map;
@@ -29,17 +30,8 @@ public class EmailService {
     private final UserRepository userRepository;
     private final CacheManager cacheManager;
 
-    public void sendConfirmationEmail(User user) {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(user.getEmail());
-        mailMessage.setSubject("Potwierdź swój adres e-mail");
-        mailMessage.setText("Aby potwierdzić swój adres e-mail, proszę kliknąć tutaj:\n"
-                + "http://localhost:4200/confirm-mail?token=" + user.getConfirmationToken());
-        mailSender.send(mailMessage);
-    }
-
     public String confirmEmail(String token) {
-        User user = userRepository.findByConfirmationToken(token).orElseThrow();
+        User user = userRepository.findByConfirmationToken(token).orElseThrow(() -> new EntityNotFoundException("User not found"));
         user.setConfirmationToken(null);
         user.setEmail_confirmed(true);
         userRepository.save(user);
@@ -64,12 +56,6 @@ public class EmailService {
         mailMessage.setText("Twój kod weryfikacjny to: " + verificationCode);
         mailSender.send(mailMessage);
         return verificationCode;
-    }
-
-    private String generateVerificationCode() {
-        SecureRandom random = new SecureRandom();
-        int code = random.nextInt(900000) + 100000; // Zakres 100000-999999
-        return String.valueOf(code);
     }
 
     @CachePut(value = "verificationCodes", key = "#email")
@@ -126,5 +112,20 @@ public class EmailService {
         email.setSubject("Password Reset Request");
         email.setText("To reset your password, click the link below:\n" + resetUrl);
         mailSender.send(email);
+    }
+
+    public void sendConfirmationEmail(User user) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setSubject("Potwierdź swój adres e-mail");
+        mailMessage.setText("Aby potwierdzić swój adres e-mail, proszę kliknąć tutaj:\n"
+                + "http://localhost:4200/confirm-mail?token=" + user.getConfirmationToken());
+        mailSender.send(mailMessage);
+    }
+
+    private String generateVerificationCode() {
+        SecureRandom random = new SecureRandom();
+        int code = random.nextInt(900000) + 100000; // Zakres 100000-999999
+        return String.valueOf(code);
     }
 }

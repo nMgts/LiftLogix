@@ -1,9 +1,10 @@
 import {UserService} from "../services/user.service";
-import {CanActivateFn, Router} from "@angular/router";
-import {inject} from "@angular/core";
+import { CanActivateFn, Router } from "@angular/router";
+import { inject } from "@angular/core";
+import { AuthService } from "../services/auth.service";
 
 export const usersGuard: CanActivateFn = (route, state) => {
-  if (inject(UserService).isAuthenticated()) {
+  if (inject(AuthService).isAuthenticated()) {
     return true;
   }
   inject(Router).navigate(['/login'])
@@ -11,7 +12,7 @@ export const usersGuard: CanActivateFn = (route, state) => {
 };
 
 export const adminGuard: CanActivateFn = (route, state) => {
-  if (inject(UserService).isAdmin()) {
+  if (inject(AuthService).isAdmin()) {
     return true;
   }
   inject(Router).navigate(['/login'])

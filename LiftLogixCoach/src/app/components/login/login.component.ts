@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import {UserService} from "../../services/user.service";
-import {Router} from "@angular/router";
+import { Router } from "@angular/router";
+import { AuthService } from "../../services/auth.service";
+import { EmailService } from "../../services/email.service";
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,7 @@ export class LoginComponent {
   showResendConfirmation: boolean = false;
   passwordFieldType = 'password';
 
-  constructor(private readonly  userService: UserService, private router: Router) {}
+  constructor(private authService: AuthService, private emailService: EmailService, private router: Router) {}
 
   async handleSubmit() {
     if (!this.email || !this.password) {
@@ -25,12 +26,14 @@ export class LoginComponent {
     }
     try {
 
-      const { success, token, role, error } = await this.userService.login(this.email, this.password, this.rememberMe);
+      const { success, token, role, id, error } = await this.authService.login(this.email, this.password, this.rememberMe);
 
       if (success) {
         localStorage.setItem('token', token);
         localStorage.setItem('role', role);
         localStorage.setItem('rememberMe', String(this.rememberMe));
+        localStorage.setItem('id', id);
+        console.log(id);
         if (role === "COACH") {
           await this.router.navigate(['/dashboard']);
         } else if (role === "ADMIN") {
@@ -51,7 +54,7 @@ export class LoginComponent {
 
   async resendConfirmationEmail() {
     try {
-      await this.userService.resendConfirmationEmail(this.email);
+      await this.emailService.resendConfirmationEmail(this.email);
       this.showSuccess('E-mail potwierdzający został ponownie wysłany.');
     } catch (error: any) {
       this.showError('Wystąpił błąd podczas wysyłania e-maila potwierdzającego.');

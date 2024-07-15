@@ -100,6 +100,7 @@ public class UserManagementService {
             resp.setRefreshToken(refreshToken);
             resp.setExpirationTime("24Hrs");
             resp.setMessage("Successfully logged in");
+            resp.setUser_id(user.getId());
             resp.setRememberMeChecked(loginRequest.isRememberMeChecked());
         } catch (Exception e) {
             resp.setStatusCode(500);
@@ -149,65 +150,5 @@ public class UserManagementService {
             resp.setError(e.getMessage());
             return resp;
         }
-    }
-
-    public ReqRes generatePasswordResetToken(String email) {
-        ReqRes resp = new ReqRes();
-        try {
-
-            Optional<User> opt = userRepository.findByEmail(email);
-            if (opt.isEmpty()) {
-                throw new EntityNotFoundException("User not exists");
-            }
-
-            User user = opt.get();
-            String token = UUID.randomUUID().toString();
-            PasswordResetToken resetToken = new PasswordResetToken(token, user);
-
-            try {
-                tokenRepository.save(resetToken);
-            } catch (Exception e) {
-                Date expiryDate = resetToken.getExpiryDate();
-                resetToken = tokenRepository.findByUser(user);;
-                resetToken.setToken(token);
-                resetToken.setExpiryDate(expiryDate);
-                tokenRepository.save(resetToken);
-            }
-
-            String resetUrl = "http://localhost:4200/reset-password?token=" + token;
-            emailService.sendPasswordResetEmail(user.getEmail(), resetUrl);
-
-            resp.setStatusCode(200);
-            resp.setMessage("Email reset token sent successfully");
-
-        } catch (Exception e) {
-            resp.setStatusCode(500);
-            resp.setError(e.getMessage());
-        }
-        return resp;
-    }
-
-    public ReqRes resetPassword(String token, String newPassword) {
-        ReqRes resp = new ReqRes();
-
-        try {
-            PasswordResetToken resetToken = tokenRepository.findByToken(token);
-            if (resetToken == null || resetToken.isExpired()) {
-                throw new InvalidTokenException("Invalid or expired token");
-            }
-
-            User user = resetToken.getUser();
-            user.setPassword(passwordEncoder.encode(newPassword));
-            userRepository.save(user);
-
-            tokenRepository.delete(resetToken);
-
-            resp.setStatusCode(200);
-            resp.setMessage("Password has been reset successfully");
-        } catch (Exception e) {
-            resp.setStatusCode(500);
-            resp.setError(e.getMessage());
-        }
-        return resp;
     }
 }

@@ -1,7 +1,6 @@
 package com.liftlogix.controllers;
 
 import com.liftlogix.dto.CoachDTO;
-import com.liftlogix.models.Coach;
 import com.liftlogix.services.CoachService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;

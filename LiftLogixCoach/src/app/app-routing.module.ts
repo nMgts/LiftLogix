@@ -7,8 +7,8 @@ import { LoginComponent } from "./components/login/login.component";
 import { adminGuard, usersGuard } from "./guard/guard";
 import { AdminDashboardComponent } from "./components/admin-dashboard/admin-dashboard.component";
 import { ForgotPasswordComponent } from "./components/forgot-password/forgot-password.component";
-import {ResetPasswordComponent} from "./components/reset-password/reset-password.component";
-import {ConfirmEmailComponent} from "./components/confirm-email/confirm-email.component";
+import { ResetPasswordComponent } from "./components/reset-password/reset-password.component";
+import { ConfirmEmailComponent } from "./components/confirm-email/confirm-email.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent },

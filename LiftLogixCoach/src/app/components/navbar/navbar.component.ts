@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import {Router} from "@angular/router";
-import {UserService} from "../../services/user.service";
-import {EditProfileDialogComponent} from "../edit-profile-dialog/edit-profile-dialog.component";
-import {MatDialog} from "@angular/material/dialog";
+import { Router } from "@angular/router";
+import { EditProfileDialogComponent } from "../edit-profile-dialog/edit-profile-dialog.component";
+import { MatDialog } from "@angular/material/dialog";
+import { AuthService } from "../../services/auth.service";
 
 @Component({
   selector: 'app-navbar',
@@ -12,25 +12,20 @@ import {MatDialog} from "@angular/material/dialog";
 export class NavbarComponent {
   menuOpen = false;
 
-  constructor(private router: Router, private userService: UserService, private dialog: MatDialog) {}
+  constructor(private router: Router, private authService: AuthService, private dialog: MatDialog) {}
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
 
   goToProfile() {
-    this.menuOpen = false; // Zamknij menu po otwarciu dialogu
+    this.menuOpen = false;
     const dialogRef = this.dialog.open(EditProfileDialogComponent, {
       width: '600px'
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      // Wartość powrotna
-      console.log('Dialog został zamknięty', result);
     });
   }
 
   logOut() {
-    this.userService.logOut();
+    this.authService.logout();
   }
 }

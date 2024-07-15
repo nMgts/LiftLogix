@@ -34,7 +34,9 @@ public class SecurityConfig {
                         // Public endpoints
                         .requestMatchers(
                                 "/api/",
-                                "/api/auth/login", "/api/auth/register/client", "/api/auth/register/coach", "/api/auth/refresh", "/api/auth/confirm", "/api/auth/resend-confirmation", "/api/auth/forgot-password", "/api/auth/reset-password")
+                                "/api/auth/login", "/api/auth/register/client", "/api/auth/register/coach", "/api/auth/refresh",
+                                "/api/email/confirm", "/api/email/resend-confirmation",
+                                "/api/user/forgot-password", "/api/user/reset-password")
                         .permitAll()
 
                         // Admin endpoints
@@ -68,11 +70,10 @@ public class SecurityConfig {
 
                         // All users endpoints
                         .requestMatchers(
-                                "/api/user/details", "/api/user/change-password",
+                                "/api/user/details", "/api/user/change-password", "/api/user/verify", "/api/user/check", "/api/user/image/{user_id}",
                                 "/api/client/unsubscribe/{client_id}",
                                 "/api/exercise/{id}", "/api/exercise/all", "/api/exercise/image/{id}",
-                                "/api/auth/send-verification-code", "/api/auth/update-email",
-                                "/api/verification/verify", "/api/verification/check")
+                                "/api/email/send-verification-code", "/api/email/update-email")
                         .authenticated()
 
                         // Other endpoints
