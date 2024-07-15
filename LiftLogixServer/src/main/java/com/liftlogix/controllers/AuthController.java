@@ -16,8 +16,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -49,13 +51,10 @@ public class AuthController {
             Cookie cookieRefreshToken = new Cookie("refreshToken", loginResponse.getRefreshToken());
             cookieRefreshToken.setHttpOnly(true);
             cookieRefreshToken.setPath("/");
+            cookieRefreshToken.setDomain("localhost");
+            cookieRefreshToken.setMaxAge(31536000);
             response.addCookie(cookieRefreshToken);
-
-            System.out.println(cookieRefreshToken.getName());
-            System.out.println(cookieRefreshToken.getValue());
-            System.out.println(cookieRefreshToken.getPath());
         }
-
         return ResponseEntity.ok(loginResponse);
     }
 
@@ -65,20 +64,39 @@ public class AuthController {
         return ResponseEntity.ok("Logged out successfully");
     }
 
+    @GetMapping("/all-cookies")
+    public String readAllCookies(HttpServletRequest request) {
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            return Arrays.stream(cookies)
+                    .map(c -> c.getName() + "=" + c.getValue()).collect(Collectors.joining(", "));
+        }
+
+        return "No cookies";
+    }
+
     @PostMapping("/refresh")
+    //@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
     public ResponseEntity<ReqRes> refreshToken(@CookieValue(value = "refreshToken") String refreshToken, HttpServletResponse response) {
         ReqRes refreshResponse = userManagementService.refreshToken(refreshToken);
         if (refreshResponse.getStatusCode() == 200) {
+            System.out.println(refreshResponse.getRefreshToken());
             Cookie cookieRefreshToken = new Cookie("refreshToken", refreshResponse.getRefreshToken());
             cookieRefreshToken.setHttpOnly(true);
             cookieRefreshToken.setPath("/");
+            cookieRefreshToken.setDomain("localhost");
+            cookieRefreshToken.setMaxAge(31536000);
             response.addCookie(cookieRefreshToken);
-
-            Cookie oldCookieRefreshToken = new Cookie("refreshToken", "");
+/*
+            Cookie oldCookieRefreshToken = new Cookie("refreshToken", refreshToken);
             oldCookieRefreshToken.setMaxAge(0);
             oldCookieRefreshToken.setHttpOnly(true);
             oldCookieRefreshToken.setPath("/");
+            oldCookieRefreshToken.setDomain("localhost");
             response.addCookie(oldCookieRefreshToken);
+
+ */
         }
         return ResponseEntity.ok(refreshResponse);
     }

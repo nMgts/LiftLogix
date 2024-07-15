@@ -9,6 +9,7 @@ import {firstValueFrom, Observable} from 'rxjs';
 export class UserService {
   private registerUrl = 'http://localhost:8080/api/auth/register/coach';
   private loginUrl = 'http://localhost:8080/api/auth/login';
+  private refreshUrl = 'http://localhost:8080/api/auth/refresh';
   private resendUrl = 'http://localhost:8080/api/auth/resend-confirmation';
   private forgotPasswordUrl = 'http://localhost:8080/api/auth/forgot-password';
   private resetPasswordUrl = 'http://localhost:8080/api/auth/reset-password';
@@ -26,9 +27,9 @@ export class UserService {
   }
 
   async login(email: string, password: string): Promise<any> {
-    const response = await firstValueFrom(this.http.post<any>(this.loginUrl, { email, password }));
+    const response = await firstValueFrom(this.http.post<any>(this.loginUrl, { email, password }, { withCredentials: true }));
     if (response.statusCode === 200 && (response.role === "COACH" || response.role === "ADMIN")) {
-      return { success: true, token: response.token, refreshToken: response.refreshToken, role: response.role };
+      return { success: true, token: response.token, role: response.role };
     } else {
       return { success: false, error: response.error};
     }
@@ -104,5 +105,9 @@ export class UserService {
       return role === 'COACH';
     }
     return false;
+  }
+
+  refreshToken(): Observable<any> {
+    return this.http.post<any>(this.refreshUrl, {}, { withCredentials: true });
   }
 }

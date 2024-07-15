@@ -24,12 +24,11 @@ export class LoginComponent {
     }
     try {
 
-      const { success, token, refreshToken, role, error } = await this.userService.login(this.email, this.password);
+      const { success, token, role, error } = await this.userService.login(this.email, this.password);
 
       if (success) {
         localStorage.setItem('token', token);
         localStorage.setItem('role', role);
-        localStorage.setItem('refreshToken', refreshToken);
         if (role === "COACH") {
           await this.router.navigate(['/dashboard']);
         } else if (role === "ADMIN") {

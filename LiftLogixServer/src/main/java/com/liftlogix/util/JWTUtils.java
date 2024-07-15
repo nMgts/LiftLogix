@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class JWTUtils {
     private final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static final Long ACCESS_EXPIRATION_TIME = 30000L;//900000L; // 15 minutes
-    private static final Long SHORT_REFRESH_EXPIRATION_TIME = 200000L;//86400000L; // 1 day
+    private static final Long SHORT_REFRESH_EXPIRATION_TIME = 60000L;//86400000L; // 1 day
     private static final Long LONG_REFRESH_EXPIRATION_TIME = 86400000L * 30; // 30 days
 
     /** This HashSet will be replaced by the database or cache **/

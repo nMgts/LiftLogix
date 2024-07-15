@@ -43,7 +43,8 @@ export class ApplicationsComponent implements OnInit, OnChanges {
     if (!this.isGrid5Expanded) {
       this.showArchivedApplications = false;
     }
-    this.applicationService.getMyApplications().subscribe(
+    const token = localStorage.getItem('token') || '';
+    this.applicationService.getMyApplications(token).subscribe(
       (applications: Application[]) => {
         this.applications = applications.filter(app => app.status === 'PENDING' || this.showArchivedApplications);
         this.totalApplications = this.applications.length;
@@ -81,7 +82,8 @@ export class ApplicationsComponent implements OnInit, OnChanges {
 
   accept(event: Event, applicationId: number): void {
     event.stopPropagation();
-    this.applicationService.acceptApplication(applicationId).subscribe(
+    const token = localStorage.getItem('token') || '';
+    this.applicationService.acceptApplication(applicationId, token).subscribe(
       () => this.loadApplications(),
       (error: any) => console.error("Error accepting application", error)
     );
@@ -89,7 +91,8 @@ export class ApplicationsComponent implements OnInit, OnChanges {
 
   reject(event: Event, applicationId: number): void {
     event.stopPropagation();
-    this.applicationService.rejectApplication(applicationId).subscribe(
+    const token = localStorage.getItem('token') || '';
+    this.applicationService.rejectApplication(applicationId, token).subscribe(
       () => this.loadApplications(),
       (error: any) => console.error("Error rejecting application", error)
     );

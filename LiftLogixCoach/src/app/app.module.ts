@@ -3,27 +3,29 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import {HomeComponent} from "./components/home/home.component";
-import {NgOptimizedImage} from "@angular/common";
+import { HomeComponent } from "./components/home/home.component";
+import { NgOptimizedImage } from "@angular/common";
 import { RegisterComponent } from './components/register/register.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient, withInterceptors} from "@angular/common/http";
 import { LoginComponent } from './components/login/login.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ApplicationDetailsDialogComponent } from './components/application-details-dialog/application-details-dialog.component';
-import {MatDialogActions, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
-import {MatButton} from "@angular/material/button";
-import {MatIconModule} from "@angular/material/icon";
-import {MatPaginator} from "@angular/material/paginator";
+import { MatDialogActions, MatDialogContent, MatDialogTitle } from "@angular/material/dialog";
+import { MatButton } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatPaginator } from "@angular/material/paginator";
 import { ApplicationsComponent } from './components/applications/applications.component';
 import { EditProfileDialogComponent } from './components/edit-profile-dialog/edit-profile-dialog.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { ConfirmEmailComponent } from './components/confirm-email/confirm-email.component';
+import {TokenInterceptorService} from "./services/token-interceptor.service";
+import {UserService} from "./services/user.service";
 
 @NgModule({
   declarations: [
@@ -57,7 +59,14 @@ import { ConfirmEmailComponent } from './components/confirm-email/confirm-email.
     ReactiveFormsModule
   ],
   providers: [
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+    //provideHttpClient(withInterceptors([tokenInterceptor]))
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptorService,
+      multi: true
+    },
+    UserService
   ],
   bootstrap: [AppComponent]
 })

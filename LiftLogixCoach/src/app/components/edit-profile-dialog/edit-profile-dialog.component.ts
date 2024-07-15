@@ -54,7 +54,8 @@ export class EditProfileDialogComponent implements OnInit {
   }
 
   loadProfile(): void {
-    this.coachService.getProfile().subscribe(
+    const token = localStorage.getItem('token') || '';
+    this.coachService.getProfile(token).subscribe(
       (profile: Coach) => {
         this.profileForm.patchValue({
           firstName: profile.first_name,
@@ -82,7 +83,8 @@ export class EditProfileDialogComponent implements OnInit {
         email: this.email
       };
 
-      this.coachService.updateProfile(profileData).subscribe(
+      const token = localStorage.getItem('token') || '';
+      this.coachService.updateProfile(profileData, token).subscribe(
         (updatedProfile) => {
           console.log('Profile updated successfully', updatedProfile);
           this.loadProfile();
@@ -95,7 +97,8 @@ export class EditProfileDialogComponent implements OnInit {
   }
 
   changeEmail(): void {
-    this.coachService.sendVerificationCode(this.email).subscribe(
+    const token = localStorage.getItem('token') || '';
+    this.coachService.sendVerificationCode(this.email, token).subscribe(
       () => {
         this.showVerificationCodeInput = true;
       },
@@ -109,7 +112,8 @@ export class EditProfileDialogComponent implements OnInit {
     const email = this.email;
     const code = this.emailForm.get('verificationCode')?.value;
 
-    this.coachService.verifyCode(email, code).subscribe(
+    const token = localStorage.getItem('token') || '';
+    this.coachService.verifyCode(email, code, token).subscribe(
       () => {
         this.showNewEmailInput = true
         this.verificationError = '';
@@ -130,7 +134,8 @@ export class EditProfileDialogComponent implements OnInit {
     const newEmail = this.emailForm.get('newEmail')?.value;
     const verificationCode = this.emailForm.get('verificationCode')?.value;
 
-    this.coachService.updateEmail(this.email, newEmail, verificationCode).subscribe(
+    const token = localStorage.getItem('token') || '';
+    this.coachService.updateEmail(this.email, newEmail, verificationCode, token).subscribe(
       () => {
         console.log('Email updated successfully');
         this.updateError = '';
@@ -166,7 +171,8 @@ export class EditProfileDialogComponent implements OnInit {
   checkPassword(): void {
     const password = this.passwordForm.get("password")?.value;
 
-    this.coachService.checkPassword(password).subscribe(
+    const token = localStorage.getItem('token') || '';
+    this.coachService.checkPassword(password, token).subscribe(
       () => {
         this.wrongPasswordError = '';
         this.passwordFieldType = 'password';
@@ -182,7 +188,8 @@ export class EditProfileDialogComponent implements OnInit {
   updatePassword(): void {
     const password = this.passwordForm.get('newPassword')?.value;
 
-    this.coachService.updatePassword(password).subscribe(
+    const token = localStorage.getItem('token') || '';
+    this.coachService.updatePassword(password, token).subscribe(
       () => {
         this.updatePasswordError = '';
         this.dialogRef.close();
