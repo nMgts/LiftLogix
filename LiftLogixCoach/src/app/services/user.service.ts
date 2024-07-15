@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/common/http";
 import { Router } from "@angular/router";
 import {firstValueFrom, Observable} from 'rxjs';
 
@@ -14,6 +14,7 @@ export class UserService {
   private forgotPasswordUrl = 'http://localhost:8080/api/auth/forgot-password';
   private resetPasswordUrl = 'http://localhost:8080/api/auth/reset-password';
   private confirmEmailUrl = 'http://localhost:8080/api/auth/confirm';
+  private logoutUrl = 'http://localhost:8080/api/auth/logout';
 
   constructor(private http: HttpClient, private readonly router: Router) {}
 
@@ -26,13 +27,36 @@ export class UserService {
     }
   }
 
-  async login(email: string, password: string): Promise<any> {
-    const response = await firstValueFrom(this.http.post<any>(this.loginUrl, { email, password }, { withCredentials: true }));
+  async login(email: string, password: string, rememberMeChecked: boolean): Promise<any> {
+    const response = await firstValueFrom(this.http.post<any>(this.loginUrl, { email, password, rememberMeChecked }, { withCredentials: true }));
     if (response.statusCode === 200 && (response.role === "COACH" || response.role === "ADMIN")) {
       return { success: true, token: response.token, role: response.role };
     } else {
       return { success: false, error: response.error};
     }
+  }
+
+  refreshToken(): Observable<any> {
+    const rememberMeChecked = localStorage.getItem('rememberMe') === 'true';
+    return this.http.post<any>(this.refreshUrl, { rememberMeChecked }, { withCredentials: true });
+  }
+
+  logOut(): void {
+    const token: string = localStorage.getItem('token') || '';
+    const headers = this.createHeaders(token);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.clear();
+    }
+    this.router.navigate(['/']);
+
+    this.http.post(this.logoutUrl, {}, { headers: headers, withCredentials: true }).subscribe(
+      () => {
+        console.log('Logged out successfully from backend');
+      },
+      (error) => {
+        console.log('Failed to log out from backend', error);
+      }
+    )
   }
 
   async resendConfirmationEmail(email: string): Promise<any> {
@@ -63,23 +87,10 @@ export class UserService {
     return this.http.put(this.confirmEmailUrl, {}, { params: params, responseType: 'text' });
   }
 
-  logOut(): void {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem('token');
-      localStorage.removeItem('role');
-    }
-
-    this.router.navigate(['/'])
-      .then(success => {
-        if (success) {
-          console.log('Navigation to home successful');
-        } else {
-          console.error('Navigation to home failed');
-        }
-      })
-      .catch(err => {
-        console.error('Error during navigation', err);
-      });
+  private createHeaders(token: string) {
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
   }
 
   /***AUTHENTICATION METHODS***/
@@ -105,9 +116,5 @@ export class UserService {
       return role === 'COACH';
     }
     return false;
-  }
-
-  refreshToken(): Observable<any> {
-    return this.http.post<any>(this.refreshUrl, {}, { withCredentials: true });
   }
 }

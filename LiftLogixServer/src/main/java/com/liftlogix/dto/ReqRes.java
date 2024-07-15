@@ -22,6 +22,7 @@ public class ReqRes {
     private String email;
     private Role role;
     private String password;
+    private boolean isRememberMeChecked;
     private UserDTO user;
     private List<UserDTO> userList;
 }

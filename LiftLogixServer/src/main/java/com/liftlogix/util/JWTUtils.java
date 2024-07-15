@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 @Component
 public class JWTUtils {
     private final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private static final Long ACCESS_EXPIRATION_TIME = 30000L;//900000L; // 15 minutes
-    private static final Long SHORT_REFRESH_EXPIRATION_TIME = 60000L;//86400000L; // 1 day
+    private static final Long ACCESS_EXPIRATION_TIME = 900000L; // 15 minutes //test 30000L
+    private static final Long SHORT_REFRESH_EXPIRATION_TIME = 86400000L; // 1 day //test 60000L
     private static final Long LONG_REFRESH_EXPIRATION_TIME = 86400000L * 30; // 30 days
 
     /** This HashSet will be replaced by the database or cache **/
@@ -41,7 +41,10 @@ public class JWTUtils {
                 .compact();
     }
 
-    public String generateRefreshToken(UserDetails userDetails) {
+    public String generateRefreshToken(UserDetails userDetails, boolean hasLongExpiryDate) {
+        Date expirationDate = new Date(System.currentTimeMillis() +
+                (hasLongExpiryDate ? LONG_REFRESH_EXPIRATION_TIME : SHORT_REFRESH_EXPIRATION_TIME));
+
         Map<String, Object> claims = new HashMap<>();
         claims.put("token_type", "refresh");
 
@@ -49,7 +52,7 @@ public class JWTUtils {
                 .claims(claims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + SHORT_REFRESH_EXPIRATION_TIME))
+                .expiration(expirationDate)
                 .signWith(key)
                 .compact();
     }

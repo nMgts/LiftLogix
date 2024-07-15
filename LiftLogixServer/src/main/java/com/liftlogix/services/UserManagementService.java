@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -87,7 +88,7 @@ public class UserManagementService {
                     loginRequest.getPassword()));
             var user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
             var jwt = jwtUtils.generateAccessToken(user);
-            var refreshToken = jwtUtils.generateRefreshToken(user);
+            var refreshToken = jwtUtils.generateRefreshToken(user, loginRequest.isRememberMeChecked());
 
             if (!user.isEmail_confirmed()) {
                 throw new UserIsNotConfirmedException("User is not confirmed");
@@ -99,6 +100,7 @@ public class UserManagementService {
             resp.setRefreshToken(refreshToken);
             resp.setExpirationTime("24Hrs");
             resp.setMessage("Successfully logged in");
+            resp.setRememberMeChecked(loginRequest.isRememberMeChecked());
         } catch (Exception e) {
             resp.setStatusCode(500);
             resp.setError(e.getMessage());
@@ -106,36 +108,34 @@ public class UserManagementService {
         return resp;
     }
 
-    public void logout(HttpServletRequest request) {
+    public void logout(HttpServletRequest request, String refreshToken) {
         final String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String accessToken = authHeader.substring(7);
             jwtUtils.invalidateToken(accessToken);
         }
 
-        final String refreshTokenHeader = request.getHeader("Refresh-Token");
-        System.out.println(refreshTokenHeader);
-        if (refreshTokenHeader != null && refreshTokenHeader.startsWith("Bearer ")) {
-            String refreshToken = refreshTokenHeader.substring(7);
+        if (!refreshToken.isEmpty()) {
             jwtUtils.invalidateToken(refreshToken);
         }
 
         SecurityContextHolder.clearContext();
     }
 
-    public ReqRes refreshToken(String refreshToken) {
+    public ReqRes refreshToken(String refreshToken, boolean isRememberMeChecked) {
         ReqRes resp = new ReqRes();
         try {
             String email = jwtUtils.extractUsername(refreshToken);
             User user = userRepository.findByEmail(email).orElseThrow();
             if (jwtUtils.isTokenValid(refreshToken, user) && jwtUtils.isRefreshToken(refreshToken)) {
                 var newAccessToken = jwtUtils.generateAccessToken(user);
-                var newRefreshToken = jwtUtils.generateRefreshToken(user);
+                var newRefreshToken = jwtUtils.generateRefreshToken(user, isRememberMeChecked);
                 resp.setStatusCode(200);
                 resp.setToken(newAccessToken);
                 resp.setRefreshToken(newRefreshToken);
                 resp.setExpirationTime("24Hrs");
                 resp.setMessage("Successfully refreshed token");
+                resp.setRememberMeChecked(isRememberMeChecked);
 
                 jwtUtils.invalidateToken(refreshToken);
             } else {

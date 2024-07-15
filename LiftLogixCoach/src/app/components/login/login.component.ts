@@ -10,6 +10,7 @@ import {Router} from "@angular/router";
 export class LoginComponent {
   email: string = '';
   password: string = '';
+  rememberMe: boolean = false;
   errorMessage: string = '';
   successMessage: string = '';
   showResendConfirmation: boolean = false;
@@ -24,11 +25,12 @@ export class LoginComponent {
     }
     try {
 
-      const { success, token, role, error } = await this.userService.login(this.email, this.password);
+      const { success, token, role, error } = await this.userService.login(this.email, this.password, this.rememberMe);
 
       if (success) {
         localStorage.setItem('token', token);
         localStorage.setItem('role', role);
+        localStorage.setItem('rememberMe', String(this.rememberMe));
         if (role === "COACH") {
           await this.router.navigate(['/dashboard']);
         } else if (role === "ADMIN") {
