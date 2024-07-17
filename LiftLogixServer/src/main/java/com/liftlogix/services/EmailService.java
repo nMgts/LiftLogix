@@ -60,7 +60,6 @@ public class EmailService {
 
     @CachePut(value = "verificationCodes", key = "#email")
     public String saveVerificationCode(String email, String code) {
-        System.out.println("Saved verification code: " + code);
         return code;
     }
 

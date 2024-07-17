@@ -58,8 +58,7 @@ public class UserController {
     }
 
     @PutMapping("/change-password")
-    @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
-    public ResponseEntity<Void> changePassword(@RequestParam String password, HttpServletResponse response, Authentication authentication) {
+    public ResponseEntity<Void> changePassword(@RequestParam String password, Authentication authentication) {
         // Będzie trzeba zrobić refactor, niech korzysta z userService do porównywania ze starym hasłem
         try {
             String username = authentication.getName();
@@ -69,20 +68,13 @@ public class UserController {
             user.setPassword(newPassword);
             userRepository.save(user);
 
-            if (response.getStatus() == 200) {
-                Cookie cookieRefreshToken = new Cookie("refreshToken", "");
-                cookieRefreshToken.setHttpOnly(true);
-                cookieRefreshToken.setPath("/");
-                cookieRefreshToken.setMaxAge(0);
-                response.addCookie(cookieRefreshToken);
-            }
-
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
+    // przenieść do maili
     @PostMapping("/verify")
     public ResponseEntity<Void> verifyCode(@RequestBody Map<String, String> request) {
         String code = request.get("code");

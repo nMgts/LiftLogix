@@ -29,7 +29,7 @@ export class EmailService {
 
   updateEmail(currentEmail: string, newEmail: string, verificationCode: string, token: string): Observable<void> {
     const headers = this.createHeaders(token);
-    return this.http.put<void>(this.updateEmailUrl, { currentEmail, newEmail, verificationCode }, { headers: headers, withCredentials: true });
+    return this.http.put<void>(this.updateEmailUrl, { currentEmail, newEmail, verificationCode }, { headers: headers });
   }
 
   private createHeaders(token: string) {

@@ -11,7 +11,8 @@ export class UserService {
   private resetPasswordUrl = 'http://localhost:8080/api/user/reset-password';
   private verifyUrl = 'http://localhost:8080/api/user/verify';
   private checkPasswordUrl = 'http://localhost:8080/api/user/check';
-  private updatePasswordUrl = 'http://localhost:8080/api/user/change-password'
+  private updatePasswordUrl = 'http://localhost:8080/api/user/change-password';
+  private getImageUrl = 'http://localhost:8080/api/user/image';
 
   constructor(private http: HttpClient, private readonly router: Router) {}
 
@@ -48,7 +49,11 @@ export class UserService {
   updatePassword(password: string, token: string): Observable<void> {
     const headers = this.createHeaders(token);
     let params = new HttpParams().set('password', password);
-    return this.http.put<void>(this.updatePasswordUrl, {}, {  headers: headers, params: params, withCredentials: true });
+    return this.http.put<void>(this.updatePasswordUrl, {}, {  headers: headers, params: params });
+  }
+
+  getUserImage(userId: string): Observable<Blob> {
+    return this.http.get(`${this.getImageUrl}/${userId}`, { responseType: 'blob' });
   }
 
   private createHeaders(token: string) {

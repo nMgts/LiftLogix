@@ -58,26 +58,14 @@ public class EmailController {
     }
 
     @PutMapping("/update-email")
-    @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
-    public ResponseEntity<String> updateEmail(@CookieValue(value = "refreshToken", required = false) String refreshToken,
-                                            @RequestBody Map<String, String> request, HttpServletRequest httpServletRequest,
-                                            HttpServletResponse response, Authentication authentication) {
+
+    public ResponseEntity<String> updateEmail(@RequestBody Map<String, String> request,  Authentication authentication) {
         String currentEmail = request.get("currentEmail");
         String newEmail = request.get("newEmail");
         String verificationCode = request.get("verificationCode");
 
         try {
             emailService.updateEmail(currentEmail, newEmail, verificationCode, authentication);
-            userManagementService.logout(httpServletRequest, refreshToken);
-
-            if (response.getStatus() == 200) {
-                Cookie cookieRefreshToken = new Cookie("refreshToken", "");
-                cookieRefreshToken.setHttpOnly(true);
-                cookieRefreshToken.setPath("/");
-                cookieRefreshToken.setMaxAge(0);
-                response.addCookie(cookieRefreshToken);
-            }
-
             return ResponseEntity.ok().body("{\"message\": \"Email updated successfully\"}");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

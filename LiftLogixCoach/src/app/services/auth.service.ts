@@ -45,14 +45,7 @@ export class AuthService {
     }
     this.router.navigate(['/']);
 
-    this.http.post(this.logoutUrl, {}, { headers: headers, withCredentials: true }).subscribe(
-      () => {
-        console.log('Logged out successfully from backend');
-      },
-      (error) => {
-        console.log('Failed to log out from backend', error);
-      }
-    )
+    this.http.post(this.logoutUrl, {}, { headers: headers, withCredentials: true });
   }
 
   private createHeaders(token: string) {

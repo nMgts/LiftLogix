@@ -31,44 +31,8 @@ h1 {
   margin-bottom: 15px;
 }
 
-img {
-  box-sizing: border-box;
-  width: 149px;
-  height: 149px;
-  border-radius: 50%;
-  border: 5px solid darkviolet;
-}
-
-.email-box {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  width: 100%;
-}
-
-input[type="email"] {
-  width: 180px;
-  margin-right: 10px;
-}
-
 input[type="text"],
-textarea {
-  width: 240px !important;
-}
-
-textarea {
-  height: 64px !important;
-  resize: none;
-}
-
-button[type="button"] {
-  width: 50px;
-  height: 32px;
-  bottom: 12px;
-}
-
-input[type="text"],
-input[type="email"],
+input[type="password"],
 textarea {
   display:block;
   box-sizing: border-box;
@@ -77,6 +41,7 @@ textarea {
   margin-bottom: 30px;
   padding: 4px;
   height: 32px;
+  width: 240px;
   border: none;
   border-bottom: 1px solid darkviolet;
   font-family: 'Roboto', sans-serif;
@@ -86,7 +51,7 @@ textarea {
 }
 
 input[type="text"]:focus,
-textarea:focus {
+input[type="password"]:focus {
   border-bottom: 2px solid darkviolet;
   border-bottom-right-radius: 20px;
   color: darkviolet;
@@ -94,10 +59,6 @@ textarea:focus {
 }
 
 input::placeholder {
-  color: white;
-}
-
-textarea::placeholder {
   color: white;
 }
 

@@ -52,7 +52,8 @@ public class AuthController {
     @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
     public ResponseEntity<?> logout(@CookieValue(value = "refreshToken", required = false) String refreshToken,
                                     HttpServletRequest request, HttpServletResponse response) {
-        userManagementService.logout(request, refreshToken);
+        String newStringForRefreshToken = refreshToken;
+        userManagementService.logout(request, newStringForRefreshToken);
         if (response.getStatus() == 200) {
             Cookie cookieRefreshToken = new Cookie("refreshToken", "");
             cookieRefreshToken.setHttpOnly(true);

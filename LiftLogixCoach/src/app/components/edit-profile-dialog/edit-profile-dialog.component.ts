@@ -6,6 +6,8 @@ import { Coach } from "../../interfaces/Coach";
 import { Router } from "@angular/router";
 import { EmailService } from "../../services/email.service";
 import { UserService } from "../../services/user.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-edit-profile-dialog',
@@ -15,17 +17,10 @@ import { UserService } from "../../services/user.service";
 export class EditProfileDialogComponent implements OnInit {
   profileForm: FormGroup;
   emailForm: FormGroup;
-  passwordForm: FormGroup;
   email: string = '';
   showVerificationCodeInput: boolean = false;
   showNewEmailInput: boolean = false;
-  showVerifyPasswordInput: boolean = false;
-  showNewPasswordInput: boolean = false;
-  verificationError: string = '';
-  updateError: string = '';
-  updatePasswordError: string = '';
-  wrongPasswordError: string = '';
-  passwordFieldType: string = 'password';
+  errorMessage: string = '';
 
   constructor(
     public dialogRef: MatDialogRef<EditProfileDialogComponent>,
@@ -33,7 +28,9 @@ export class EditProfileDialogComponent implements OnInit {
     private coachService: CoachService,
     private emailService: EmailService,
     private userService: UserService,
-    private router: Router
+    private authService: AuthService,
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {
     this.profileForm = this.fb.group({
       firstName: ['', Validators.required],
@@ -43,13 +40,6 @@ export class EditProfileDialogComponent implements OnInit {
     this.emailForm = this.fb.group({
       verificationCode: ['', Validators.required],
       newEmail: ['', [Validators.required, Validators.email, this.emailValidator]]
-    })
-    this.passwordForm = this.fb.group({
-      password: ['', Validators.required],
-      newPassword: ['', Validators.required],
-      confirmPassword: ['', Validators.required]
-    }, {
-      validators: this.passwordMatchValidator.bind(this)
     });
   }
 
@@ -74,10 +64,6 @@ export class EditProfileDialogComponent implements OnInit {
     )
   }
 
-  togglePasswordField(): void {
-    this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
-  }
-
   saveChanges(): void {
     if (this.profileForm.valid) {
       const profileData: Coach = {
@@ -90,13 +76,16 @@ export class EditProfileDialogComponent implements OnInit {
       const token = localStorage.getItem('token') || '';
       this.coachService.updateProfile(profileData, token).subscribe(
         (updatedProfile) => {
-          console.log('Profile updated successfully', updatedProfile);
           this.loadProfile();
+          this.dialogRef.close();
+          this.openSnackBar('Profil został zaktualizowany');
         },
         (error) => {
-          console.error('Error updating profile', error);
+          this.showError('Nie udało się zaktualizować profilu');
         }
       )
+    } else {
+      this.showError('Wprowadź wszystkie pola');
     }
   }
 
@@ -107,7 +96,7 @@ export class EditProfileDialogComponent implements OnInit {
         this.showVerificationCodeInput = true;
       },
       (error) => {
-        console.error('Error sending verification code', error);
+        this.showError('Nie udało się wysłać kodu weryfikacyjnego');
       }
     );
   }
@@ -120,18 +109,16 @@ export class EditProfileDialogComponent implements OnInit {
     this.userService.verifyCode(email, code, token).subscribe(
       () => {
         this.showNewEmailInput = true
-        this.verificationError = '';
       },
       (error) => {
-        console.error('Error verifying code', error);
-        this.verificationError = 'Błędny kod weryfikacyjny. Spróbuj ponownie.';
+        this.showError('Błędny kod weryfikacjny, spróbuj ponownie');
       }
     );
   }
 
   updateEmail(): void {
     if (this.emailForm.invalid) {
-      this.emailForm.markAllAsTouched();
+      this.showError('Nieprawidłowy adres email');
       return;
     }
 
@@ -141,15 +128,13 @@ export class EditProfileDialogComponent implements OnInit {
     const token = localStorage.getItem('token') || '';
     this.emailService.updateEmail(this.email, newEmail, verificationCode, token).subscribe(
       () => {
-        console.log('Email updated successfully');
-        this.updateError = '';
         this.dialogRef.close();
-        localStorage.clear();
+        this.authService.logout();
         this.router.navigate(['/login']);
+        this.openSnackBar('E-mail został zaktualizowany');
       },
       (error) => {
-        console.error('Error updating email:', error);
-        this.updateError = 'Adres email niedostępny';
+        this.showError('Nie udało się zaktualizować adresu email');
       }
     );
   }
@@ -168,66 +153,21 @@ export class EditProfileDialogComponent implements OnInit {
     return null;
   }
 
-  changePassword(): void {
-    this.showVerifyPasswordInput = true;
+  close() {
+    this.dialogRef.close();
   }
 
-  checkPassword(): void {
-    const password = this.passwordForm.get("password")?.value;
-
-    const token = localStorage.getItem('token') || '';
-    this.userService.checkPassword(password, token).subscribe(
-      () => {
-        this.wrongPasswordError = '';
-        this.passwordFieldType = 'password';
-        this.showNewPasswordInput = true;
-      },
-      (error) => {
-        console.error('Złe hasło', error);
-        this.wrongPasswordError = "Złe hasło";
-      }
-    );
+  private openSnackBar(message: string): void {
+    this.snackBar.open(message, 'Zamknij', {
+      duration: 3000,
+      verticalPosition: 'top'
+    });
   }
 
-  updatePassword(): void {
-    const newPassword = this.passwordForm.get('newPassword')?.value;
-    const confirmPassword = this.passwordForm.get('confirmPassword')?.value;
-
-    if (newPassword === confirmPassword){
-      const token = localStorage.getItem('token') || '';
-      this.userService.updatePassword(newPassword, token).subscribe(
-        () => {
-          this.updatePasswordError = '';
-          this.dialogRef.close();
-          localStorage.clear();
-          this.router.navigate(['/login']);
-        },
-        (error) => {
-          console.error('Nie udało się zmienić hasła', error);
-          this.updatePasswordError = 'Nie udało się zmienić hasła';
-        }
-      );
-    } else {
-      console.log('Złe hasła');
-    }
-  }
-
-  cancelPasswordChange(): void {
-    this.showVerifyPasswordInput = false;
-    this.showNewPasswordInput = false;
-    this.passwordFieldType = 'password';
-    this.passwordForm.reset();
-  }
-
-  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
-    const newPassword = control.get('newPassword');
-    const confirmPassword = control.get('confirmPassword');
-
-    if (newPassword && confirmPassword && newPassword.value !== confirmPassword.value) {
-      confirmPassword.setErrors({ passwordMismatch: true });
-      return { passwordMismatch: true };
-    } else {
-      return null;
-    }
+  showError(message: string) {
+    this.errorMessage = message;
+    setTimeout(() => {
+      this.errorMessage = '';
+    }, 3000);
   }
 }

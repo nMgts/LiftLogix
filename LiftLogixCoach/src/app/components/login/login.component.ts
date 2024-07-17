@@ -33,7 +33,6 @@ export class LoginComponent {
         localStorage.setItem('role', role);
         localStorage.setItem('rememberMe', String(this.rememberMe));
         localStorage.setItem('id', id);
-        console.log(id);
         if (role === "COACH") {
           await this.router.navigate(['/dashboard']);
         } else if (role === "ADMIN") {

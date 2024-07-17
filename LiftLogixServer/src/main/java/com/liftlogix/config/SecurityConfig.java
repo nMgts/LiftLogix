@@ -34,7 +34,7 @@ public class SecurityConfig {
                         // Public endpoints
                         .requestMatchers(
                                 "/api/",
-                                "/api/auth/login", "/api/auth/register/client", "/api/auth/register/coach", "/api/auth/refresh",
+                                "/api/auth/login", "/api/auth/register/client", "/api/auth/register/coach", "/api/auth/refresh", "/api/auth/logout",
                                 "/api/email/confirm", "/api/email/resend-confirmation",
                                 "/api/user/forgot-password", "/api/user/reset-password")
                         .permitAll()

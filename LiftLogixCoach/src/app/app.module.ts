@@ -26,6 +26,7 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { ConfirmEmailComponent } from './components/confirm-email/confirm-email.component';
 import {TokenInterceptorService} from "./services/token-interceptor.service";
 import {UserService} from "./services/user.service";
+import { SecurityOptionsDialogComponent } from './components/security-options-dialog/security-options-dialog.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import {UserService} from "./services/user.service";
     EditProfileDialogComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
-    ConfirmEmailComponent
+    ConfirmEmailComponent,
+    SecurityOptionsDialogComponent
   ],
   imports: [
     BrowserModule,

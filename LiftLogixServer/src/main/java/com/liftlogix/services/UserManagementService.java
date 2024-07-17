@@ -116,10 +116,10 @@ public class UserManagementService {
             jwtUtils.invalidateToken(accessToken);
         }
 
-        if (!refreshToken.isEmpty()) {
+        System.out.println(refreshToken);
+        if (refreshToken != null) {
             jwtUtils.invalidateToken(refreshToken);
         }
-
         SecurityContextHolder.clearContext();
     }
 
