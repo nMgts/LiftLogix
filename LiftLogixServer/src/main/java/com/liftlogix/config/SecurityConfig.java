@@ -70,7 +70,7 @@ public class SecurityConfig {
 
                         // All users endpoints
                         .requestMatchers(
-                                "/api/user/details", "/api/user/change-password", "/api/user/verify", "/api/user/check", "/api/user/image/{user_id}",
+                                "/api/user/details", "/api/user/change-password", "/api/user/verify", "/api/user/check", "/api/user/image/{user_id}", "/api/user/image/update",
                                 "/api/client/unsubscribe/{client_id}",
                                 "/api/exercise/{id}", "/api/exercise/all", "/api/exercise/image/{id}",
                                 "/api/email/send-verification-code", "/api/email/update-email")

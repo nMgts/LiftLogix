@@ -29,7 +29,7 @@
     </div>
 
     <div class="profile-menu">
-      <img [src]="image" height="36" width="36" alt="Profile" class="profile-icon" (click)="toggleMenu()">
+      <img [ngSrc]="image" height="36" width="36" alt="Profile" class="profile-icon" (click)="toggleMenu()">
       <div class="dropdown-menu" *ngIf="menuOpen">
         <a (click)="goToProfile()">Profil</a>
         <a (click)="logOut()">Wyloguj</a>

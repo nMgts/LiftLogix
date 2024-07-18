@@ -15,7 +15,7 @@ import {SecurityOptionsDialogComponent} from "../security-options-dialog/securit
 export class NavbarComponent implements OnInit {
   menuOpen = false;
   settingsOpen = false;
-  image: SafeUrl = '/icons/user.jpg';
+  image: SafeUrl = '';
 
   constructor(
     private router: Router, private authService: AuthService, private userService: UserService,
@@ -27,7 +27,8 @@ export class NavbarComponent implements OnInit {
 
   loadImage() {
     const id = localStorage.getItem('id') || '0';
-    this.userService.getUserImage(id).subscribe(
+    const token = localStorage.getItem('token') || '';
+    this.userService.getUserImage(id, token).subscribe(
       (blob) => {
         const objectURL = URL.createObjectURL(blob);
         this.image = this.sanitizer.bypassSecurityTrustUrl(objectURL);

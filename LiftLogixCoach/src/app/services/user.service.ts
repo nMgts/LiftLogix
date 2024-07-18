@@ -13,6 +13,7 @@ export class UserService {
   private checkPasswordUrl = 'http://localhost:8080/api/user/check';
   private updatePasswordUrl = 'http://localhost:8080/api/user/change-password';
   private getImageUrl = 'http://localhost:8080/api/user/image';
+  private updateImageUrl = 'http://localhost:8080/api/user/image/update';
 
   constructor(private http: HttpClient, private readonly router: Router) {}
 
@@ -52,8 +53,16 @@ export class UserService {
     return this.http.put<void>(this.updatePasswordUrl, {}, {  headers: headers, params: params });
   }
 
-  getUserImage(userId: string): Observable<Blob> {
-    return this.http.get(`${this.getImageUrl}/${userId}`, { responseType: 'blob' });
+  getUserImage(userId: string, token: string): Observable<Blob> {
+    const headers = this.createHeaders(token);
+    return this.http.get(`${this.getImageUrl}/${userId}`, { headers: headers, responseType: 'blob' });
+  }
+
+  updateImage(image: File, token: string): Observable<void> {
+    const headers = this.createHeaders(token);
+    const formData = new FormData();
+    formData.append('image', image);
+    return this.http.put<void>(this.updateImageUrl, formData, { headers });
   }
 
   private createHeaders(token: string) {

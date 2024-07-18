@@ -8,7 +8,7 @@ import { NgOptimizedImage } from "@angular/common";
 import { RegisterComponent } from './components/register/register.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient, withInterceptors} from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { LoginComponent } from './components/login/login.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -24,9 +24,11 @@ import { EditProfileDialogComponent } from './components/edit-profile-dialog/edi
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { ConfirmEmailComponent } from './components/confirm-email/confirm-email.component';
-import {TokenInterceptorService} from "./services/token-interceptor.service";
-import {UserService} from "./services/user.service";
+import { TokenInterceptorService } from "./services/token-interceptor.service";
 import { SecurityOptionsDialogComponent } from './components/security-options-dialog/security-options-dialog.component';
+import {CdkDropList} from "@angular/cdk/drag-drop";
+import {MatList, MatListItem, MatListSubheaderCssMatStyler} from "@angular/material/list";
+import {MatLine} from "@angular/material/core";
 
 @NgModule({
   declarations: [
@@ -58,7 +60,12 @@ import { SecurityOptionsDialogComponent } from './components/security-options-di
     MatButton,
     MatIconModule,
     MatPaginator,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CdkDropList,
+    MatListSubheaderCssMatStyler,
+    MatList,
+    MatListItem,
+    MatLine
   ],
   providers: [
     provideAnimationsAsync(),

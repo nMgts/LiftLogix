@@ -7,14 +7,18 @@ import com.liftlogix.models.User;
 import com.liftlogix.repositories.TokenRepository;
 import com.liftlogix.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -87,21 +91,29 @@ public class UserService {
         return resp;
     }
 
-    public ResponseEntity<?> getImage(long user_id) {
-        Optional<User> opt = userRepository.findById(user_id);
-        if (opt.isPresent()) {
-            User user = opt.get();
-            if (user.getImage() != null) {
-                return ResponseEntity.ok()
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"image.jpg\"")
-                        .contentType(MediaType.IMAGE_JPEG)
-                        .body(user.getImage());
-            }
-            else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Image not found");
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+    public byte[] getImage(long user_id) {
+            User user = userRepository.findById(user_id).orElseThrow(
+                    () -> new EntityNotFoundException("User not found")
+            );
+        byte[] image = user.getImage();
+        if (image != null && image.length > 0) {
+            return image;
+        }
+        else {
+            throw new EntityNotFoundException("Image not found");
+        }
+    }
+
+    public void updateImage(MultipartFile image, Authentication authentication) throws IOException {
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new EntityNotFoundException("User not found")
+        );
+        try {
+            user.setImage(image.getBytes());
+            userRepository.save(user);
+        } catch (IOException e) {
+            throw new IOException("Error during image update");
         }
     }
 }

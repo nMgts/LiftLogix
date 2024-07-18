@@ -7,7 +7,8 @@ import { Router } from "@angular/router";
 import { EmailService } from "../../services/email.service";
 import { UserService } from "../../services/user.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import {AuthService} from "../../services/auth.service";
+import { AuthService } from "../../services/auth.service";
+import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 
 @Component({
   selector: 'app-edit-profile-dialog',
@@ -20,7 +21,13 @@ export class EditProfileDialogComponent implements OnInit {
   email: string = '';
   showVerificationCodeInput: boolean = false;
   showNewEmailInput: boolean = false;
+  showEditButton: boolean = false;
+  showImageInput: boolean = false;
+  draggingOver: boolean = false;
   errorMessage: string = '';
+  image: SafeUrl = '';
+  newImage: SafeUrl = '';
+  selectedImage: File | null = null;
 
   constructor(
     public dialogRef: MatDialogRef<EditProfileDialogComponent>,
@@ -30,7 +37,8 @@ export class EditProfileDialogComponent implements OnInit {
     private userService: UserService,
     private authService: AuthService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private sanitizer: DomSanitizer
   ) {
     this.profileForm = this.fb.group({
       firstName: ['', Validators.required],
@@ -45,6 +53,80 @@ export class EditProfileDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProfile();
+    this.loadImage();
+  }
+
+  loadImage(): void {
+    const id = localStorage.getItem('id') || '0';
+    const token = localStorage.getItem('token') || '';
+    this.userService.getUserImage(id, token).subscribe(
+      (blob) => {
+        const objectURL = URL.createObjectURL(blob);
+        this.image = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      },
+      (error) => {
+        this.image = '/icons/user.jpg';
+      }
+    );
+  }
+
+  async onFileSelected(event: any) {
+    this.selectedImage = event.target.files[0];
+
+    const objectURL = URL.createObjectURL(await this.fileToBlob(this.selectedImage));
+    this.newImage = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+  }
+
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.draggingOver = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.draggingOver = false;
+  }
+
+  async onDrop(event: any) {
+    event.preventDefault();
+    const droppedFile = event.dataTransfer.files[0];
+
+    if (droppedFile) {
+      this.selectedImage = droppedFile;
+
+      const objectURL = URL.createObjectURL(await this.fileToBlob(droppedFile));
+      this.newImage = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+    }
+  }
+
+  uploadImage() {
+    if (this.selectedImage) {
+
+      const token = localStorage.getItem('token') || '';
+      this.userService.updateImage(this.selectedImage, token).subscribe(
+        () => {
+          this.cancelImageChange();
+          this.openSnackBar('Zdjęcie zostało zaktualizowane');
+        },
+        (error) => {
+          this.showError('Nie udało się zaktualizować zdjęcia');
+        }
+      );
+    } else {
+      this.showError('Wybierz zdjęcie do przesłania');
+    }
+  }
+
+  deleteNewImage() {
+    this.selectedImage = null;
+    this.newImage = '';
+  }
+
+  cancelImageChange() {
+    this.showImageInput = false;
+    this.selectedImage = null;
+    this.loadImage();
   }
 
   loadProfile(): void {
@@ -87,6 +169,10 @@ export class EditProfileDialogComponent implements OnInit {
     } else {
       this.showError('Wprowadź wszystkie pola');
     }
+  }
+
+  editImage() {
+    this.showImageInput = true;
   }
 
   changeEmail(): void {
@@ -143,6 +229,7 @@ export class EditProfileDialogComponent implements OnInit {
     this.showVerificationCodeInput = false;
     this.showNewEmailInput = false;
     this.emailForm.reset();
+    this.loadImage();
   }
 
   emailValidator(control: AbstractControl): ValidationErrors | null {
@@ -155,6 +242,23 @@ export class EditProfileDialogComponent implements OnInit {
 
   close() {
     this.dialogRef.close();
+  }
+
+  fileToBlob(file: File | null): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result instanceof ArrayBuffer && file != null) {
+          const blob = new Blob([new Uint8Array(reader.result)], {type: file.type});
+          resolve(blob);
+        } else {
+          reject(new Error('Failed to convert file to Blob'));
+        }
+      };
+      reader.onerror = reject;
+      // @ts-ignore
+      reader.readAsArrayBuffer(file);
+    });
   }
 
   private openSnackBar(message: string): void {

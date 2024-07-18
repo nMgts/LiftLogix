@@ -1,6 +1,14 @@
 <div class="main-container">
-  <img ngSrc="/icons/user.jpg" height="30" width="30" *ngIf="!showVerificationCodeInput && !showNewEmailInput">
-  <h1 *ngIf="!showVerificationCodeInput && !showNewEmailInput">Profil</h1>
+
+  <div class="profile-picture-container" (mouseover)="showEditButton = true"
+       (mouseleave)="showEditButton = false" *ngIf="!showVerificationCodeInput && !showNewEmailInput && !showImageInput">
+    <img [ngSrc]="image" height="149" width="149">
+    <div class="edit-button" *ngIf="showEditButton" (click)="editImage()">
+      <p>Edytuj</p>
+    </div>
+  </div>
+
+  <h1 *ngIf="!showVerificationCodeInput && !showNewEmailInput && !showImageInput">Profil</h1>
 
   <div class="error-box" *ngIf="errorMessage">
     {{ errorMessage }}
@@ -14,12 +22,34 @@
     </div>
   </div>
 
-  <div class="email-box" *ngIf="!showVerificationCodeInput && !showNewEmailInput">
+  <div *ngIf="showImageInput" class="image-upload">
+    <div class="drop-zone"
+         [class.drag-over]="draggingOver"
+         (drop)="onDrop($event)"
+         (dragover)="onDragOver($event)"
+         (dragleave)="onDragLeave($event)">
+      <div *ngIf="selectedImage">
+        <img [ngSrc]="newImage" height="100" width="100" alt="image">
+        <div class="image-del" (click)="deleteNewImage()">x</div>
+      </div>
+
+      <div *ngIf="!selectedImage">
+        Przeciągnij i upuść zdjęcie tutaj lub
+        <input type="file" (change)="onFileSelected($event)" accept="image/*">
+      </div>
+    </div>
+    <div class="button-box">
+      <button (click)="cancelImageChange()">Anuluj</button>
+      <button (click)="uploadImage()" [disabled]="!selectedImage">Zatwierdź</button>
+    </div>
+  </div>
+
+  <div class="email-box" *ngIf="!showVerificationCodeInput && !showNewEmailInput && !showImageInput">
     <input id="email" [value]="email" readonly type="email" placeholder="Email">
     <button type="button" (click)="changeEmail()">Zmień</button>
   </div>
 
-  <form [formGroup]="profileForm" *ngIf="!showVerificationCodeInput && !showNewEmailInput">
+  <form [formGroup]="profileForm" *ngIf="!showVerificationCodeInput && !showNewEmailInput && !showImageInput">
     <div class="profile-box">
       <input id="firstName" type="text" placeholder="Imię" formControlName="firstName">
       <input id="lastName" type="text" placeholder="Nazwisko" formControlName="lastName">
@@ -33,9 +63,7 @@
   </form>
 
 
-  <form [formGroup]="emailForm"
-        *ngIf="showVerificationCodeInput && !showNewEmailInput">
-
+  <form [formGroup]="emailForm" *ngIf="showVerificationCodeInput && !showNewEmailInput && !showImageInput">
 
     <input id="verificationCode" formControlName="verificationCode" type="text" placeholder="Podaj kod weryfikacyjny">
 
@@ -45,7 +73,7 @@
     </div>
   </form>
 
-  <form [formGroup]="emailForm" *ngIf="showNewEmailInput">
+  <form [formGroup]="emailForm" *ngIf="showNewEmailInput && !showImageInput">
     <input id="newEmail" formControlName="newEmail" type="text" placeholder="Podaj nowy adres e-mail">
 
     <div class="button-box">

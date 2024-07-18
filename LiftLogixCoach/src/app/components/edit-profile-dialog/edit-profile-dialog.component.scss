@@ -31,12 +31,70 @@ h1 {
   margin-bottom: 15px;
 }
 
-img {
-  box-sizing: border-box;
+.profile-picture-container {
+  position: relative;
   width: 149px;
   height: 149px;
   border-radius: 50%;
+  overflow: hidden;
   border: 5px solid darkviolet;
+}
+
+.edit-button {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: rgba(192, 192, 192, 0.7);
+  text-align: center;
+  padding: 8px 0;
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+
+.edit-button p {
+  margin: 0;
+  color: darkviolet;
+  font-weight: bold;
+}
+
+.edit-button:hover {
+  cursor: pointer;
+}
+
+.image-upload {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.drop-zone {
+  width: 240px;
+  height: 100px;
+  border: 2px dashed darkviolet;
+  border-radius: 10px;
+  margin: 10px auto;
+  padding: 20px;
+  color: darkviolet;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  position: relative;
+}
+
+.drop-zone.drag-over {
+  border-color: purple; // Zmiana koloru obramowania na przeciągnięcie
+  background-color: rgba(150, 150, 255, 0.1); // Dodanie delikatnego koloru tła
+}
+
+.image-del {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+  z-index: 10;
+  color: white;
+}
+
+.image-del:hover {
+  color: darkviolet;
 }
 
 .email-box {
