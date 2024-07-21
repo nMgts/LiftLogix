@@ -18,7 +18,7 @@ import { ApplicationDetailsDialogComponent } from '../application-details-dialog
   styleUrls: ['./applications.component.scss']
 })
 export class ApplicationsComponent implements OnInit, OnChanges {
-  @Input() isGrid5Expanded = false;
+  @Input() isBoxExpanded = false;
   applications: Application[] = [];
   displayedApplications: Application[] = [];
   showArchivedApplications = false;
@@ -40,7 +40,7 @@ export class ApplicationsComponent implements OnInit, OnChanges {
 
   async loadApplications(): Promise<void> {
 
-    if (!this.isGrid5Expanded) {
+    if (!this.isBoxExpanded) {
       this.showArchivedApplications = false;
     }
     const token = localStorage.getItem('token') || '';
@@ -57,7 +57,7 @@ export class ApplicationsComponent implements OnInit, OnChanges {
   }
 
   updateDisplayedApplications(): void {
-    if (this.isGrid5Expanded) {
+    if (this.isBoxExpanded) {
       const start = this.pageIndex * this.pageSize;
       const end = start + this.pageSize;
       this.displayedApplications = this.applications.slice(start, end);
@@ -100,7 +100,7 @@ export class ApplicationsComponent implements OnInit, OnChanges {
 
   showArchivedApps(event: Event): void {
     event.stopPropagation();
-    if (this.isGrid5Expanded) {
+    if (this.isBoxExpanded) {
       this.showArchivedApplications = !this.showArchivedApplications;
       this.cdr.detectChanges();
       this.loadApplications();

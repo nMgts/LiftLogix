@@ -7,17 +7,13 @@ import { ChangeDetectorRef } from '@angular/core';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  isGrid5Expanded = false;
+  expandedBox: string | null = null;
 
   constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {}
 
-  toggleGrid5Expanded(event: Event): void {
-    event.stopPropagation();
-    this.isGrid5Expanded = !this.isGrid5Expanded;
-
-    const gridsToToggle = document.querySelectorAll('.wrapper > div:not(.grid5)');
-    gridsToToggle.forEach(grid => grid.classList.toggle('fade-out'));
+  expandBox(box: string) {
+    this.expandedBox = this.expandedBox === box ? null : box;
   }
 }

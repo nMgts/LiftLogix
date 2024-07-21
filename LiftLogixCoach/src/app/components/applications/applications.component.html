@@ -1,4 +1,4 @@
-<div class="grid5" [ngClass]="{ 'expanded': isGrid5Expanded }">
+<div class="grid5" [ngClass]="{ 'expanded': isBoxExpanded }">
   <h3>5Zgłoszenia</h3>
   <div *ngFor="let application of displayedApplications; let i = index"
        (click)="openApplicationDialog($event, application)"
@@ -8,7 +8,7 @@
       <p>{{ calculateIndex(i) + 1 }}. {{application.client.first_name}} {{application.client.last_name}}</p>
       <p>Zgłoszono: {{application.submitted_date | date:'short'}}</p>
     </div>
-    <div *ngIf="isGrid5Expanded" class="description">
+    <div *ngIf="isBoxExpanded" class="description">
       <p><strong>Opis:</strong> {{ application.description }}</p>
     </div>
     <div class="button-container" *ngIf="application.status === 'PENDING'">
@@ -21,7 +21,7 @@
     </div>
   </div>
 
-  <mat-paginator *ngIf="isGrid5Expanded"
+  <mat-paginator *ngIf="isBoxExpanded"
                  [length]="totalApplications"
                  [pageSize]="pageSize"
                  [pageIndex]="pageIndex"
@@ -30,7 +30,7 @@
                  class="paginator">
   </mat-paginator>
 
-  <div *ngIf="isGrid5Expanded" class="show-archived-container">
+  <div *ngIf="isBoxExpanded" class="show-archived-container">
     <label>
       <input type="checkbox" (click)="showArchivedApps($event)">
       Pokaż archiwalne

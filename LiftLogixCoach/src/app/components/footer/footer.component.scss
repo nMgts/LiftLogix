@@ -1,5 +1,5 @@
 .footer {
-  background-color: black;
+  background-color: transparent;
   padding: 10px;
   color: white;
   display: flex;
@@ -58,5 +58,11 @@
     margin-top: 20px;
     font-size: 14px;
     text-align: center;
+  }
+}
+
+@media(max-width: 650px) {
+  h2 {
+    display: none;
   }
 }
