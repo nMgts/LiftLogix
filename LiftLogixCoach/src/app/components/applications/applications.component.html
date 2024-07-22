@@ -1,15 +1,14 @@
-<div class="grid5" [ngClass]="{ 'expanded': isBoxExpanded }">
-  <h3>5Zgłoszenia</h3>
+<div class="application-box" [ngClass]="{ 'expanded': isBoxExpanded }">
+  <h1>Zgłoszenia</h1>
   <div *ngFor="let application of displayedApplications; let i = index"
        (click)="openApplicationDialog($event, application)"
-       (change)="showArchivedApps($event)"
        class="application-container">
     <div class="application-info">
       <p>{{ calculateIndex(i) + 1 }}. {{application.client.first_name}} {{application.client.last_name}}</p>
-      <p>Zgłoszono: {{application.submitted_date | date:'short'}}</p>
+      <p class="date">Zgłoszono: {{application.submitted_date | date:'short'}}</p>
     </div>
     <div *ngIf="isBoxExpanded" class="description">
-      <p><strong>Opis:</strong> {{ application.description }}</p>
+      <p><strong *ngIf="application.description">Opis:</strong> {{ truncateDescription(application.description) }}</p>
     </div>
     <div class="button-container" *ngIf="application.status === 'PENDING'">
       <button class="app_btn" (click)="accept($event, application.id)">

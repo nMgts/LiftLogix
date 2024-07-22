@@ -4,13 +4,14 @@ import {
   OnInit,
   Input,
   OnChanges,
-  SimpleChanges
+  SimpleChanges, HostListener
 } from '@angular/core';
 import { Application } from '../../interfaces/Application';
 import { ApplicationService } from '../../services/application.service';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { ApplicationDetailsDialogComponent } from '../application-details-dialog/application-details-dialog.component';
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-applications',
@@ -22,23 +23,30 @@ export class ApplicationsComponent implements OnInit, OnChanges {
   applications: Application[] = [];
   displayedApplications: Application[] = [];
   showArchivedApplications = false;
-  pageSize = 4;
+  pageSize = 10;
   pageIndex = 0;
   totalApplications = 0;
+  truncateLength = 200;
 
-  constructor(private cdr: ChangeDetectorRef, private applicationService: ApplicationService, private dialog: MatDialog) {}
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private applicationService: ApplicationService,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     this.loadApplications();
+    this.updateTruncateLength();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['isGrid5Expanded']) {
+    if (changes['isBoxExpanded']) {
       this.loadApplications();
+      this.updateTruncateLength();
     }
   }
 
-  async loadApplications(): Promise<void> {
+  async loadApplications() {
 
     if (!this.isBoxExpanded) {
       this.showArchivedApplications = false;
@@ -62,7 +70,7 @@ export class ApplicationsComponent implements OnInit, OnChanges {
       const end = start + this.pageSize;
       this.displayedApplications = this.applications.slice(start, end);
     } else {
-      this.displayedApplications = this.applications.slice(0, 3);
+      this.displayedApplications = this.applications.slice(0, 5);
     }
   }
 
@@ -74,9 +82,14 @@ export class ApplicationsComponent implements OnInit, OnChanges {
 
   openApplicationDialog(event: Event, application: Application): void {
     event.stopPropagation();
-    this.dialog.open(ApplicationDetailsDialogComponent, {
+    const dialogRef = this.dialog.open(ApplicationDetailsDialogComponent, {
       data: application,
       width: '600px'
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.loadApplications();
+      this.updateTruncateLength();
     });
   }
 
@@ -84,8 +97,11 @@ export class ApplicationsComponent implements OnInit, OnChanges {
     event.stopPropagation();
     const token = localStorage.getItem('token') || '';
     this.applicationService.acceptApplication(applicationId, token).subscribe(
-      () => this.loadApplications(),
-      (error: any) => console.error("Error accepting application", error)
+      () => {
+        this.loadApplications();
+        this.openSnackBar('Zgłoszenie przyjęte - dodano nowego klienta');
+      },
+      (error: any) => console.error('Error accepting application', error)
     );
   }
 
@@ -93,8 +109,11 @@ export class ApplicationsComponent implements OnInit, OnChanges {
     event.stopPropagation();
     const token = localStorage.getItem('token') || '';
     this.applicationService.rejectApplication(applicationId, token).subscribe(
-      () => this.loadApplications(),
-      (error: any) => console.error("Error rejecting application", error)
+      () => {
+        this.loadApplications();
+        this.openSnackBar('Zgłoszenie odrzucone');
+      },
+      (error: any) => console.error('Error rejecting application', error)
     );
   }
 
@@ -109,5 +128,39 @@ export class ApplicationsComponent implements OnInit, OnChanges {
 
   calculateIndex(index: number): number {
     return index + this.pageIndex * this.pageSize;
+  }
+
+  private openSnackBar(message: string): void {
+    this.snackBar.open(message, 'Zamknij', {
+      duration: 3000,
+      verticalPosition: 'top'
+    });
+  }
+
+
+  /** Truncate text methods */
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event): void {
+    this.updateTruncateLength();
+  }
+
+  updateTruncateLength(): void {
+    const width = window.innerWidth;
+    if (width > 1200) {
+      this.truncateLength = 600;
+    } else if (width > 800) {
+      this.truncateLength = 400;
+    } else {
+      this.truncateLength = 200;
+    }
+    this.cdr.detectChanges();
+  }
+
+  truncateDescription(description: string): string {
+    if (description.length > this.truncateLength) {
+      return description.substring(0, this.truncateLength) + '...';
+    }
+    return description;
   }
 }

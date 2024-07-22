@@ -15,12 +15,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex: 1;
+  overflow: auto;
 }
 
 .wrapper {
   background-color: transparent;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   padding: 2em;
   display: flex;
   gap: 1em;
@@ -29,7 +31,6 @@
 
 .col-left {
   flex: 3;
-  border-radius: 2em;
   display: flex;
   flex-direction: column;
   gap: 1em;
@@ -115,6 +116,7 @@
   right: 25px;
   bottom: 5px;
   transition: none;
+  overflow: auto;
 }
 
 .box.expanded:hover {
@@ -137,17 +139,8 @@
 }
 
 @media(max-width: 650px) {
-  .main-container {
-    min-height: 190vh;
-  }
-
-  .dashboard-container {
-    min-height: 170vh;
-  }
-
   .wrapper {
     gap: 0.5em;
-    min-height: 170vh;
   }
 
   .col-left {
