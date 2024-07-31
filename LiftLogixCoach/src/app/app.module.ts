@@ -29,6 +29,8 @@ import { SecurityOptionsDialogComponent } from './components/security-options-di
 import {CdkDropList} from "@angular/cdk/drag-drop";
 import {MatList, MatListItem, MatListSubheaderCssMatStyler} from "@angular/material/list";
 import {MatLine} from "@angular/material/core";
+import { ClientsComponent } from './components/clients/clients.component';
+import { ExercisesComponent } from './components/exercises/exercises.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +48,9 @@ import {MatLine} from "@angular/material/core";
     ForgotPasswordComponent,
     ResetPasswordComponent,
     ConfirmEmailComponent,
-    SecurityOptionsDialogComponent
+    SecurityOptionsDialogComponent,
+    ClientsComponent,
+    ExercisesComponent
   ],
   imports: [
     BrowserModule,

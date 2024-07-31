@@ -32,7 +32,8 @@ export class ApplicationsComponent implements OnInit, OnChanges {
     private cdr: ChangeDetectorRef,
     private applicationService: ApplicationService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar) {}
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
     this.loadApplications();

@@ -1,0 +1,41 @@
+* {
+  color: aliceblue;
+}
+
+.not-expanded-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  width: 100%;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-bottom: 5px;
+}
+
+h1 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - 24px);
+  width: 100%;
+}
+
+.client-image {
+  margin-right: 15px;
+  max-width: 50%;
+  height: auto;
+}
+
+.caption {
+  font-size: 2.5em;
+  color: darkviolet;
+  font-weight: bold;
+}
