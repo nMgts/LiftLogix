@@ -6,15 +6,26 @@
 </div>
 
 <div class="expanded-box" *ngIf="isBoxExpanded">
-  <div class="search-filter-container">
-    <input type="text" class="search-input" placeholder="Szukaj ćwiczeń"/>
-    <div class="filter-container">
-      <button class="filter-button">Wybierz partię</button>
-      <!-- Dropdown do wybierania partii ciała (jeszcze nie zaimplementowane) -->
+  <div class="exercise-library-header">
+    <h1 class="library-title">Biblioteka ćwiczeń</h1>
+    <div class="header-actions">
+      <div class="filter-exercises">
+        <img ngSrc="/icons/filter.png" alt="Filter Icon" class="filter-icon" height="24" width="24"/>
+        <span>Filtruj</span>
+      </div>
+      <div class="add-exercise" (click)="addExercise($event)">
+        <img ngSrc="/icons/plus.svg" alt="Plus Icon" class="plus-icon" height="24" width="24"/>
+        <span>Dodaj ćwiczenie</span>
+      </div>
     </div>
   </div>
+
+  <div class="search-container">
+    <input type="text" class="search-input" placeholder="Szukaj ćwiczeń"/>
+  </div>
+
   <div class="exercise-grid">
-    <div class="exercise-card" *ngFor="let exercise of displayedExercises">
+    <div class="exercise-card" *ngFor="let exercise of displayedExercises" (click)="openDetails(exercise, $event)">
       <img [src]="exercise.imageSafeUrl" alt="{{exercise.name}} Image" class="exercise-card-image"/>
       <div class="exercise-card-name">{{exercise.name}}</div>
       <div class="exercise-card-body-parts">{{exercise.body_parts.join(', ')}}</div>

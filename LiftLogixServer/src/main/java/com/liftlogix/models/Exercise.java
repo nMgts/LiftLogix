@@ -20,13 +20,12 @@ public class Exercise {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String url;
 
-    @Column(nullable = false)
     @Lob
     private byte[] image;
 

@@ -8,6 +8,8 @@
   background-image: url('/images/login-form-background.jpg');
   background-size: cover;
   background-position: center;
+  overflow: auto;
+  height: 100vh;
 }
 
 .dashboard-container {
@@ -16,7 +18,6 @@
   align-items: center;
   justify-content: center;
   flex: 1;
-  overflow: auto;
 }
 
 .wrapper {
@@ -117,6 +118,7 @@
   bottom: 5px;
   transition: none;
   overflow: auto;
+  clip-path: inset(0 round 2em);
 }
 
 .box.expanded:hover {

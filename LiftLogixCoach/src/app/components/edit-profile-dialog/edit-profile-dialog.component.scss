@@ -22,7 +22,7 @@
 }
 
 h1 {
-  color: white;
+  color: aliceblue;
 }
 
 .error-box {
@@ -90,7 +90,7 @@ h1 {
   right: 5px;
   cursor: pointer;
   z-index: 10;
-  color: white;
+  color: aliceblue;
 }
 
 .image-del:hover {
@@ -131,7 +131,7 @@ textarea {
   display:block;
   box-sizing: border-box;
   background: none;
-  color: darkviolet;
+  color: aliceblue;
   margin-bottom: 30px;
   padding: 4px;
   height: 32px;
@@ -147,22 +147,21 @@ input[type="text"]:focus,
 textarea:focus {
   border-bottom: 2px solid darkviolet;
   border-bottom-right-radius: 20px;
-  color: darkviolet;
   transition: 0.2s ease;
 }
 
 input::placeholder {
-  color: white;
+  color: aliceblue;
 }
 
 textarea::placeholder {
-  color: white;
+  color: aliceblue;
 }
 
 button {
   border: 1px solid darkviolet;
   background-color: transparent;
-  color: white;
+  color: aliceblue;
   height: 30px;
   width: 100px;
   border-radius: 5px;

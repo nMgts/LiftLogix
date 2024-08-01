@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Application } from "../../interfaces/Application";
 import { ApplicationService } from "../../services/application.service";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-application-details-dialog',
@@ -15,7 +15,7 @@ export class ApplicationDetailsDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: Application,
     public dialogRef: MatDialogRef<ApplicationDetailsDialogComponent>,
     private applicationService: ApplicationService,
-    private snackBar: MatSnackBar,) {}
+    private snackBar: MatSnackBar) {}
 
   sendMessage(): void {}
 

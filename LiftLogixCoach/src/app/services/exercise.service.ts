@@ -7,8 +7,8 @@ import { Exercise } from "../interfaces/Exercise";
   providedIn: 'root'
 })
 export class ExerciseService {
-  private defaultUrl = 'http://localhost:8080/api/exercise';
   private getUrl = 'http://localhost:8080/api/exercise/all';
+  private addUrl = 'http://localhost:8080/api/exercise/add';
 
   constructor(private http: HttpClient) {}
 
@@ -17,9 +17,9 @@ export class ExerciseService {
     return this.http.get<Exercise[]>(this.getUrl, { headers: headers });
   }
 
-  getExerciseImage(exerciseId: string, token: string): Observable<Blob> {
+  addExercise(token: string, data: FormData): Observable<any> {
     const headers = this.createHeaders(token);
-    return this.http.get(`${this.defaultUrl}/${exerciseId}`, { headers: headers, responseType: 'blob' });
+    return this.http.post<void>(this.addUrl, data, { headers: headers});
   }
 
   private createHeaders(token: string) {
