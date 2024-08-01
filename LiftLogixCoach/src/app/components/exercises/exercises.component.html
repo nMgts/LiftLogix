@@ -10,9 +10,20 @@
     <h1 class="library-title">Biblioteka ćwiczeń</h1>
     <div class="header-actions">
       <div class="filter-exercises">
-        <img ngSrc="/icons/filter.png" alt="Filter Icon" class="filter-icon" height="24" width="24"/>
-        <span>Filtruj</span>
+        <div (click)="toggleDropdown($event)">
+          <img ngSrc="/icons/filter.png" alt="Filter Icon" class="filter-icon" height="24" width="24"/>
+          <span>Filtruj</span>
+        </div>
+
+        <div class="dropdown-menu" *ngIf="isDropdownOpen">
+          <button (click)="clearFilters($event)">Wyczyść filtry</button>
+          <label *ngFor="let part of body_parts" (click)="onCheckboxChange($event)">
+            <input type="checkbox" [value]="part" [checked]="selectedBodyParts.includes(part)"/>
+            {{ part }}
+          </label>
+        </div>
       </div>
+
       <div class="add-exercise" (click)="addExercise($event)">
         <img ngSrc="/icons/plus.svg" alt="Plus Icon" class="plus-icon" height="24" width="24"/>
         <span>Dodaj ćwiczenie</span>

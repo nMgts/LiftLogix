@@ -15,10 +15,18 @@ import { AddExerciseDialogComponent } from "../add-exercise-dialog/add-exercise-
 export class ExercisesComponent implements OnInit, OnChanges {
   @Input() isBoxExpanded = false;
   exercises: (Exercise & { imageSafeUrl: SafeUrl })[] = [];
+  filteredExercises: (Exercise & { imageSafeUrl: SafeUrl })[] = [];
   displayedExercises: (Exercise & { imageSafeUrl: SafeUrl })[] = [];
   pageSize = 0;
   pageIndex = 0;
   totalExercises = 0;
+
+  isDropdownOpen = false;
+  selectedBodyParts: string[] = [];
+  body_parts = [
+    'CHEST', 'BACK', 'BICEPS', 'TRICEPS', 'SHOULDERS',
+    'FOREARMS', 'ABS', 'CALVES', 'QUAD', 'HAMSTRING', 'GLUTE'
+  ];
 
   private readonly defaultImageUrl: string = '/icons/dumbbell.jpg';
 
@@ -37,7 +45,7 @@ export class ExercisesComponent implements OnInit, OnChanges {
     }
   }
 
-  loadExercises() {
+  async loadExercises() {
     const token = localStorage.getItem('token') || '';
     this.exerciseService.getExercises(token).subscribe(
       (data: Exercise[]) => {
@@ -48,8 +56,9 @@ export class ExercisesComponent implements OnInit, OnChanges {
           ),
           body_parts : exercise.body_parts || []
         }));
-        console.log(this.exercises);
-        this.totalExercises = this.exercises.length;
+
+        this.filterExercises();
+        //this.totalExercises = this.exercises.length;
         this.updatePageSize();
         this.updateDisplayedExercises();
       },
@@ -57,6 +66,44 @@ export class ExercisesComponent implements OnInit, OnChanges {
         console.error('Error loading exercises', error);
       }
     );
+  }
+
+  filterExercises(): void {
+    if (this.selectedBodyParts.length > 0) {
+      this.filteredExercises = this.exercises.filter(exercise=>
+        exercise.body_parts.some(part => this.selectedBodyParts.includes(part))
+      );
+    } else {
+      this.filteredExercises = [...this.exercises];
+    }
+    this.pageIndex = 0;
+    this.updateDisplayedExercises();
+  }
+
+  toggleDropdown(event: Event): void {
+    event.stopPropagation();
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  onCheckboxChange(event: Event): void {
+    event.stopPropagation();
+    const checkbox = event.target as HTMLInputElement;
+    const value = checkbox.value;
+    console.log(value);
+    if (checkbox.checked) {
+      if (!this.selectedBodyParts.includes(value)) {
+        this.selectedBodyParts.push(value);
+      }
+    } else {
+      this.selectedBodyParts = this.selectedBodyParts.filter(part => part !== value);
+    }
+    this.filterExercises();
+  }
+
+  clearFilters(event: Event): void {
+    event.stopPropagation();
+    this.selectedBodyParts = [];
+    this.filterExercises();
   }
 
   @HostListener('window:resize', ['$event'])
@@ -75,7 +122,8 @@ export class ExercisesComponent implements OnInit, OnChanges {
   updateDisplayedExercises(): void {
       const start = this.pageIndex * this.pageSize;
       const end = start + this.pageSize;
-      this.displayedExercises = this.exercises.slice(start, end);
+      this.displayedExercises = this.filteredExercises.slice(start, end);
+      this.totalExercises = this.filteredExercises.length;
   }
 
   onPageChange(event: PageEvent): void {

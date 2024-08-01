@@ -19,7 +19,7 @@ export class AddExerciseDialogComponent {
 
   body_parts = [
     'CHEST', 'BACK', 'BICEPS', 'TRICEPS', 'SHOULDERS',
-    'FOREARMS', 'ABS', 'CALVES', 'QUAD', 'HAMSTRING'
+    'FOREARMS', 'ABS', 'CALVES', 'QUAD', 'HAMSTRING', 'GLUTE'
   ];
 
   constructor(
