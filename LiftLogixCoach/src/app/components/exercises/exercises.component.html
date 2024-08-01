@@ -32,7 +32,7 @@
   </div>
 
   <div class="search-container">
-    <input type="text" class="search-input" placeholder="Szukaj ćwiczeń"/>
+    <input type="text" class="search-input" placeholder="Szukaj ćwiczeń" (input)="onSearchChange($event)" (click)="stopPropagation($event)"/>
   </div>
 
   <div class="exercise-grid">

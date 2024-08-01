@@ -20,6 +20,7 @@ export class ExercisesComponent implements OnInit, OnChanges {
   pageSize = 0;
   pageIndex = 0;
   totalExercises = 0;
+  searchKeyword: string = '';
 
   isDropdownOpen = false;
   selectedBodyParts: string[] = [];
@@ -69,13 +70,27 @@ export class ExercisesComponent implements OnInit, OnChanges {
   }
 
   filterExercises(): void {
+    let filtered = this.exercises;
+
+    // Filter by body parts
     if (this.selectedBodyParts.length > 0) {
-      this.filteredExercises = this.exercises.filter(exercise=>
+      filtered = filtered.filter(exercise=>
         exercise.body_parts.some(part => this.selectedBodyParts.includes(part))
       );
     } else {
-      this.filteredExercises = [...this.exercises];
+      filtered = [...this.exercises];
     }
+
+    if (this.searchKeyword.trim()) {
+      const keyword = this.searchKeyword.trim().toLowerCase();
+      filtered = filtered.filter(exercise =>
+        exercise.aliases.some(alias =>
+          alias.alias.toLowerCase().includes(keyword)
+        )
+      );
+    }
+
+    this.filteredExercises = filtered;
     this.pageIndex = 0;
     this.updateDisplayedExercises();
   }
@@ -83,6 +98,12 @@ export class ExercisesComponent implements OnInit, OnChanges {
   toggleDropdown(event: Event): void {
     event.stopPropagation();
     this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  onSearchChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.searchKeyword = input.value;
+    this.filterExercises();
   }
 
   onCheckboxChange(event: Event): void {
@@ -137,6 +158,10 @@ export class ExercisesComponent implements OnInit, OnChanges {
     this.dialog.open(ExerciseDetailsDialogComponent, {
       data: exercise
     });
+  }
+
+  stopPropagation(event: Event): void {
+    event.stopPropagation();
   }
 
   addExercise(event: Event): void {

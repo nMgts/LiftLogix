@@ -7,6 +7,22 @@
   color: red;
 }
 
+.alias-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+
+  span {
+    display: flex;
+    align-items: center;
+  }
+
+  button {
+    margin-left: 4px;
+  }
+}
+
 .drop-zone {
   width: 240px;
   height: 100px;

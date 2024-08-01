@@ -33,4 +33,7 @@ public class Exercise {
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "exercise_body_parts", joinColumns = @JoinColumn(name = "exercise_id"))
     private Set<BodyPart> body_parts;
+
+    @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ExerciseAlias> aliases;
 }

@@ -16,6 +16,7 @@ export class AddExerciseDialogComponent {
   newImage: SafeUrl | null = null;
   selectedImage: File | null = null;
   errorMessage: string | null = null;
+  aliases: string[] = [];
 
   body_parts = [
     'CHEST', 'BACK', 'BICEPS', 'TRICEPS', 'SHOULDERS',
@@ -34,7 +35,8 @@ export class AddExerciseDialogComponent {
       body_parts: [[]],
       description: [''],
       url: [''],
-      image: ['']
+      image: [''],
+      newAlias: ['']
     });
   }
 
@@ -75,7 +77,8 @@ export class AddExerciseDialogComponent {
   save(): void {
     if (this.exerciseForm.valid) {
       const formData = new FormData();
-      formData.append('name', this.exerciseForm.get('name')?.value);
+      const name = this.exerciseForm.get('name')?.value
+      formData.append('name', name);
       formData.append('body_parts', this.exerciseForm.get('body_parts')?.value);
       formData.append('description', this.exerciseForm.get('description')?.value);
 
@@ -87,6 +90,13 @@ export class AddExerciseDialogComponent {
       if (this.selectedImage) {
         formData.append('image', this.selectedImage);
       }
+
+      if (!this.aliases.includes(name)) {
+        this.aliases.push(name);
+      }
+
+      const aliasesString = this.aliases.join(',');
+      formData.append('aliases', aliasesString);
 
       const token = localStorage.getItem('token') || '';
       this.exerciseService.addExercise(token, formData).subscribe(
@@ -102,6 +112,19 @@ export class AddExerciseDialogComponent {
         }
       );
     }
+  }
+
+  addAlias(): void {
+    const newAliasValue = this.exerciseForm.get('newAlias')?.value;
+    console.log(newAliasValue);
+    if (newAliasValue && !this.aliases.includes(newAliasValue)) {
+      this.aliases.push(newAliasValue);
+      this.exerciseForm.get('newAlias')?.setValue('');
+    }
+  }
+
+  removeAlias(index: number): void {
+    this.aliases.splice(index, 1);
   }
 
   close(): void {

@@ -3,6 +3,7 @@ package com.liftlogix.controllers;
 import com.liftlogix.dto.ExerciseDTO;
 import com.liftlogix.exceptions.DuplicateExerciseNameException;
 import com.liftlogix.models.Exercise;
+import com.liftlogix.models.ExerciseAlias;
 import com.liftlogix.services.ExerciseService;
 import com.liftlogix.types.BodyPart;
 import jakarta.persistence.EntityNotFoundException;
@@ -47,7 +48,8 @@ public class ExerciseController {
             @RequestParam(value = "description", required = false) String description,
             @RequestParam(value = "url", required = false) String url,
             @RequestParam(value = "image", required = false) MultipartFile image,
-            @RequestParam(value = "body_parts", required = false) String bodyParts
+            @RequestParam(value = "body_parts", required = false) String bodyParts,
+            @RequestParam(value = "aliases", required = false) String aliases
     ) {
         try {
             Set<BodyPart> bodyPartSet = (bodyParts != null && !bodyParts.isEmpty())
@@ -56,10 +58,22 @@ public class ExerciseController {
                     .collect(Collectors.toSet())
                     : Collections.emptySet();
 
+            Set<ExerciseAlias> aliasSet = (aliases != null && !aliases.isEmpty())
+                    ? Stream.of(aliases.split(","))
+                    .map(alias -> {
+                        ExerciseAlias exerciseAlias = new ExerciseAlias();
+                        exerciseAlias.setAlias(alias);
+                        return exerciseAlias;
+                    })
+                    .collect(Collectors.toSet())
+                    : Collections.emptySet();
+
             description = (description != null) ? description : "";
             url = (url != null) ? url : "";
 
-            return ResponseEntity.ok(exerciseService.addExercise(name, description, url, image, bodyPartSet));
+            exerciseService.addExercise(name, description, url, image, bodyPartSet, aliasSet);
+
+            return ResponseEntity.ok().body("{\"message\": \"Exercise saved successfully\"}");
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         } catch (IllegalArgumentException e) {
