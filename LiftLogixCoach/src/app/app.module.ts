@@ -36,6 +36,10 @@ import { MatFormFieldModule} from "@angular/material/form-field";
 import { MatSelectModule} from "@angular/material/select";
 import { MatInputModule} from "@angular/material/input";
 import { YoutubeEmbedPipe } from './pipes/youtube-embed.pipe';
+import { ClientDietComponent } from './components/client-diet/client-diet.component';
+import { ClientProfileComponent } from './components/client-profile/client-profile.component';
+import { ClientHoursComponent } from './components/client-hours/client-hours.component';
+import { ClientPlanComponent } from './components/client-plan/client-plan.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +62,11 @@ import { YoutubeEmbedPipe } from './pipes/youtube-embed.pipe';
     ExercisesComponent,
     ExerciseDetailsDialogComponent,
     AddExerciseDialogComponent,
-    YoutubeEmbedPipe
+    YoutubeEmbedPipe,
+    ClientDietComponent,
+    ClientProfileComponent,
+    ClientHoursComponent,
+    ClientPlanComponent
   ],
   imports: [
     BrowserModule,
