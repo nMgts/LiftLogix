@@ -11,5 +11,5 @@ public class ClientDTO {
     private String last_name;
     private String email;
     private boolean assignedToCoach;
-    private byte[] image;
+    private String image;
 }

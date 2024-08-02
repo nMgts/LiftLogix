@@ -25,6 +25,16 @@ public class ClientController {
         return ResponseEntity.ok(clientService.findAllClients());
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<List<ClientDTO>> findMyClients(Authentication authentication) {
+        return ResponseEntity.ok(clientService.findMyClients(authentication));
+    }
+
+    @GetMapping("/quantity")
+    public ResponseEntity<Integer> getMyClientsQuantity(Authentication authentication) {
+        return ResponseEntity.ok(clientService.getMyClientsQuantity(authentication));
+    }
+
     @PostMapping("/assign/{client_id}/{coach_id}")
     public ResponseEntity<String> assignUserToCoach(@PathVariable long client_id, @PathVariable long coach_id, Authentication authentication) {
         try {

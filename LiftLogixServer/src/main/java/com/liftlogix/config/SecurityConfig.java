@@ -48,7 +48,8 @@ public class SecurityConfig {
 
                         // Coach endpoints
                         .requestMatchers("/api/application/accept/{application_id}", "/api/application/reject/{application_id}",
-                                "/api/coach/profile")
+                                "/api/coach/profile",
+                                "/api/client/my", "/api/client/quantity")
                         .hasAuthority("COACH")
 
                         // Client endpoints

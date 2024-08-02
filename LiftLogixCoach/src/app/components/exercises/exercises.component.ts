@@ -59,7 +59,6 @@ export class ExercisesComponent implements OnInit, OnChanges {
         }));
 
         this.filterExercises();
-        //this.totalExercises = this.exercises.length;
         this.updatePageSize();
         this.updateDisplayedExercises();
       },

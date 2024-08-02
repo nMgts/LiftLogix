@@ -1,12 +1,7 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
-
-interface Client {
-  profileImage: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  isDropdownOpen?: boolean;
-}
+import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import { Client } from "../../interfaces/Client";
+import { ClientService } from "../../services/client.service";
 
 @Component({
   selector: 'app-clients',
@@ -15,25 +10,56 @@ interface Client {
 })
 export class ClientsComponent implements OnInit{
   @Input() isBoxExpanded = false;
+  clientsQuantity: number = 0;
   protected readonly window = window;
   selectedComponent: string | null = null;
   maxEmailLength: number = 50;
 
-  clients: Client[] = [
-    { profileImage: '/images/logo.svg', first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com' },
-    { profileImage: '/images/logo.svg', first_name: 'Jane', last_name: 'Smith', email: 'jane.smith@example.com' },
-    { profileImage: '/images/logo.svg', first_name: 'Maksymilian', last_name: 'Jędrzeszczykiwiecz', email: 'maksymilan.jedrzeszczykiwiecz.1234567890@gmail.com' }
-  ];
+  clients: (Client & { imageSafeUrl: SafeUrl })[] = [];
+  dropdownStates: { [key: string]: boolean } = {};
 
-  constructor() {}
+  private readonly defaultImageUrl: string = '/icons/user.jpg';
+
+  constructor(
+    private clientService: ClientService,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit(): void {
     this.updateMaxEmailLength(window.innerWidth);
+    this.getClientsQuantity();
+    this.loadClients();
+  }
+
+  getClientsQuantity() {
+    const token = localStorage.getItem('token') || '';
+    this.clientService.getMyClientsQuantity(token).subscribe(
+      (response) => {
+        this.clientsQuantity = response;
+      }
+    );
+  }
+
+  async loadClients() {
+    const token = localStorage.getItem('token') || '';
+    this.clientService.getMyClients(token).subscribe(
+      (data: Client[]) => {
+        this.clients = data.map(client => ({
+          ...client,
+          imageSafeUrl: this.sanitizer.bypassSecurityTrustUrl(
+            client.image ? client.image : this.defaultImageUrl
+          )
+        }));
+        this.clients.forEach(client => {
+          this.dropdownStates[client.id] = false;
+        });
+      }
+    )
   }
 
   toggleDropdown(client: Client, event: Event) {
     event.stopPropagation();
-    client.isDropdownOpen = !client.isDropdownOpen;
+    this.dropdownStates[client.id] = !this.dropdownStates[client.id];
   }
 
   showComponent(component: string, event: Event) {

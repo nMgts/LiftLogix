@@ -2,7 +2,7 @@
   <h1 class="header">Klienci</h1>
   <div class="content">
     <img ngSrc="/icons/client.png" alt="Client Icon" class="client-image" width="136" height="136"/>
-    <span class="caption">17</span>
+    <span class="caption"> {{ clientsQuantity }} </span>
   </div>
 </div>
 
@@ -14,7 +14,7 @@
 
     <div class="clients-list">
       <div class="client-row" *ngFor="let client of clients">
-        <img [src]="client.profileImage" alt="{{client.email}}" class="profile-image"/>
+        <img [src]="client.imageSafeUrl" alt="{{client.email}}" class="profile-image"/>
         <div class="client-info">
           <div class="client-name">{{client.first_name}} {{getDisplayLastName(client)}}</div>
           <div class="client-email" [title]="client.email">
@@ -33,7 +33,7 @@
         </div>
 
         <mat-icon class="more-options" (click)="toggleDropdown(client, $event)">more_vert</mat-icon>
-        <div class="dropdown" *ngIf="client.isDropdownOpen">
+        <div class="dropdown" *ngIf="dropdownStates[client.id]">
           <button (click)="showComponent('plan', $event)">Plan</button>
           <button (click)="showComponent('profile', $event)">Profil</button>
           <button (click)="showComponent('hours', $event)">Godziny</button>

@@ -36,6 +36,22 @@ public class ClientService {
                 .collect(Collectors.toList());
     }
 
+    public List<ClientDTO> findMyClients(Authentication authentication) {
+        String username = authentication.getName();
+        Coach coach = coachRepository.findByEmail(username).orElseThrow();
+        List<Client> clients = clientRepository.findByCoach(coach);
+        return clients.stream()
+                .map(clientDTOMapper::mapEntityToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public int getMyClientsQuantity(Authentication authentication) {
+        String username = authentication.getName();
+        Coach coach = coachRepository.findByEmail(username).orElseThrow();
+        List<Client> clients = clientRepository.findByCoach(coach);
+        return clients.size();
+    }
+
     public void assignClientToCoach(long client_id, long coach_id, Authentication authentication) {
         Optional<Coach> optCoach = coachRepository.findById(coach_id);
         if (optCoach.isPresent()) {

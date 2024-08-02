@@ -25,20 +25,12 @@ public class ExerciseService {
     private final ExerciseRepository exerciseRepository;
     private final ExerciseDTOMapper exerciseDTOMapper;
 
-    private static final Logger logger = LoggerFactory.getLogger(ExerciseService.class);
-
     public Exercise getExerciseDetails(long id) {
         return exerciseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Exercise not found"));
     }
 
     public List<ExerciseDTO> getAllExercises() {
         List<Exercise> exercises = exerciseRepository.findAll();
-        for (Exercise exercise : exercises) {
-            logger.info("Exercise: {}", exercise);
-            for (ExerciseAlias alias : exercise.getAliases()) {
-                logger.info("Alias: {}, Language: {}", alias.getAlias(), alias.getLanguage());
-            }
-        }
         return exercises.stream()
                 .map(exerciseDTOMapper::mapExerciseToDTO)
                 .collect(Collectors.toList());
