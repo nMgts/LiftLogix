@@ -1,16 +1,18 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ClientsComponent } from "../clients/clients.component";
 import { ResultService } from "../../services/result.service";
 import { Result } from "../../interfaces/Result";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { ChartDataset, ChartOptions, ChartType } from 'chart.js';
+import { ChartDataset, ChartOptions } from 'chart.js';
+import { ClientService } from "../../services/client.service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: 'app-client-results',
   templateUrl: './client-results.component.html',
   styleUrl: './client-results.component.scss'
 })
-export class ClientResultsComponent implements OnInit{
+export class ClientResultsComponent implements OnInit, OnDestroy {
   @Input() clientId: number | null = null;
   currentResult: Result | null = null;
   results: Result[] = [];
@@ -37,16 +39,28 @@ export class ClientResultsComponent implements OnInit{
   showDeadlift: boolean = true;
   showSquat: boolean = true;
 
+  private clientIdSubscription!: Subscription;
+
   constructor(
     private clientsComponent: ClientsComponent,
     private resultService: ResultService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private clientService: ClientService
   ) {}
 
   ngOnInit(): void {
-    if (this.clientId !== null) {
-      this.loadCurrentResult(this.clientId);
-      this.loadResults(this.clientId);
+    this.clientIdSubscription = this.clientService.selectedClientId$.subscribe(clientId => {
+      this.clientId = clientId;
+      if (this.clientId !== null) {
+        this.loadCurrentResult(this.clientId);
+        this.loadResults(this.clientId);
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.clientIdSubscription) {
+      this.clientIdSubscription.unsubscribe();
     }
   }
 
@@ -154,6 +168,7 @@ export class ClientResultsComponent implements OnInit{
           this.squat = null;
           if (this.clientId !== null) {
             this.loadCurrentResult(this.clientId);
+            this.loadResults(this.clientId);
           }
         },
         error: (error) => {

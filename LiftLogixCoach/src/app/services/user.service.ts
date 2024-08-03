@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Router } from "@angular/router";
-import { firstValueFrom, Observable } from 'rxjs';
+import {firstValueFrom, Observable, Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,14 @@ export class UserService {
   private getImageUrl = 'http://localhost:8080/api/user/image';
   private updateImageUrl = 'http://localhost:8080/api/user/image/update';
 
+  private imageUpdatedSource = new Subject<void>();
+  imageUpdated$ = this.imageUpdatedSource.asObservable();
+
   constructor(private http: HttpClient, private readonly router: Router) {}
+
+  notifyImageUpdate() {
+    this.imageUpdatedSource.next();
+  }
 
   async forgotPassword(email: string): Promise<any> {
     let params = new HttpParams().set('email', email);

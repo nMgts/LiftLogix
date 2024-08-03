@@ -101,6 +101,7 @@ export class ApplicationsComponent implements OnInit, OnChanges {
       () => {
         this.loadApplications();
         this.openSnackBar('Zgłoszenie przyjęte - dodano nowego klienta');
+        this.applicationService.notifyClientsQuantityUpdate();
       },
       (error: any) => console.error('Error accepting application', error)
     );

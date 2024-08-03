@@ -33,7 +33,7 @@
         </div>
 
         <mat-icon class="more-options" (click)="toggleDropdown(client, $event)">more_vert</mat-icon>
-        <div class="dropdown" *ngIf="dropdownStates[client.id]">
+        <div class="dropdown" *ngIf="dropdownOpenClientId && dropdownOpenClientId === client.id && window.innerWidth < 1200">
           <button (click)="showComponent('plan', client.id, $event)">Plan</button>
           <button (click)="showComponent('results', client.id, $event)">Wyniki</button>
           <button (click)="showComponent('hours', client.id, $event)">Godziny</button>

@@ -18,11 +18,14 @@ export class NavbarComponent implements OnInit {
   image: SafeUrl = '';
 
   constructor(
-    private router: Router, private authService: AuthService, private userService: UserService,
+    private authService: AuthService, private userService: UserService,
     private dialog: MatDialog, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
     this.loadImage();
+    this.userService.imageUpdated$.subscribe(() => {
+      this.loadImage();
+    });
   }
 
   loadImage() {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Application } from "../interfaces/Application";
-import { Observable } from "rxjs";
+import {Observable, Subject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,14 @@ export class ApplicationService {
   private acceptUrl = 'http://localhost:8080/api/application/accept';
   private rejectUrl = 'http://localhost:8080/api/application/reject'
 
+  private clientsQuantityUpdatedSource = new Subject<void>();
+  clientsQuantityUpdated$ = this.clientsQuantityUpdatedSource.asObservable();
+
   constructor(private http: HttpClient) {}
+
+  notifyClientsQuantityUpdate() {
+    this.clientsQuantityUpdatedSource.next();
+  }
 
   getMyApplications(token: string): Observable<Application[]> {
     const headers = this.createHeaders(token);

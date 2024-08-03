@@ -9,6 +9,7 @@ import { UserService } from "../../services/user.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "../../services/auth.service";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import {NavbarComponent} from "../navbar/navbar.component";
 
 @Component({
   selector: 'app-edit-profile-dialog',
@@ -108,6 +109,7 @@ export class EditProfileDialogComponent implements OnInit {
         () => {
           this.cancelImageChange();
           this.openSnackBar('Zdjęcie zostało zaktualizowane');
+          this.userService.notifyImageUpdate();
         },
         (error) => {
           this.showError('Nie udało się zaktualizować zdjęcia');
