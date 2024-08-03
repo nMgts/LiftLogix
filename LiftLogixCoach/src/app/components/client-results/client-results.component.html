@@ -9,4 +9,23 @@
   <ng-template #loading>
     <p>Ładowanie wyników...</p>
   </ng-template>
+
+  <form (ngSubmit)="addResult()">
+    <div (click)="stopPropagation($event)">
+      <label for="benchpress">Wyciskanie leżąc:</label>
+      <input id="benchpress" type="number" [(ngModel)]="benchpress" name="benchpress">
+    </div>
+
+    <div (click)="stopPropagation($event)">
+      <label for="deadlift">Martwy ciąg:</label>
+      <input id="deadlift" type="number" [(ngModel)]="deadlift" name="deadlift">
+    </div>
+
+    <div (click)="stopPropagation($event)">
+      <label for="squat">Przysiad:</label>
+      <input id="squat" type="number" [(ngModel)]="squat" name="squat">
+    </div>
+
+    <button type="submit" (click)="stopPropagation($event)">Dodaj wynik</button>
+  </form>
 </div>
