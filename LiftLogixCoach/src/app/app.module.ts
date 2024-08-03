@@ -40,6 +40,8 @@ import { ClientDietComponent } from './components/client-diet/client-diet.compon
 import { ClientHoursComponent } from './components/client-hours/client-hours.component';
 import { ClientPlanComponent } from './components/client-plan/client-plan.component';
 import { ClientResultsComponent } from './components/client-results/client-results.component';
+import {BaseChartDirective, provideCharts, withDefaultRegisterables} from 'ng2-charts';
+import {MatCheckbox} from "@angular/material/checkbox";
 
 @NgModule({
   declarations: [
@@ -83,7 +85,9 @@ import { ClientResultsComponent } from './components/client-results/client-resul
     MatListModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatInputModule
+    MatInputModule,
+    BaseChartDirective,
+    MatCheckbox
   ],
   providers: [
     provideAnimationsAsync(),
@@ -93,7 +97,9 @@ import { ClientResultsComponent } from './components/client-results/client-resul
       useClass: TokenInterceptorService,
       multi: true
     },
-    [YoutubeEmbedPipe]
+    [YoutubeEmbedPipe,
+    provideCharts(withDefaultRegisterables())
+  ]
   ],
   bootstrap: [AppComponent]
 })

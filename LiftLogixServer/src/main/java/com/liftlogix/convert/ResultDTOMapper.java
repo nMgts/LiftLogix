@@ -5,6 +5,8 @@ import com.liftlogix.dto.ResultDTO;
 import com.liftlogix.models.Result;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Mapper(componentModel = "spring")
 public interface ResultDTOMapper {

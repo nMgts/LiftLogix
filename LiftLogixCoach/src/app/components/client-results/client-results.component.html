@@ -5,6 +5,7 @@
     <p>Wyciskanie leżąc: {{ currentResult.benchpress }}</p>
     <p>Martwy ciąg: {{ currentResult.deadlift }}</p>
     <p>Przysiad: {{ currentResult.squat }}</p>
+    <p>Razem: {{ total }}</p>
   </div>
   <ng-template #loading>
     <p>Ładowanie wyników...</p>
@@ -28,4 +29,25 @@
 
     <button type="submit" (click)="stopPropagation($event)">Dodaj wynik</button>
   </form>
+
+  <div class="filter">
+    <button mat-raised-button (click)="toggleFilter($event)">
+      Pokaż wyniki z {{ showLastYear ? 'całego okresu' : 'ostatniego roku' }}
+    </button>
+  </div>
+
+  <div class="chart-container">
+    <canvas baseChart
+            [datasets]="lineChartData"
+            [labels]="lineChartLabels"
+            [options]="lineChartOptions"
+            [legend]="lineChartLegend">
+    </canvas>
+  </div>
+
+  <div class="chart-options">
+    <mat-checkbox [(ngModel)]="showBenchpress" (change)="updateChartData()" (click)="stopPropagation($event)">Wyciskanie leżąc</mat-checkbox>
+    <mat-checkbox [(ngModel)]="showDeadlift" (change)="updateChartData()" (click)="stopPropagation($event)">Martwy ciąg</mat-checkbox>
+    <mat-checkbox [(ngModel)]="showSquat" (change)="updateChartData()" (click)="stopPropagation($event)">Przysiad</mat-checkbox>
+  </div>
 </div>
