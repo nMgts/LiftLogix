@@ -13,6 +13,7 @@ export class ClientsComponent implements OnInit{
   clientsQuantity: number = 0;
   protected readonly window = window;
   selectedComponent: string | null = null;
+  selectedClientId: number = 0;
   maxEmailLength: number = 50;
 
   clients: (Client & { imageSafeUrl: SafeUrl })[] = [];
@@ -62,9 +63,10 @@ export class ClientsComponent implements OnInit{
     this.dropdownStates[client.id] = !this.dropdownStates[client.id];
   }
 
-  showComponent(component: string, event: Event) {
+  showComponent(component: string, clientId: number, event: Event) {
     event.stopPropagation();
     this.selectedComponent = component;
+    this.selectedClientId = clientId;
   }
 
   clearSelectedComponent() {

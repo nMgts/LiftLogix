@@ -22,10 +22,10 @@
           </div>
         </div>
         <div class="client-actions">
-          <button (click)="showComponent('plan', $event)">Plan</button>
-          <button (click)="showComponent('profile', $event)">Profil</button>
-          <button (click)="showComponent('hours', $event)">Godziny</button>
-          <button (click)="showComponent('diet', $event)">Dieta</button>
+          <button (click)="showComponent('plan', client.id, $event)">Plan</button>
+          <button (click)="showComponent('results', client.id, $event)">Wyniki</button>
+          <button (click)="showComponent('hours', client.id, $event)">Godziny</button>
+          <button (click)="showComponent('diet', client.id, $event)">Dieta</button>
         </div>
         <div class="client-icons">
           <mat-icon class="message">email</mat-icon>
@@ -34,10 +34,10 @@
 
         <mat-icon class="more-options" (click)="toggleDropdown(client, $event)">more_vert</mat-icon>
         <div class="dropdown" *ngIf="dropdownStates[client.id]">
-          <button (click)="showComponent('plan', $event)">Plan</button>
-          <button (click)="showComponent('profile', $event)">Profil</button>
-          <button (click)="showComponent('hours', $event)">Godziny</button>
-          <button (click)="showComponent('diet', $event)">Diety</button>
+          <button (click)="showComponent('plan', client.id, $event)">Plan</button>
+          <button (click)="showComponent('results', client.id, $event)">Wyniki</button>
+          <button (click)="showComponent('hours', client.id, $event)">Godziny</button>
+          <button (click)="showComponent('diet', client.id, $event)">Diety</button>
           <button class="optional">Napisz</button>
           <button class="optional">Usuń</button>
         </div>
@@ -54,7 +54,7 @@
   <div class="right-side" *ngIf="selectedComponent && window.innerWidth >= 1024">
     <ng-container [ngSwitch]="selectedComponent">
       <app-client-plan *ngSwitchCase="'plan'"></app-client-plan>
-      <app-client-profile *ngSwitchCase="'profile'"></app-client-profile>
+      <app-client-results *ngSwitchCase="'results'" [clientId]="selectedClientId"></app-client-results>
       <app-client-hours *ngSwitchCase="'hours'"></app-client-hours>
       <app-client-diet *ngSwitchCase="'diet'"></app-client-diet>
     </ng-container>
@@ -63,7 +63,7 @@
   <div class="left-side" *ngIf="selectedComponent && window.innerWidth < 1024">
     <ng-container [ngSwitch]="selectedComponent">
       <app-client-plan *ngSwitchCase="'plan'"></app-client-plan>
-      <app-client-profile *ngSwitchCase="'profile'"></app-client-profile>
+      <app-client-results *ngSwitchCase="'results'" [clientId]="selectedClientId"></app-client-results>
       <app-client-hours *ngSwitchCase="'hours'"></app-client-hours>
       <app-client-diet *ngSwitchCase="'diet'"></app-client-diet>
     </ng-container>

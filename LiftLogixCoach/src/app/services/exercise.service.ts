@@ -19,7 +19,7 @@ export class ExerciseService {
 
   addExercise(token: string, data: FormData): Observable<any> {
     const headers = this.createHeaders(token);
-    return this.http.post<void>(this.addUrl, data, { headers: headers});
+    return this.http.post<void>(this.addUrl, data, { headers: headers });
   }
 
   private createHeaders(token: string) {
