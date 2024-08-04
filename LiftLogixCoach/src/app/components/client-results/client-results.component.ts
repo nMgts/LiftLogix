@@ -70,6 +70,7 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
       next: (results) => {
         this.results = results;
         this.filterResults();
+        console.log(results);
       },
       error: (error) => {
         console.error("Nie udało się pobrać wykresu" + error);
@@ -85,8 +86,6 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
         if (typeof this.currentResult.benchpress === "number") this.total = this.currentResult.benchpress;
         if (typeof this.currentResult.deadlift === "number") this.total += this.currentResult.deadlift;
         if (typeof this.currentResult.squat === "number") this.total += this.currentResult.squat;
-
-        console.log(this.currentResult.squat);
       },
       (error) => console.error('Error loading current result', error)
     );
@@ -107,34 +106,82 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
   }
 
   updateChartData() {
-    this.lineChartLabels = this.filteredResults.map(result => new Date(result.date).toLocaleDateString('pl-PL'));
+    // Przechowuj dane i etykiety
+    const dateMap: { [key: string]: { benchpress: number | null, deadlift: number | null, squat: number | null } } = {};
 
+    // Zbierz dane dla każdego dnia
+    this.filteredResults.forEach(result => {
+      const date = new Date(result.date).toLocaleDateString('pl-PL');
+
+      if (!dateMap[date]) {
+        dateMap[date] = {
+          benchpress: null,
+          deadlift: null,
+          squat: null
+        };
+      }
+
+      // Przypisz wartości do odpowiednich dat
+      if (this.showBenchpress) {
+        dateMap[date].benchpress = Number(result.benchpress) || null;
+      }
+      if (this.showDeadlift) {
+        dateMap[date].deadlift = Number(result.deadlift) || null;
+      }
+      if (this.showSquat) {
+        dateMap[date].squat = Number(result.squat) || null;
+      }
+    });
+
+    // Filtrowanie dat, które mają przynajmniej jedno widoczne ćwiczenie
+    const filteredDates: string[] = [];
+    const benchpressData: (number | null)[] = [];
+    const deadliftData: (number | null)[] = [];
+    const squatData: (number | null)[] = [];
+
+    Object.keys(dateMap).forEach(date => {
+      const data = dateMap[date];
+      // Sprawdź, czy istnieje przynajmniej jedno widoczne ćwiczenie
+      if (data.benchpress !== null || data.deadlift !== null || data.squat !== null) {
+        filteredDates.push(date);
+        benchpressData.push(data.benchpress);
+        deadliftData.push(data.deadlift);
+        squatData.push(data.squat);
+      }
+    });
+
+    // Ustaw etykiety wykresu
+    this.lineChartLabels = filteredDates;
+
+    // Aktualizuj dane wykresu
     this.lineChartData[0] = {
-      data: this.filteredResults.map(result => {
-        const value = Number(result.benchpress);
-        return isNaN(value) ? null : value;
-      }),
+      data: this.getFilteredData(benchpressData, filteredDates),
       label: 'Wyciskanie leżąc',
       hidden: !this.showBenchpress
     };
 
     this.lineChartData[1] = {
-      data: this.filteredResults.map(result => {
-        const value = Number(result.deadlift);
-        return isNaN(value) ? null : value;
-      }),
+      data: this.getFilteredData(deadliftData, filteredDates),
       label: 'Martwy ciąg',
       hidden: !this.showDeadlift
     };
 
     this.lineChartData[2] = {
-      data: this.filteredResults.map(result => {
-        const value = Number(result.squat);
-        return isNaN(value) ? null : value;
-      }),
+      data: this.getFilteredData(squatData, filteredDates),
       label: 'Przysiad',
       hidden: !this.showSquat
     };
+  }
+
+  private getFilteredData(dataArray: (number | null)[], dates: string[]): (number | null)[] {
+    // Tworzy mapę dat z odpowiednimi danymi
+    const dataMap: { [key: string]: number | null } = {};
+    dates.forEach((date, index) => {
+      dataMap[date] = dataArray[index] !== undefined ? dataArray[index] : null;
+    });
+
+    // Filtrowanie danych w zależności od dat
+    return dates.map(date => dataMap[date] || null);
   }
 
   toggleFilter(event: Event): void {

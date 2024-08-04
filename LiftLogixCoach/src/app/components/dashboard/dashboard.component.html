@@ -8,7 +8,9 @@
 
         <div class="row1">
           <div class="row1-col-left box" [ngClass]="{'expanded': expandedBox === 'row1-col-left',
-          'hidden': expandedBox && expandedBox !== 'row1-col-left'}" (click)="expandBox('row1-col-left')"></div>
+          'hidden': expandedBox && expandedBox !== 'row1-col-left'}" (click)="expandBox('row1-col-left')">
+            <app-schedule [isBoxExpanded]="expandedBox==='row1-col-left'"></app-schedule>
+          </div>
 
           <div class="row1-col-right">
             <div class="row1-col-right-row1 box" [ngClass]="{'expanded': expandedBox === 'row1-col-right-row1',
@@ -22,10 +24,11 @@
 
         <div class="row2">
           <div class="row2-col1 box" [ngClass]="{'expanded': expandedBox === 'row2-col1',
-          'hidden': expandedBox && expandedBox !== 'row2-col1'}" (click)="expandBox('row2-col1')"></div>
+          'hidden': expandedBox && expandedBox !== 'row2-col1'}" (click)="expandBox('row2-col1')">
+            <app-exercises [isBoxExpanded]="expandedBox==='row2-col1'"></app-exercises>
+          </div>
           <div class="row2-col2 box" [ngClass]="{'expanded': expandedBox === 'row2-col2',
           'hidden': expandedBox && expandedBox !== 'row2-col2'}" (click)="expandBox('row2-col2')">
-            <app-exercises [isBoxExpanded]="expandedBox==='row2-col2'"></app-exercises>
           </div>
           <div class="row2-col3 box" [ngClass]="{'expanded': expandedBox === 'row2-col3',
           'hidden': expandedBox && expandedBox !== 'row2-col3'}" (click)="expandBox('row2-col3')"></div>

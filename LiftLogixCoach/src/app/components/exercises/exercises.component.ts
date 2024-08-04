@@ -173,4 +173,6 @@ export class ExercisesComponent implements OnInit, OnChanges {
       }
     });
   }
+
+    protected readonly window = window;
 }

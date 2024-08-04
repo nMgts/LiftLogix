@@ -5,7 +5,7 @@
        class="application-container">
     <div class="application-info">
       <p>{{ calculateIndex(i) + 1 }}. {{application.client.first_name}} {{application.client.last_name}}</p>
-      <p class="date">Zgłoszono: {{application.submitted_date | date:'short'}}</p>
+      <p class="date">Zgłoszono: {{application.submitted_date | date:'dd/MM/yyyy HH:mm'}}</p>
     </div>
     <div *ngIf="isBoxExpanded" class="description">
       <p><strong *ngIf="application.description">Opis:</strong> {{ truncateDescription(application.description) }}</p>

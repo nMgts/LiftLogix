@@ -1,0 +1,87 @@
+.scheduler-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 15px 15px 15px;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+@media (max-width: 650px) {
+  .scheduler-container {
+    padding: 10px;
+  }
+}
+
+.scheduler {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 0;
+  table-layout: fixed;
+  font-family: 'Arial', sans-serif;
+  color: aliceblue;
+
+  @media(max-width: 650px) {
+    font-size: 10px;
+  }
+}
+
+th, td {
+  text-align: center;
+  border-right: 2px solid rgba(0, 0, 0, 0.5);
+}
+
+td {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+th:last-child, td:last-child, th:first-child, td:first-child {
+  border-right: none;
+}
+
+th {
+  background-color: rgba(128, 0, 128, 0.3);
+  color: aliceblue;
+  font-weight: bold;
+  padding: 5px 0 5px 0;
+}
+
+.hour-header {
+  background-color: rgba(128, 0, 128, 0.3);
+  font-size: 12px;
+
+  @media(max-width: 650px) {
+    font-size: 10px;
+  }
+
+  @media(max-width: 430px) {
+    font-size: 9px;
+  }
+}
+
+tr:last-child td:first-child {
+  border-bottom-left-radius: 10px;
+}
+
+.time-slot {
+  height: 50px;
+  box-shadow: none;
+}
+
+th:first-child {
+  border-top-left-radius: 10px;
+}
+
+th:last-child {
+  border-top-right-radius: 10px;
+}

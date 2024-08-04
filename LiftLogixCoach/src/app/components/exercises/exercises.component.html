@@ -1,5 +1,5 @@
 <div class="not-expanded-box" *ngIf="!isBoxExpanded">
-  <h1 class="header">Ćwiczenia</h1>
+  <h1 class="header" *ngIf="window.innerWidth>650">Ćwiczenia</h1>
   <div class="content">
     <img ngSrc="/icons/barbell.svg" alt="Exercise Icon" class="exercise-image" width="200" height="200"/>
   </div>

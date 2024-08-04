@@ -9,7 +9,7 @@ import {ApplicationService} from "../../services/application.service";
   templateUrl: './clients.component.html',
   styleUrl: './clients.component.scss'
 })
-export class ClientsComponent implements OnInit{
+export class ClientsComponent implements OnInit {
   @Input() isBoxExpanded = false;
   clientsQuantity: number = 0;
   protected readonly window = window;
