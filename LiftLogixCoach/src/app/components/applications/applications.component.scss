@@ -8,10 +8,30 @@
   padding: 5px 15px 10px 15px;
 }
 
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 48px;
+  color: aliceblue;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: red;
+}
+
 h1 {
   font-size: 16px;
   margin-bottom: 10px;
   text-align: center;
+}
+
+h1.expanded {
+  font-size: 36px;
+  margin-bottom: 15px;
 }
 
 .application-container {
@@ -76,6 +96,10 @@ h1 {
       background: #f44336;
     }
   }
+}
+
+mat-paginator {
+  margin-top: 10px;
 }
 
 .show-archived-container {

@@ -1,4 +1,4 @@
-import { Component, HostListener, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import { Exercise } from "../../interfaces/Exercise";
 import { ExerciseService } from "../../services/exercise.service";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
@@ -14,6 +14,7 @@ import { AddExerciseDialogComponent } from "../add-exercise-dialog/add-exercise-
 })
 export class ExercisesComponent implements OnInit, OnChanges {
   @Input() isBoxExpanded = false;
+  @Output() closeBox = new EventEmitter<void>();
   exercises: (Exercise & { imageSafeUrl: SafeUrl })[] = [];
   filteredExercises: (Exercise & { imageSafeUrl: SafeUrl })[] = [];
   displayedExercises: (Exercise & { imageSafeUrl: SafeUrl })[] = [];
@@ -30,6 +31,7 @@ export class ExercisesComponent implements OnInit, OnChanges {
   ];
 
   private readonly defaultImageUrl: string = '/icons/dumbbell.jpg';
+  protected readonly window = window;
 
   constructor(
     private exerciseService: ExerciseService,
@@ -99,6 +101,10 @@ export class ExercisesComponent implements OnInit, OnChanges {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
+  cancelAllActions() {
+    this.isDropdownOpen = false;
+  }
+
   onSearchChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.searchKeyword = input.value;
@@ -127,7 +133,7 @@ export class ExercisesComponent implements OnInit, OnChanges {
   }
 
   @HostListener('window:resize', ['$event'])
-  onResize(event: Event): void {
+  onResize(): void {
     this.updatePageSize();
     this.updateDisplayedExercises();
   }
@@ -152,19 +158,13 @@ export class ExercisesComponent implements OnInit, OnChanges {
     this.updateDisplayedExercises();
   }
 
-  openDetails(exercise: Exercise, event: Event): void {
-    event.stopPropagation();
+  openDetails(exercise: Exercise): void {
     this.dialog.open(ExerciseDetailsDialogComponent, {
       data: exercise
     });
   }
 
-  stopPropagation(event: Event): void {
-    event.stopPropagation();
-  }
-
-  addExercise(event: Event): void {
-    event.stopPropagation();
+  addExercise(): void {
     const dialogRef = this.dialog.open(AddExerciseDialogComponent);
 
     dialogRef.afterClosed().subscribe(result => {
@@ -174,5 +174,8 @@ export class ExercisesComponent implements OnInit, OnChanges {
     });
   }
 
-    protected readonly window = window;
+  close(event: Event) {
+    event.stopPropagation();
+    this.closeBox.emit();
+  }
 }

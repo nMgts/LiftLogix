@@ -1,6 +1,7 @@
 <div class="component-container">
-  <mat-icon class="back-arrow" (click)="goBack($event)">arrow_back</mat-icon>
-  <h2>Wyniki</h2>
+  <button class="back-arrow" (click)="goBack()">
+    <span class="material-icons">arrow_back</span>
+  </button>
   <div *ngIf="currentResult; else loading">
     <p>Wyciskanie leżąc: {{ currentResult.benchpress }}</p>
     <p>Martwy ciąg: {{ currentResult.deadlift }}</p>
@@ -12,26 +13,26 @@
   </ng-template>
 
   <form (ngSubmit)="addResult()">
-    <div (click)="stopPropagation($event)">
+    <div>
       <label for="benchpress">Wyciskanie leżąc:</label>
       <input id="benchpress" type="number" [(ngModel)]="benchpress" name="benchpress">
     </div>
 
-    <div (click)="stopPropagation($event)">
+    <div>
       <label for="deadlift">Martwy ciąg:</label>
       <input id="deadlift" type="number" [(ngModel)]="deadlift" name="deadlift">
     </div>
 
-    <div (click)="stopPropagation($event)">
+    <div>
       <label for="squat">Przysiad:</label>
       <input id="squat" type="number" [(ngModel)]="squat" name="squat">
     </div>
 
-    <button type="submit" (click)="stopPropagation($event)">Dodaj wynik</button>
+    <button type="submit">Dodaj wynik</button>
   </form>
 
   <div class="filter">
-    <button mat-raised-button (click)="toggleFilter($event)">
+    <button mat-raised-button (click)="toggleFilter()">
       Pokaż wyniki z {{ showLastYear ? 'całego okresu' : 'ostatniego roku' }}
     </button>
   </div>
@@ -46,8 +47,8 @@
   </div>
 
   <div class="chart-options">
-    <mat-checkbox [(ngModel)]="showBenchpress" (change)="updateChartData()" (click)="stopPropagation($event)">Wyciskanie leżąc</mat-checkbox>
-    <mat-checkbox [(ngModel)]="showDeadlift" (change)="updateChartData()" (click)="stopPropagation($event)">Martwy ciąg</mat-checkbox>
-    <mat-checkbox [(ngModel)]="showSquat" (change)="updateChartData()" (click)="stopPropagation($event)">Przysiad</mat-checkbox>
+    <mat-checkbox [(ngModel)]="showBenchpress" (change)="updateChartData()">Wyciskanie leżąc</mat-checkbox>
+    <mat-checkbox [(ngModel)]="showDeadlift" (change)="updateChartData()">Martwy ciąg</mat-checkbox>
+    <mat-checkbox [(ngModel)]="showSquat" (change)="updateChartData()">Przysiad</mat-checkbox>
   </div>
 </div>

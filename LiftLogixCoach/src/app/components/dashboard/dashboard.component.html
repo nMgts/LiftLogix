@@ -9,23 +9,25 @@
         <div class="row1">
           <div class="row1-col-left box" [ngClass]="{'expanded': expandedBox === 'row1-col-left',
           'hidden': expandedBox && expandedBox !== 'row1-col-left'}" (click)="expandBox('row1-col-left')">
-            <app-schedule [isBoxExpanded]="expandedBox==='row1-col-left'"></app-schedule>
+            <app-schedule [isBoxExpanded]="expandedBox==='row1-col-left'" (closeBox)="closeBox('row1-col-left')"></app-schedule>
           </div>
 
           <div class="row1-col-right">
             <div class="row1-col-right-row1 box" [ngClass]="{'expanded': expandedBox === 'row1-col-right-row1',
             'hidden': expandedBox && expandedBox !== 'row1-col-right-row1'}" (click)="expandBox('row1-col-right-row1')">
-              <app-clients [isBoxExpanded]="expandedBox==='row1-col-right-row1'"></app-clients>
+              <app-clients [isBoxExpanded]="expandedBox==='row1-col-right-row1'" (closeBox)="closeBox('row1-col-right-row1')"></app-clients>
             </div>
             <div class="row1-col-right-row2 box" [ngClass]="{'expanded': expandedBox === 'row1-col-right-row2',
-             'hidden': expandedBox && expandedBox !== 'row1-col-right-row2'}" (click)="expandBox('row1-col-right-row2')"></div>
+             'hidden': expandedBox && expandedBox !== 'row1-col-right-row2'}" (click)="expandBox('row1-col-right-row2')">
+              <app-workout-creator [isBoxExpanded]="expandedBox==='row1-col-right-row2'" (closeBox)="closeBox('row1-col-right-row2')"></app-workout-creator>
+            </div>
           </div>
         </div>
 
         <div class="row2">
           <div class="row2-col1 box" [ngClass]="{'expanded': expandedBox === 'row2-col1',
           'hidden': expandedBox && expandedBox !== 'row2-col1'}" (click)="expandBox('row2-col1')">
-            <app-exercises [isBoxExpanded]="expandedBox==='row2-col1'"></app-exercises>
+            <app-exercises [isBoxExpanded]="expandedBox==='row2-col1'" (closeBox)="closeBox('row2-col1')"></app-exercises>
           </div>
           <div class="row2-col2 box" [ngClass]="{'expanded': expandedBox === 'row2-col2',
           'hidden': expandedBox && expandedBox !== 'row2-col2'}" (click)="expandBox('row2-col2')">
@@ -38,7 +40,7 @@
       <div class="col-right">
         <div class="row-top box" [ngClass]="{'expanded': expandedBox === 'row-top',
         'hidden': expandedBox && expandedBox !== 'row-top'}" (click)="expandBox('row-top')">
-          <app-applications [isBoxExpanded]="expandedBox==='row-top'"></app-applications>
+          <app-applications [isBoxExpanded]="expandedBox==='row-top'" (closeBox)="closeBox('row-top')"></app-applications>
         </div>
         <div class="row-bottom box" [ngClass]="{'expanded': expandedBox === 'row-bottom',
         'hidden': expandedBox && expandedBox !== 'row-bottom'}" (click)="expandBox('row-bottom')"></div>

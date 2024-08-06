@@ -1,11 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  Input,
-  OnChanges,
-  SimpleChanges, HostListener
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, Input, OnChanges, SimpleChanges, HostListener, Output, EventEmitter} from '@angular/core';
 import { Application } from '../../interfaces/Application';
 import { ApplicationService } from '../../services/application.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -20,6 +13,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 })
 export class ApplicationsComponent implements OnInit, OnChanges {
   @Input() isBoxExpanded = false;
+  @Output() closeBox = new EventEmitter<void>();
   applications: Application[] = [];
   displayedApplications: Application[] = [];
   showArchivedApplications = false;
@@ -81,8 +75,7 @@ export class ApplicationsComponent implements OnInit, OnChanges {
     this.updateDisplayedApplications();
   }
 
-  openApplicationDialog(event: Event, application: Application): void {
-    event.stopPropagation();
+  openApplicationDialog(application: Application): void {
     const dialogRef = this.dialog.open(ApplicationDetailsDialogComponent, {
       data: application,
       width: '600px'
@@ -94,8 +87,7 @@ export class ApplicationsComponent implements OnInit, OnChanges {
     });
   }
 
-  accept(event: Event, applicationId: number): void {
-    event.stopPropagation();
+  accept(applicationId: number): void {
     const token = localStorage.getItem('token') || '';
     this.applicationService.acceptApplication(applicationId, token).subscribe(
       () => {
@@ -107,8 +99,7 @@ export class ApplicationsComponent implements OnInit, OnChanges {
     );
   }
 
-  reject(event: Event, applicationId: number): void {
-    event.stopPropagation();
+  reject(applicationId: number): void {
     const token = localStorage.getItem('token') || '';
     this.applicationService.rejectApplication(applicationId, token).subscribe(
       () => {
@@ -119,8 +110,7 @@ export class ApplicationsComponent implements OnInit, OnChanges {
     );
   }
 
-  showArchivedApps(event: Event): void {
-    event.stopPropagation();
+  showArchivedApps(): void {
     if (this.isBoxExpanded) {
       this.showArchivedApplications = !this.showArchivedApplications;
       this.cdr.detectChanges();
@@ -143,7 +133,7 @@ export class ApplicationsComponent implements OnInit, OnChanges {
   /** Truncate text methods */
 
   @HostListener('window:resize', ['$event'])
-  onResize(event: Event): void {
+  onResize(): void {
     this.updateTruncateLength();
   }
 
@@ -164,5 +154,10 @@ export class ApplicationsComponent implements OnInit, OnChanges {
       return description.substring(0, this.truncateLength) + '...';
     }
     return description;
+  }
+
+  close(event: Event) {
+    event.stopPropagation();
+    this.closeBox.emit();
   }
 }

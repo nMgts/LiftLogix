@@ -1,11 +1,27 @@
 .component-container {
-  position: relative;
-  padding: 20px;
+  padding: 0 20px 20px 20px;
 }
 
 .back-arrow {
   position: absolute;
+  background: none;
+  border: none;
   top: 10px;
   left: 10px;
+  cursor: pointer;
+  color: aliceblue;
+}
+
+.back-arrow span {
+  font-size: 36px;
+}
+
+.back-arrow:hover {
+  color: darkviolet;
+}
+
+button {
+  padding: 10px;
+  font-size: 1rem;
   cursor: pointer;
 }

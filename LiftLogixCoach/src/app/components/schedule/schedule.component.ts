@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-schedule',
@@ -7,5 +7,11 @@ import { Component, Input } from '@angular/core';
 })
 export class ScheduleComponent {
   @Input() isBoxExpanded = false;
+  @Output() closeBox = new EventEmitter<void>();
   protected readonly window = window;
+
+  close(event: Event) {
+    event.stopPropagation();
+    this.closeBox.emit();
+  }
 }

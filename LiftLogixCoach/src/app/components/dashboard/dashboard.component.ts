@@ -1,7 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { ChangeDetectorRef } from '@angular/core';
-import { ClientService } from "../../services/client.service";
-import {Observable} from "rxjs";
+import { Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,11 +8,19 @@ import {Observable} from "rxjs";
 export class DashboardComponent implements OnInit {
   expandedBox: string | null = null;
 
-  constructor(private cdr: ChangeDetectorRef, private clientService: ClientService) {}
+  constructor() {}
 
   ngOnInit(): void {}
 
   expandBox(box: string) {
-    this.expandedBox = this.expandedBox === box ? null : box;
+    if (this.expandedBox !== box) {
+      this.expandedBox = box;
+    }
+  }
+
+  closeBox(box: string) {
+    if (this.expandedBox === box) {
+      this.expandedBox = null;
+    }
   }
 }

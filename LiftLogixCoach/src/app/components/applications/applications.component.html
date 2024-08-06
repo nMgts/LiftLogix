@@ -1,7 +1,8 @@
 <div class="application-box" [ngClass]="{ 'expanded': isBoxExpanded }">
-  <h1>Zgłoszenia</h1>
+  <button *ngIf="isBoxExpanded" (click)="close($event)" class="close-button">&times;</button>
+  <h1 [ngClass]="{ 'expanded': isBoxExpanded }">Zgłoszenia</h1>
   <div *ngFor="let application of displayedApplications; let i = index"
-       (click)="openApplicationDialog($event, application)"
+       (click)="openApplicationDialog(application)"
        class="application-container">
     <div class="application-info">
       <p>{{ calculateIndex(i) + 1 }}. {{application.client.first_name}} {{application.client.last_name}}</p>
@@ -11,10 +12,10 @@
       <p><strong *ngIf="application.description">Opis:</strong> {{ truncateDescription(application.description) }}</p>
     </div>
     <div class="button-container" *ngIf="application.status === 'PENDING'">
-      <button class="app_btn" (click)="accept($event, application.id)">
+      <button class="app_btn" (click)="accept(application.id)">
         <i class="fas fa-check"></i>
       </button>
-      <button class="app_btn rejected" (click)="reject($event, application.id)">
+      <button class="app_btn rejected" (click)="reject(application.id)">
         <i class="fas fa-times"></i>
       </button>
     </div>
@@ -31,7 +32,7 @@
 
   <div *ngIf="isBoxExpanded" class="show-archived-container">
     <label>
-      <input type="checkbox" (click)="showArchivedApps($event)">
+      <input type="checkbox" (click)="showArchivedApps()">
       Pokaż archiwalne
     </label>
   </div>

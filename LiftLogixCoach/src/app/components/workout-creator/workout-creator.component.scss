@@ -1,0 +1,307 @@
+* {
+  color: aliceblue;
+}
+
+.not-expanded-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  width: 100%;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-bottom: 5px;
+}
+
+h1 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px;
+  height: unset;
+}
+
+@media (min-width: 650px) {
+  .content {
+    height: calc(100% - 24px);
+  }
+}
+
+.workout-creator-image {
+  max-width: 70%;
+  height: auto;
+
+  @media (max-width: 650px) {
+    .client-image {
+      margin-right: 0;
+    }
+  }
+}
+
+.expanded-box {
+  padding: 10px;
+  min-height: calc(98vh - 20px);
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 48px;
+  color: aliceblue;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: red;
+}
+
+.creator-header {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.workout-name-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100px;
+  padding: 5px;
+}
+
+.workout-name-container input {
+  flex-grow: 1;
+  outline: none;
+  padding: 5px;
+  color: black;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.workout-name-container button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown-button {
+  position: absolute;
+  right: -80px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-button mat-icon {
+  color: black !important;
+}
+
+.add-button {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  white-space: nowrap;
+}
+
+.add-button span {
+  margin-left: 10px
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 5px;
+  width: 163%;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.dropdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.dropdown-item span {
+  color: black;
+  font-size: 14px;
+}
+
+.dropdown-item mat-icon {
+  cursor: pointer;
+  color: black !important;
+}
+
+.dropdown-menu div:hover {
+  background-color: rgba(196, 196, 196, 0.7);
+}
+
+.exercise-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  table-layout: fixed;
+  min-width: 900px;
+}
+
+.exercise-table th:nth-child(1),
+.exercise-table td:nth-child(1) {
+  width: 26%;
+}
+
+.exercise-table th:nth-child(2),
+.exercise-table td:nth-child(2) {
+  width: 12%;
+}
+
+.exercise-table th:nth-child(3),
+.exercise-table td:nth-child(3) {
+  width: 12%;
+}
+
+.exercise-table th:nth-child(4),
+.exercise-table td:nth-child(4) {
+  width: 12%;
+}
+
+.exercise-table th:nth-child(5),
+.exercise-table td:nth-child(5) {
+  width: 12%;
+}
+
+.exercise-table th:nth-child(6),
+.exercise-table td:nth-child(6) {
+  width: 12%;
+}
+
+.exercise-table th:nth-child(7),
+.exercise-table td:nth-child(7) {
+  width: 12%;
+}
+
+.exercise-table th:nth-child(8),
+.exercise-table td:nth-child(8) {
+  width: 2%;
+}
+
+.exercise-table th:nth-child(8) {
+  border: none;
+  background-color: transparent;
+}
+
+.exercise-table th, .exercise-table td {
+  border: 1px solid black;
+  text-align: center;
+  position: relative;
+}
+
+.exercise-table th {
+  background-color: rgba(128, 0, 128, 0.8);
+  padding: 10px;
+}
+
+.exercise-table td {
+  background-color: rgba(128, 0, 128, 0.1);
+  overflow: hidden;
+}
+
+.exercise-table input {
+  max-width: 45px;
+  border: none;
+  box-sizing: border-box;
+  background: white;
+  color: black;
+}
+
+.exercise-table input[placeholder] {
+  text-align: center;
+}
+
+td.repetitions-cell {
+  vertical-align: middle;
+  align-items: center;
+  justify-content: center;
+  width: 12%;
+}
+
+.repetitions-inputs {
+  display: inline-block;
+  align-items: center;
+  margin: 0 auto;
+
+  input {
+    width: 30px;
+    -moz-appearance: textfield;
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+td.break-cell {
+  vertical-align: middle;
+  align-items: center;
+  justify-content: center;
+  width: 12%;
+}
+
+.break-input {
+  display: inline-block;
+  align-items: center;
+  margin: 0 auto;
+
+  input {
+    width: 35px;
+  }
+
+  select {
+    width: 40px;
+    margin-left: 5px;
+    color: black;
+  }
+
+  option {
+    color: black;
+  }
+}
+
+.add-exercise-button {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.add-exercise-button mat-icon {
+  margin-right: 10px;
+}
+
+.add-exercise-button span {
+  margin-left: 10px;
+}

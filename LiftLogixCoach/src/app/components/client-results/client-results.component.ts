@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import { ClientsComponent } from "../clients/clients.component";
 import { ResultService } from "../../services/result.service";
 import { Result } from "../../interfaces/Result";
@@ -14,6 +14,7 @@ import { Subscription } from "rxjs";
 })
 export class ClientResultsComponent implements OnInit, OnDestroy {
   @Input() clientId: number | null = null;
+  @Output() closeRightComponent = new EventEmitter<void>();
   currentResult: Result | null = null;
   results: Result[] = [];
   filteredResults: Result[] = [];
@@ -106,10 +107,8 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
   }
 
   updateChartData() {
-    // Przechowuj dane i etykiety
     const dateMap: { [key: string]: { benchpress: number | null, deadlift: number | null, squat: number | null } } = {};
 
-    // Zbierz dane dla każdego dnia
     this.filteredResults.forEach(result => {
       const date = new Date(result.date).toLocaleDateString('pl-PL');
 
@@ -121,7 +120,6 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
         };
       }
 
-      // Przypisz wartości do odpowiednich dat
       if (this.showBenchpress) {
         dateMap[date].benchpress = Number(result.benchpress) || null;
       }
@@ -133,7 +131,6 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Filtrowanie dat, które mają przynajmniej jedno widoczne ćwiczenie
     const filteredDates: string[] = [];
     const benchpressData: (number | null)[] = [];
     const deadliftData: (number | null)[] = [];
@@ -141,7 +138,7 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
 
     Object.keys(dateMap).forEach(date => {
       const data = dateMap[date];
-      // Sprawdź, czy istnieje przynajmniej jedno widoczne ćwiczenie
+
       if (data.benchpress !== null || data.deadlift !== null || data.squat !== null) {
         filteredDates.push(date);
         benchpressData.push(data.benchpress);
@@ -150,10 +147,8 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Ustaw etykiety wykresu
     this.lineChartLabels = filteredDates;
 
-    // Aktualizuj dane wykresu
     this.lineChartData[0] = {
       data: this.getFilteredData(benchpressData, filteredDates),
       label: 'Wyciskanie leżąc',
@@ -174,18 +169,15 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
   }
 
   private getFilteredData(dataArray: (number | null)[], dates: string[]): (number | null)[] {
-    // Tworzy mapę dat z odpowiednimi danymi
     const dataMap: { [key: string]: number | null } = {};
     dates.forEach((date, index) => {
       dataMap[date] = dataArray[index] !== undefined ? dataArray[index] : null;
     });
 
-    // Filtrowanie danych w zależności od dat
     return dates.map(date => dataMap[date] || null);
   }
 
-  toggleFilter(event: Event): void {
-    event.stopPropagation();
+  toggleFilter(): void {
     this.showLastYear = !this.showLastYear;
     this.filterResults();
   }
@@ -219,7 +211,7 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
           }
         },
         error: (error) => {
-          if (error.status = 400) {
+          if (error.status === 400) {
             this.openSnackBar('Wprowadź przynajmiej jeden wynik');
           } else {
             this.openSnackBar('Nie udało sie wprowadzić wyniku');
@@ -235,12 +227,7 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
     });
   }
 
-  stopPropagation(event: Event): void {
-    event.stopPropagation();
-  }
-
-  goBack(event: Event): void {
-    event.stopPropagation();
+  goBack(): void {
     this.clientsComponent.clearSelectedComponent();
   }
 }

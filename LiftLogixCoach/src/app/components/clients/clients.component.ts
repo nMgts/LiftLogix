@@ -1,8 +1,8 @@
-import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { Client } from "../../interfaces/Client";
 import { ClientService } from "../../services/client.service";
-import {ApplicationService} from "../../services/application.service";
+import { ApplicationService } from "../../services/application.service";
 
 @Component({
   selector: 'app-clients',
@@ -11,6 +11,7 @@ import {ApplicationService} from "../../services/application.service";
 })
 export class ClientsComponent implements OnInit {
   @Input() isBoxExpanded = false;
+  @Output() closeBox = new EventEmitter<void>();
   clientsQuantity: number = 0;
   protected readonly window = window;
   selectedComponent: string | null = null;
@@ -62,8 +63,7 @@ export class ClientsComponent implements OnInit {
     )
   }
 
-  toggleDropdown(client: Client, event: Event) {
-    event.stopPropagation();
+  toggleDropdown(client: Client) {
     if (this.dropdownOpenClientId === client.id) {
       this.dropdownOpenClientId = null;
     } else {
@@ -99,5 +99,23 @@ export class ClientsComponent implements OnInit {
     return window.innerWidth < 500 && client.last_name.length > 11 ? `${client.last_name.charAt(0)}.` : client.last_name;
   }
 
-  protected readonly innerWidth = innerWidth;
+  switchHeader(selectedComponent: string): string {
+    switch (selectedComponent) {
+      case 'results':
+        return 'Wyniki';
+      case 'plan':
+        return 'Plan';
+      case 'hours':
+        return 'Godziny';
+      case 'diet':
+        return 'Dieta';
+      default:
+        return '';
+    }
+  }
+
+  close(event: Event) {
+    event.stopPropagation();
+    this.closeBox.emit();
+  }
 }

@@ -1,6 +1,9 @@
-<h1 *ngIf="!isBoxExpanded && window.innerWidth>650">Harmonogram</h1>
-<app-weekly-schedule [isBoxExpanded]="isBoxExpanded"></app-weekly-schedule>
+<div class="not-expanded-box" *ngIf="!isBoxExpanded">
+  <h1 *ngIf="window.innerWidth>650">Harmonogram</h1>
+  <app-weekly-schedule [isBoxExpanded]="isBoxExpanded"></app-weekly-schedule>
+</div>
 
 <div class="expanded-box" *ngIf="isBoxExpanded">
-
+  <button (click)="close($event)" class="close-button">&times;</button>
+  <app-weekly-schedule [isBoxExpanded]="isBoxExpanded"></app-weekly-schedule>
 </div>
