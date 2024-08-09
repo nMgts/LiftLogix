@@ -6,6 +6,7 @@ import { PageEvent } from "@angular/material/paginator";
 import { MatDialog } from "@angular/material/dialog";
 import { ExerciseDetailsDialogComponent } from "../exercise-details-dialog/exercise-details-dialog.component";
 import { AddExerciseDialogComponent } from "../add-exercise-dialog/add-exercise-dialog.component";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-exercises',
@@ -36,7 +37,9 @@ export class ExercisesComponent implements OnInit, OnChanges {
   constructor(
     private exerciseService: ExerciseService,
     private sanitizer: DomSanitizer,
-    private dialog: MatDialog ) {}
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
+    ) {}
 
   ngOnInit(): void {
     this.loadExercises();
@@ -73,9 +76,8 @@ export class ExercisesComponent implements OnInit, OnChanges {
   filterExercises(): void {
     let filtered = this.exercises;
 
-    // Filter by body parts
     if (this.selectedBodyParts.length > 0) {
-      filtered = filtered.filter(exercise=>
+      filtered = filtered.filter(exercise =>
         exercise.body_parts.some(part => this.selectedBodyParts.includes(part))
       );
     } else {
@@ -84,9 +86,18 @@ export class ExercisesComponent implements OnInit, OnChanges {
 
     if (this.searchKeyword.trim()) {
       const keyword = this.searchKeyword.trim().toLowerCase();
+      const keywordWords = keyword.split(' ').filter(Boolean);
+
+      const containsAllKeywords = (alias: string, keywords: string[]): boolean => {
+        const aliasWords = alias.split(' ').filter(Boolean);
+        return keywords.every(keyword =>
+          aliasWords.some(aliasWord => aliasWord.includes(keyword))
+        );
+      };
+
       filtered = filtered.filter(exercise =>
         exercise.aliases.some(alias =>
-          alias.alias.toLowerCase().includes(keyword)
+          containsAllKeywords(alias.alias.toLowerCase(), keywordWords)
         )
       );
     }
@@ -95,6 +106,7 @@ export class ExercisesComponent implements OnInit, OnChanges {
     this.pageIndex = 0;
     this.updateDisplayedExercises();
   }
+
 
   toggleDropdown(event: Event): void {
     event.stopPropagation();
@@ -169,6 +181,7 @@ export class ExercisesComponent implements OnInit, OnChanges {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        this.openSnackBar('Pomyślnie dodano nowe ćwiczenie');
         this.loadExercises();
       }
     });
@@ -177,5 +190,12 @@ export class ExercisesComponent implements OnInit, OnChanges {
   close(event: Event) {
     event.stopPropagation();
     this.closeBox.emit();
+  }
+
+  private openSnackBar(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      verticalPosition: 'top'
+    });
   }
 }

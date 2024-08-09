@@ -77,8 +77,11 @@ h1 {
   display: flex;
   align-items: center;
   position: relative;
-  width: 100px;
+  width: 400px;
   padding: 5px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
 }
 
 .workout-name-container input {
@@ -98,7 +101,7 @@ h1 {
 
 .dropdown-button {
   position: absolute;
-  right: -80px;
+  right: 210px;
   border: none;
   cursor: pointer;
   display: flex;
@@ -119,15 +122,11 @@ h1 {
   white-space: nowrap;
 }
 
-.add-button span {
-  margin-left: 10px
-}
-
 .dropdown-menu {
   position: absolute;
   top: 100%;
   left: 5px;
-  width: 163%;
+  width: 46%;
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -157,6 +156,13 @@ h1 {
   background-color: rgba(196, 196, 196, 0.7);
 }
 
+.advanced-options-checkbox {
+  margin-top: 20px;
+  width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .exercise-table {
   width: 100%;
   border-collapse: collapse;
@@ -165,47 +171,79 @@ h1 {
   min-width: 900px;
 }
 
+.exercise-table.basic-options {
+  min-width: 450px;
+  max-width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .exercise-table th:nth-child(1),
 .exercise-table td:nth-child(1) {
-  width: 26%;
+  width: 21%;
+}
+
+.exercise-table.basic-options th:nth-child(1),
+.exercise-table.basic-options td:nth-child(1) {
+  width: 42%;
 }
 
 .exercise-table th:nth-child(2),
 .exercise-table td:nth-child(2) {
-  width: 12%;
+  width: 11%;
+}
+
+.exercise-table.basic-options th:nth-child(2),
+.exercise-table.basic-options td:nth-child(2) {
+  width: 19%;
 }
 
 .exercise-table th:nth-child(3),
 .exercise-table td:nth-child(3) {
-  width: 12%;
+  width: 11%;
+}
+
+.exercise-table.basic-options th:nth-child(3),
+.exercise-table.basic-options td:nth-child(3) {
+  width: 19%;
 }
 
 .exercise-table th:nth-child(4),
 .exercise-table td:nth-child(4) {
-  width: 12%;
+  width: 11%;
 }
 
 .exercise-table th:nth-child(5),
 .exercise-table td:nth-child(5) {
-  width: 12%;
+  width: 19%;
+}
+
+.exercise-table th:nth-child(5),
+.exercise-table td:nth-child(5) {
+  width: 11%;
 }
 
 .exercise-table th:nth-child(6),
 .exercise-table td:nth-child(6) {
-  width: 12%;
+  width: 11%;
 }
 
 .exercise-table th:nth-child(7),
 .exercise-table td:nth-child(7) {
-  width: 12%;
+  width: 11%;
 }
 
 .exercise-table th:nth-child(8),
 .exercise-table td:nth-child(8) {
+  width: 11%;
+}
+
+.exercise-table th:last-child,
+.exercise-table td:last-child {
   width: 2%;
 }
 
-.exercise-table th:nth-child(8) {
+.exercise-table th:last-child {
   border: none;
   background-color: transparent;
 }
@@ -219,6 +257,10 @@ h1 {
 .exercise-table th {
   background-color: rgba(128, 0, 128, 0.8);
   padding: 10px;
+
+  @media (max-width: 1050px) {
+    font-size: 12px;
+  }
 }
 
 .exercise-table td {
@@ -296,12 +338,212 @@ td.break-cell {
   border: none;
   cursor: pointer;
   margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.add-exercise-button mat-icon {
+.delete-icon {
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.delete-icon:hover {
+  color: red !important;
+}
+
+.info-icon {
+  font-size: 20px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.info-icon:hover {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.tempo-tooltip {
+  position: relative;
+}
+
+.tempo-tooltip mat-icon {
+  vertical-align: middle;
+  font-size: 20px;
+}
+
+.tempo-tooltip .tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: aliceblue;
+  color: black;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 10px;
+  position: absolute;
+  z-index: 1;
+  top: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tempo-tooltip .tooltip-text::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent aliceblue transparent;
+}
+
+.tempo-tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Style for microcycle */
+
+.microcycle-length-form {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+}
+
+.microcycle-length-form label {
+  font-weight: bold;
   margin-right: 10px;
 }
 
-.add-exercise-button span {
-  margin-left: 10px;
+.microcycle-length-form input {
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  color: black;
+}
+
+.microcycle-length-form input:focus {
+  border-color: darkviolet;
+  outline: none;
+}
+
+.microcycle-table {
+  margin-top: 20px;
+  padding: 10px;
+  text-align: center;
+  vertical-align: top;
+  height: auto;
+  line-height: normal;
+}
+
+.microcycle-table table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.microcycle-table th {
+  border: 1px solid black;
+  background-color: rgba(128, 0, 128, 0.8);
+  font-size: 16px;
+  padding: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.microcycle-table td {
+  font-size: 14px;
+  border: 1px solid black;
+  padding: 10px;
+  text-align: center;
+  vertical-align: top;
+  color: black;
+  min-height: 40px;
+  line-height: 40px;
+  height: 40px;
+}
+
+.microcycle-table td.hidden-cell {
+  color: transparent !important;
+  border: none !important;
+}
+
+.cell-content {
+  position: relative;
+  min-height: 50px;
+}
+
+.microcycle-cell-dropdown-menu ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.microcycle-cell-dropdown-menu li {
+  padding: 10px;
+  cursor: pointer;
+  color: black;
+  line-height: 1.2;
+}
+
+.microcycle-cell-dropdown-menu li:hover {
+  background-color: #f0f0f0;
+}
+
+.workout-names-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.workout-letter {
+  background-color: #6A0DAD;
+  color: white;
+  border-radius: 50%;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.workout-letter:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  background-color: #8000FF;
+}
+
+.plus-icon {
+  display: none;
+  cursor: pointer;
+  font-size: 36px;
+  position: relative;
+}
+
+.microcycle-table td.active-cell:hover .plus-icon {
+  display: inline-block;
+}
+
+.microcycle-cell-dropdown-menu {
+  position: absolute;
+  top: 40px;
+  right: -75px;
+  width: 200px;
+  max-height: 100px;
+  overflow: auto;
+  background-color: white;
+  border: 1px solid black;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }

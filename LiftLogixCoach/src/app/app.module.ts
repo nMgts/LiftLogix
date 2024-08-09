@@ -45,9 +45,7 @@ import { MatCheckbox } from "@angular/material/checkbox";
 import { ScheduleComponent } from './components/schedule/schedule.component';
 import { WeeklyScheduleComponent } from './components/weekly-schedule/weekly-schedule.component';
 import { WorkoutCreatorComponent } from './components/workout-creator/workout-creator.component';
-import { AddWorkoutDialogComponent } from './components/add-workout-dialog/add-workout-dialog.component';
 import { AddExerciseToWorkoutDialogComponent } from './components/add-exercise-to-workout-dialog/add-exercise-to-workout-dialog.component';
-import { EditExerciseNameDialogComponent } from './components/edit-exercise-name-dialog/edit-exercise-name-dialog.component';
 
 @NgModule({
   declarations: [
@@ -78,9 +76,7 @@ import { EditExerciseNameDialogComponent } from './components/edit-exercise-name
     ScheduleComponent,
     WeeklyScheduleComponent,
     WorkoutCreatorComponent,
-    AddWorkoutDialogComponent,
-    AddExerciseToWorkoutDialogComponent,
-    EditExerciseNameDialogComponent
+    AddExerciseToWorkoutDialogComponent
   ],
   imports: [
     BrowserModule,

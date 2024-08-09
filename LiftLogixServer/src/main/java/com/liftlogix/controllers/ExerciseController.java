@@ -42,6 +42,12 @@ public class ExerciseController {
         return ResponseEntity.ok(exerciseService.getAllExercises());
     }
 
+    @GetMapping("/searchByAlias")
+    public ResponseEntity<List<ExerciseDTO>> searchExercisesByAlias(@RequestParam String alias) {
+        List<ExerciseDTO> exercises = exerciseService.searchExercisesByAlias(alias);
+        return ResponseEntity.ok(exercises);
+    }
+
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addExercise(
             @RequestParam("name") String name,
@@ -71,9 +77,7 @@ public class ExerciseController {
             description = (description != null) ? description : "";
             url = (url != null) ? url : "";
 
-            exerciseService.addExercise(name, description, url, image, bodyPartSet, aliasSet);
-
-            return ResponseEntity.ok().body("{\"message\": \"Exercise saved successfully\"}");
+            return ResponseEntity.ok(exerciseService.addExercise(name, description, url, image, bodyPartSet, aliasSet));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         } catch (IllegalArgumentException e) {

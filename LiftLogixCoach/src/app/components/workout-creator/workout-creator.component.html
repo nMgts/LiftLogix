@@ -9,39 +9,59 @@
   <button (click)="close($event)" class="close-button">&times;</button>
   <h1 class="creator-header">Stwórz plan</h1>
   <div class="workout-name-container">
-    <input [(ngModel)]="selectedWorkout" (focus)="onWorkoutNameFocus()" (ngModelChange)="updateWorkoutName($event)"/>
+    <input [(ngModel)]="selectedWorkout.name" readonly/>
     <button class="dropdown-button" (click)="toggleDropdown($event)">
       <mat-icon>expand_more</mat-icon>
     </button>
-    <button class="add-button" (click)="openAddWorkoutDialog()">
+    <button class="add-button" (click)="createNewWorkout()">
       <mat-icon>add</mat-icon>
       <span>Dodaj jednostkę treningową</span>
     </button>
     <div *ngIf="showDropdown" class="dropdown-menu">
       <div class="dropdown-item" *ngFor="let workout of workouts" (click)="selectWorkout(workout)">
-        <span (click)="selectWorkout(workout)">{{ workout }}</span>
+        <span (click)="selectWorkout(workout)">{{ workout.name }}</span>
         <mat-icon (click)="removeWorkout(workout, $event)">delete</mat-icon>
       </div>
     </div>
   </div>
 
-  <table class="exercise-table">
+  <div class="advanced-options-checkbox">
+    <label>
+      <input type="checkbox" [(ngModel)]="showAdvancedOptions"/>
+      Opcje zaawansowane
+    </label>
+  </div>
+
+  <table class="exercise-table" [ngClass]="{'advanced-options': showAdvancedOptions, 'basic-options': !showAdvancedOptions}">
     <thead>
     <tr>
       <th>Ćwiczenie</th>
       <th>Ilość serii</th>
       <th>Powtórzenia</th>
-      <th>Tempo</th>
-      <th>%1RM</th>
-      <th>RPE</th>
-      <th>Przerwa</th>
+      <th>Ciężar</th>
+      <th *ngIf="showAdvancedOptions">%1RM</th>
+      <th class="tempo-tooltip" *ngIf="showAdvancedOptions">
+        Tempo
+        <mat-icon>info</mat-icon>
+        <span class="tooltip-text">
+          Tempo musi być w formacie 1-1-1-1. Oprócz cyfry można zastosować znak x, oznacza on "jak najszybciej". Jednostką są sekundy.
+          Pierwsza pozycja to ekscentryka,
+          druga to pauza,
+          trzecia to koncentryka,
+          czwarta to pauza.
+          Można również pozostawić puste.
+        </span>
+      </th>
+      <th *ngIf="showAdvancedOptions">RPE</th>
+      <th *ngIf="showAdvancedOptions">Przerwa</th>
       <th></th>
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let exercise of exercises">
+    <tr *ngFor="let exercise of selectedWorkout.workoutExercises">
       <td (click)="openEditExerciseNameDialog(exercise)">
-        {{ exercise.name }}
+        {{ exercise.exercise.name }}
+        <mat-icon class="info-icon" (click)="openExerciseDetails(exercise.exercise, $event)">info</mat-icon>
       </td>
       <td (click)="editCell(exercise, 'series')">
         <ng-container *ngIf="!isEditing(exercise, 'series'); else editSeries">
@@ -63,33 +83,43 @@
           </div>
         </ng-template>
       </td>
-      <td (click)="editCell(exercise, 'tempo')">
-        <ng-container *ngIf="!isEditing(exercise, 'tempo'); else editTempo">
-          {{ exercise.tempo || '' }}
+      <td (click)="editCell(exercise, 'weight')">
+        <ng-container *ngIf="!isEditing(exercise, 'weight'); else editWeight">
+          {{ exercise.weight ? exercise.weight + 'kg' : '' }}
         </ng-container>
-        <ng-template #editTempo>
-          <input #inputElement [(ngModel)]="exercise.tempo" (blur)="endEdit(exercise, 'tempo')" (keydown.enter)="endEdit(exercise, 'name')" />
+        <ng-template #editWeight>
+          <input #inputElement type="number" [(ngModel)]="exercise.weight" (blur)="endEdit(exercise, 'weight')" (keydown.enter)="endEdit(exercise, 'weight')" />
         </ng-template>
       </td>
-      <td (click)="editCell(exercise, 'percentage')">
+      <td *ngIf="showAdvancedOptions" (click)="editCell(exercise, 'percentage')">
         <ng-container *ngIf="!isEditing(exercise, 'percentage'); else editPercentage">
           {{ exercise.percentage ? exercise.percentage + '%' : '' }}
         </ng-container>
         <ng-template #editPercentage>
-          <input #inputElement type="number" [(ngModel)]="exercise.percentage" (blur)="endEdit(exercise, 'percentage')" (keydown.enter)="endEdit(exercise, 'name')" />
+          <input #inputElement type="number" [(ngModel)]="exercise.percentage" (blur)="endEdit(exercise, 'percentage')" (keydown.enter)="endEdit(exercise, 'percentage')" />
         </ng-template>
       </td>
-      <td (click)="editCell(exercise, 'rpe')">
+      <td *ngIf="showAdvancedOptions" (click)="editCell(exercise, 'tempo')">
+        <ng-container *ngIf="!isEditing(exercise, 'tempo'); else editTempo">
+          {{ exercise.tempo || '' }}
+        </ng-container>
+      <ng-template #editTempo>
+        <input #inputElement [(ngModel)]="exercise.tempo" (blur)="endEdit(exercise, 'tempo')"
+               (keydown.enter)="endEdit(exercise, 'name')" (input)="onTempoInput($event, exercise)"
+               placeholder="1-1-1-1"/>
+      </ng-template>
+      </td>
+      <td *ngIf="showAdvancedOptions" (click)="editCell(exercise, 'rpe')">
         <ng-container *ngIf="!isEditing(exercise, 'rpe'); else editRpe">
           {{ exercise.rpe || '' }}
         </ng-container>
         <ng-template #editRpe>
-          <input #inputElement type="number" min="1" max="10" [(ngModel)]="exercise.rpe" (blur)="validateRpe(exercise)" (keydown.enter)="endEdit(exercise, 'name')" />
+          <input #inputElement type="number" min="1" max="10" [(ngModel)]="exercise.rpe" (blur)="validateRpe(exercise)" (keydown.enter)="endEdit(exercise, 'rpe')" />
         </ng-template>
       </td>
-      <td class="break-cell" (click)="editCell(exercise, 'break')">
+      <td *ngIf="showAdvancedOptions" class="break-cell" (click)="editCell(exercise, 'break')">
         <ng-container *ngIf="!isEditing(exercise, 'break'); else editBreak">
-          {{ exercise.break ? exercise.break.value + exercise.break.unit : '' }}
+          {{ exercise.break.value ? exercise.break.value + exercise.break.unit : '' }}
         </ng-container>
         <ng-template #editBreak>
           <div class="break-input">
@@ -112,4 +142,44 @@
     <mat-icon>add</mat-icon>
     <span>Dodaj ćwiczenie</span>
   </button>
+
+  <button (click)="duplicateWorkout()" mat-raised-button color="primary">Duplikuj trening</button>
+
+  <!-- Microcycle -->
+
+  <div class="microcycle-length-form">
+    <label for="microcycle-length">Długość mikrocyklu (dni):</label>
+    <input type="number" id="microcycle-length" [(ngModel)]="microcycleLength" (input)="setMicrocycleLength(microcycleLength)" />
+  </div>
+
+  <div class="microcycle-table">
+    <table>
+      <thead>
+      <tr>
+        <th *ngFor="let day of daysInWeek">{{ day }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let row of microcycleTable">
+        <td *ngFor="let cell of row" [ngClass]="{'hidden-cell': cell === 0, 'active-cell': cell !== 0}">
+          <div class="cell-content" *ngIf="cell !== 0">
+
+            <div class="workout-name">
+              <span *ngFor="let workout of getWorkoutsForDay(cell)" class="workout-letter" (click)="removeWorkoutFromMicrocycle(workout, cell)">
+                {{ getWorkoutInitials(workout.name) }}
+              </span>
+              <span class="plus-icon" (click)="toggleMicrocycleCellDropdown($event, cell)">+</span>
+            </div>
+
+            <div class="microcycle-cell-dropdown-menu" *ngIf="microcycleCellDropdownVisible && activeCell === cell">
+              <ul>
+                <li *ngFor="let workout of workouts" (click)="addWorkoutToMicrocycle(workout, cell)">{{ workout.name }}</li>
+              </ul>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

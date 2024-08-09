@@ -9,12 +9,15 @@ import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 })
 export class ExerciseDetailsDialogComponent {
   safeUrl: SafeHtml;
+  safeDescription: SafeHtml;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private sanitizer: DomSanitizer,
     public dialogRef: MatDialogRef<ExerciseDetailsDialogComponent>
   ) {
+    const description = data.description.replace(/\r\n/g, '<br>');
+    this.safeDescription = this.sanitizer.bypassSecurityTrustHtml(description);
     this.safeUrl = this.sanitizer.bypassSecurityTrustHtml(data.url);
   }
 

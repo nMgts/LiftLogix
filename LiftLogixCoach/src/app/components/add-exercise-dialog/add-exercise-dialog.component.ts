@@ -4,6 +4,7 @@ import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { MatDialogRef } from "@angular/material/dialog";
 import { ExerciseService } from "../../services/exercise.service";
 import { YoutubeEmbedPipe } from '../../pipes/youtube-embed.pipe';
+import {Exercise} from "../../interfaces/Exercise";
 
 @Component({
   selector: 'app-add-exercise-dialog',
@@ -100,8 +101,8 @@ export class AddExerciseDialogComponent {
 
       const token = localStorage.getItem('token') || '';
       this.exerciseService.addExercise(token, formData).subscribe(
-        () => {
-          this.dialogRef.close(true);
+        (newExercise: Exercise) => {
+          this.dialogRef.close(newExercise);
         },
         (error) => {
           if (error.status === 409) {
