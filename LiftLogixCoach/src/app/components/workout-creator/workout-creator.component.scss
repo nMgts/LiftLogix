@@ -547,3 +547,85 @@ td.break-cell {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
 }
+
+/* Style for micro and macro cycle */
+
+.microcycle-count-form, .mesocycle-count-form {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+}
+
+.microcycle-count-form label, .mesocycle-count-form label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.microcycle-count-form input, .mesocycle-count-form input {
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  color: black;
+}
+
+.microcycle-count-form input:focus, .mesocycle-count-form input:focus {
+  border-color: darkviolet;
+  outline: none;
+}
+
+.mesocycle-table, .macrocycle-table {
+  margin-top: 20px;
+  padding: 10px;
+  text-align: center;
+  vertical-align: top;
+  height: auto;
+  line-height: normal;
+}
+
+.mesocycle-table table, .macrocycle-table table {
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.mesocycle-table th, .macrocycle-table th {
+  border: 1px solid black;
+  background-color: rgba(128, 0, 128, 0.8);
+  font-size: 16px;
+  padding: 10px;
+  width: 50px;
+  height: 50px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.microcycle-header, .mesocycle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.microcycle-management, .mesocycle-management {
+  display: none;
+}
+
+.microcycle-header, .mesocycle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.microcycle-header:hover .microcycle-thead, .mesocycle-header:hover .mesocycle-thead {
+  display: none;
+}
+
+.microcycle-header:hover .microcycle-management, .mesocycle-header:hover .mesocycle-management {
+  display: inline-block;
+}
+
+.highlighted-header {
+  box-shadow: 0 0 10px 2px white;
+  color: aliceblue;
+  z-index: 100;
+}

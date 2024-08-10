@@ -1,4 +1,4 @@
-import {Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnChanges, Output } from '@angular/core';
 import { Exercise } from "../../interfaces/Exercise";
 import { ExerciseService } from "../../services/exercise.service";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
@@ -6,14 +6,14 @@ import { PageEvent } from "@angular/material/paginator";
 import { MatDialog } from "@angular/material/dialog";
 import { ExerciseDetailsDialogComponent } from "../exercise-details-dialog/exercise-details-dialog.component";
 import { AddExerciseDialogComponent } from "../add-exercise-dialog/add-exercise-dialog.component";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-exercises',
   templateUrl: './exercises.component.html',
   styleUrl: './exercises.component.scss'
 })
-export class ExercisesComponent implements OnInit, OnChanges {
+export class ExercisesComponent implements OnChanges {
   @Input() isBoxExpanded = false;
   @Output() closeBox = new EventEmitter<void>();
   exercises: (Exercise & { imageSafeUrl: SafeUrl })[] = [];
@@ -41,12 +41,8 @@ export class ExercisesComponent implements OnInit, OnChanges {
     private snackBar: MatSnackBar
     ) {}
 
-  ngOnInit(): void {
-    this.loadExercises();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['isBoxExpanded']) {
+  ngOnChanges(): void {
+    if (this.isBoxExpanded) {
       this.loadExercises();
     }
   }

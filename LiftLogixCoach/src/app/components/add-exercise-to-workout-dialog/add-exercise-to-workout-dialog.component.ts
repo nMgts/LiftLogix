@@ -36,7 +36,6 @@ export class AddExerciseToWorkoutDialogComponent implements OnInit {
         catchError(() => of([]))
       ))
     );
-    console.log(this.filteredExercises$);
   }
 
   showDropdown(event: Event) {

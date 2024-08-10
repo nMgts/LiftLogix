@@ -1,81 +1,34 @@
-import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, Output, ViewChild } from '@angular/core';
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AddExerciseToWorkoutDialogComponent } from "../add-exercise-to-workout-dialog/add-exercise-to-workout-dialog.component";
 import { Exercise } from "../../interfaces/Exercise";
 import { ExerciseDetailsDialogComponent } from "../exercise-details-dialog/exercise-details-dialog.component";
-
-export interface WorkoutExercise {
-  exercise: Exercise;
-  series: number | null;
-  repetitionsFrom: number | null;
-  repetitionsTo: number | null;
-  weight: number | null;
-  percentage: number | null;
-  tempo: string;
-  rpe: number | null;
-  break: {
-    value: number | null;
-    unit: string;
-  };
-}
-
-export interface Workout {
-  name: string;
-  workoutExercises: WorkoutExercise[];
-}
-
-export interface Microcycle {
-  length: number;
-  workouts: { workout: Workout, day: number }[];
-}
+import { WorkoutExercise } from "../../interfaces/WorkoutExercise";
+import { Workout } from "../../interfaces/Workout";
+import { Microcycle } from "../../interfaces/Microcycle";
+import {Mesocycle} from "../../interfaces/Mesocycle";
+import {Macrocycle} from "../../interfaces/Macrocycle";
 
 @Component({
   selector: 'app-workout-creator',
   templateUrl: './workout-creator.component.html',
   styleUrl: './workout-creator.component.scss'
 })
-export class WorkoutCreatorComponent implements OnInit {
+export class WorkoutCreatorComponent implements OnChanges {
   @Input() isBoxExpanded = false;
   @Output() closeBox = new EventEmitter<void>();
   protected readonly window = window;
 
   showDropdown: boolean = false;
   showAdvancedOptions = false;
-
-  exampleExercise: Exercise = {
-    id: 125,
-    name: 'Squat',
-    description: 'A basic leg exercise that targets the quadriceps, hamstrings, and glutes.',
-    url: 'https://www.example.com/squat-video',
-    image: '/icons/dumbbell.jpg',
-    body_parts: ['GLUTES', 'QUAD'],
-    aliases: [
-      { id: 125, alias: 'Przysiad', language: 'pl' },
-      { id: 235, alias: 'Squat', language: 'en' }
-    ]
-  };
-
-  workoutExercises: WorkoutExercise[] = [
-    {
-      exercise: this.exampleExercise,
-      series: 3,
-      repetitionsFrom: 8,
-      repetitionsTo: 12,
-      weight: 100,
-      percentage: 70,
-      tempo: '1-0-1-0',
-      rpe: 7,
-      break: { value: 60, unit: 's' }
-    }
-  ];
-
+  workoutExercises: WorkoutExercise[] = [];
   exampleWorkout: Workout = {
     name: 'Trening A',
-    workoutExercises: this.workoutExercises
+    workoutExercises: this.workoutExercises,
+    days: []
   }
 
-  workouts = [this.exampleWorkout];
   selectedWorkout = this.exampleWorkout;
   addedWorkouts = 1;
 
@@ -84,12 +37,27 @@ export class WorkoutCreatorComponent implements OnInit {
   @ViewChild('inputElement') inputElement: ElementRef | undefined;
 
   microcycleLength: number = 7;
-  microcycle: Microcycle = { length: 7, workouts: [] };
+  microcycle: Microcycle = {
+    length: 7,
+    workouts: [
+      this.exampleWorkout
+    ]
+  };
   daysInWeek: string[] = ['PON', 'WT', 'ŚR', 'CZW', 'PT', 'SOB', 'NDZ'];
   microcycleTable: number[][] = [];
 
   microcycleCellDropdownVisible = false;
   activeCell: any = null;
+
+  selectedMicrocycle = this.microcycle;
+  mesocycle: Mesocycle = { microcycles: [this.microcycle] };
+  microcycleCount: number = 1;
+  showMesocycle = false;
+
+  showMacrocycle = false;
+  macrocycle: Macrocycle = { mesocycles: [this.mesocycle] };
+  selectedMesocycle = this.mesocycle;
+  mesocycleCount: number = 1;
 
   constructor(
     public dialog: MatDialog,
@@ -99,8 +67,10 @@ export class WorkoutCreatorComponent implements OnInit {
     document.addEventListener('click', () => this.closeMicrocycleCellDropdown());
   }
 
-  ngOnInit() {
-    this.generateMicrocycleTable();
+  ngOnChanges() {
+    if (this.isBoxExpanded) {
+      this.generateMicrocycleTable();
+    }
   }
 
   /** Workout Unit Methods **/
@@ -143,9 +113,10 @@ export class WorkoutCreatorComponent implements OnInit {
   createNewWorkout() {
     const newWorkout: Workout = {
       name: this.generateWorkoutName(),
-      workoutExercises: []
+      workoutExercises: [],
+      days: []
     };
-    this.workouts.push(newWorkout);
+    this.selectedMicrocycle.workouts.push(newWorkout);
     this.selectedWorkout = newWorkout;
     this.showDropdown = false;
     this.addedWorkouts++;
@@ -153,12 +124,12 @@ export class WorkoutCreatorComponent implements OnInit {
 
   removeWorkout(workout: Workout, event: Event) {
     event.stopPropagation();
-    if (this.workouts.length > 1) {
-      const index = this.workouts.indexOf(workout);
+    if (this.microcycle.workouts.length > 1) {
+      const index = this.microcycle.workouts.indexOf(workout);
       if (index !== -1) {
-        this.workouts.splice(index, 1);
+        this.microcycle.workouts.splice(index, 1);
         if (this.selectedWorkout === workout) {
-          this.selectedWorkout = this.workouts[0];
+          this.selectedWorkout = this.microcycle.workouts[0];
         }
       }
     } else {
@@ -286,7 +257,7 @@ export class WorkoutCreatorComponent implements OnInit {
     const workoutNamePattern = new RegExp(`^(${this.selectedWorkout.name.replace(/\d*$/, '')})(\\d*)$`);
     let maxNumber = 0;
 
-    this.workouts.forEach(workout => {
+    this.microcycle.workouts.forEach(workout => {
       const match = workout.name.match(workoutNamePattern);
       if (match) {
         const number = match[2] ? parseInt(match[2]) : 0;
@@ -313,10 +284,11 @@ export class WorkoutCreatorComponent implements OnInit {
         tempo: exercise.tempo,
         rpe: exercise.rpe,
         break: { ...exercise.break }
-      }))
+      })),
+      days: []
     };
 
-    this.workouts.push(newWorkout);
+    this.microcycle.workouts.push(newWorkout);
   }
 
   /** Microcycle Methods **/
@@ -326,7 +298,9 @@ export class WorkoutCreatorComponent implements OnInit {
     this.generateMicrocycleTable();
     this.microcycle.length = value;
 
-    this.microcycle.workouts = this.microcycle.workouts.filter(workout => workout.day <= value);
+    this.microcycle.workouts.forEach(workout => {
+      workout.days = workout.days.filter(day => day <= value);
+    });
 
     console.log(this.microcycle);
   }
@@ -362,11 +336,13 @@ export class WorkoutCreatorComponent implements OnInit {
   }
 
   addWorkoutToMicrocycle(workout: Workout, day: number): void {
-    this.microcycle.workouts.push({workout, day});
+    workout.days.push(day);
   }
 
   getWorkoutsForDay(day: number): Workout[] {
-    return this.microcycle.workouts.filter(entry => entry.day === day).map(entry => entry.workout);
+    return this.selectedMicrocycle.workouts
+      .filter(workout => workout.days.includes(day))
+      .map(workout => workout);
   }
 
   getWorkoutInitials(name: string): string {
@@ -374,13 +350,140 @@ export class WorkoutCreatorComponent implements OnInit {
   }
 
   removeWorkoutFromMicrocycle(workout: Workout, day: number): void {
-    const workoutIndex = this.microcycle.workouts.findIndex(w => w.workout === workout && w.day === day);
-    if (workoutIndex !== -1) {
-      this.microcycle.workouts.splice(workoutIndex, 1);
+    workout.days = workout.days.filter(d => d !== day);
+  }
+
+  /** Mesoocycle Methods **/
+
+  setMicrocycleCount(value: number) {
+    if (value < 1) {
+      this.microcycleCount = 1;
+    } else {
+      this.microcycleCount = value;
+    }
+
+    const difference = this.microcycleCount - this.selectedMesocycle.microcycles.length;
+
+    if (difference > 0) {
+      for (let i = 0; i < difference; i++) {
+        const newMicrocycle: Microcycle = {
+          length: this.selectedMesocycle.microcycles[0].length,
+          workouts: this.selectedMesocycle.microcycles[0].workouts.map(workout => ({
+            ...workout,
+            workoutExercises: workout.workoutExercises.map(exercise => ({
+              ...exercise,
+              exercise: { ...exercise.exercise },
+              break: { ...exercise.break }
+            })),
+            days: [...workout.days]
+          }))
+        };
+        this.selectedMesocycle.microcycles.push(newMicrocycle);
+      }
+    } else if (difference < 0) {
+      this.selectedMesocycle.microcycles.splice(difference);
+    }
+  }
+
+  selectMicrocycle(index: number): void {
+    this.selectedMicrocycle = this.selectedMesocycle.microcycles[index];
+    this.selectedWorkout = this.selectedMicrocycle.workouts[0];
+  }
+
+  deleteMicrocycle(index: number): void {
+    if (this.selectedMesocycle.microcycles.length > 1) {
+      const selectedIndex = this.selectedMesocycle.microcycles.indexOf(this.selectedMicrocycle);
+      this.selectedMesocycle.microcycles.splice(index, 1);
+      this.microcycleCount--;
+      if (index == selectedIndex) {
+        this.selectedMicrocycle = this.selectedMesocycle.microcycles[0];
+      }
+    } else {
+      this.openSnackBar("Nie można usunąć wszystkich mikrocykli");
+    }
+  }
+
+  /** Macrocycle Methods **/
+
+  setMesocycleCount(value: number) {
+    if (value < 1) {
+      this.mesocycleCount = 1;
+    } else {
+      this.mesocycleCount = value;
+    }
+
+    const difference = this.mesocycleCount - this.macrocycle.mesocycles.length;
+
+    if (difference > 0) {
+      for (let i = 0; i < difference; i++) {
+        const newMesocycle: Mesocycle = {
+          microcycles: this.macrocycle.mesocycles[0].microcycles.map(microcycle => ({
+            length: microcycle.length,
+            workouts: microcycle.workouts.map(workout => ({
+              ...workout,
+              workoutExercises: workout.workoutExercises.map(exercise => ({
+                ...exercise,
+                exercise: { ...exercise.exercise },
+                break: { ...exercise.break }
+              })),
+              days: [...workout.days]
+            }))
+          }))
+        };
+        this.macrocycle.mesocycles.push(newMesocycle);
+      }
+    } else if (difference < 0) {
+      this.macrocycle.mesocycles.splice(difference);
+    }
+  }
+
+  selectMesocycle(index: number): void {
+    this.selectedMesocycle = this.macrocycle.mesocycles[index];
+    this.selectedMicrocycle = this.selectedMesocycle.microcycles[0];
+    this.selectedWorkout = this.selectedMicrocycle.workouts[0];
+  }
+
+  deleteMesocycle(index: number): void {
+    if (this.macrocycle.mesocycles.length > 1) {
+      const selectedIndex = this.macrocycle.mesocycles.indexOf(this.selectedMesocycle);
+      this.macrocycle.mesocycles.splice(index, 1);
+      this.mesocycleCount--;
+      if (index == selectedIndex) {
+        this.selectedMesocycle = this.macrocycle.mesocycles[0];
+        this.selectMicrocycle(0);
+      }
+    } else {
+      this.openSnackBar("Nie można usunąć wszystkich mezocykli");
     }
   }
 
   /** Other Methods **/
+
+  getMesocycleIndex(): number {
+    return this.macrocycle.mesocycles.indexOf(this.selectedMesocycle);
+  }
+
+  getMicrocycleIndex(): number {
+    return this.selectedMesocycle.microcycles.indexOf(this.selectedMicrocycle);
+  }
+
+  toRoman(num: number): string {
+    const romanNumerals: { [key: number]: string } = {
+      1: 'I', 4: 'IV', 5: 'V', 9: 'IX', 10: 'X', 40: 'XL', 50: 'L',
+      90: 'XC', 100: 'C', 400: 'CD', 500: 'D', 900: 'CM', 1000: 'M'
+    };
+    let result = '';
+    const keys = Object.keys(romanNumerals).map(Number).reverse();
+
+    for (const key of keys) {
+      while (num >= key) {
+        result += romanNumerals[key];
+        num -= key;
+      }
+    }
+
+    return result;
+  }
 
   private openSnackBar(message: string): void {
     this.snackBar.open(message, 'Zamknij', {

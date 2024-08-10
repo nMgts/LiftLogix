@@ -2,7 +2,7 @@
   <button *ngIf="isBoxExpanded" (click)="close($event)" class="close-button">&times;</button>
   <h1 [ngClass]="{ 'expanded': isBoxExpanded }">Zgłoszenia</h1>
   <div *ngFor="let application of displayedApplications; let i = index"
-       (click)="openApplicationDialog(application)"
+       (click)="openApplicationDialog(application, $event)"
        class="application-container">
     <div class="application-info">
       <p>{{ calculateIndex(i) + 1 }}. {{application.client.first_name}} {{application.client.last_name}}</p>
@@ -12,10 +12,10 @@
       <p><strong *ngIf="application.description">Opis:</strong> {{ truncateDescription(application.description) }}</p>
     </div>
     <div class="button-container" *ngIf="application.status === 'PENDING'">
-      <button class="app_btn" (click)="accept(application.id)">
+      <button class="app_btn" (click)="accept(application.id, $event)">
         <i class="fas fa-check"></i>
       </button>
-      <button class="app_btn rejected" (click)="reject(application.id)">
+      <button class="app_btn rejected" (click)="reject(application.id, $event)">
         <i class="fas fa-times"></i>
       </button>
     </div>

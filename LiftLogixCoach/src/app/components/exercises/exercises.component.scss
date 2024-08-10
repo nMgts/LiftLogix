@@ -184,28 +184,29 @@ h1.header {
         object-fit: cover;
         border-radius: 5px;
         margin-bottom: 10px;
+        aspect-ratio: 3/4;
       }
 
       .exercise-card-name {
         font-size: 1.2em;
         padding-bottom: 5px;
         font-weight: bold;
-        white-space: nowrap;       /* Zapobiega łamaniu się linii */
-        overflow: hidden;          /* Ukrywa nadmiarowy tekst */
-        text-overflow: ellipsis;   /* Dodaje "..." na końcu nadmiarowego tekstu */
-        max-width: 100%;           /* Ustawia maksymalną szerokość na 100% dostępnego miejsca */
-        display: block;            /* Sprawia, że element zajmuje całą dostępną szerokość */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        display: block;
       }
 
       .exercise-card-body-parts {
         font-size: 0.9em;
         color: #6c757d;
         padding-bottom: 2px;
-        white-space: nowrap;       /* Zapobiega łamaniu się linii */
-        overflow: hidden;          /* Ukrywa nadmiarowy tekst */
-        text-overflow: ellipsis;   /* Dodaje "..." na końcu nadmiarowego tekstu */
-        max-width: 100%;           /* Ustawia maksymalną szerokość na 100% dostępnego miejsca */
-        display: block;            /* Sprawia, że element zajmuje całą dostępną szerokość */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        display: block;
       }
 
       .paginator {

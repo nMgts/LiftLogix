@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { Client } from "../../interfaces/Client";
 import { ClientService } from "../../services/client.service";
@@ -9,7 +9,7 @@ import { ApplicationService } from "../../services/application.service";
   templateUrl: './clients.component.html',
   styleUrl: './clients.component.scss'
 })
-export class ClientsComponent implements OnInit {
+export class ClientsComponent implements OnChanges {
   @Input() isBoxExpanded = false;
   @Output() closeBox = new EventEmitter<void>();
   clientsQuantity: number = 0;
@@ -29,13 +29,14 @@ export class ClientsComponent implements OnInit {
     private applicationService: ApplicationService
   ) {}
 
-  ngOnInit(): void {
-    this.updateMaxEmailLength(window.innerWidth);
+  ngOnChanges(): void {
     this.getClientsQuantity();
-    this.loadClients();
+    if (this.isBoxExpanded) {
+      this.loadClients();
+      this.updateMaxEmailLength(window.innerWidth);
+    }
     this.applicationService.clientsQuantityUpdated$.subscribe(() => {
       this.getClientsQuantity();
-      this.loadClients();
     });
   }
 

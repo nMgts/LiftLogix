@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, Input, OnChanges, SimpleChanges, HostListener, Output, EventEmitter} from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges, HostListener, Output, EventEmitter } from '@angular/core';
 import { Application } from '../../interfaces/Application';
 import { ApplicationService } from '../../services/application.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,7 +11,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
   templateUrl: './applications.component.html',
   styleUrls: ['./applications.component.scss']
 })
-export class ApplicationsComponent implements OnInit, OnChanges {
+export class ApplicationsComponent implements OnChanges {
   @Input() isBoxExpanded = false;
   @Output() closeBox = new EventEmitter<void>();
   applications: Application[] = [];
@@ -29,16 +29,9 @@ export class ApplicationsComponent implements OnInit, OnChanges {
     private snackBar: MatSnackBar
   ) {}
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     this.loadApplications();
     this.updateTruncateLength();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['isBoxExpanded']) {
-      this.loadApplications();
-      this.updateTruncateLength();
-    }
   }
 
   async loadApplications() {
@@ -75,7 +68,8 @@ export class ApplicationsComponent implements OnInit, OnChanges {
     this.updateDisplayedApplications();
   }
 
-  openApplicationDialog(application: Application): void {
+  openApplicationDialog(application: Application, event: Event): void {
+    event.stopPropagation();
     const dialogRef = this.dialog.open(ApplicationDetailsDialogComponent, {
       data: application,
       width: '600px'
@@ -87,7 +81,8 @@ export class ApplicationsComponent implements OnInit, OnChanges {
     });
   }
 
-  accept(applicationId: number): void {
+  accept(applicationId: number, event: Event): void {
+    event.stopPropagation();
     const token = localStorage.getItem('token') || '';
     this.applicationService.acceptApplication(applicationId, token).subscribe(
       () => {
@@ -99,7 +94,8 @@ export class ApplicationsComponent implements OnInit, OnChanges {
     );
   }
 
-  reject(applicationId: number): void {
+  reject(applicationId: number, event: Event): void {
+    event.stopPropagation();
     const token = localStorage.getItem('token') || '';
     this.applicationService.rejectApplication(applicationId, token).subscribe(
       () => {
