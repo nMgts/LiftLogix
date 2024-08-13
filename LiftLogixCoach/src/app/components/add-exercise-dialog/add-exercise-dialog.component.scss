@@ -1,0 +1,63 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+.error-message {
+  margin-left: 25px;
+  color: red;
+}
+
+.alias-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+
+  span {
+    display: flex;
+    align-items: center;
+  }
+
+  button {
+    margin-left: 4px;
+  }
+}
+
+.drop-zone {
+  width: 240px;
+  height: 100px;
+  border: 2px dashed darkviolet;
+  border-radius: 10px;
+  margin: 10px auto;
+  padding: 20px;
+  color: darkviolet;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  position: relative;
+}
+
+.drop-zone.drag-over {
+  border-color: purple;
+  background-color: rgba(150, 150, 255, 0.1);
+}
+
+.image-del {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+  z-index: 10;
+  color: aliceblue;
+}
+
+.image-del:hover {
+  color: darkviolet;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+textarea {
+  height: 64px !important;
+}

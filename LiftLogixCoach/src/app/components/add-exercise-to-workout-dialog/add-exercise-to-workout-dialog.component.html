@@ -1,0 +1,28 @@
+<div class="custom-dialog-container" (click)="hideDropdown()">
+  <h1 mat-dialog-title>Dodaj ćwiczenie</h1>
+  <div mat-dialog-content>
+    <mat-form-field>
+      <input matInput [formControl]="searchControl" placeholder="Wyszukaj"
+             (click)="showDropdown($event)" (input)="showDropdown($event)"/>
+      <button mat-icon-button class="toggle-dropdown" (click)="toggleDropdown($event)">
+        <mat-icon>{{ isDropdownOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+      </button>
+    </mat-form-field>
+    <div class="dropdown" *ngIf="filteredExercises$ | async as exercises">
+      <div *ngIf="exercises.length > 0 && searchControl.value != '' && isDropdownOpen">
+        <div *ngFor="let exercise of exercises" (click)="onExerciseSelect(exercise)" class="dropdown-item">
+          <img [src]="exercise.image ? exercise.image : '/icons/dumbbell.jpg'" alt="{{exercise.name}}" class="dropdown-image" />
+          <span>{{exercise.name}}</span>
+          <button mat-icon-button (click)="openExerciseDetails(exercise, $event)">
+            <mat-icon>info</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <button mat-button (click)="openAddExerciseDialog()">Dodaj nowe ćwiczenie</button>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCancel()">Anuluj</button>
+    <button mat-button (click)="onConfirm()">Potwierdź</button>
+  </div>
+</div>

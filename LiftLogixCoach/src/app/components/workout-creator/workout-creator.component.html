@@ -1,0 +1,351 @@
+<div class="not-expanded-box" *ngIf="!isBoxExpanded">
+  <h1 class="header" *ngIf="window.innerWidth > 650">Kreator planów</h1>
+  <div class="content">
+    <img ngSrc="/icons/workout.png" alt="Workout creator Icon" class="workout-creator-image" width="136" height="136"/>
+  </div>
+</div>
+
+<button *ngIf="isBoxExpanded" (click)="close($event)" class="close-button">&times;</button>
+
+<div class="expanded-box" *ngIf="isBoxExpanded">
+
+  <h1 class="creator-header">Stwórz plan</h1>
+
+  <div *ngIf="showAdvancedOptions" class="micro-meso-info">Mezocykl: {{ getMesocycleIndex() + 1 }}, Mikrocykl: {{ getMicrocycleIndex() + 1 }}</div>
+
+  <mat-form-field class="workout-name-container" appearance="fill">
+    <mat-label>Wybierz jednostkę treningową</mat-label>
+    <mat-select [(ngModel)]="selectedWorkout" (selectionChange)="selectWorkout($event.value)">
+      <mat-option *ngFor="let workout of selectedMicrocycle.workouts" [value]="workout">
+        {{ workout.name }}
+        <mat-icon (click)="removeWorkout(workout, $event)">delete</mat-icon>
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="actions-container">
+    <button (click)="createNewWorkout()" mat-raised-button color="primary">
+      <mat-icon>add</mat-icon> Dodaj trening
+    </button>
+
+    <button (click)="duplicateWorkout()" mat-raised-button color="primary">
+      <mat-icon>content_copy</mat-icon>Duplikuj trening
+    </button>
+
+    <mat-checkbox [(ngModel)]="showAdvancedOptions">Opcje zaawansowane</mat-checkbox>
+  </div>
+
+  <div class="meso-macro-inputs" *ngIf="showAdvancedOptions">
+    <mat-checkbox [(ngModel)]="showMesocycle">Stwórz mezocykl</mat-checkbox>
+    <mat-checkbox *ngIf="showMesocycle" [(ngModel)]="showMacrocycle">Stwórz makrocykl</mat-checkbox>
+  </div>
+
+  <table class="exercise-table" [ngClass]="{'advanced-options': showAdvancedOptions, 'basic-options': !showAdvancedOptions}">
+    <thead>
+    <tr>
+      <th>Ćwiczenie</th>
+      <th>Ilość serii</th>
+      <th>Powtórzenia</th>
+      <th>Ciężar</th>
+      <th class="tooltip" *ngIf="showAdvancedOptions">
+        %1RM
+        <mat-icon>info</mat-icon>
+        <span class="tooltip-text">
+          <span class="important-text">Procent ciężaru maksymalnego dla jednego powtórzenia.</span>
+          <br> Jeśli zadeklarujesz procent ciężaru maksymalnego, a pole dotyczące ciężaru pozostanie puste,
+          <span class="important-text">system automatycznie obliczy ciężar</span> dla każdego klienta na podstawie jego indywidualnych rekordów.
+          <br> Jeśli dodatkowo wypełnisz pole <span class="important-text">RPE</span> (Rating of Perceived Exertion), <span class="important-text">system automatycznie wyliczy liczbę powtórzeń.</span>
+        </span>
+      </th>
+      <th class="tooltip" *ngIf="showAdvancedOptions">
+        Tempo
+        <mat-icon>info</mat-icon>
+        <span class="tooltip-text">
+          <span class="important-text">Tempo ćwiczenia należy podać w formacie 1-1-1-1</span>, gdzie każda cyfra reprezentuje czas trwania
+          poszczególnych faz w sekundach. Można również użyć znaku x, który oznacza "jak najszybciej".
+          <br><span class="important-text">Pierwsza pozycja</span> to czas trwania fazy ekscentrycznej,
+          <br><span class="important-text">Druga pozycja</span> to czas pauzy,
+          <br><span class="important-text">Trzecia pozycja</span> to czas trwania fazy koncentrycznej,
+          <br><span class="important-text">Czwarta pozycja</span> to czas pauzy.
+          <br>Jeżeli którąkolwiek fazę zostawisz jako pustą - tempo nie będzie uwzględniane.
+        </span>
+      </th>
+      <th class="tooltip" *ngIf="showAdvancedOptions">
+        RPE
+        <mat-icon>info</mat-icon>
+        <span class="tooltip-text">
+          <span class="important-text">Skala subiektywnego wysiłku (Rating of Perceived Exertion) (od 1 do 10).</span>
+          <br> <span class="important-text">Skala RPE</span> ocenia, ile powtórzeń zostało w zapasie w stosunku do naszych maksymalnych możliwości podczas ćwiczenia.
+          <br> Jeśli dodatkowo wprowadzisz procent ciężaru maksymalnego <span class="important-text">(%1RM), system automatycznie obliczy liczbę powtórzeń</span>
+          na podstawie tych danych.
+        </span>
+      </th>
+      <th *ngIf="showAdvancedOptions">Przerwa</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let exercise of selectedWorkout.workoutExercises">
+      <td (click)="openEditExerciseNameDialog(exercise)">
+        {{ exercise.exercise.name }}
+        <mat-icon class="info-icon" (click)="openExerciseDetails(exercise.exercise, $event)">info</mat-icon>
+      </td>
+      <td (click)="editCell(exercise, 'series')">
+        <ng-container *ngIf="!isEditing(exercise, 'series'); else editSeries">
+          {{ exercise.series || '' }}
+        </ng-container>
+        <ng-template #editSeries>
+          <input #inputElement
+                 [(ngModel)]="exercise.series"
+                 (focus)="selectAllText($event)"
+                 (blur)="validateSeries(exercise)"
+                 (keydown.enter)="endEdit()"
+                 type="number" min="0"/>
+        </ng-template>
+      </td>
+      <td class="repetitions-cell" (click)="editCell(exercise, 'repetitions')">
+        <ng-container *ngIf="!isEditing(exercise, 'repetitions'); else editRepetitions">
+          {{ formatRepetitions(exercise) }}
+        </ng-container>
+        <ng-template #editRepetitions>
+          <div class="repetitions-inputs">
+            <input #inputElement
+                   [(ngModel)]="exercise.repetitionsFrom"
+                   (click)="selectAllText($event);"
+                   (blur)="validateRepetitions(exercise); endEditIfNotFocusedOnOtherInput('repetitions', $event)"
+                   (keydown.enter)="endEdit()"
+                   tabindex="1" placeholder="od" type="number"/>
+            -
+            <input [(ngModel)]="exercise.repetitionsTo"
+                   (click)="selectAllText($event);"
+                   (blur)="validateRepetitions(exercise); endEditIfNotFocusedOnOtherInput('repetitions', $event)"
+                   (keydown.enter)="endEdit()"
+                   tabindex="2" placeholder="do" type="number" />
+          </div>
+        </ng-template>
+      </td>
+      <td (click)="editCell(exercise, 'weight')">
+        <ng-container *ngIf="!isEditing(exercise, 'weight'); else editWeight">
+          {{ exercise.weight ? exercise.weight + 'kg' : '' }}
+        </ng-container>
+        <ng-template #editWeight>
+          <input #inputElement
+                 [(ngModel)]="exercise.weight"
+                 (focus)="selectAllText($event)"
+                 (blur)="validateWeight(exercise)"
+                 (keydown.enter)="endEdit()"
+                 type="number" min="0"/>
+        </ng-template>
+      </td>
+      <td *ngIf="showAdvancedOptions" (click)="editCell(exercise, 'percentage')">
+        <ng-container *ngIf="!isEditing(exercise, 'percentage'); else editPercentage">
+          {{ exercise.percentage ? exercise.percentage + '%' : '' }}
+        </ng-container>
+        <ng-template #editPercentage>
+          <input #inputElement
+                 [(ngModel)]="exercise.percentage"
+                 (focus)="selectAllText($event)"
+                 (blur)="validatePercentage(exercise)"
+                 (keydown.enter)="endEdit()"
+                 type="number" min="0"/>
+        </ng-template>
+      </td>
+      <td *ngIf="showAdvancedOptions" (click)="editCell(exercise, 'tempo')">
+        <ng-container *ngIf="!isEditing(exercise, 'tempo'); else editTempo">
+          {{ exercise.tempo || '' }}
+        </ng-container>
+        <ng-template #editTempo>
+          <input #inputElement
+                 [(ngModel)]="exercise.tempo"
+                 (focus)="selectAllText($event)"
+                 (blur)="validateTempo(exercise)"
+                 (keydown.enter)="endEdit()"
+                 (input)="onTempoInput($event, exercise)"
+                 placeholder="1-1-1-1"/>
+        </ng-template>
+      </td>
+      <td *ngIf="showAdvancedOptions" (click)="editCell(exercise, 'rpe')">
+        <ng-container *ngIf="!isEditing(exercise, 'rpe'); else editRpe">
+          {{ exercise.rpe || '' }}
+        </ng-container>
+        <ng-template #editRpe>
+          <input #inputElement
+                 [(ngModel)]="exercise.rpe"
+                 (focus)="selectAllText($event)"
+                 (blur)="validateRpe(exercise)"
+                 (keydown.enter)="endEdit()"
+                 type="number" min="1" max="10"/>
+        </ng-template>
+      </td>
+      <td *ngIf="showAdvancedOptions" class="break-cell" (click)="editCell(exercise, 'break')">
+        <ng-container *ngIf="!isEditing(exercise, 'break'); else editBreak">
+          {{ exercise.break.value ? exercise.break.value + exercise.break.unit : '' }}
+        </ng-container>
+        <ng-template #editBreak>
+          <div class="break-input">
+            <input #inputElement
+                   [(ngModel)]="exercise.break.value"
+                   (focus)="selectAllText($event)"
+                   (blur)="validateBreak(exercise); endEditIfNotFocusedOnOtherInput('break', $event)"
+                   (keydown.enter)="endEdit()"
+                   tabindex="1" type="number" min="0"/>
+            <select [(ngModel)]="exercise.break.unit"
+                    (click)="$event.stopPropagation()"
+                    (blur)="validateBreak(exercise); endEditIfNotFocusedOnOtherInput('break', $event)"
+                    tabindex="2">
+              <option value="s">s</option>
+              <option value="min">min</option>
+            </select>
+          </div>
+        </ng-template>
+      </td>
+      <td>
+        <mat-icon class="delete-icon" (click)="removeExercise(exercise)">delete</mat-icon>
+      </td>
+    </tr>
+
+    <tr class="add-exercise-row">
+      <td [attr.colspan]="showAdvancedOptions ? 8 : 4">
+        <button mat-raised-button color="primary" (click)="openAddExerciseDialog()">
+          <mat-icon>add</mat-icon> Dodaj ćwiczenie
+        </button>
+      </td>
+    </tr>
+
+    </tbody>
+  </table>
+
+  <!-- Microcycle -->
+
+  <div class="tables-container" [ngClass]="{'show-advanced': showAdvancedOptions}">
+
+    <div class="microcycle-table-container">
+
+      <h1>Mikrocykl</h1>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Długość mikrocyklu (dni):</mat-label>
+        <input matInput type="number" id="microcycle-length"
+               [(ngModel)]="microcycleLength"
+               (input)="setMicrocycleLength(microcycleLength)"
+               (click)="selectAllText($event)"
+               (focus)="selectAllText($event)"
+               min="1" max="28"/>
+      </mat-form-field>
+
+      <table>
+        <thead>
+        <tr>
+          <th *ngFor="let day of daysInWeek">{{ day }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let row of microcycleTable">
+          <td *ngFor="let cell of row" [ngClass]="{'hidden-cell': cell === 0, 'active-cell': cell !== 0}">
+            <div class="cell-content" *ngIf="cell !== 0">
+              <div class="workout-names">
+                <span *ngFor="let workout of getWorkoutsForDay(cell)" class="workout-letter" (click)="removeWorkoutFromMicrocycle(workout, cell)">
+                  {{ getWorkoutInitials(workout.name) }}
+                </span>
+                <span class="plus-icon" (click)="toggleMicrocycleCellDropdown($event, cell)">+</span>
+              </div>
+
+              <div class="microcycle-cell-dropdown-menu" *ngIf="microcycleCellDropdownVisible && activeCell === cell">
+                <ul>
+                  <li *ngFor="let workout of selectedMicrocycle.workouts" (click)="addWorkoutToMicrocycle(workout, cell)">{{ workout.name }}</li>
+                </ul>
+              </div>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Mesocycle -->
+
+    <div class="meso-macro-tables-container" [ngClass]="{'show-advanced': showAdvancedOptions}">
+      <div class="mesocycle-container">
+        <h1 *ngIf="showMesocycle && showAdvancedOptions">Mezocykl</h1>
+
+        <mat-form-field appearance="fill" *ngIf="showMesocycle && showAdvancedOptions">
+          <mat-label>Ilość mikrocykli:</mat-label>
+          <input matInput type="number" id="microcycle-count"
+                 [(ngModel)]="microcycleCount"
+                 (input)="setMicrocycleCount(microcycleCount)"
+                 (click)="selectAllText($event)"
+                 (focus)="selectAllText($event)"
+                 min="1" max="10"/>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" *ngIf="isTouchDevice" class="delete-microcycle"
+                (click)="deleteMicrocycle(selectedMesocycle.microcycles.indexOf(selectedMicrocycle), $event)">
+          <mat-icon>delete</mat-icon> Usuń wybrany mikrocykl
+        </button>
+
+        <div class="mesocycle-table" *ngIf="showMesocycle && showAdvancedOptions">
+          <table>
+            <thead>
+            <tr>
+              <th *ngFor="let microcycle of selectedMesocycle.microcycles; let i = index"
+                  [ngClass]="{'highlighted-header': microcycle == selectedMicrocycle, 'touch-device': isTouchDevice}"
+                  (click)="selectMicrocycle(i)">
+                <div class="microcycle-header">
+                  <span class="microcycle-thead">
+                    {{ toRoman(i + 1) }}
+                  </span>
+                  <div class="microcycle-management">
+                    <mat-icon class='delete' (click)="deleteMicrocycle(i, $event)">delete</mat-icon>
+                  </div>
+                </div>
+              </th>
+            </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+
+      <!-- Macrocycle -->
+
+      <div class="macrocycle-container">
+        <h1 *ngIf="showMesocycle && showMacrocycle && showAdvancedOptions">Makrocykl</h1>
+
+        <mat-form-field appearance="fill" *ngIf="showMesocycle && showMacrocycle && showAdvancedOptions">
+          <mat-label>Ilość mezocykli:</mat-label>
+          <input matInput type="number" id="mesocycle-count"
+                 [(ngModel)]="mesocycleCount"
+                 (input)="setMesocycleCount(mesocycleCount)"
+                 (click)="selectAllText($event)"
+                 (focus)="selectAllText($event)"
+                 min="1" max="10"/>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" *ngIf="isTouchDevice" class="delete-mesocycle"
+                (click)="deleteMesocycle(macrocycle.mesocycles.indexOf(selectedMesocycle), $event)">
+          <mat-icon>delete</mat-icon> Usuń wybrany mikrocykl
+        </button>
+
+        <div class="macrocycle-table" *ngIf="showMesocycle && showMacrocycle && showAdvancedOptions">
+          <table>
+            <thead>
+            <tr>
+              <th *ngFor="let mesocycle of macrocycle.mesocycles; let i = index"
+                  [ngClass]="{'highlighted-header': mesocycle == selectedMesocycle, 'touch-device': isTouchDevice}"
+                  (click)="selectMesocycle(i)">
+                <div class="mesocycle-header">
+                  <span class="mesocycle-thead">
+                    {{ toRoman(i + 1) }}
+                  </span>
+                  <div class="mesocycle-management">
+                    <mat-icon class='delete' (click)="deleteMesocycle(i, $event)">delete</mat-icon>
+                  </div>
+                </div>
+              </th>
+            </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

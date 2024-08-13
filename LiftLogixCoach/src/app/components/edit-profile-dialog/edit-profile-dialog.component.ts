@@ -1,9 +1,15 @@
-import {Component, OnInit} from '@angular/core';
-import {MatDialogRef} from "@angular/material/dialog";
-import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
-import {CoachService} from "../../services/coach.service";
-import {Coach} from "../../interfaces/Coach";
-import {Router} from "@angular/router";
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from "@angular/material/dialog";
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from "@angular/forms";
+import { CoachService } from "../../services/coach.service";
+import { Coach } from "../../interfaces/Coach";
+import { Router } from "@angular/router";
+import { EmailService } from "../../services/email.service";
+import { UserService } from "../../services/user.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { AuthService } from "../../services/auth.service";
+import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import {NavbarComponent} from "../navbar/navbar.component";
 
 @Component({
   selector: 'app-edit-profile-dialog',
@@ -13,23 +19,27 @@ import {Router} from "@angular/router";
 export class EditProfileDialogComponent implements OnInit {
   profileForm: FormGroup;
   emailForm: FormGroup;
-  passwordForm: FormGroup;
   email: string = '';
   showVerificationCodeInput: boolean = false;
   showNewEmailInput: boolean = false;
-  showVerifyPasswordInput: boolean = false;
-  showNewPasswordInput: boolean = false;
-  verificationError: string = '';
-  updateError: string = '';
-  updatePasswordError: string = '';
-  wrongPasswordError: string = '';
-  passwordFieldType: string = 'password';
+  showEditButton: boolean = false;
+  showImageInput: boolean = false;
+  draggingOver: boolean = false;
+  errorMessage: string = '';
+  image: SafeUrl = '';
+  newImage: SafeUrl = '';
+  selectedImage: File | null = null;
 
   constructor(
     public dialogRef: MatDialogRef<EditProfileDialogComponent>,
     private fb: FormBuilder,
     private coachService: CoachService,
-    private router: Router
+    private emailService: EmailService,
+    private userService: UserService,
+    private authService: AuthService,
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private sanitizer: DomSanitizer
   ) {
     this.profileForm = this.fb.group({
       firstName: ['', Validators.required],
@@ -39,22 +49,91 @@ export class EditProfileDialogComponent implements OnInit {
     this.emailForm = this.fb.group({
       verificationCode: ['', Validators.required],
       newEmail: ['', [Validators.required, Validators.email, this.emailValidator]]
-    })
-    this.passwordForm = this.fb.group({
-      password: ['', Validators.required],
-      newPassword: ['', Validators.required],
-      confirmPassword: ['', Validators.required]
-    }, {
-      validators: this.passwordMatchValidator.bind(this)
     });
   }
 
   ngOnInit(): void {
     this.loadProfile();
+    this.loadImage();
+  }
+
+  loadImage(): void {
+    const id = localStorage.getItem('id') || '0';
+    const token = localStorage.getItem('token') || '';
+    this.userService.getUserImage(id, token).subscribe(
+      (blob) => {
+        const objectURL = URL.createObjectURL(blob);
+        this.image = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      },
+      (error) => {
+        this.image = '/icons/user.jpg';
+      }
+    );
+  }
+
+  async onFileSelected(event: any) {
+    this.selectedImage = event.target.files[0];
+
+    const objectURL = URL.createObjectURL(await this.fileToBlob(this.selectedImage));
+    this.newImage = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+  }
+
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.draggingOver = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.draggingOver = false;
+  }
+
+  async onDrop(event: any) {
+    event.preventDefault();
+    const droppedFile = event.dataTransfer.files[0];
+
+    if (droppedFile) {
+      this.selectedImage = droppedFile;
+
+      const objectURL = URL.createObjectURL(await this.fileToBlob(droppedFile));
+      this.newImage = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+    }
+  }
+
+  uploadImage() {
+    if (this.selectedImage) {
+
+      const token = localStorage.getItem('token') || '';
+      this.userService.updateImage(this.selectedImage, token).subscribe(
+        () => {
+          this.cancelImageChange();
+          this.openSnackBar('Zdjęcie zostało zaktualizowane');
+          this.userService.notifyImageUpdate();
+        },
+        (error) => {
+          this.showError('Nie udało się zaktualizować zdjęcia');
+        }
+      );
+    } else {
+      this.showError('Wybierz zdjęcie do przesłania');
+    }
+  }
+
+  deleteNewImage() {
+    this.selectedImage = null;
+    this.newImage = '';
+  }
+
+  cancelImageChange() {
+    this.showImageInput = false;
+    this.selectedImage = null;
+    this.loadImage();
   }
 
   loadProfile(): void {
-    this.coachService.getProfile().subscribe(
+    const token = localStorage.getItem('token') || '';
+    this.coachService.getProfile(token).subscribe(
       (profile: Coach) => {
         this.profileForm.patchValue({
           firstName: profile.first_name,
@@ -69,10 +148,6 @@ export class EditProfileDialogComponent implements OnInit {
     )
   }
 
-  togglePasswordField(): void {
-    this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
-  }
-
   saveChanges(): void {
     if (this.profileForm.valid) {
       const profileData: Coach = {
@@ -82,25 +157,34 @@ export class EditProfileDialogComponent implements OnInit {
         email: this.email
       };
 
-      this.coachService.updateProfile(profileData).subscribe(
+      const token = localStorage.getItem('token') || '';
+      this.coachService.updateProfile(profileData, token).subscribe(
         (updatedProfile) => {
-          console.log('Profile updated successfully', updatedProfile);
           this.loadProfile();
+          this.dialogRef.close();
+          this.openSnackBar('Profil został zaktualizowany');
         },
         (error) => {
-          console.error('Error updating profile', error);
+          this.showError('Nie udało się zaktualizować profilu');
         }
       )
+    } else {
+      this.showError('Wprowadź wszystkie pola');
     }
   }
 
+  editImage() {
+    this.showImageInput = true;
+  }
+
   changeEmail(): void {
-    this.coachService.sendVerificationCode(this.email).subscribe(
+    const token = localStorage.getItem('token') || '';
+    this.emailService.sendVerificationCode(this.email, token).subscribe(
       () => {
         this.showVerificationCodeInput = true;
       },
       (error) => {
-        console.error('Error sending verification code', error);
+        this.showError('Nie udało się wysłać kodu weryfikacyjnego');
       }
     );
   }
@@ -109,38 +193,36 @@ export class EditProfileDialogComponent implements OnInit {
     const email = this.email;
     const code = this.emailForm.get('verificationCode')?.value;
 
-    this.coachService.verifyCode(email, code).subscribe(
+    const token = localStorage.getItem('token') || '';
+    this.userService.verifyCode(email, code, token).subscribe(
       () => {
         this.showNewEmailInput = true
-        this.verificationError = '';
       },
       (error) => {
-        console.error('Error verifying code', error);
-        this.verificationError = 'Błędny kod weryfikacyjny. Spróbuj ponownie.';
+        this.showError('Błędny kod weryfikacjny, spróbuj ponownie');
       }
     );
   }
 
   updateEmail(): void {
     if (this.emailForm.invalid) {
-      this.emailForm.markAllAsTouched();
+      this.showError('Nieprawidłowy adres email');
       return;
     }
 
     const newEmail = this.emailForm.get('newEmail')?.value;
     const verificationCode = this.emailForm.get('verificationCode')?.value;
 
-    this.coachService.updateEmail(this.email, newEmail, verificationCode).subscribe(
+    const token = localStorage.getItem('token') || '';
+    this.emailService.updateEmail(this.email, newEmail, verificationCode, token).subscribe(
       () => {
-        console.log('Email updated successfully');
-        this.updateError = '';
         this.dialogRef.close();
-        localStorage.clear();
+        this.authService.logout();
         this.router.navigate(['/login']);
+        this.openSnackBar('E-mail został zaktualizowany');
       },
       (error) => {
-        console.error('Error updating email:', error);
-        this.updateError = 'Adres email niedostępny';
+        this.showError('Nie udało się zaktualizować adresu email');
       }
     );
   }
@@ -149,6 +231,7 @@ export class EditProfileDialogComponent implements OnInit {
     this.showVerificationCodeInput = false;
     this.showNewEmailInput = false;
     this.emailForm.reset();
+    this.loadImage();
   }
 
   emailValidator(control: AbstractControl): ValidationErrors | null {
@@ -159,59 +242,38 @@ export class EditProfileDialogComponent implements OnInit {
     return null;
   }
 
-  changePassword(): void {
-    this.showVerifyPasswordInput = true;
+  close() {
+    this.dialogRef.close();
   }
 
-  checkPassword(): void {
-    const password = this.passwordForm.get("password")?.value;
-
-    this.coachService.checkPassword(password).subscribe(
-      () => {
-        this.wrongPasswordError = '';
-        this.passwordFieldType = 'password';
-        this.showNewPasswordInput = true;
-      },
-      (error) => {
-        console.error('Złe hasło', error);
-        this.wrongPasswordError = "Złe hasło";
-      }
-    );
+  fileToBlob(file: File | null): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result instanceof ArrayBuffer && file != null) {
+          const blob = new Blob([new Uint8Array(reader.result)], {type: file.type});
+          resolve(blob);
+        } else {
+          reject(new Error('Failed to convert file to Blob'));
+        }
+      };
+      reader.onerror = reject;
+      // @ts-ignore
+      reader.readAsArrayBuffer(file);
+    });
   }
 
-  updatePassword(): void {
-    const password = this.passwordForm.get('newPassword')?.value;
-
-    this.coachService.updatePassword(password).subscribe(
-      () => {
-        this.updatePasswordError = '';
-        this.dialogRef.close();
-        localStorage.clear();
-        this.router.navigate(['/login']);
-      },
-      (error) => {
-        console.error('Nie udało się zmienić hasła', error);
-        this.updatePasswordError = 'Nie udało się zmienić hasła';
-      }
-    );
+  private openSnackBar(message: string): void {
+    this.snackBar.open(message, 'Zamknij', {
+      duration: 3000,
+      verticalPosition: 'top'
+    });
   }
 
-  cancelPasswordChange(): void {
-    this.showVerifyPasswordInput = false;
-    this.showNewPasswordInput = false;
-    this.passwordFieldType = 'password';
-    this.passwordForm.reset();
-  }
-
-  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
-    const newPassword = control.get('newPassword');
-    const confirmPassword = control.get('confirmPassword');
-
-    if (newPassword && confirmPassword && newPassword.value !== confirmPassword.value) {
-      confirmPassword.setErrors({ passwordMismatch: true });
-      return { passwordMismatch: true };
-    } else {
-      return null;
-    }
+  showError(message: string) {
+    this.errorMessage = message;
+    setTimeout(() => {
+      this.errorMessage = '';
+    }, 3000);
   }
 }

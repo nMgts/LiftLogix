@@ -42,7 +42,7 @@ public class ApplicationService {
 
         if (coach == null) {
             Client client = clientRepository.findByEmail(username)
-                    .orElseThrow(() -> new EntityNotFoundException("Client not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
             return client.getApplications().stream()
                     .map(applicationDTOMapper::mapEntityToDTO)
@@ -97,17 +97,6 @@ public class ApplicationService {
         throw new EntityNotFoundException("Client not found");
     }
 
-    public void updateStatus(long application_id, ApplicationStatus status) {
-        Optional<Application> optApplication = applicationRepository.findById(application_id);
-        if (optApplication.isPresent()) {
-            Application application = optApplication.get();
-            application.setStatus(status);
-            applicationRepository.save(application);
-        } else {
-            throw new EntityNotFoundException("Application with ID " + application_id + " not found");
-        }
-    }
-
     public void acceptApplication(long application_id, Authentication authentication) {
         Application application = applicationRepository.findById(application_id)
                 .orElseThrow(() -> new EntityNotFoundException("Application not found"));
@@ -149,5 +138,16 @@ public class ApplicationService {
 
         application.setStatus(ApplicationStatus.REJECTED);
         applicationRepository.save(application);
+    }
+
+    public void updateStatus(long application_id, ApplicationStatus status) {
+        Optional<Application> optApplication = applicationRepository.findById(application_id);
+        if (optApplication.isPresent()) {
+            Application application = optApplication.get();
+            application.setStatus(status);
+            applicationRepository.save(application);
+        } else {
+            throw new EntityNotFoundException("Application with ID " + application_id + " not found");
+        }
     }
 }

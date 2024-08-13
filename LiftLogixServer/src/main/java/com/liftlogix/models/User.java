@@ -29,6 +29,8 @@ public abstract class User implements UserDetails {
     private String email;
     @Column(nullable = false)
     private String password;
+    @Lob
+    private byte[] image;
     @Column(nullable = false)
     private Date created_at;
     @Column(nullable = false)

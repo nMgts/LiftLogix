@@ -1,0 +1,18 @@
+<div class="scheduler-container">
+  <div class="scheduler">
+    <table>
+      <thead>
+      <tr>
+        <th></th>
+        <th *ngFor="let day of daysOfWeek">{{ day }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let hour of hours">
+        <td class="hour-header">{{ hour }}</td>
+        <td *ngFor="let day of daysOfWeek" class="time-slot"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

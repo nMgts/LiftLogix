@@ -1,15 +1,53 @@
-<app-navbar></app-navbar>
+<div class="main-container">
+  <app-navbar></app-navbar>
 
-<div class="wrapper">
-  <div class="grid1">1</div>
-  <div class="grid2">2</div>
-  <div class="grid3">3</div>
-  <div class="grid4">4</div>
-  <div class="grid5" [ngClass]="{ 'expanded': isGrid5Expanded }"
-       (click)="toggleGrid5Expanded($event)">
-    <app-applications [isGrid5Expanded]="isGrid5Expanded"></app-applications>
+  <div class="dashboard-container">
+    <div class="wrapper" [ngClass]="{'expanded': expandedBox !== null}">
+
+      <div class="col-left">
+
+        <div class="row1">
+          <div class="row1-col-left box" [ngClass]="{'expanded': expandedBox === 'row1-col-left',
+          'hidden': expandedBox && expandedBox !== 'row1-col-left'}" (click)="expandBox('row1-col-left')">
+            <app-schedule [isBoxExpanded]="expandedBox==='row1-col-left'" (closeBox)="closeBox('row1-col-left')"></app-schedule>
+          </div>
+
+          <div class="row1-col-right">
+            <div class="row1-col-right-row1 box" [ngClass]="{'expanded': expandedBox === 'row1-col-right-row1',
+            'hidden': expandedBox && expandedBox !== 'row1-col-right-row1'}" (click)="expandBox('row1-col-right-row1')">
+              <app-clients [isBoxExpanded]="expandedBox==='row1-col-right-row1'" (closeBox)="closeBox('row1-col-right-row1')"></app-clients>
+            </div>
+            <div class="row1-col-right-row2 box" [ngClass]="{'expanded': expandedBox === 'row1-col-right-row2',
+             'hidden': expandedBox && expandedBox !== 'row1-col-right-row2'}" (click)="expandBox('row1-col-right-row2')">
+              <app-workout-creator [isBoxExpanded]="expandedBox==='row1-col-right-row2'" (closeBox)="closeBox('row1-col-right-row2')"></app-workout-creator>
+            </div>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="row2-col1 box" [ngClass]="{'expanded': expandedBox === 'row2-col1',
+          'hidden': expandedBox && expandedBox !== 'row2-col1'}" (click)="expandBox('row2-col1')">
+            <app-exercises [isBoxExpanded]="expandedBox==='row2-col1'" (closeBox)="closeBox('row2-col1')"></app-exercises>
+          </div>
+          <div class="row2-col2 box" [ngClass]="{'expanded': expandedBox === 'row2-col2',
+          'hidden': expandedBox && expandedBox !== 'row2-col2'}" (click)="expandBox('row2-col2')">
+          </div>
+          <div class="row2-col3 box" [ngClass]="{'expanded': expandedBox === 'row2-col3',
+          'hidden': expandedBox && expandedBox !== 'row2-col3'}" (click)="expandBox('row2-col3')"></div>
+        </div>
+      </div>
+
+      <div class="col-right">
+        <div class="row-top box" [ngClass]="{'expanded': expandedBox === 'row-top',
+        'hidden': expandedBox && expandedBox !== 'row-top'}" (click)="expandBox('row-top')">
+          <app-applications [isBoxExpanded]="expandedBox==='row-top'" (closeBox)="closeBox('row-top')"></app-applications>
+        </div>
+        <div class="row-bottom box" [ngClass]="{'expanded': expandedBox === 'row-bottom',
+        'hidden': expandedBox && expandedBox !== 'row-bottom'}" (click)="expandBox('row-bottom')"></div>
+      </div>
+
+    </div>
   </div>
-  <div class="grid6">6</div>
-</div>
 
-<app-footer></app-footer>
+  <app-footer></app-footer>
+</div>

@@ -1,0 +1,54 @@
+<div class="component-container">
+  <button class="back-arrow" (click)="goBack()">
+    <span class="material-icons">arrow_back</span>
+  </button>
+  <div *ngIf="currentResult; else loading">
+    <p>Wyciskanie leżąc: {{ currentResult.benchpress }}</p>
+    <p>Martwy ciąg: {{ currentResult.deadlift }}</p>
+    <p>Przysiad: {{ currentResult.squat }}</p>
+    <p>Razem: {{ total }}</p>
+  </div>
+  <ng-template #loading>
+    <p>Ładowanie wyników...</p>
+  </ng-template>
+
+  <form (ngSubmit)="addResult()">
+    <div>
+      <label for="benchpress">Wyciskanie leżąc:</label>
+      <input id="benchpress" type="number" [(ngModel)]="benchpress" name="benchpress">
+    </div>
+
+    <div>
+      <label for="deadlift">Martwy ciąg:</label>
+      <input id="deadlift" type="number" [(ngModel)]="deadlift" name="deadlift">
+    </div>
+
+    <div>
+      <label for="squat">Przysiad:</label>
+      <input id="squat" type="number" [(ngModel)]="squat" name="squat">
+    </div>
+
+    <button type="submit">Dodaj wynik</button>
+  </form>
+
+  <div class="filter">
+    <button mat-raised-button (click)="toggleFilter()">
+      Pokaż wyniki z {{ showLastYear ? 'całego okresu' : 'ostatniego roku' }}
+    </button>
+  </div>
+
+  <div class="chart-container">
+    <canvas baseChart
+            [datasets]="lineChartData"
+            [labels]="lineChartLabels"
+            [options]="lineChartOptions"
+            [legend]="lineChartLegend">
+    </canvas>
+  </div>
+
+  <div class="chart-options">
+    <mat-checkbox [(ngModel)]="showBenchpress" (change)="updateChartData()">Wyciskanie leżąc</mat-checkbox>
+    <mat-checkbox [(ngModel)]="showDeadlift" (change)="updateChartData()">Martwy ciąg</mat-checkbox>
+    <mat-checkbox [(ngModel)]="showSquat" (change)="updateChartData()">Przysiad</mat-checkbox>
+  </div>
+</div>

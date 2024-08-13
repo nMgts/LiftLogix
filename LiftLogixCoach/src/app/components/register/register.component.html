@@ -1,27 +1,40 @@
-<div class="container">
-  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
-  <p *ngIf="successMessage" class="success-message">{{ successMessage }}</p>
-  <h3>Rejestracja</h3>
-  <form (submit)="handleSubmit($event)">
-    <div class="form-group">
-      <label>Imię: </label>
-      <input type="text" name="first_name" [(ngModel)]="formData.first_name" required>
-      <label>Nazwisko: </label>
-      <input type="text" name="last_name" [(ngModel)]="formData.last_name" required>
-      <label>Email: </label>
-      <input type="email" name="email" [(ngModel)]="formData.email" required>
-      <label>Hasło: </label>
-      <input [type]="passwordFieldType" name="password" [(ngModel)]="formData.password" required>
-      <span class="toggle-password" (click)="togglePasswordField()">
-      <i class="fa fa-eye" aria-hidden="true"></i>
-      </span>
-      <label>Powtórz hasło: </label>
-      <input [type]="passwordFieldType" name="confirm_password" [(ngModel)]="formData.confirm_password" required>
-      <span class="toggle-password" (click)="togglePasswordField()">
-      <i class="fa fa-eye" aria-hidden="true"></i>
-      </span>
-      <button type="submit">Zarejestruj</button>
+<div class="main-container">
+  <a routerLink="/" class="back-link">
+    <i class="bx bxs-left-arrow-alt"></i>
+  </a>
+
+  <div class="wrapper">
+    <form>
+      <h1>Rejestracja</h1>
+
+      <div class="success-error-container">
+        <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+        <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+      </div>
+
+      <div class="input-box">
+        <input type="text" placeholder="Imię" [(ngModel)]="formData.first_name" name="email" required>
+      </div>
+      <div class="input-box">
+        <input type="text" placeholder="Nazwisko" [(ngModel)]="formData.last_name" name="email" required>
+      </div>
+      <div class="input-box">
+        <input type="email" placeholder="Email" [(ngModel)]="formData.email" name="email" required>
+      </div>
+      <div class="input-box">
+        <input [type]="passwordFieldType" placeholder="Hasło" [(ngModel)]="formData.password" name="email" required>
+        <i class='bx bxs-show' (click)="togglePasswordField()" aria-hidden="true"></i>
+      </div>
+      <div class="input-box">
+        <input [type]="passwordFieldType" placeholder="Potwierdź hasło" [(ngModel)]="formData.confirm_password" name="email" required>
+        <i class='bx bxs-show' (click)="togglePasswordField()" aria-hidden="true"></i>
+      </div>
+    </form>
+
+    <button type="submit" (click)="handleSubmit($event)" class="btn">Zarejestruj</button>
+
+    <div class="login-link">
+      <p>Posiadasz już konto?<a routerLink="/login"> Zaloguj się</a></p>
     </div>
-  </form>
-  <p>Posiadasz już konto? <a routerLink="/login"><button>Zaloguj się</button></a></p>
+  </div>
 </div>

@@ -1,0 +1,51 @@
+<div class="main-container">
+  <h1 *ngIf="!showVerifyPasswordInput">Opcje bezpieczeństwa</h1>
+
+  <div class="error-box" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <button type="button" *ngIf="!showVerifyPasswordInput" (click)="changePassword()">Zmień hasło</button>
+
+  <div class="change-password-box" *ngIf="showVerifyPasswordInput && !showNewPasswordInput">
+    <form [formGroup]="passwordForm">
+      <input id="password" [type]="passwordFieldType" placeholder="Obecne hasło" formControlName="password">
+      <span class="toggle-password" (click)="togglePasswordField()">
+        <i class="fa fa-eye" aria-hidden="true"></i>
+      </span>
+
+      <div class="button-box">
+        <button (click)="cancelPasswordChange()" style="float: left; margin: 10px 0 0 18.2%">Anuluj</button>
+        <button type="submit" (click)="checkPassword()" style="float: right; margin: 10px 18.2% 0 0">Zatwierdź</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="change-password-box" *ngIf="showNewPasswordInput">
+    <form [formGroup]="passwordForm">
+      <input id="newPassword" [type]="passwordFieldType" placeholder="Nowe hasło" formControlName="newPassword">
+      <span class="toggle-password" (click)="togglePasswordField()">
+        <i class="fa fa-eye" aria-hidden="true"></i>
+      </span>
+      <input id="confirmPassword" [type]="passwordFieldType" placeholder="Potwierdź nowe hasło" formControlName="confirmPassword">
+      <span class="toggle-password" (click)="togglePasswordField()">
+        <i class="fa fa-eye" aria-hidden="true"></i>
+      </span>
+
+      <div class="button-box">
+        <button (click)="cancelPasswordChange()" style="float: left; margin: 10px 0 0 18.2%">Anuluj</button>
+        <button type="submit" (click)="updatePassword()" style="float: right; margin: 10px 18.2% 0 0">Zatwierdź</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="two-factor-auth-box" *ngIf="!showVerifyPasswordInput">
+    <label>
+      <input type="checkbox">Włącz weryfikację dwuetapową</label>
+  </div>
+
+  <div class="button-box" *ngIf="!showVerifyPasswordInput">
+    <button (click)="close()" style="float: left; margin: 10px 0 0 18.2%">Anuluj</button>
+    <button type="submit" (click)="saveChanges()" style="float: right; margin: 10px 18.2% 0 0">Zatwierdź</button>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<div class="main-container">
+  <h1>{{ data.name }}</h1>
+  <div class="content">
+    <div class="body-parts">
+      <span *ngFor="let part of data.body_parts" class="body-part">{{ part }}</span>
+    </div>
+    <div [innerHTML]="safeDescription"></div>
+    <div class="video-container" [innerHTML]="safeUrl"></div>
+  </div>
+  <button (click)="closeDialog()">Zamknij</button>
+</div>

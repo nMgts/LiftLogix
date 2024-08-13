@@ -1,0 +1,615 @@
+* {
+  color: aliceblue;
+}
+
+.not-expanded-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  width: 100%;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-bottom: 5px;
+}
+
+h1 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px;
+  height: unset;
+}
+
+@media (min-width: 650px) {
+  .content {
+    height: calc(100% - 24px);
+  }
+}
+
+.workout-creator-image {
+  max-width: 70%;
+  height: auto;
+}
+
+@media (max-width: 650px) {
+  .workout-creator-image {
+    margin-right: 0;
+  }
+}
+
+.expanded-box {
+  padding: 10px;
+  min-height: calc(98vh - 20px);
+}
+
+.close-button {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 48px;
+  color: aliceblue;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.close-button:hover {
+  color: red;
+}
+
+.creator-header {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.micro-meso-info {
+  width: fit-content;
+  margin: 0 auto;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.workout-name-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 300px;
+  max-width: 100%;
+  padding: 5px 5px 0 5px;
+  margin: 20px auto 0 auto;
+}
+
+mat-option mat-icon:hover {
+  color: red !important;
+  scale: 1.2;
+}
+
+.actions-container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin: 0 auto;
+  width: fit-content;
+}
+
+.meso-macro-inputs {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin: 10px auto 0 auto;
+  width: fit-content;
+}
+
+.meso-macro-inputs label {
+  flex-grow: 1;
+}
+
+.exercise-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  table-layout: fixed;
+  min-width: 900px;
+}
+
+.exercise-table.basic-options {
+  min-width: 450px;
+  max-width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+tr.add-exercise-row td {
+  align-items: center;
+  background-color: transparent;
+  border: none;
+}
+
+tr.add-exercise-row td button {
+  width: 100%;
+}
+
+.exercise-table th:nth-child(1),
+.exercise-table td:nth-child(1) {
+  width: 21%;
+}
+
+.exercise-table.basic-options th:nth-child(1),
+.exercise-table.basic-options td:nth-child(1) {
+  width: 42%;
+}
+
+.exercise-table th:nth-child(2),
+.exercise-table td:nth-child(2) {
+  width: 11%;
+}
+
+.exercise-table.basic-options th:nth-child(2),
+.exercise-table.basic-options td:nth-child(2) {
+  width: 19%;
+}
+
+.exercise-table th:nth-child(3),
+.exercise-table td:nth-child(3) {
+  width: 11%;
+}
+
+.exercise-table.basic-options th:nth-child(3),
+.exercise-table.basic-options td:nth-child(3) {
+  width: 19%;
+}
+
+.exercise-table th:nth-child(4),
+.exercise-table td:nth-child(4) {
+  width: 11%;
+}
+
+.exercise-table th:nth-child(5),
+.exercise-table td:nth-child(5) {
+  width: 19%;
+}
+
+.exercise-table th:nth-child(5),
+.exercise-table td:nth-child(5) {
+  width: 11%;
+}
+
+.exercise-table th:nth-child(6),
+.exercise-table td:nth-child(6) {
+  width: 11%;
+}
+
+.exercise-table th:nth-child(7),
+.exercise-table td:nth-child(7) {
+  width: 11%;
+}
+
+.exercise-table th:nth-child(8),
+.exercise-table td:nth-child(8) {
+  width: 11%;
+}
+
+.exercise-table th:last-child,
+.exercise-table td:last-child {
+  width: 2%;
+}
+
+.exercise-table th:last-child {
+  border: none;
+  background-color: transparent;
+}
+
+.exercise-table th, .exercise-table td {
+  border: 1px solid black;
+  text-align: center;
+  position: relative;
+}
+
+.exercise-table th {
+  background-color: rgba(128, 0, 128, 0.8);
+  padding: 10px;
+
+  @media (max-width: 1050px) {
+    font-size: 12px;
+  }
+}
+
+.exercise-table td {
+  background-color: rgba(128, 0, 128, 0.1);
+  overflow: hidden;
+}
+
+.exercise-table input {
+  max-width: 45px;
+  border: none;
+  box-sizing: border-box;
+  background: white;
+  color: black;
+}
+
+.exercise-table input[placeholder] {
+  text-align: center;
+}
+
+td.repetitions-cell {
+  vertical-align: middle;
+  align-items: center;
+  justify-content: center;
+  width: 12%;
+}
+
+.repetitions-inputs {
+  display: inline-block;
+  align-items: center;
+  margin: 0 auto;
+
+  input {
+    width: 30px;
+    -moz-appearance: textfield;
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+td.break-cell {
+  vertical-align: middle;
+  align-items: center;
+  justify-content: center;
+  width: 12%;
+}
+
+.break-input {
+  display: inline-block;
+  align-items: center;
+  margin: 0 auto;
+
+  input {
+    width: 35px;
+  }
+
+  select {
+    width: 40px;
+    margin-left: 5px;
+    color: black;
+  }
+
+  option {
+    color: black;
+  }
+}
+
+.delete-icon {
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.delete-icon:hover {
+  color: red !important;
+}
+
+.info-icon {
+  font-size: 20px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.info-icon:hover {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.tooltip {
+  position: relative;
+}
+
+.tooltip mat-icon {
+  vertical-align: middle;
+  font-size: 20px;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: aliceblue;
+  color: black;
+  text-align: left;
+  border-radius: 6px;
+  padding: 5px 10px;
+  position: absolute;
+  z-index: 1;
+  top: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltip-text .important-text {
+  color: #6A0DAD;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Style for microcycle */
+
+.tables-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+@media (max-width: 1023px) {
+  .tables-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tables-container.show-advanced {
+    min-width: 900px;
+  }
+}
+
+.microcycle-table-container {
+  margin-top: 20px;
+  margin-right: 20px;
+  padding: 10px;
+  vertical-align: top;
+  height: auto;
+  line-height: normal;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.microcycle-table-container h1 {
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  padding: 20px 0;
+  font-size: 26px;
+}
+
+.microcycle-table-container table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.microcycle-table-container th {
+  border: 1px solid black;
+  background-color: rgba(128, 0, 128, 0.8);
+  font-size: 16px;
+  padding: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.microcycle-table-container td {
+  font-size: 14px;
+  border: 1px solid black;
+  padding: 10px;
+  text-align: center;
+  vertical-align: top;
+  color: black;
+  min-height: 40px;
+  line-height: 40px;
+  height: 40px;
+}
+
+.microcycle-table-container td.hidden-cell {
+  color: transparent !important;
+  border: none !important;
+}
+
+.cell-content {
+  position: relative;
+  min-height: 50px;
+}
+
+.workout-names {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.workout-letter {
+  background-color: #6A0DAD;
+  color: white;
+  border-radius: 50%;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.workout-letter:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  background-color: #8000FF;
+}
+
+.plus-icon {
+  display: none;
+  cursor: pointer;
+  font-size: 36px;
+  position: relative;
+}
+
+.microcycle-table-container td.active-cell:hover .plus-icon {
+  display: inline-block;
+}
+
+.microcycle-cell-dropdown-menu ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.microcycle-cell-dropdown-menu li {
+  padding: 10px;
+  cursor: pointer;
+  color: black;
+  line-height: 1.2;
+}
+
+.microcycle-cell-dropdown-menu li:hover {
+  background-color: #f0f0f0;
+}
+
+.microcycle-cell-dropdown-menu {
+  position: absolute;
+  top: 40px;
+  right: -75px;
+  width: 200px;
+  max-height: 100px;
+  overflow: auto;
+  background-color: white;
+  border: 1px solid black;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+/* Style for meso and macro cycle */
+
+.meso-macro-tables-container {
+  display: none;
+}
+
+.meso-macro-tables-container.show-advanced {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  justify-content: space-between;
+
+  @media (max-width: 1023px) {
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+    min-width: 900px;
+  }
+}
+
+.mesocycle-container, .macrocycle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (max-width: 1023px) {
+    width: 100%;
+    padding: 10px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.meso-macro-tables-container h1 {
+  width: 100%;
+  text-align: center;
+  font-size: 26px;
+  margin: 0;
+  padding: 20px 0;
+}
+
+.delete-microcycle, .delete-mesocycle {
+  margin-bottom: 15px;
+}
+
+.mesocycle-table table, .macrocycle-table table {
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.mesocycle-table th, .macrocycle-table th {
+  border: 1px solid black;
+  background-color: rgba(128, 0, 128, 0.8);
+  font-size: 16px;
+  width: 70px;
+  height: 70px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.microcycle-header, .mesocycle-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.microcycle-management, .mesocycle-management {
+  display: none;
+}
+
+.microcycle-header:hover .microcycle-thead,
+.mesocycle-header:hover .mesocycle-thead {
+  display: none;
+}
+
+.microcycle-header:hover .microcycle-management,
+.mesocycle-header:hover .mesocycle-management {
+  display: flex;
+  gap: 10px;
+
+  mat-icon {
+    cursor: pointer;
+  }
+
+  mat-icon.select:hover {
+    scale: 1.2;
+    color: #0056b3 !important;
+  }
+
+  mat-icon.delete:hover {
+    scale: 1.2;
+    color: red !important;
+  }
+}
+
+.touch-device .microcycle-header:hover .microcycle-thead,
+.touch-device .mesocycle-header:hover .mesocycle-thead {
+  display: flex;
+}
+
+.touch-device .microcycle-header:hover .microcycle-management,
+.touch-device .mesocycle-header:hover .mesocycle-management{
+  display: none;
+}
+
+.highlighted-header {
+  box-shadow: 0 0 10px 2px white;
+  color: aliceblue;
+  z-index: 100;
+}

@@ -1,97 +1,80 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams} from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Router } from "@angular/router";
-import {firstValueFrom, Observable} from 'rxjs';
+import {firstValueFrom, Observable, Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private baseUrl = 'http://localhost:8080/api/auth';
-  private registerUrl = 'http://localhost:8080/api/auth/register/coach';
-  private loginUrl = 'http://localhost:8080/api/auth/login';
-  private forgotPasswordUrl = 'http://localhost:8080/api/auth/forgot-password';
-  private resetPasswordUrl = 'http://localhost:8080/api/auth/reset-password';
+  private forgotPasswordUrl = 'http://localhost:8080/api/user/forgot-password';
+  private resetPasswordUrl = 'http://localhost:8080/api/user/reset-password';
+  private verifyUrl = 'http://localhost:8080/api/user/verify';
+  private checkPasswordUrl = 'http://localhost:8080/api/user/check';
+  private updatePasswordUrl = 'http://localhost:8080/api/user/change-password';
+  private getImageUrl = 'http://localhost:8080/api/user/image';
+  private updateImageUrl = 'http://localhost:8080/api/user/image/update';
+
+  private imageUpdatedSource = new Subject<void>();
+  imageUpdated$ = this.imageUpdatedSource.asObservable();
 
   constructor(private http: HttpClient, private readonly router: Router) {}
 
-  async register(userData: any): Promise<any> {
-    try {
-      return await firstValueFrom(this.http.post<any>(this.registerUrl, userData));
-    } catch (error) {
-      throw error;
-    }
+  notifyImageUpdate() {
+    this.imageUpdatedSource.next();
   }
 
-  async login(email: string, password: string): Promise<any> {
-    try {
-      const response = await firstValueFrom(this.http.post<any>(this.loginUrl, { email, password }));
-      if (response.statusCode === 200 && (response.role === "COACH" || response.role === "ADMIN")) {
-        return { success: true, token: response.token, role: response.role };
-      } else {
-        return { success: false, message: response.message};
-      }
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  resendConfirmationEmail(email: string): Promise<any> {
-    return this.http.post<any>(`${this.baseUrl}/resend-confirmation`, { email }).toPromise();
-  }
-
-  forgotPassword(email: string): Observable<void> {
-    const url = `${this.forgotPasswordUrl}`;
+  async forgotPassword(email: string): Promise<any> {
     let params = new HttpParams().set('email', email);
-    return this.http.post<void>(url, {}, { params: params });
-  }
-
-  resetPassword(token: string, newPassword: string): Observable<void> {
-    const url = `${this.resetPasswordUrl}`;
-    return this.http.put<void>(url, { token, newPassword });
-  }
-
-  logOut(): void {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem('token');
-      localStorage.removeItem('role');
+    const response = await firstValueFrom(this.http.post<any>(this.forgotPasswordUrl, {}, {params: params}));
+    if (response.statusCode === 200) {
+      return { success: true };
+    } else {
+      return { success: false };
     }
-
-    this.router.navigate(['/'])
-      .then(success => {
-        if (success) {
-          console.log('Navigation to home successful');
-        } else {
-          console.error('Navigation to home failed');
-        }
-      })
-      .catch(err => {
-        console.error('Error during navigation', err);
-      });
   }
 
-  /***AUTHENTICATION METHODS***/
-  isAuthenticated(): boolean {
-    if (typeof localStorage !== 'undefined') {
-      const token = localStorage.getItem('token');
-      return !!token;
+  async resetPassword(token: string, newPassword: string): Promise<any> {
+    const response = await firstValueFrom(this.http.put<any>(this.resetPasswordUrl, { token, newPassword }));
+    if (response.statusCode === 200) {
+      return { success: true };
+    } else {
+     return { success: false }
     }
-    return false;
   }
 
-  isAdmin(): boolean {
-    if (typeof localStorage !== 'undefined') {
-      const role = localStorage.getItem('role');
-      return role === 'ADMIN';
-    }
-    return false;
+  verifyCode(email: string, code: string, token: string): Observable<void> {
+    const headers = this.createHeaders(token);
+    return this.http.post<void>(this.verifyUrl, { email, code }, { headers: headers })
   }
 
-  isUser(): boolean {
-    if (typeof localStorage !== 'undefined') {
-      const role = localStorage.getItem('role');
-      return role === 'COACH';
-    }
-    return false;
+  checkPassword(password: string, token: string): Observable<void> {
+    const headers = this.createHeaders(token);
+    let params = new HttpParams().set('password', password);
+    return this.http.get<void>(this.checkPasswordUrl, { headers: headers, params: params });
+  }
+
+  updatePassword(password: string, token: string): Observable<void> {
+    const headers = this.createHeaders(token);
+    let params = new HttpParams().set('password', password);
+    return this.http.put<void>(this.updatePasswordUrl, {}, {  headers: headers, params: params });
+  }
+
+  getUserImage(userId: string, token: string): Observable<Blob> {
+    const headers = this.createHeaders(token);
+    return this.http.get(`${this.getImageUrl}/${userId}`, { headers: headers, responseType: 'blob' });
+  }
+
+  updateImage(image: File, token: string): Observable<void> {
+    const headers = this.createHeaders(token);
+    const formData = new FormData();
+    formData.append('image', image);
+    return this.http.put<void>(this.updateImageUrl, formData, { headers });
+  }
+
+  private createHeaders(token: string) {
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
   }
 }

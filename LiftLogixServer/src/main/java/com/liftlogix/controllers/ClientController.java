@@ -13,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/client")
@@ -24,6 +23,16 @@ public class ClientController {
     @GetMapping("/all")
     public ResponseEntity<List<ClientDTO>> findAllClients() {
         return ResponseEntity.ok(clientService.findAllClients());
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<ClientDTO>> findMyClients(Authentication authentication) {
+        return ResponseEntity.ok(clientService.findMyClients(authentication));
+    }
+
+    @GetMapping("/quantity")
+    public ResponseEntity<Integer> getMyClientsQuantity(Authentication authentication) {
+        return ResponseEntity.ok(clientService.getMyClientsQuantity(authentication));
     }
 
     @PostMapping("/assign/{client_id}/{coach_id}")

@@ -13,6 +13,7 @@ export class ResetPasswordComponent implements OnInit {
   confirmPassword: string = '';
   errorMessage: string = '';
   successMessage: string = '';
+  passwordFieldType = 'password';
 
   constructor(private route: ActivatedRoute, private userService: UserService, private router: Router) {}
 
@@ -24,23 +25,34 @@ export class ResetPasswordComponent implements OnInit {
 
   async handleSubmit() {
     if (this.newPassword !== this.confirmPassword) {
-      this.showError("Hasła nie pasują do siebie");
+      this.showError('Hasła nie pasują do siebie');
       return;
     }
-
-    this.userService.resetPassword(this.token, this.newPassword).subscribe(
-      () => {
-        this.showSuccess("Hasło zostało pomyślnie zresetowane");
+    try {
+      const { success } = await this.userService.resetPassword(this.token, this.newPassword);
+      if (success) {
+        this.showSuccess('Hasło zostało pomyślnie zresetowane');
+        this.newPassword = '';
+        this.confirmPassword = '';
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 3000);
-      },
-      (error) => {
-        console.error("Token wygasł lub jest nieprawidłowy", error)
-        this.showError("Token wygasł lub jest nieprawidłowy");
+      } else {
+        this.showError('Token wygasł lub jest nieprawidłowy');
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 3000);
       }
-    )
+    } catch (error) {
+      this.showError('Nie udało się zresetetować hasła');
+    }
   }
+
+  togglePasswordField(): void {
+    this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+  }
+
+  /** Methods for displaying success/error messages */
 
   showError(message: string) {
     this.errorMessage = message;

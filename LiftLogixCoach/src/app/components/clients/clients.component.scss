@@ -1,0 +1,297 @@
+* {
+  color: aliceblue;
+}
+
+.not-expanded-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  width: 100%;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-bottom: 5px;
+}
+
+h1 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px;
+  height: unset;
+}
+
+@media (min-width: 650px) {
+  .content {
+    height: calc(100% - 24px);
+  }
+}
+
+.client-image {
+  margin-right: 15px;
+  max-width: 70%;
+  height: auto;
+
+  @media (max-width: 650px) {
+    .client-image {
+      margin-right: 0;
+    }
+  }
+}
+
+.caption {
+  font-size: 2.5em;
+  color: darkviolet;
+  font-weight: bold;
+  padding-right: 10px;
+}
+
+.expanded-box {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 48px;
+  color: aliceblue;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: red;
+}
+
+.component-header {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 30px;
+}
+
+.left-side, .right-side {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+
+.left-side {
+  border-right: 1px solid #ccc;
+  padding: 20px;
+
+  @media (max-width: 1023px) {
+    padding: 60px 20px 20px 20px;
+  }
+}
+
+.right-side {
+  padding: 60px 20px 20px 20px;
+}
+
+.search-container {
+  margin-bottom: 20px;
+  margin-right: 20px;
+
+  @media (max-width: 1023px) {
+    margin-top: 10px;
+  }
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.clients-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.client-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 25px;
+  background-color: rgba(139, 0, 139, 0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2),
+  0 6px 20px rgba(0, 0, 0, 0.19);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.profile-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.client-info {
+  flex-grow: 1;
+}
+
+.client-name {
+  font-weight: bold;
+  color: aliceblue;
+}
+
+.client-email {
+  color: #888;
+  font-size: 12px;
+  padding-top: 5px;
+}
+
+.client-email:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  white-space: nowrap;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.client-actions {
+  display: none;
+
+  @media (min-width: 1200px) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+    margin-right: 15px;
+  }
+}
+
+.client-actions button {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid black;
+  color: aliceblue;
+  background-color: rgba(36, 36, 36, 0.7);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.client-actions button:hover {
+  background-color: rgba(66, 66, 66, 0.7);
+}
+
+.client-icons {
+  display: flex;
+  gap: 10px;
+
+  .message {
+    color: dodgerblue;
+  }
+
+  .message:hover {
+    color: deepskyblue;
+  }
+
+  .delete {
+    color: lightslategrey;
+  }
+
+  .delete:hover {
+    color: red;
+  }
+}
+
+.client-icons mat-icon {
+  cursor: pointer;
+  transition: 0.3s all ease-in-out;
+}
+
+.client-icons mat-icon:hover {
+  scale: 1.05;
+}
+
+.more-options {
+  display: block;
+
+  @media (min-width: 1200px) {
+    display: none;
+  }
+
+  cursor: pointer;
+  transition: 0.3s all ease-in-out;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+
+  button {
+    padding: 10px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: background 0.3s;
+    color: black;
+
+    &:hover {
+      background: #f1f1f1;
+    }
+  }
+}
+
+.optional {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+
+  .left-side {
+    border: none;
+  }
+
+  .right-side {
+    display: none;
+  }
+}
+
+@media (max-width: 549px) {
+  .client-icons .message,
+  .client-icons .delete {
+    display: none;
+  }
+
+  .client-email {
+    font-size: 10px;
+  }
+
+  .optional {
+    display: block;
+  }
+}

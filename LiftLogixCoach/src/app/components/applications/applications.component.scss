@@ -1,79 +1,113 @@
-.grid5 {
-  font-size: 9px;
-  cursor: pointer;
+* {
+  color: aliceblue;
+}
+
+.application-box {
+  font-size: 12px;
   position: relative;
-  padding: 0
+  padding: 5px 15px 10px 15px;
 }
 
-.grid5 h3 {
-  margin-top: 0;
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 48px;
+  color: aliceblue;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: red;
+}
+
+h1 {
+  font-size: 16px;
   margin-bottom: 10px;
+  text-align: center;
 }
 
-.grid5 .application-container{
-  border: 1px solid darkviolet;
+h1.expanded {
+  font-size: 36px;
+  margin-bottom: 15px;
 }
 
 .application-container {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  border: 3px solid darkviolet;
+  padding: 2px 0 0 10px;
+  margin-top: 4px;
+  position: relative;
+  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+  }
+
+  .application-info {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
+
+  .date {
+    white-space: nowrap;
+  }
+
+  p {
+    margin: 0;
+    line-height: 1.4;
+  }
 }
 
-.grid5 .application-info {
-  flex-grow: 1;
-  text-align: left;
-  border: none;
-  margin-left: 5px;
-  gap: 0;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-}
-
-.application-info{
-  flex-wrap: nowrap;
+.description {
   text-align: justify;
+  padding-left: 20px;
+  margin-right: 75px;
+  margin-top: 10px;
 }
 
-.grid5 .button-container {
+.button-container {
   display: flex;
   flex-direction: row;
   gap: 3px;
-  border: none;
+  position: absolute;
+  right: 5px;
+
+  .app_btn {
+    margin-right: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease, color 0.3s ease;
+
+    &:hover {
+      background: #00cc00;
+    }
+
+    &.rejected:hover {
+      background: #f44336;
+    }
+  }
 }
 
-.app_btn{
-  margin-right: 5px;
-  background: none;
-  border: none;
-  color: aliceblue;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.app_btn:hover {
-  color: green;
-}
-
-.app_btn.rejected:hover {
-  color: red;
-}
-
-.grid5 .description {
-  margin-left: auto;
-  margin-right: 50px;
-  margin-top: 0;
-  border: none;
-  max-width: 1000px;
-  text-align: justify;
+mat-paginator {
+  margin-top: 10px;
 }
 
 .show-archived-container {
-  border: none;
+  margin-top: 10px;
 }
 
-.grid5 .show-archived-container {
-  border: none;
-  margin: 5px;
+@media(max-width: 460px) {
+  .description {
+    display: none;
+  }
 }

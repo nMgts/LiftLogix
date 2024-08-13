@@ -3,24 +3,25 @@ package com.liftlogix.services;
 import com.liftlogix.convert.UserDTOMapper;
 import com.liftlogix.dto.ReqRes;
 import com.liftlogix.dto.UserDTO;
+import com.liftlogix.exceptions.EmailIsTakenException;
 import com.liftlogix.exceptions.InvalidTokenException;
-import com.liftlogix.exceptions.UserIsNotConfirmed;
+import com.liftlogix.exceptions.UserIsNotConfirmedException;
 import com.liftlogix.models.*;
 import com.liftlogix.repositories.TokenRepository;
 import com.liftlogix.repositories.UserRepository;
 import com.liftlogix.types.Role;
 import com.liftlogix.util.JWTUtils;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -45,6 +46,12 @@ public class UserManagementService {
             } else {
                 user = new Client();
             }
+
+            Optional<User> opt = userRepository.findByEmail(registrationRequest.getEmail());
+            if (opt.isPresent()) {
+                throw new EmailIsTakenException("Email is taken");
+            }
+
             user.setEmail(registrationRequest.getEmail());
             user.setFirst_name(registrationRequest.getFirst_name());
             user.setLast_name(registrationRequest.getLast_name());
@@ -78,13 +85,13 @@ public class UserManagementService {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
-                            loginRequest.getPassword()));
+                    loginRequest.getPassword()));
             var user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
-            var jwt = jwtUtils.generateToken(user);
-            var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
+            var jwt = jwtUtils.generateAccessToken(user);
+            var refreshToken = jwtUtils.generateRefreshToken(user, loginRequest.isRememberMeChecked());
 
             if (!user.isEmail_confirmed()) {
-                throw new UserIsNotConfirmed("User is not confirmed");
+                throw new UserIsNotConfirmedException("User is not confirmed");
             }
 
             resp.setStatusCode(200);
@@ -93,57 +100,55 @@ public class UserManagementService {
             resp.setRefreshToken(refreshToken);
             resp.setExpirationTime("24Hrs");
             resp.setMessage("Successfully logged in");
+            resp.setUser_id(user.getId());
+            resp.setRememberMeChecked(loginRequest.isRememberMeChecked());
         } catch (Exception e) {
             resp.setStatusCode(500);
-            resp.setMessage(e.getMessage());
+            resp.setError(e.getMessage());
         }
         return resp;
     }
 
-    public ReqRes refreshToken(ReqRes refreshTokenRequest) {
+    public void logout(HttpServletRequest request, String refreshToken) {
+        final String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String accessToken = authHeader.substring(7);
+            jwtUtils.invalidateToken(accessToken);
+        }
+
+        System.out.println(refreshToken);
+        if (refreshToken != null) {
+            jwtUtils.invalidateToken(refreshToken);
+        }
+        SecurityContextHolder.clearContext();
+    }
+
+    public ReqRes refreshToken(String refreshToken, boolean isRememberMeChecked) {
         ReqRes resp = new ReqRes();
         try {
-            String email = jwtUtils.extractUsername(refreshTokenRequest.getToken());
+            String email = jwtUtils.extractUsername(refreshToken);
             User user = userRepository.findByEmail(email).orElseThrow();
-            if (jwtUtils.isTokenValid(refreshTokenRequest.getToken(), user)) {
-                var jwt = jwtUtils.generateToken(user);
+            if (jwtUtils.isTokenValid(refreshToken, user) && jwtUtils.isRefreshToken(refreshToken)) {
+                var newAccessToken = jwtUtils.generateAccessToken(user);
+                var newRefreshToken = jwtUtils.generateRefreshToken(user, isRememberMeChecked);
                 resp.setStatusCode(200);
-                resp.setToken(jwt);
-                resp.setRefreshToken(refreshTokenRequest.getToken());
+                resp.setToken(newAccessToken);
+                resp.setRefreshToken(newRefreshToken);
                 resp.setExpirationTime("24Hrs");
                 resp.setMessage("Successfully refreshed token");
+                resp.setRememberMeChecked(isRememberMeChecked);
+
+                jwtUtils.invalidateToken(refreshToken);
+            } else {
+                resp.setStatusCode(500);
+                resp.setError("Refresh token is not valid");
             }
-            resp.setStatusCode(200);
+
             return resp;
         } catch (Exception e) {
             resp.setStatusCode(500);
-            resp.setMessage(e.getMessage());
+            resp.setError(e.getMessage());
             return resp;
         }
-    }
-
-    public void generatePasswordResetToken(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow();
-
-        String token = UUID.randomUUID().toString();
-        PasswordResetToken resetToken = new PasswordResetToken(token, user);
-
-        tokenRepository.save(resetToken);
-
-        String resetUrl = "http://localhost:4200/reset-password?token=" + token;
-        emailService.sendPasswordResetEmail(user.getEmail(), resetUrl);
-    }
-
-    public void resetPassword(String token, String newPassword) {
-        PasswordResetToken resetToken = tokenRepository.findByToken(token);
-        if (resetToken == null || resetToken.isExpired()) {
-            throw new InvalidTokenException("Invalid or expired token");
-        }
-
-        User user = resetToken.getUser();
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
-
-        tokenRepository.delete(resetToken);
     }
 }

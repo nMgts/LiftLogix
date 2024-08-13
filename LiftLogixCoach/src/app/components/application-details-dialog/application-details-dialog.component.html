@@ -9,7 +9,7 @@
     Wyślij wiadomość
   </button>
   <span class="spacer"></span>
-  <button mat-button color="warn" *ngIf="data.status == 'PENDING'">Reject</button>
-  <button mat-button color="primary" *ngIf="data.status == 'PENDING'">Accept</button>
+  <button mat-button color="primary" *ngIf="data.status == 'PENDING'" (click)="accept(data.id)">Accept</button>
+  <button mat-button color="warn" *ngIf="data.status == 'PENDING'" (click)="reject(data.id)">Reject</button>
 </div>
 

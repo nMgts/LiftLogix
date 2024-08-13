@@ -1,27 +1,27 @@
-<div class="grid5" [ngClass]="{ 'expanded': isGrid5Expanded }">
-  <h3>5Zgłoszenia</h3>
+<div class="application-box" [ngClass]="{ 'expanded': isBoxExpanded }">
+  <button *ngIf="isBoxExpanded" (click)="close($event)" class="close-button">&times;</button>
+  <h1 [ngClass]="{ 'expanded': isBoxExpanded }">Zgłoszenia</h1>
   <div *ngFor="let application of displayedApplications; let i = index"
-       (click)="openApplicationDialog($event, application)"
-       (change)="showArchivedApps($event)"
+       (click)="openApplicationDialog(application, $event)"
        class="application-container">
     <div class="application-info">
       <p>{{ calculateIndex(i) + 1 }}. {{application.client.first_name}} {{application.client.last_name}}</p>
-      <p>Zgłoszono: {{application.submitted_date | date:'short'}}</p>
+      <p class="date">Zgłoszono: {{application.submitted_date | date:'dd/MM/yyyy HH:mm'}}</p>
     </div>
-    <div *ngIf="isGrid5Expanded" class="description">
-      <p><strong>Opis:</strong> {{ application.description }}</p>
+    <div *ngIf="isBoxExpanded" class="description">
+      <p><strong *ngIf="application.description">Opis:</strong> {{ truncateDescription(application.description) }}</p>
     </div>
     <div class="button-container" *ngIf="application.status === 'PENDING'">
-      <button class="app_btn" (click)="accept($event, application.id)">
+      <button class="app_btn" (click)="accept(application.id, $event)">
         <i class="fas fa-check"></i>
       </button>
-      <button class="app_btn rejected" (click)="reject($event, application.id)">
+      <button class="app_btn rejected" (click)="reject(application.id, $event)">
         <i class="fas fa-times"></i>
       </button>
     </div>
   </div>
 
-  <mat-paginator *ngIf="isGrid5Expanded"
+  <mat-paginator *ngIf="isBoxExpanded"
                  [length]="totalApplications"
                  [pageSize]="pageSize"
                  [pageIndex]="pageIndex"
@@ -30,9 +30,9 @@
                  class="paginator">
   </mat-paginator>
 
-  <div *ngIf="isGrid5Expanded" class="show-archived-container">
+  <div *ngIf="isBoxExpanded" class="show-archived-container">
     <label>
-      <input type="checkbox" (click)="showArchivedApps($event)">
+      <input type="checkbox" (click)="showArchivedApps()">
       Pokaż archiwalne
     </label>
   </div>

@@ -1,0 +1,77 @@
+<div class="not-expanded-box" *ngIf="!isBoxExpanded">
+  <h1 class="header" *ngIf="window.innerWidth > 650">Klienci</h1>
+  <div class="content">
+    <img ngSrc="/icons/client.png" alt="Client Icon" class="client-image" width="136" height="136"/>
+    <span class="caption" *ngIf="window.innerWidth > 650"> {{ clientsQuantity }} </span>
+  </div>
+</div>
+
+<div class="expanded-box" *ngIf="isBoxExpanded">
+  <div class="left-side" *ngIf="!selectedComponent || window.innerWidth >= 1024">
+    <button *ngIf="window.innerWidth < 1024" (click)="close($event)" class="close-button">&times;</button>
+    <div class="search-container">
+      <input type="text" class="search-input" placeholder="Szukaj klientów" />
+    </div>
+
+    <div class="clients-list">
+      <div class="client-row" *ngFor="let client of clients">
+        <img [src]="client.imageSafeUrl" alt="{{client.email}}" class="profile-image"/>
+        <div class="client-info">
+          <div class="client-name">{{client.first_name}} {{getDisplayLastName(client)}}</div>
+          <div class="client-email" [title]="client.email">
+            {{ client.email.length > maxEmailLength ? (client.email | slice:0:maxEmailLength) + '...' : client.email }}
+          </div>
+        </div>
+        <div class="client-actions">
+          <button (click)="showComponent('plan', client.id, $event)">Plan</button>
+          <button (click)="showComponent('results', client.id, $event)">Wyniki</button>
+          <button (click)="showComponent('hours', client.id, $event)">Godziny</button>
+          <button (click)="showComponent('diet', client.id, $event)">Dieta</button>
+        </div>
+        <div class="client-icons">
+          <mat-icon class="message">email</mat-icon>
+          <mat-icon class="delete">delete</mat-icon>
+        </div>
+
+        <mat-icon class="more-options" (click)="toggleDropdown(client)">more_vert</mat-icon>
+        <div class="dropdown" *ngIf="dropdownOpenClientId && dropdownOpenClientId === client.id && window.innerWidth < 1200">
+          <button (click)="showComponent('plan', client.id, $event)">Plan</button>
+          <button (click)="showComponent('results', client.id, $event)">Wyniki</button>
+          <button (click)="showComponent('hours', client.id, $event)">Godziny</button>
+          <button (click)="showComponent('diet', client.id, $event)">Diety</button>
+          <button class="optional">Napisz</button>
+          <button class="optional">Usuń</button>
+        </div>
+      </div>
+    </div>
+
+    <mat-paginator class="paginator"></mat-paginator>
+  </div>
+
+  <div class="right-side" *ngIf="!selectedComponent && window.innerWidth >= 1024">
+    <button (click)="close($event)" class="close-button">&times;</button>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+  </div>
+
+  <div class="right-side" *ngIf="selectedComponent && window.innerWidth >= 1024">
+    <button (click)="close($event)" class="close-button">&times;</button>
+    <h1 class="component-header">{{ switchHeader(selectedComponent) }}</h1>
+    <ng-container [ngSwitch]="selectedComponent">
+      <app-client-plan *ngSwitchCase="'plan'"></app-client-plan>
+      <app-client-results *ngSwitchCase="'results'" [clientId]="selectedClientId"></app-client-results>
+      <app-client-hours *ngSwitchCase="'hours'"></app-client-hours>
+      <app-client-diet *ngSwitchCase="'diet'"></app-client-diet>
+    </ng-container>
+  </div>
+
+  <div class="left-side" *ngIf="selectedComponent && window.innerWidth < 1024">
+    <button (click)="close($event)" class="close-button">&times;</button>
+    <h1 class="component-header">{{ switchHeader(selectedComponent) }}</h1>
+    <ng-container [ngSwitch]="selectedComponent">
+      <app-client-plan *ngSwitchCase="'plan'"></app-client-plan>
+      <app-client-results *ngSwitchCase="'results'" [clientId]="selectedClientId"></app-client-results>
+      <app-client-hours *ngSwitchCase="'hours'"></app-client-hours>
+      <app-client-diet *ngSwitchCase="'diet'"></app-client-diet>
+    </ng-container>
+  </div>
+</div>

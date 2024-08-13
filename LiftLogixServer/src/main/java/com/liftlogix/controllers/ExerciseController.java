@@ -1,7 +1,11 @@
 package com.liftlogix.controllers;
 
+import com.liftlogix.dto.ExerciseDTO;
+import com.liftlogix.exceptions.DuplicateExerciseNameException;
 import com.liftlogix.models.Exercise;
+import com.liftlogix.models.ExerciseAlias;
 import com.liftlogix.services.ExerciseService;
+import com.liftlogix.types.BodyPart;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -12,7 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/exercise")
@@ -30,21 +38,52 @@ public class ExerciseController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Exercise>> getAllExercises() {
+    public ResponseEntity<List<ExerciseDTO>> getAllExercises() {
         return ResponseEntity.ok(exerciseService.getAllExercises());
+    }
+
+    @GetMapping("/searchByAlias")
+    public ResponseEntity<List<ExerciseDTO>> searchExercisesByAlias(@RequestParam String alias) {
+        List<ExerciseDTO> exercises = exerciseService.searchExercisesByAlias(alias);
+        return ResponseEntity.ok(exercises);
     }
 
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addExercise(
             @RequestParam("name") String name,
-            @RequestParam("description") String description,
-            @RequestParam("url") String url,
-            @RequestParam("image") MultipartFile image
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "url", required = false) String url,
+            @RequestParam(value = "image", required = false) MultipartFile image,
+            @RequestParam(value = "body_parts", required = false) String bodyParts,
+            @RequestParam(value = "aliases", required = false) String aliases
     ) {
         try {
-            return ResponseEntity.ok(exerciseService.addExercise(name, description, url, image));
+            Set<BodyPart> bodyPartSet = (bodyParts != null && !bodyParts.isEmpty())
+                    ? Stream.of(bodyParts.split(","))
+                    .map(BodyPart::valueOf)
+                    .collect(Collectors.toSet())
+                    : Collections.emptySet();
+
+            Set<ExerciseAlias> aliasSet = (aliases != null && !aliases.isEmpty())
+                    ? Stream.of(aliases.split(","))
+                    .map(alias -> {
+                        ExerciseAlias exerciseAlias = new ExerciseAlias();
+                        exerciseAlias.setAlias(alias);
+                        return exerciseAlias;
+                    })
+                    .collect(Collectors.toSet())
+                    : Collections.emptySet();
+
+            description = (description != null) ? description : "";
+            url = (url != null) ? url : "";
+
+            return ResponseEntity.ok(exerciseService.addExercise(name, description, url, image, bodyPartSet, aliasSet));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid body part provided.");
+        } catch (DuplicateExerciseNameException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }

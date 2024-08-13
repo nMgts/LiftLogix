@@ -1,24 +1,42 @@
-<div class="container">
-  <h3>Zaloguj</h3>
-  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
-  <form (submit)="handleSubmit()">
-    <div class="form-group">
-      <label class="for-group">Email:</label>
-      <input type="text" placeholder="Enter" [(ngModel)]="email" name="email" required>
-      <label class="for-group">Password:</label>
-      <input [type]="passwordFieldType" placeholder="Enter" [(ngModel)]="password" name="password" required>
-      <span class="toggle-password" (click)="togglePasswordField()">
-      <i class="fa fa-eye" aria-hidden="true"></i>
-      </span>
-      <button type="submit">Zaloguj</button>
-    </div>
-  </form>
-  <div *ngIf="showRedirect" class="forgot-password-link" (click)="redirectToForgotPassword()">
-    <p>Nie pamiętasz hasła?</p>
-  </div>
+<div class="main-container">
 
-  <div *ngIf="showResendConfirmation" class="resend-confirmation">
-    <button (click)="resendConfirmationEmail()">Wyślij ponownie e-mail potwierdzający</button>
+  <a routerLink="/" class="back-link">
+    <i class="bx bxs-left-arrow-alt"></i>
+  </a>
+
+  <div class="wrapper">
+    <form>
+      <h1>Logowanie</h1>
+
+      <div class="success-error-container">
+        <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+        <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+      </div>
+
+      <div class="input-box">
+        <input type="email" placeholder="Email" [(ngModel)]="email" name="email" required>
+      </div>
+      <div class="input-box">
+        <input [type]="passwordFieldType" placeholder="Hasło" [(ngModel)]="password" name="password" required>
+        <i class='bx bxs-show' (click)="togglePasswordField()" aria-hidden="true"></i>
+      </div>
+    </form>
+
+    <div class="remember-forgot">
+      <label>
+        <input type="checkbox" [(ngModel)]="rememberMe">Zapamiętaj mnie
+      </label>
+      <a routerLink="/forgot-password">Zapomniałeś hasło?</a>
+    </div>
+
+    <div *ngIf="showResendConfirmation" class="resend" (click)="resendConfirmationEmail()">
+      <p>Wyślij ponownie email potwierdzający</p>
+    </div>
+
+    <button type="submit" (click)="handleSubmit()" class="btn">Zaloguj</button>
+
+    <div class="register-link">
+      <p>Nie posiadasz jeszcze konta?<a routerLink="/register"> Zarejestruj</a></p>
+    </div>
   </div>
-  <p>Nie posiadasz konta? <a routerLink="/register"><button>Zarejestruj się</button></a></p>
 </div>
