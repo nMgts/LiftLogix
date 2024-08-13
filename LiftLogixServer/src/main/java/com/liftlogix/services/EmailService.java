@@ -124,7 +124,7 @@ public class EmailService {
 
     private String generateVerificationCode() {
         SecureRandom random = new SecureRandom();
-        int code = random.nextInt(900000) + 100000; // Zakres 100000-999999
+        int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
     }
 }

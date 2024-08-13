@@ -38,11 +38,11 @@ h1 {
 .workout-creator-image {
   max-width: 70%;
   height: auto;
+}
 
-  @media (max-width: 650px) {
-    .client-image {
-      margin-right: 0;
-    }
+@media (max-width: 650px) {
+  .workout-creator-image {
+    margin-right: 0;
   }
 }
 
@@ -52,7 +52,7 @@ h1 {
 }
 
 .close-button {
-  position: absolute;
+  position: fixed;
   top: 10px;
   right: 10px;
   background: none;
@@ -60,6 +60,7 @@ h1 {
   font-size: 48px;
   color: aliceblue;
   cursor: pointer;
+  z-index: 1000;
 }
 
 .close-button:hover {
@@ -73,94 +74,46 @@ h1 {
   text-align: center;
 }
 
+.micro-meso-info {
+  width: fit-content;
+  margin: 0 auto;
+  font-weight: bold;
+  font-size: 24px;
+}
+
 .workout-name-container {
   display: flex;
   align-items: center;
   position: relative;
-  width: 400px;
-  padding: 5px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 20px;
+  width: 300px;
+  max-width: 100%;
+  padding: 5px 5px 0 5px;
+  margin: 20px auto 0 auto;
 }
 
-.workout-name-container input {
+mat-option mat-icon:hover {
+  color: red !important;
+  scale: 1.2;
+}
+
+.actions-container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin: 0 auto;
+  width: fit-content;
+}
+
+.meso-macro-inputs {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin: 10px auto 0 auto;
+  width: fit-content;
+}
+
+.meso-macro-inputs label {
   flex-grow: 1;
-  outline: none;
-  padding: 5px;
-  color: black;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.workout-name-container button {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.dropdown-button {
-  position: absolute;
-  right: 210px;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-}
-
-.dropdown-button mat-icon {
-  color: black !important;
-}
-
-.add-button {
-  display: flex;
-  align-items: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  margin-left: 10px;
-  white-space: nowrap;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 5px;
-  width: 46%;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 100;
-}
-
-.dropdown-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-}
-
-.dropdown-item span {
-  color: black;
-  font-size: 14px;
-}
-
-.dropdown-item mat-icon {
-  cursor: pointer;
-  color: black !important;
-}
-
-.dropdown-menu div:hover {
-  background-color: rgba(196, 196, 196, 0.7);
-}
-
-.advanced-options-checkbox {
-  margin-top: 20px;
-  width: 200px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .exercise-table {
@@ -176,6 +129,16 @@ h1 {
   max-width: 750px;
   margin-left: auto;
   margin-right: auto;
+}
+
+tr.add-exercise-row td {
+  align-items: center;
+  background-color: transparent;
+  border: none;
+}
+
+tr.add-exercise-row td button {
+  width: 100%;
 }
 
 .exercise-table th:nth-child(1),
@@ -331,17 +294,6 @@ td.break-cell {
   }
 }
 
-.add-exercise-button {
-  display: flex;
-  align-items: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  margin-top: 10px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .delete-icon {
   cursor: pointer;
   vertical-align: middle;
@@ -361,21 +313,21 @@ td.break-cell {
   color: rgba(255, 255, 255, 0.8) !important;
 }
 
-.tempo-tooltip {
+.tooltip {
   position: relative;
 }
 
-.tempo-tooltip mat-icon {
+.tooltip mat-icon {
   vertical-align: middle;
   font-size: 20px;
 }
 
-.tempo-tooltip .tooltip-text {
+.tooltip .tooltip-text {
   visibility: hidden;
   width: 200px;
   background-color: aliceblue;
   color: black;
-  text-align: center;
+  text-align: left;
   border-radius: 6px;
   padding: 5px 10px;
   position: absolute;
@@ -387,59 +339,59 @@ td.break-cell {
   transition: opacity 0.3s;
 }
 
-.tempo-tooltip .tooltip-text::after {
-  content: '';
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent transparent aliceblue transparent;
+.tooltip .tooltip-text .important-text {
+  color: #6A0DAD;
 }
 
-.tempo-tooltip:hover .tooltip-text {
+.tooltip:hover .tooltip-text {
   visibility: visible;
   opacity: 1;
 }
 
 /* Style for microcycle */
 
-.microcycle-length-form {
-  margin: 20px 0;
+.tables-container {
   display: flex;
-  align-items: center;
-}
-
-.microcycle-length-form label {
-  font-weight: bold;
-  margin-right: 10px;
-}
-
-.microcycle-length-form input {
-  width: 60px;
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  color: black;
-}
-
-.microcycle-length-form input:focus {
-  border-color: darkviolet;
-  outline: none;
-}
-
-.microcycle-table {
+  justify-content: space-between;
+  align-items: flex-start;
   margin-top: 20px;
+}
+
+@media (max-width: 1023px) {
+  .tables-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tables-container.show-advanced {
+    min-width: 900px;
+  }
+}
+
+.microcycle-table-container {
+  margin-top: 20px;
+  margin-right: 20px;
   padding: 10px;
-  text-align: center;
   vertical-align: top;
   height: auto;
   line-height: normal;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
 }
 
-.microcycle-table table {
+.microcycle-table-container h1 {
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  padding: 20px 0;
+  font-size: 26px;
+}
+
+.microcycle-table-container table {
   border-collapse: collapse;
   table-layout: fixed;
   width: 500px;
@@ -447,7 +399,7 @@ td.break-cell {
   margin-right: auto;
 }
 
-.microcycle-table th {
+.microcycle-table-container th {
   border: 1px solid black;
   background-color: rgba(128, 0, 128, 0.8);
   font-size: 16px;
@@ -456,7 +408,7 @@ td.break-cell {
   text-align: center;
 }
 
-.microcycle-table td {
+.microcycle-table-container td {
   font-size: 14px;
   border: 1px solid black;
   padding: 10px;
@@ -468,7 +420,7 @@ td.break-cell {
   height: 40px;
 }
 
-.microcycle-table td.hidden-cell {
+.microcycle-table-container td.hidden-cell {
   color: transparent !important;
   border: none !important;
 }
@@ -478,24 +430,7 @@ td.break-cell {
   min-height: 50px;
 }
 
-.microcycle-cell-dropdown-menu ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-.microcycle-cell-dropdown-menu li {
-  padding: 10px;
-  cursor: pointer;
-  color: black;
-  line-height: 1.2;
-}
-
-.microcycle-cell-dropdown-menu li:hover {
-  background-color: #f0f0f0;
-}
-
-.workout-names-container {
+.workout-names {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -531,8 +466,25 @@ td.break-cell {
   position: relative;
 }
 
-.microcycle-table td.active-cell:hover .plus-icon {
+.microcycle-table-container td.active-cell:hover .plus-icon {
   display: inline-block;
+}
+
+.microcycle-cell-dropdown-menu ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.microcycle-cell-dropdown-menu li {
+  padding: 10px;
+  cursor: pointer;
+  color: black;
+  line-height: 1.2;
+}
+
+.microcycle-cell-dropdown-menu li:hover {
+  background-color: #f0f0f0;
 }
 
 .microcycle-cell-dropdown-menu {
@@ -548,40 +500,51 @@ td.break-cell {
   z-index: 1000;
 }
 
-/* Style for micro and macro cycle */
+/* Style for meso and macro cycle */
 
-.microcycle-count-form, .mesocycle-count-form {
-  margin: 20px 0;
+.meso-macro-tables-container {
+  display: none;
+}
+
+.meso-macro-tables-container.show-advanced {
+  flex: 1;
   display: flex;
-  align-items: center;
-}
-
-.microcycle-count-form label, .mesocycle-count-form label {
-  font-weight: bold;
-  margin-right: 10px;
-}
-
-.microcycle-count-form input, .mesocycle-count-form input {
-  width: 60px;
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  color: black;
-}
-
-.microcycle-count-form input:focus, .mesocycle-count-form input:focus {
-  border-color: darkviolet;
-  outline: none;
-}
-
-.mesocycle-table, .macrocycle-table {
-  margin-top: 20px;
-  padding: 10px;
+  flex-direction: column;
   text-align: center;
-  vertical-align: top;
-  height: auto;
-  line-height: normal;
+  align-items: center;
+  justify-content: space-between;
+
+  @media (max-width: 1023px) {
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+    min-width: 900px;
+  }
+}
+
+.mesocycle-container, .macrocycle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (max-width: 1023px) {
+    width: 100%;
+    padding: 10px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.meso-macro-tables-container h1 {
+  width: 100%;
+  text-align: center;
+  font-size: 26px;
+  margin: 0;
+  padding: 20px 0;
+}
+
+.delete-microcycle, .delete-mesocycle {
+  margin-bottom: 15px;
 }
 
 .mesocycle-table table, .macrocycle-table table {
@@ -593,35 +556,56 @@ td.break-cell {
   border: 1px solid black;
   background-color: rgba(128, 0, 128, 0.8);
   font-size: 16px;
-  padding: 10px;
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
   font-weight: bold;
   text-align: center;
 }
 
 .microcycle-header, .mesocycle-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  height: 100%;
 }
 
 .microcycle-management, .mesocycle-management {
   display: none;
 }
 
-.microcycle-header, .mesocycle-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.microcycle-header:hover .microcycle-thead, .mesocycle-header:hover .mesocycle-thead {
+.microcycle-header:hover .microcycle-thead,
+.mesocycle-header:hover .mesocycle-thead {
   display: none;
 }
 
-.microcycle-header:hover .microcycle-management, .mesocycle-header:hover .mesocycle-management {
-  display: inline-block;
+.microcycle-header:hover .microcycle-management,
+.mesocycle-header:hover .mesocycle-management {
+  display: flex;
+  gap: 10px;
+
+  mat-icon {
+    cursor: pointer;
+  }
+
+  mat-icon.select:hover {
+    scale: 1.2;
+    color: #0056b3 !important;
+  }
+
+  mat-icon.delete:hover {
+    scale: 1.2;
+    color: red !important;
+  }
+}
+
+.touch-device .microcycle-header:hover .microcycle-thead,
+.touch-device .mesocycle-header:hover .mesocycle-thead {
+  display: flex;
+}
+
+.touch-device .microcycle-header:hover .microcycle-management,
+.touch-device .mesocycle-header:hover .mesocycle-management{
+  display: none;
 }
 
 .highlighted-header {

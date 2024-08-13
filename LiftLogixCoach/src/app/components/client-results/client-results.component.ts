@@ -200,7 +200,7 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
     const token = localStorage.getItem('token') || '';
     this.resultService.addResult(this.clientId, token, this.benchpress, this.deadlift, this.squat)
       .subscribe({
-        next: (result) => {
+        next: () => {
           this.openSnackBar('Result added successfully!');
           this.benchpress = null;
           this.deadlift = null;
