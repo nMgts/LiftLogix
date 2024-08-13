@@ -72,6 +72,10 @@ h1 {
   font-weight: bold;
   margin-bottom: 10px;
   text-align: center;
+
+  @media (max-width: 600px) {
+    font-size: 24px;
+  }
 }
 
 .micro-meso-info {
@@ -79,6 +83,10 @@ h1 {
   margin: 0 auto;
   font-weight: bold;
   font-size: 24px;
+
+  @media (max-width: 600px) {
+    font-size: 18px;
+  }
 }
 
 .workout-name-container {
@@ -491,7 +499,7 @@ td.break-cell {
   }
 
   .tables-container.show-advanced {
-    min-width: 900px;
+    min-width: 100%;
   }
 }
 
@@ -515,6 +523,10 @@ td.break-cell {
   margin: 0;
   padding: 20px 0;
   font-size: 26px;
+
+  @media (max-width: 600px) {
+    font-size: 18px;
+  }
 }
 
 .microcycle-table-container table {
@@ -721,14 +733,17 @@ td.break-cell {
   display: flex;
   flex-direction: column;
   text-align: center;
-  align-items: center;
-  justify-content: space-between;
 
   @media (max-width: 1023px) {
     flex-direction: row;
     gap: 20px;
     width: 100%;
-    min-width: 900px;
+  }
+
+  @media (max-width: 690px) {
+    flex-direction: column;
+    width: fit-content;
+    max-width: 100%;
   }
 }
 
@@ -736,10 +751,10 @@ td.break-cell {
   display: flex;
   flex-direction: column;
   align-items: center;
+  vertical-align: top;
 
   @media (max-width: 1023px) {
     width: 100%;
-    padding: 10px;
     margin-left: auto;
     margin-right: auto;
   }
@@ -751,10 +766,20 @@ td.break-cell {
   font-size: 26px;
   margin: 0;
   padding: 20px 0;
+
+  @media (max-width: 600px) {
+    font-size: 18px;
+  }
 }
 
 .delete-microcycle, .delete-mesocycle {
   margin-bottom: 15px;
+}
+
+button.delete-microcycle, button.delete-mesocycle {
+  @media (max-width: 450px) {
+    font-size: 12px;
+  }
 }
 
 .mesocycle-table table, .macrocycle-table table {
@@ -774,6 +799,21 @@ td.break-cell {
   @media (max-width: 974px) {
     width: 60px;
     height: 60px;
+  }
+
+  @media (max-width: 780px) {
+    width: 50px;
+    height: 50px;
+  }
+
+  @media (max-width: 400px) {
+    width: 43px;
+    height: 43px;
+  }
+
+  @media (max-width: 353px) {
+    width: 38px;
+    height: 38px;
   }
 }
 
