@@ -98,17 +98,68 @@ mat-option mat-icon:hover {
 
 .actions-container {
   display: flex;
-  gap: 16px;
   align-items: center;
   margin: 0 auto;
   width: fit-content;
 }
 
+.button-container {
+  display: flex;
+  align-items: center;
+  margin: 0 auto;
+  width: fit-content;
+  gap: 16px;
+
+  @media (max-width: 650px) {
+    gap: 9px;
+  }
+
+  @media (max-width: 350px) {
+    gap: 7px;
+  }
+}
+
+.actions-container button span {
+  color: inherit;
+}
+
+.actions-container button span.short-text {
+  display: none;
+}
+
+@media (max-width: 650px) {
+  .actions-container button span.full-text {
+    display: none;
+  }
+
+  .actions-container button span.short-text {
+    display: inline;
+  }
+}
+
+.actions-container button {
+  @media (max-width: 650px) {
+    font-size: 12px;
+  }
+}
+
+.actions-container mat-checkbox {
+  margin-left: 10px;
+}
+
+.actions-container .advanced-options-icon {
+  margin-left: 9px;
+}
+
 .meso-macro-inputs {
   display: flex;
-  gap: 20px;
   align-items: center;
   margin: 10px auto 0 auto;
+  gap: 20px;
+  width: fit-content;
+}
+
+.mesocycle-management div {
   width: fit-content;
 }
 
@@ -117,18 +168,29 @@ mat-option mat-icon:hover {
 }
 
 .exercise-table {
-  width: 100%;
+  max-width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
   table-layout: fixed;
   min-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media (max-width: 999px) {
+    min-width: 200px;
+  }
 }
 
 .exercise-table.basic-options {
-  min-width: 450px;
+  min-width: 400px;
   max-width: 750px;
+  table-layout: fixed;
   margin-left: auto;
   margin-right: auto;
+
+  @media (max-width: 499px) {
+    min-width: 200px;
+  }
 }
 
 tr.add-exercise-row td {
@@ -144,36 +206,81 @@ tr.add-exercise-row td button {
 .exercise-table th:nth-child(1),
 .exercise-table td:nth-child(1) {
   width: 21%;
+
+  @media (max-width: 999px) {
+    width: 42%;
+  }
+
+  @media (max-width: 499px) {
+    width: 90%;
+  }
 }
 
 .exercise-table.basic-options th:nth-child(1),
 .exercise-table.basic-options td:nth-child(1) {
   width: 42%;
+
+  @media(max-width: 499px) {
+    width: 90%;
+  }
 }
 
 .exercise-table th:nth-child(2),
 .exercise-table td:nth-child(2) {
   width: 11%;
+
+  @media (max-width: 999px) {
+    width: 19%;
+  }
+
+  @media (max-width: 499px) {
+    width: 5%;
+  }
 }
 
 .exercise-table.basic-options th:nth-child(2),
 .exercise-table.basic-options td:nth-child(2) {
   width: 19%;
+
+  @media(max-width: 499px) {
+    width: 5%;
+  }
 }
 
 .exercise-table th:nth-child(3),
 .exercise-table td:nth-child(3) {
   width: 11%;
+
+  @media (max-width: 999px) {
+    width: 19%;
+  }
+
+  @media (max-width: 499px) {
+    width: 5%;
+  }
 }
 
 .exercise-table.basic-options th:nth-child(3),
 .exercise-table.basic-options td:nth-child(3) {
   width: 19%;
+
+  @media(max-width: 499px) {
+    width: 5%;
+  }
 }
 
 .exercise-table th:nth-child(4),
 .exercise-table td:nth-child(4) {
   width: 11%;
+
+  @media (max-width: 999px) {
+    width: 18%;
+  }
+}
+
+.exercise-table.basic-options th:nth-child(4),
+.exercise-table.basic-options td:nth-child(4) {
+  width: 18%;
 }
 
 .exercise-table th:nth-child(5),
@@ -211,6 +318,20 @@ tr.add-exercise-row td button {
   background-color: transparent;
 }
 
+@media (max-width: 999px) {
+  .exercise-table th:nth-child(5) {
+    border: none;
+    background-color: transparent;
+  }
+}
+
+@media (max-width: 499px) {
+  .exercise-table th:nth-child(2) {
+    border: none;
+    background-color: transparent;
+  }
+}
+
 .exercise-table th, .exercise-table td {
   border: 1px solid black;
   text-align: center;
@@ -223,6 +344,12 @@ tr.add-exercise-row td button {
 
   @media (max-width: 1050px) {
     font-size: 12px;
+  }
+}
+
+@media (max-width: 499px) {
+  .exercise-table.basic-options th {
+    font-size: 16px;
   }
 }
 
@@ -370,9 +497,8 @@ td.break-cell {
 
 .microcycle-table-container {
   margin-top: 20px;
-  margin-right: 20px;
   padding: 10px;
-  vertical-align: top;
+  vertical-align: center;
   height: auto;
   line-height: normal;
   flex: 1;
@@ -397,27 +523,69 @@ td.break-cell {
   width: 500px;
   margin-left: auto;
   margin-right: auto;
+
+  @media (max-width: 599px) {
+    width: 428px;
+  }
+
+  @media (max-width: 521px) {
+    width: 357px;
+  }
+
+  @media (max-width: 438px) {
+    width: 287px;
+  }
+
+  @media (max-width: 368px) {
+    width: 217px;
+  }
 }
 
 .microcycle-table-container th {
   border: 1px solid black;
   background-color: rgba(128, 0, 128, 0.8);
   font-size: 16px;
-  padding: 10px;
+  padding: 10px 0;
   font-weight: bold;
   text-align: center;
+
+  @media (max-width: 438px) {
+    font-size: 13px;
+  }
+
+  @media (max-width: 368px) {
+    font-size: 12px;
+  }
 }
 
 .microcycle-table-container td {
   font-size: 14px;
   border: 1px solid black;
-  padding: 10px;
+  padding: 10px 0;
   text-align: center;
-  vertical-align: top;
+  vertical-align: middle;
   color: black;
   min-height: 40px;
   line-height: 40px;
   height: 40px;
+
+  @media (max-width: 599px) {
+    min-height: 30px;
+    line-height: 30px;
+    height: 30px;
+  }
+
+  @media (max-width: 521px) {
+    min-height: 20px;
+    line-height: 20px;
+    height: 20px;
+  }
+
+  @media (max-width: 438px) {
+    min-height: 10px;
+    line-height: 10px;
+    height: 10px;
+  }
 }
 
 .microcycle-table-container td.hidden-cell {
@@ -428,6 +596,23 @@ td.break-cell {
 .cell-content {
   position: relative;
   min-height: 50px;
+  vertical-align: middle;
+
+  @media (max-width: 599px) {
+    min-height: 40px;
+  }
+
+  @media (max-width: 521px) {
+    min-height: 30px;
+  }
+
+  @media (max-width: 438px) {
+    min-height: 20px;
+  }
+
+  @media (max-width: 368px) {
+    min-height: 13px;
+  }
 }
 
 .workout-names {
@@ -435,6 +620,9 @@ td.break-cell {
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
+  align-items: center;
+  vertical-align: middle;
+  flex-direction: column;
 }
 
 .workout-letter {
@@ -451,6 +639,20 @@ td.break-cell {
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+  @media (max-width: 599px) {
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    font-size: 13px;
+  }
+
+  @media (max-width: 438px) {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 12px;
+  }
 }
 
 .workout-letter:hover {
@@ -464,9 +666,17 @@ td.break-cell {
   cursor: pointer;
   font-size: 36px;
   position: relative;
+
+  @media (max-width: 521px) {
+    font-size: 30px;
+  }
 }
 
 .microcycle-table-container td.active-cell:hover .plus-icon {
+  display: inline-block;
+}
+
+.microcycle-table-container td.touch-device .plus-icon {
   display: inline-block;
 }
 
@@ -560,6 +770,11 @@ td.break-cell {
   height: 70px;
   font-weight: bold;
   text-align: center;
+
+  @media (max-width: 974px) {
+    width: 60px;
+    height: 60px;
+  }
 }
 
 .microcycle-header, .mesocycle-header {

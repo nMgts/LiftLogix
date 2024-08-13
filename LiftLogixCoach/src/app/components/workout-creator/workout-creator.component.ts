@@ -609,4 +609,6 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     }
     this.closeBox.emit();
   }
+
+  protected readonly innerWidth = innerWidth;
 }

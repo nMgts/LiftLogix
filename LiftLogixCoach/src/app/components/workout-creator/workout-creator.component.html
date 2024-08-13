@@ -24,30 +24,37 @@
   </mat-form-field>
 
   <div class="actions-container">
-    <button (click)="createNewWorkout()" mat-raised-button color="primary">
-      <mat-icon>add</mat-icon> Dodaj trening
-    </button>
+    <div class="button-container">
+      <button (click)="createNewWorkout()" mat-raised-button color="primary">
+        <mat-icon>add</mat-icon>
+        <span class="short-text">Dodaj</span>
+        <span class="full-text">Dodaj trening</span>
+      </button>
 
-    <button (click)="duplicateWorkout()" mat-raised-button color="primary">
-      <mat-icon>content_copy</mat-icon>Duplikuj trening
-    </button>
+      <button (click)="duplicateWorkout()" mat-raised-button color="primary">
+        <mat-icon>content_copy</mat-icon>
+        <span class="short-text">Duplikuj</span>
+        <span class="full-text">Duplikuj trening</span>
+      </button>
+    </div>
 
-    <mat-checkbox [(ngModel)]="showAdvancedOptions">Opcje zaawansowane</mat-checkbox>
+    <mat-checkbox *ngIf="window.innerWidth > 651" [(ngModel)]="showAdvancedOptions">Opcje zaawansowane</mat-checkbox>
+    <mat-icon class="advanced-options-icon" *ngIf="window.innerWidth < 651">settings</mat-icon>
   </div>
 
-  <div class="meso-macro-inputs" *ngIf="showAdvancedOptions">
-    <mat-checkbox [(ngModel)]="showMesocycle">Stwórz mezocykl</mat-checkbox>
-    <mat-checkbox *ngIf="showMesocycle" [(ngModel)]="showMacrocycle">Stwórz makrocykl</mat-checkbox>
+  <div class="meso-macro-inputs" *ngIf="showAdvancedOptions && window.innerWidth > 651">
+    <div><mat-checkbox [(ngModel)]="showMesocycle">Stwórz mezocykl</mat-checkbox></div>
+    <div><mat-checkbox *ngIf="showMesocycle" [(ngModel)]="showMacrocycle">Stwórz makrocykl</mat-checkbox></div>
   </div>
 
   <table class="exercise-table" [ngClass]="{'advanced-options': showAdvancedOptions, 'basic-options': !showAdvancedOptions}">
     <thead>
     <tr>
       <th>Ćwiczenie</th>
-      <th>Ilość serii</th>
-      <th>Powtórzenia</th>
-      <th>Ciężar</th>
-      <th class="tooltip" *ngIf="showAdvancedOptions">
+      <th *ngIf="window.innerWidth > 499">Ilość serii</th>
+      <th *ngIf="window.innerWidth > 499">Powtórzenia</th>
+      <th *ngIf="window.innerWidth > 499">Ciężar</th>
+      <th class="tooltip" *ngIf="showAdvancedOptions && window.innerWidth > 999">
         %1RM
         <mat-icon>info</mat-icon>
         <span class="tooltip-text">
@@ -57,7 +64,7 @@
           <br> Jeśli dodatkowo wypełnisz pole <span class="important-text">RPE</span> (Rating of Perceived Exertion), <span class="important-text">system automatycznie wyliczy liczbę powtórzeń.</span>
         </span>
       </th>
-      <th class="tooltip" *ngIf="showAdvancedOptions">
+      <th class="tooltip" *ngIf="showAdvancedOptions && window.innerWidth > 999">
         Tempo
         <mat-icon>info</mat-icon>
         <span class="tooltip-text">
@@ -70,7 +77,7 @@
           <br>Jeżeli którąkolwiek fazę zostawisz jako pustą - tempo nie będzie uwzględniane.
         </span>
       </th>
-      <th class="tooltip" *ngIf="showAdvancedOptions">
+      <th class="tooltip" *ngIf="showAdvancedOptions && window.innerWidth > 999">
         RPE
         <mat-icon>info</mat-icon>
         <span class="tooltip-text">
@@ -80,8 +87,10 @@
           na podstawie tych danych.
         </span>
       </th>
-      <th *ngIf="showAdvancedOptions">Przerwa</th>
-      <th></th>
+      <th *ngIf="showAdvancedOptions && window.innerWidth > 999">Przerwa</th>
+      <th class="workout-exercise-details-column"
+          *ngIf="(window.innerWidth < 1000 && showAdvancedOptions) || window.innerWidth < 500"></th>
+      <th class="delete-column"></th>
     </tr>
     </thead>
     <tbody>
@@ -90,7 +99,7 @@
         {{ exercise.exercise.name }}
         <mat-icon class="info-icon" (click)="openExerciseDetails(exercise.exercise, $event)">info</mat-icon>
       </td>
-      <td (click)="editCell(exercise, 'series')">
+      <td *ngIf="window.innerWidth > 499" (click)="editCell(exercise, 'series')">
         <ng-container *ngIf="!isEditing(exercise, 'series'); else editSeries">
           {{ exercise.series || '' }}
         </ng-container>
@@ -103,7 +112,7 @@
                  type="number" min="0"/>
         </ng-template>
       </td>
-      <td class="repetitions-cell" (click)="editCell(exercise, 'repetitions')">
+      <td class="repetitions-cell" *ngIf="window.innerWidth > 499" (click)="editCell(exercise, 'repetitions')">
         <ng-container *ngIf="!isEditing(exercise, 'repetitions'); else editRepetitions">
           {{ formatRepetitions(exercise) }}
         </ng-container>
@@ -124,7 +133,7 @@
           </div>
         </ng-template>
       </td>
-      <td (click)="editCell(exercise, 'weight')">
+      <td *ngIf="window.innerWidth > 499" (click)="editCell(exercise, 'weight')">
         <ng-container *ngIf="!isEditing(exercise, 'weight'); else editWeight">
           {{ exercise.weight ? exercise.weight + 'kg' : '' }}
         </ng-container>
@@ -137,7 +146,7 @@
                  type="number" min="0"/>
         </ng-template>
       </td>
-      <td *ngIf="showAdvancedOptions" (click)="editCell(exercise, 'percentage')">
+      <td *ngIf="showAdvancedOptions && window.innerWidth > 999" (click)="editCell(exercise, 'percentage')">
         <ng-container *ngIf="!isEditing(exercise, 'percentage'); else editPercentage">
           {{ exercise.percentage ? exercise.percentage + '%' : '' }}
         </ng-container>
@@ -150,7 +159,7 @@
                  type="number" min="0"/>
         </ng-template>
       </td>
-      <td *ngIf="showAdvancedOptions" (click)="editCell(exercise, 'tempo')">
+      <td *ngIf="showAdvancedOptions && window.innerWidth > 999" (click)="editCell(exercise, 'tempo')">
         <ng-container *ngIf="!isEditing(exercise, 'tempo'); else editTempo">
           {{ exercise.tempo || '' }}
         </ng-container>
@@ -164,7 +173,7 @@
                  placeholder="1-1-1-1"/>
         </ng-template>
       </td>
-      <td *ngIf="showAdvancedOptions" (click)="editCell(exercise, 'rpe')">
+      <td *ngIf="showAdvancedOptions && window.innerWidth > 999" (click)="editCell(exercise, 'rpe')">
         <ng-container *ngIf="!isEditing(exercise, 'rpe'); else editRpe">
           {{ exercise.rpe || '' }}
         </ng-container>
@@ -177,7 +186,7 @@
                  type="number" min="1" max="10"/>
         </ng-template>
       </td>
-      <td *ngIf="showAdvancedOptions" class="break-cell" (click)="editCell(exercise, 'break')">
+      <td *ngIf="showAdvancedOptions && window.innerWidth > 999" class="break-cell" (click)="editCell(exercise, 'break')">
         <ng-container *ngIf="!isEditing(exercise, 'break'); else editBreak">
           {{ exercise.break.value ? exercise.break.value + exercise.break.unit : '' }}
         </ng-container>
@@ -199,13 +208,22 @@
           </div>
         </ng-template>
       </td>
-      <td>
+      <td class="workout-exercise-details-column"
+          *ngIf="(window.innerWidth < 1000 && showAdvancedOptions) || window.innerWidth < 500">
+        <mat-icon>more_vert</mat-icon>
+      </td>
+      <td class="delete-column">
         <mat-icon class="delete-icon" (click)="removeExercise(exercise)">delete</mat-icon>
       </td>
     </tr>
 
     <tr class="add-exercise-row">
-      <td [attr.colspan]="showAdvancedOptions ? 8 : 4">
+      <td [attr.colspan]=
+            "showAdvancedOptions
+              ? (window.innerWidth < 500
+                  ? 1
+                  : (window.innerWidth < 1000 ? 4 : 8))
+              : (window.innerWidth < 500 ? 1 : 4)">
         <button mat-raised-button color="primary" (click)="openAddExerciseDialog()">
           <mat-icon>add</mat-icon> Dodaj ćwiczenie
         </button>
@@ -241,7 +259,11 @@
         </thead>
         <tbody>
         <tr *ngFor="let row of microcycleTable">
-          <td *ngFor="let cell of row" [ngClass]="{'hidden-cell': cell === 0, 'active-cell': cell !== 0}">
+          <td *ngFor="let cell of row"
+              [ngClass]="{
+              'hidden-cell': cell === 0,
+              'active-cell': cell !== 0,
+              'touch-device': isTouchDevice}">
             <div class="cell-content" *ngIf="cell !== 0">
               <div class="workout-names">
                 <span *ngFor="let workout of getWorkoutsForDay(cell)" class="workout-letter" (click)="removeWorkoutFromMicrocycle(workout, cell)">
@@ -287,15 +309,29 @@
           <table>
             <thead>
             <tr>
-              <th *ngFor="let microcycle of selectedMesocycle.microcycles; let i = index"
+              <th *ngFor="let microcycle of selectedMesocycle.microcycles.slice(0, 5); let i = index"
                   [ngClass]="{'highlighted-header': microcycle == selectedMicrocycle, 'touch-device': isTouchDevice}"
                   (click)="selectMicrocycle(i)">
                 <div class="microcycle-header">
-                  <span class="microcycle-thead">
-                    {{ toRoman(i + 1) }}
-                  </span>
+            <span class="microcycle-thead">
+              {{ toRoman(i + 1) }}
+            </span>
                   <div class="microcycle-management">
                     <mat-icon class='delete' (click)="deleteMicrocycle(i, $event)">delete</mat-icon>
+                  </div>
+                </div>
+              </th>
+            </tr>
+            <tr>
+              <th *ngFor="let microcycle of selectedMesocycle.microcycles.slice(5); let i = index"
+                  [ngClass]="{'highlighted-header': microcycle == selectedMicrocycle, 'touch-device': isTouchDevice}"
+                  (click)="selectMicrocycle(i + 5)">
+                <div class="microcycle-header">
+            <span class="microcycle-thead">
+              {{ toRoman(i + 6) }}
+            </span>
+                  <div class="microcycle-management">
+                    <mat-icon class='delete' (click)="deleteMicrocycle(i + 5, $event)">delete</mat-icon>
                   </div>
                 </div>
               </th>
@@ -329,15 +365,29 @@
           <table>
             <thead>
             <tr>
-              <th *ngFor="let mesocycle of macrocycle.mesocycles; let i = index"
+              <th *ngFor="let mesocycle of macrocycle.mesocycles.slice(0, 5); let i = index"
                   [ngClass]="{'highlighted-header': mesocycle == selectedMesocycle, 'touch-device': isTouchDevice}"
                   (click)="selectMesocycle(i)">
                 <div class="mesocycle-header">
-                  <span class="mesocycle-thead">
-                    {{ toRoman(i + 1) }}
-                  </span>
+            <span class="mesocycle-thead">
+              {{ toRoman(i + 1) }}
+            </span>
                   <div class="mesocycle-management">
                     <mat-icon class='delete' (click)="deleteMesocycle(i, $event)">delete</mat-icon>
+                  </div>
+                </div>
+              </th>
+            </tr>
+            <tr>
+              <th *ngFor="let mesocycle of macrocycle.mesocycles.slice(5); let i = index"
+                  [ngClass]="{'highlighted-header': mesocycle == selectedMesocycle, 'touch-device': isTouchDevice}"
+                  (click)="selectMesocycle(i + 5)">
+                <div class="mesocycle-header">
+            <span class="mesocycle-thead">
+              {{ toRoman(i + 6) }}
+            </span>
+                  <div class="mesocycle-management">
+                    <mat-icon class='delete' (click)="deleteMesocycle(i + 5, $event)">delete</mat-icon>
                   </div>
                 </div>
               </th>
