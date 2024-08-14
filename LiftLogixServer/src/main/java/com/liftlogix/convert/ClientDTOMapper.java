@@ -16,4 +16,11 @@ public interface ClientDTOMapper {
         }
         return null;
     }
+
+    default byte[] map(String image) {
+        if (image != null && image.startsWith("data:image/png;base64,")) {
+            return Base64.getDecoder().decode(image.substring("data:image/png;base64,".length()));
+        }
+        return null;
+    }
 }
