@@ -7,7 +7,7 @@
 
 <button *ngIf="isBoxExpanded" (click)="close($event)" class="close-button">&times;</button>
 
-<div class="expanded-box" *ngIf="isBoxExpanded">
+<div class="expanded-box" *ngIf="isBoxExpanded" (click)="closeDropdown()">
 
   <h1 class="creator-header">Stwórz plan</h1>
 
@@ -39,7 +39,27 @@
     </div>
 
     <mat-checkbox *ngIf="window.innerWidth > 651" [(ngModel)]="showAdvancedOptions">Opcje zaawansowane</mat-checkbox>
-    <mat-icon class="advanced-options-icon" *ngIf="window.innerWidth < 651">settings</mat-icon>
+    <mat-icon class="advanced-options-icon" *ngIf="window.innerWidth < 651" (click)="toggleDropdown($event)">settings</mat-icon>
+
+    <div class="checkbox-dropdown-menu" *ngIf="window.innerWidth < 651 && dropdownOpen">
+      <mat-checkbox class="dropdown-option"
+                    [(ngModel)]="showAdvancedOptions"
+                    (click)="$event.stopPropagation()">
+        Opcje zaawansowane
+      </mat-checkbox>
+      <mat-checkbox class="dropdown-option"
+                    [(ngModel)]="showMesocycle"
+                    [disabled]="!showAdvancedOptions"
+                    (click)="$event.stopPropagation()">
+        Stwórz mezocykl
+      </mat-checkbox>
+      <mat-checkbox class="dropdown-option"
+                    [(ngModel)]="showMacrocycle"
+                    [disabled]="!showMesocycle || !showAdvancedOptions"
+                    (click)="$event.stopPropagation()">
+        Stwórz makrocykl
+      </mat-checkbox>
+    </div>
   </div>
 
   <div class="meso-macro-inputs" *ngIf="showAdvancedOptions && window.innerWidth > 651">

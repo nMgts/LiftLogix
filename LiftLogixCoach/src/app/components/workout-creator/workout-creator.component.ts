@@ -20,6 +20,7 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
   @Input() isBoxExpanded = false;
   @Output() closeBox = new EventEmitter<void>();
   protected readonly window = window;
+  dropdownOpen: boolean = false;
 
   showAdvancedOptions = false;
   exampleWorkout: Workout = {
@@ -608,6 +609,15 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
   }
 
   /** Other Methods **/
+
+  toggleDropdown(event: Event) {
+    event.stopPropagation();
+    this.dropdownOpen = !this.dropdownOpen;
+  }
+
+  closeDropdown() {
+    this.dropdownOpen = false;
+  }
 
   detectTouchDevice() {
     this.isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
