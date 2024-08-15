@@ -47,7 +47,8 @@
     <div><mat-checkbox *ngIf="showMesocycle" [(ngModel)]="showMacrocycle">Stwórz makrocykl</mat-checkbox></div>
   </div>
 
-  <table class="exercise-table" [ngClass]="{'advanced-options': showAdvancedOptions, 'basic-options': !showAdvancedOptions}">
+  <table class="exercise-table"
+         [ngClass]="{'advanced-options': showAdvancedOptions, 'basic-options': !showAdvancedOptions}">
     <thead>
     <tr>
       <th>Ćwiczenie</th>
@@ -88,9 +89,7 @@
         </span>
       </th>
       <th *ngIf="showAdvancedOptions && window.innerWidth > 999">Przerwa</th>
-      <th class="workout-exercise-details-column"
-          *ngIf="(window.innerWidth < 1000 && showAdvancedOptions) || window.innerWidth < 500"></th>
-      <th class="delete-column"></th>
+
     </tr>
     </thead>
     <tbody>

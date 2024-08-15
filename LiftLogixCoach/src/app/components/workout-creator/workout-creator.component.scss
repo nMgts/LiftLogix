@@ -316,29 +316,10 @@ tr.add-exercise-row td button {
   width: 11%;
 }
 
-.exercise-table th:last-child,
 .exercise-table td:last-child {
   width: 2%;
 }
 
-.exercise-table th:last-child {
-  border: none;
-  background-color: transparent;
-}
-
-@media (max-width: 999px) {
-  .exercise-table th:nth-child(5) {
-    border: none;
-    background-color: transparent;
-  }
-}
-
-@media (max-width: 499px) {
-  .exercise-table th:nth-child(2) {
-    border: none;
-    background-color: transparent;
-  }
-}
 
 .exercise-table th, .exercise-table td {
   border: 1px solid black;
@@ -466,7 +447,7 @@ td.break-cell {
   border-radius: 6px;
   padding: 5px 10px;
   position: absolute;
-  z-index: 1;
+  z-index: 1000;
   top: 125%;
   left: 50%;
   margin-left: -100px;
@@ -504,8 +485,6 @@ td.break-cell {
 }
 
 .microcycle-table-container {
-  margin-top: 20px;
-  padding: 10px;
   vertical-align: center;
   height: auto;
   line-height: normal;

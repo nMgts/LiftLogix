@@ -81,6 +81,10 @@ h1 {
   left: 50%;
   transform: translateX(-50%);
   font-size: 30px;
+
+  @media (max-width: 600px) {
+    font-size: 24px;
+  }
 }
 
 .left-side, .right-side {

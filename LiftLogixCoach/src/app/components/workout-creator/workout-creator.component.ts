@@ -88,9 +88,7 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
   /** Workout Unit Methods **/
 
   selectWorkout(workout: Workout) {
-    console.log(workout);
     this.selectedWorkout = workout;
-    console.log(this.selectedWorkout);
   }
 
   createNewWorkout() {
@@ -263,18 +261,20 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     }
   }
 
-  toggleMicrocycleCellDropdown(event: Event, cell: any): void {
+  toggleMicrocycleCellDropdown(event: Event, cell: any) {
     event.stopPropagation();
     this.microcycleCellDropdownVisible = !this.microcycleCellDropdownVisible;
     this.activeCell = cell;
   }
 
-  closeMicrocycleCellDropdown(): void {
+  closeMicrocycleCellDropdown() {
     this.microcycleCellDropdownVisible = false;
   }
 
-  addWorkoutToMicrocycle(workout: Workout, day: number): void {
-    workout.days.push(day);
+  addWorkoutToMicrocycle(workout: Workout, day: number) {
+    if (!workout.days.includes(day)) {
+      workout.days.push(day);
+    }
   }
 
   getWorkoutsForDay(day: number): Workout[] {
@@ -325,14 +325,14 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     }
   }
 
-  selectMicrocycle(index: number): void {
+  selectMicrocycle(index: number) {
     this.selectedMicrocycle = this.selectedMesocycle.microcycles[index];
     this.selectedWorkout = this.selectedMicrocycle.workouts[0];
     this.microcycleLength = this.selectedMicrocycle.length;
     this.generateMicrocycleTable();
   }
 
-  deleteMicrocycle(index: number, event: Event): void {
+  deleteMicrocycle(index: number, event: Event) {
     event.stopPropagation();
     if (this.selectedMesocycle.microcycles.length > 1) {
       const selectedIndex = this.selectedMesocycle.microcycles.indexOf(this.selectedMicrocycle);
@@ -384,7 +384,7 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     }
   }
 
-  selectMesocycle(index: number): void {
+  selectMesocycle(index: number) {
     this.selectedMesocycle = this.macrocycle.mesocycles[index];
     this.selectedMicrocycle = this.selectedMesocycle.microcycles[0];
     this.selectedWorkout = this.selectedMicrocycle.workouts[0];
@@ -392,7 +392,7 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     this.microcycleCount = this.selectedMesocycle.microcycles.length;
   }
 
-  deleteMesocycle(index: number, event: Event): void {
+  deleteMesocycle(index: number, event: Event) {
     event.stopPropagation();
     if (this.macrocycle.mesocycles.length > 1) {
       const selectedIndex = this.macrocycle.mesocycles.indexOf(this.selectedMesocycle);
@@ -592,7 +592,7 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     return result;
   }
 
-  private openSnackBar(message: string): void {
+  private openSnackBar(message: string) {
     this.snackBar.open(message, 'Zamknij', {
       duration: 3000,
       verticalPosition: 'top'
@@ -609,6 +609,4 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     }
     this.closeBox.emit();
   }
-
-  protected readonly innerWidth = innerWidth;
 }

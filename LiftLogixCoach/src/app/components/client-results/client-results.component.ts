@@ -33,6 +33,7 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
   public lineChartLabels: string[] = [];
   public lineChartOptions: ChartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
   };
   public lineChartLegend = true;
 

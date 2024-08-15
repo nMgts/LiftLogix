@@ -3,33 +3,41 @@
     <span class="material-icons">arrow_back</span>
   </button>
   <div *ngIf="currentResult; else loading">
-    <p>Wyciskanie leżąc: {{ currentResult.benchpress }}</p>
-    <p>Martwy ciąg: {{ currentResult.deadlift }}</p>
-    <p>Przysiad: {{ currentResult.squat }}</p>
-    <p>Razem: {{ total }}</p>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Bieżący rekord</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Wyciskanie leżąc: {{ currentResult.benchpress }}</p>
+        <p>Martwy ciąg: {{ currentResult.deadlift }}</p>
+        <p>Przysiad: {{ currentResult.squat }}</p>
+        <p class="total">Razem: {{ total }}</p>
+      </mat-card-content>
+    </mat-card>
   </div>
   <ng-template #loading>
     <p>Ładowanie wyników...</p>
   </ng-template>
 
   <form (ngSubmit)="addResult()">
-    <div>
-      <label for="benchpress">Wyciskanie leżąc:</label>
-      <input id="benchpress" type="number" [(ngModel)]="benchpress" name="benchpress">
-    </div>
+    <mat-form-field appearance="fill">
+      <mat-label>Wyciskanie leżąc</mat-label>
+      <input matInput id="benchpress" type="number" [(ngModel)]="benchpress" name="benchpress">
+    </mat-form-field>
 
-    <div>
-      <label for="deadlift">Martwy ciąg:</label>
-      <input id="deadlift" type="number" [(ngModel)]="deadlift" name="deadlift">
-    </div>
+    <mat-form-field appearance="fill">
+      <mat-label>Martwy ciąg</mat-label>
+      <input matInput id="deadlift" type="number" [(ngModel)]="deadlift" name="deadlift">
+    </mat-form-field>
 
-    <div>
-      <label for="squat">Przysiad:</label>
-      <input id="squat" type="number" [(ngModel)]="squat" name="squat">
-    </div>
+    <mat-form-field appearance="fill">
+      <mat-label>Przysiad</mat-label>
+      <input matInput id="squat" type="number" [(ngModel)]="squat" name="squat">
+    </mat-form-field>
 
-    <button type="submit">Dodaj wynik</button>
+    <button mat-raised-button color="primary" type="submit">Dodaj wynik</button>
   </form>
+
 
   <div class="filter">
     <button mat-raised-button (click)="toggleFilter()">
