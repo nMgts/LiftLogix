@@ -28,7 +28,6 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
   }
 
   selectedWorkout = this.exampleWorkout;
-  addedWorkouts = 1;
 
   editingExercise: any = null;
   editingField: string = '';
@@ -99,18 +98,23 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     };
     this.selectedMicrocycle.workouts.push(newWorkout);
     this.selectedWorkout = newWorkout;
-    this.addedWorkouts++;
   }
 
   generateWorkoutName(): string {
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    const uniqueBaseNames = new Set(
+      this.selectedMicrocycle.workouts.map(workout => workout.name.replace(/\d*$/, ''))
+    );
+
+    const workoutCount = uniqueBaseNames.size;
     let name;
 
-    if (this.addedWorkouts < 26) {
-      name = `Trening ${alphabet[this.addedWorkouts]}`;
+    if (workoutCount < 26) {
+      name = `Trening ${alphabet[workoutCount]}`;
     } else {
       let letters = '';
-      let count = this.addedWorkouts;
+      let count = workoutCount;
 
       while (count >= 0) {
         const remainder = count % 26;
@@ -120,21 +124,53 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
 
       name = `Trening ${letters}`;
     }
+
     return name;
   }
 
   removeWorkout(workout: Workout, event: Event) {
     event.stopPropagation();
+
     if (this.selectedMicrocycle.workouts.length > 1) {
       const index = this.selectedMicrocycle.workouts.indexOf(workout);
       if (index !== -1) {
         this.selectedMicrocycle.workouts.splice(index, 1);
+
+        this.updateWorkoutNames();
+
         if (this.selectedWorkout === workout) {
           this.selectedWorkout = this.selectedMicrocycle.workouts[0];
         }
       }
     } else {
       this.openSnackBar("Nie można usunąć wszystkich treningów");
+    }
+  }
+
+  updateWorkoutNames() {
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const uniqueWorkouts: { [key: string]: Workout[] } = {};
+
+    this.selectedMicrocycle.workouts.forEach(workout => {
+      const baseName = workout.name.replace(/\d*$/, '');
+      if (!uniqueWorkouts[baseName]) {
+        uniqueWorkouts[baseName] = [];
+      }
+      uniqueWorkouts[baseName].push(workout);
+    });
+
+    let currentLetterIndex = 0;
+    for (let letter in uniqueWorkouts) {
+      const workoutsGroup = uniqueWorkouts[letter];
+      const newBaseName = `Trening ${alphabet[currentLetterIndex++]}`;
+
+      workoutsGroup.forEach((workout, i) => {
+        if (workoutsGroup.length > 1) {
+          workout.name = `${newBaseName}${i + 1}`;
+        } else {
+          workout.name = newBaseName;
+        }
+      });
     }
   }
 

@@ -46,8 +46,11 @@ public class ResultService {
     }
 
     public ResultDTO addResult(long clientId, Double benchpress, Double deadlift, Double squat) throws IllegalArgumentException {
-        if (benchpress == null && deadlift == null && squat == null) {
-            throw new IllegalArgumentException("At least one result must be provided");
+
+        if ((benchpress == null || benchpress <= 0) &&
+                (deadlift == null || deadlift <= 0) &&
+                (squat == null || squat <= 0)) {
+            throw new IllegalArgumentException("At least one result must be provided and greater than 0");
         }
 
         Client client = clientRepository.findById(clientId)
@@ -55,12 +58,19 @@ public class ResultService {
 
         Result result = new Result();
         result.setClient(client);
-        result.setBenchpress(benchpress);
-        result.setDeadlift(deadlift);
-        result.setSquat(squat);
-        result.setDate(LocalDateTime.now());
 
+        if (benchpress != null && benchpress > 0) {
+            result.setBenchpress(benchpress);
+        }
+        if (deadlift != null && deadlift > 0) {
+            result.setDeadlift(deadlift);
+        }
+        if (squat != null && squat > 0) {
+            result.setSquat(squat);
+        }
+        result.setDate(LocalDateTime.now());
         resultRepository.save(result);
+
         return resultDTOMapper.mapEntityToDTO(result);
     }
 

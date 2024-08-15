@@ -198,6 +198,11 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
       return
     }
 
+    if (!this.validateResult(this.benchpress, this.deadlift, this.squat)) {
+      this.openSnackBar('Wprowadź dodatnią liczbę lub zostaw pole puste.');
+      return;
+    }
+
     const token = localStorage.getItem('token') || '';
     this.resultService.addResult(this.clientId, token, this.benchpress, this.deadlift, this.squat)
       .subscribe({
@@ -219,6 +224,15 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
           }
         }
       });
+  }
+
+  validateResult(benchpress: number | null, deadlift: number | null, squat: number | null): boolean {
+    if ((benchpress != null && benchpress <= 0) ||
+        (deadlift != null && deadlift <= 0) ||
+        (squat != null && squat <= 0)) {
+      return false;
+    }
+    return true;
   }
 
   private openSnackBar(message: string): void {
