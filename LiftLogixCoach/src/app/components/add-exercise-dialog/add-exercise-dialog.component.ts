@@ -1,17 +1,17 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Renderer2, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { MatDialogRef } from "@angular/material/dialog";
 import { ExerciseService } from "../../services/exercise.service";
 import { YoutubeEmbedPipe } from '../../pipes/youtube-embed.pipe';
-import {Exercise} from "../../interfaces/Exercise";
+import { Exercise } from "../../interfaces/Exercise";
 
 @Component({
   selector: 'app-add-exercise-dialog',
   templateUrl: './add-exercise-dialog.component.html',
   styleUrl: './add-exercise-dialog.component.scss'
 })
-export class AddExerciseDialogComponent {
+export class AddExerciseDialogComponent implements AfterViewInit {
   exerciseForm: FormGroup;
   draggingOver = false;
   newImage: SafeUrl | null = null;
@@ -24,12 +24,16 @@ export class AddExerciseDialogComponent {
     'FOREARMS', 'ABS', 'CALVES', 'QUAD', 'HAMSTRING', 'GLUTE'
   ];
 
+  scrollTimeout: any;
+  @ViewChild('dialog', { static: true }) dialog!: ElementRef;
+
   constructor(
     public dialogRef: MatDialogRef<AddExerciseDialogComponent>,
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
     private exerciseService: ExerciseService,
-    private youtubeEmbedPipe: YoutubeEmbedPipe
+    private youtubeEmbedPipe: YoutubeEmbedPipe,
+    private renderer: Renderer2
   ) {
     this.exerciseForm = this.fb.group({
       name: ['', Validators.required],
@@ -38,6 +42,12 @@ export class AddExerciseDialogComponent {
       url: [''],
       image: [''],
       newAlias: ['']
+    });
+  }
+
+  ngAfterViewInit(): void {
+    this.renderer.listen(this.dialog.nativeElement, 'scroll', () => {
+      this.onWindowScroll();
     });
   }
 
@@ -126,6 +136,17 @@ export class AddExerciseDialogComponent {
 
   removeAlias(index: number): void {
     this.aliases.splice(index, 1);
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+
+    this.renderer.addClass(document.body, 'show-scrollbar');
+
+    clearTimeout(this.scrollTimeout);
+    this.scrollTimeout = setTimeout(() => {
+      this.renderer.removeClass(document.body, 'show-scrollbar');
+    }, 3000);
   }
 
   close(): void {

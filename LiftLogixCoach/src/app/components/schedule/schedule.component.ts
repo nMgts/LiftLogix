@@ -10,6 +10,8 @@ export class ScheduleComponent {
   @Output() closeBox = new EventEmitter<void>();
   protected readonly window = window;
 
+  constructor() {}
+
   close(event: Event) {
     event.stopPropagation();
     this.closeBox.emit();

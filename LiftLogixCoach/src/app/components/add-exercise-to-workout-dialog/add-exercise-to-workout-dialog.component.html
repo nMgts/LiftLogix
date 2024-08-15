@@ -1,6 +1,6 @@
 <div class="custom-dialog-container" (click)="hideDropdown()">
   <h1 mat-dialog-title>Dodaj ćwiczenie</h1>
-  <div mat-dialog-content>
+  <div class="content">
     <mat-form-field>
       <input matInput [formControl]="searchControl" placeholder="Wyszukaj"
              (click)="showDropdown($event)" (input)="showDropdown($event)"/>
@@ -8,7 +8,7 @@
         <mat-icon>{{ isDropdownOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
       </button>
     </mat-form-field>
-    <div class="dropdown" *ngIf="filteredExercises$ | async as exercises">
+    <div class="dropdown" *ngIf="filteredExercises$ | async as exercises" #elem (scroll)="onScroll($event)">
       <div *ngIf="exercises.length > 0 && searchControl.value != '' && isDropdownOpen">
         <div *ngFor="let exercise of exercises" (click)="onExerciseSelect(exercise)" class="dropdown-item">
           <img [src]="exercise.image ? exercise.image : '/icons/dumbbell.jpg'" alt="{{exercise.name}}" class="dropdown-image" />

@@ -1,70 +1,72 @@
-<h1 mat-dialog-title>Dodaj nowe ćwiczenie</h1>
+<div class="main-container">
+  <h1 mat-dialog-title>Dodaj nowe ćwiczenie</h1>
 
-<div *ngIf="errorMessage" class="error-message">
-  {{ errorMessage }}
-</div>
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
 
-<div mat-dialog-content>
-  <form [formGroup]="exerciseForm">
-    <mat-form-field appearance="fill">
-      <mat-label>Nazwa ćwiczenia</mat-label>
-      <input matInput formControlName="name">
-      <mat-error *ngIf="exerciseForm.get('name')?.invalid">
-        Nazwa ćwiczenia jest wymagana.
-      </mat-error>
-    </mat-form-field>
+  <div mat-dialog-content #dialog>
+    <form [formGroup]="exerciseForm">
+      <mat-form-field appearance="fill">
+        <mat-label>Nazwa ćwiczenia</mat-label>
+        <input matInput formControlName="name">
+        <mat-error *ngIf="exerciseForm.get('name')?.invalid">
+          Nazwa ćwiczenia jest wymagana.
+        </mat-error>
+      </mat-form-field>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Alias</mat-label>
-      <input matInput formControlName="newAlias">
-    </mat-form-field>
-    <button mat-button (click)="addAlias()">Dodaj alias</button>
+      <mat-form-field appearance="fill">
+        <mat-label>Alias</mat-label>
+        <input matInput formControlName="newAlias">
+      </mat-form-field>
+      <button mat-button (click)="addAlias()">Dodaj alias</button>
 
-    <div *ngIf="aliases.length > 0">
-      <h3>Aliasy:</h3>
-      <div class="alias-list">
-        <span *ngFor="let alias of aliases; let i = index">
-          {{ alias }}<button mat-icon-button (click)="removeAlias(i)">x</button>
-          <ng-container *ngIf="i < aliases.length - 1">, </ng-container>
-        </span>
-      </div>
-    </div>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Partie:</mat-label>
-      <mat-select formControlName="body_parts" multiple>
-        <mat-option *ngFor="let part of body_parts" [value]="part">{{ part }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Opis ćwiczenia</mat-label>
-      <textarea matInput formControlName="description"></textarea>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Link do filmu YouTube</mat-label>
-      <input matInput formControlName="url">
-    </mat-form-field>
-
-    <div class="drop-zone"
-         [class.drag-over]="draggingOver"
-         (drop)="onDrop($event)"
-         (dragover)="onDragOver($event)"
-         (dragleave)="onDragLeave($event)">
-      <div *ngIf="newImage">
-        <img [src]="newImage" height="100" width="100" alt="image">
-        <div class="image-del" (click)="deleteNewImage()">x</div>
+      <div *ngIf="aliases.length > 0">
+        <h3>Aliasy:</h3>
+        <div class="alias-list">
+          <span *ngFor="let alias of aliases; let i = index">
+            {{ alias }}<button mat-icon-button (click)="removeAlias(i)">x</button>
+            <ng-container *ngIf="i < aliases.length - 1">, </ng-container>
+          </span>
+        </div>
       </div>
 
-      <div *ngIf="!newImage">
-        Przeciągnij i upuść zdjęcie tutaj lub
-        <input type="file" (change)="onFileSelected($event)" accept="image/*">
+      <mat-form-field appearance="fill">
+        <mat-label>Partie:</mat-label>
+        <mat-select formControlName="body_parts" multiple>
+          <mat-option *ngFor="let part of body_parts" [value]="part">{{ part }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Opis ćwiczenia</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Link do filmu YouTube</mat-label>
+        <input matInput formControlName="url">
+      </mat-form-field>
+
+      <div class="drop-zone"
+           [class.drag-over]="draggingOver"
+           (drop)="onDrop($event)"
+           (dragover)="onDragOver($event)"
+           (dragleave)="onDragLeave($event)">
+        <div *ngIf="newImage">
+          <img [src]="newImage" height="100" width="100" alt="image">
+          <div class="image-del" (click)="deleteNewImage()">x</div>
+        </div>
+
+        <div *ngIf="!newImage">
+          Przeciągnij i upuść zdjęcie tutaj lub
+          <input type="file" (change)="onFileSelected($event)" accept="image/*">
+        </div>
       </div>
-    </div>
-  </form>
-</div>
-<div mat-dialog-actions>
-  <button mat-button (click)="close()">Anuluj</button>
-  <button mat-button color="primary" (click)="save()">Zapisz</button>
+    </form>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="close()">Anuluj</button>
+    <button mat-button color="primary" (click)="save()">Zapisz</button>
+  </div>
 </div>

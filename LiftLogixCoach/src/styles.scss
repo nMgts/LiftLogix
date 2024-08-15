@@ -6,6 +6,7 @@ html, body {
 body {
   display: flex;
   flex-direction: column;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 #app-root {
@@ -18,19 +19,20 @@ router-outlet {
   flex: 1;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: gray;
+  background-color: transparent;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-track {
   background: transparent;
+}
+
+body.show-scrollbar ::-webkit-scrollbar-thumb {
+  background-color: gray;
 }

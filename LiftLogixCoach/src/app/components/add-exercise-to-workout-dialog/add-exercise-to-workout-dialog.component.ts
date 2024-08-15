@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Exercise } from "../../interfaces/Exercise";
@@ -15,17 +15,20 @@ import {AddExerciseDialogComponent} from "../add-exercise-dialog/add-exercise-di
 })
 export class AddExerciseToWorkoutDialogComponent implements OnInit {
   exerciseName: string = '';
-  newExerciseName: string = '';
   searchControl = new FormControl();
   filteredExercises$: Observable<Exercise[]> = of([]);
   isDropdownOpen = false;
   exercise: Exercise | null = null;
 
+  scrollTimeout: any;
+  @ViewChild('elem', { static: true }) elem!: ElementRef;
+
   constructor(
     public dialogRef: MatDialogRef<AddExerciseToWorkoutDialogComponent>,
     private snackBar: MatSnackBar,
     private exerciseService: ExerciseService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private renderer: Renderer2
   ) {}
 
   ngOnInit(): void {
@@ -88,6 +91,20 @@ export class AddExerciseToWorkoutDialogComponent implements OnInit {
         this.onConfirm();
       }
     });
+  }
+
+  onScroll(event: Event): void {
+    const target = event.target as HTMLElement;
+
+    if (target && target.classList.contains('dropdown')) {
+      this.renderer.addClass(document.body, 'show-scrollbar');
+
+      clearTimeout(this.scrollTimeout);
+
+      this.scrollTimeout = setTimeout(() => {
+        this.renderer.removeClass(document.body, 'show-scrollbar');
+      }, 3000);
+    }
   }
 
   private openSnackBar(message: string): void {

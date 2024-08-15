@@ -1,16 +1,15 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, Renderer2 } from '@angular/core';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent  {
   expandedBox: string | null = null;
+  private scrollTimeout: any;
 
-  constructor() {}
-
-  ngOnInit(): void {}
+  constructor(private renderer: Renderer2) {}
 
   expandBox(box: string) {
     if (this.expandedBox !== box) {
@@ -22,5 +21,13 @@ export class DashboardComponent implements OnInit {
     if (this.expandedBox === box) {
       this.expandedBox = null;
     }
+  }
+
+  onScroll(): void {
+    this.renderer.addClass(document.body, 'show-scrollbar');
+
+    this.scrollTimeout = setTimeout(() => {
+      this.renderer.removeClass(document.body, 'show-scrollbar');
+    }, 3000);
   }
 }

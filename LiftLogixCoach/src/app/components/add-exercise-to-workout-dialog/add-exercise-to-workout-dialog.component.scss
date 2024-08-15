@@ -7,9 +7,17 @@
     font-size: 1.5rem;
   }
 
+  mat-dialog-content {
+    height: fit-content;
+    overflow-y: hidden;
+  }
+
+  .content {
+    padding: 10px 25px 0 25px;
+  }
+
   mat-form-field {
     width: 100%;
-    margin-bottom: 1rem;
     position: relative;
 
     .toggle-dropdown {
@@ -38,9 +46,9 @@
     background-color: rgb(15, 0, 22);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     z-index: 1000;
-    width: 86%;
+    width: 88.2%;
     top: 130px;
-    max-height: 140px;
+    max-height: 130px;
     overflow-y: auto;
   }
   .dropdown-item {
