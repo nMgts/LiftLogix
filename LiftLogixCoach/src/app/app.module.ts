@@ -47,6 +47,7 @@ import { WeeklyScheduleComponent } from './components/weekly-schedule/weekly-sch
 import { WorkoutCreatorComponent } from './components/workout-creator/workout-creator.component';
 import { AddExerciseToWorkoutDialogComponent } from './components/add-exercise-to-workout-dialog/add-exercise-to-workout-dialog.component';
 import { MatCardModule } from '@angular/material/card';
+import { ExerciseOptionsDialogComponent } from './components/exercise-options-dialog/exercise-options-dialog.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +78,8 @@ import { MatCardModule } from '@angular/material/card';
     ScheduleComponent,
     WeeklyScheduleComponent,
     WorkoutCreatorComponent,
-    AddExerciseToWorkoutDialogComponent
+    AddExerciseToWorkoutDialogComponent,
+    ExerciseOptionsDialogComponent
   ],
   imports: [
     BrowserModule,

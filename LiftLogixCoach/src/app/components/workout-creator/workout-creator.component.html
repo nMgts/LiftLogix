@@ -209,7 +209,7 @@
       </td>
       <td class="workout-exercise-details-column"
           *ngIf="(window.innerWidth < 1000 && showAdvancedOptions) || window.innerWidth < 500">
-        <mat-icon>more_vert</mat-icon>
+        <mat-icon (click)="openExerciseOptionsDialog(exercise)">more_vert</mat-icon>
       </td>
       <td class="delete-column">
         <mat-icon class="delete-icon" (click)="removeExercise(exercise)">delete</mat-icon>

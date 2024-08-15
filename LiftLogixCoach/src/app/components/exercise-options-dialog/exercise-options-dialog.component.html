@@ -1,0 +1,47 @@
+<h1 mat-dialog-title>Edytuj dane ćwiczenia</h1>
+<div mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Ilość serii</mat-label>
+    <input matInput [(ngModel)]="data.exercise.series" (click)="selectAllText($event)" type="number" min="1">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Powtórzenia</mat-label>
+    <input matInput [(ngModel)]="data.exercise.repetitionsFrom" (click)="selectAllText($event)" placeholder="od" type="number" min="1">
+    -
+    <input matInput [(ngModel)]="data.exercise.repetitionsTo" (click)="selectAllText($event)" placeholder="do" type="number" min="1">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Ciężar (kg)</mat-label>
+    <input matInput [(ngModel)]="data.exercise.weight" (click)="selectAllText($event)" type="number" min="1">
+  </mat-form-field>
+
+  <mat-form-field *ngIf="showAdvancedOptions">
+    <mat-label>%1RM</mat-label>
+    <input matInput [(ngModel)]="data.exercise.percentage" (click)="selectAllText($event)" type="number" min="1">
+  </mat-form-field>
+
+  <mat-form-field *ngIf="showAdvancedOptions">
+    <mat-label>Tempo</mat-label>
+    <input matInput [(ngModel)]="data.exercise.tempo" (click)="selectAllText($event)" placeholder="1-1-1-1" (input)="onTempoInput($event, data.exercise)">
+  </mat-form-field>
+
+  <mat-form-field *ngIf="showAdvancedOptions">
+    <mat-label>RPE</mat-label>
+    <input matInput [(ngModel)]="data.exercise.rpe" (click)="selectAllText($event)" type="number" min="1" max="10">
+  </mat-form-field>
+
+  <mat-form-field *ngIf="showAdvancedOptions">
+    <mat-label>Przerwa</mat-label>
+    <input matInput [(ngModel)]="data.exercise.break.value" (click)="selectAllText($event)" placeholder="Czas przerwy" type="number" min="1">
+    <mat-select [(ngModel)]="data.exercise.break.unit">
+      <mat-option value="s">Sekundy</mat-option>
+      <mat-option value="min">Minuty</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Anuluj</button>
+  <button mat-button (click)="onSave()">Zapisz</button>
+</div>

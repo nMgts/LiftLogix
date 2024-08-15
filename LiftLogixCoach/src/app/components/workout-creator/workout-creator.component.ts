@@ -9,6 +9,7 @@ import { Workout } from "../../interfaces/Workout";
 import { Microcycle } from "../../interfaces/Microcycle";
 import { Mesocycle } from "../../interfaces/Mesocycle";
 import { Macrocycle } from "../../interfaces/Macrocycle";
+import {ExerciseOptionsDialogComponent} from "../exercise-options-dialog/exercise-options-dialog.component";
 
 @Component({
   selector: 'app-workout-creator',
@@ -213,10 +214,13 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     this.selectedWorkout.workoutExercises = this.selectedWorkout.workoutExercises.filter(e => e !== exercise);
   }
 
-  openExerciseDetails(exercise: Exercise, event: Event): void {
+  openExerciseDetails(exercise: any, event: Event): void {
     event.stopPropagation();
-    this.dialog.open(ExerciseDetailsDialogComponent, {
-      data: exercise
+    this.dialog.open(ExerciseOptionsDialogComponent, {
+      data: {
+        exercise: exercise,
+        showAdvancedOptions: this.showAdvancedOptions
+      }
     });
   }
 
@@ -256,6 +260,25 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     };
 
     this.selectedMicrocycle.workouts.push(newWorkout);
+  }
+
+  openExerciseOptionsDialog(exercise: WorkoutExercise): void {
+    const dialogRef = this.dialog.open(ExerciseOptionsDialogComponent, {
+      data: {
+        exercise,
+        showAdvancedOptions: this.showAdvancedOptions
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const { exercise: updatedExercise, showAdvancedOptions } = result;
+        const index = this.selectedWorkout.workoutExercises.findIndex(e => e.exercise.id === updatedExercise.exercise.id);
+        if (index !== -1) {
+          this.selectedWorkout.workoutExercises[index] = { ...this.selectedWorkout.workoutExercises[index], ...updatedExercise };
+        }
+      }
+    });
   }
 
   /** Microcycle Methods **/

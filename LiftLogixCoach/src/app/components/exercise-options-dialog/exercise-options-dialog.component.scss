@@ -1,0 +1,25 @@
+/* exercise-options-dialog.component.scss */
+
+mat-dialog-content {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+mat-form-field {
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+mat-form-field:last-of-type {
+  margin-bottom: 0;
+}
+
+mat-form-field > mat-label {
+  font-weight: bold;
+}
+
+mat-form-field input,
+mat-form-field mat-select {
+  width: 100%;
+}
