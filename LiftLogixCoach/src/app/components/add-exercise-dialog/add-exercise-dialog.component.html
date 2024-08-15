@@ -15,18 +15,21 @@
         </mat-error>
       </mat-form-field>
 
-      <mat-form-field appearance="fill">
-        <mat-label>Alias</mat-label>
-        <input matInput formControlName="newAlias">
-      </mat-form-field>
-      <button mat-button (click)="addAlias()">Dodaj alias</button>
+      <div class="aliases">
+        <mat-form-field appearance="fill">
+          <mat-label>Alias</mat-label>
+          <input matInput formControlName="newAlias">
+        </mat-form-field>
+        <button mat-button (click)="addAlias()">Dodaj alias</button>
+      </div>
 
-      <div *ngIf="aliases.length > 0">
+      <div *ngIf="aliases.length > 0" class="alias-list-container">
         <h3>Aliasy:</h3>
         <div class="alias-list">
           <span *ngFor="let alias of aliases; let i = index">
-            {{ alias }}<button mat-icon-button (click)="removeAlias(i)">x</button>
-            <ng-container *ngIf="i < aliases.length - 1">, </ng-container>
+            {{ alias }}
+            <mat-icon class="delete-icon" (click)="removeAlias(i)">cancel</mat-icon>
+            <ng-container *ngIf="i < aliases.length - 1"></ng-container>
           </span>
         </div>
       </div>
