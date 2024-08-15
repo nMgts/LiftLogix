@@ -28,6 +28,11 @@
       margin-left: 30px;
       cursor: pointer;
       font-size: 24px;
+
+      @media (max-width: 600px) {
+        font-size: 18px;
+        margin-left: 20px;
+      }
     }
 
     .settings-menu {
