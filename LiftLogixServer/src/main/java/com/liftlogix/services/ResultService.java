@@ -15,7 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
@@ -52,7 +52,7 @@ public class ResultService {
 
         ResultDTO currentResult = new ResultDTO();
         currentResult.setClient_id(clientId);
-        currentResult.setDate(LocalDateTime.now());
+        currentResult.setDate(LocalDate.now());
 
         findNearestResult(results, "benchpress").ifPresent(r -> currentResult.setBenchpress(r.getBenchpress()));
         findNearestResult(results, "deadlift").ifPresent(r -> currentResult.setDeadlift(r.getDeadlift()));
@@ -88,10 +88,57 @@ public class ResultService {
         if (squat != null && squat > 0) {
             result.setSquat(squat);
         }
-        result.setDate(LocalDateTime.now());
+        result.setDate(LocalDate.now());
         resultRepository.save(result);
 
         return resultDTOMapper.mapEntityToDTO(result);
+    }
+
+    public ResultDTO updateResult(ResultDTO result, Authentication authentication) {
+
+        long clientId = result.getClient_id();
+        if (!checkAccess(authentication, clientId)) {
+            throw new AuthorizationException("You are not authorized");
+        }
+
+        if ((result.getBenchpress() == null || result.getBenchpress() <= 0) &&
+                (result.getDeadlift() == null || result.getDeadlift() <= 0) &&
+                (result.getSquat() == null || result.getSquat() <= 0)) {
+            throw new IllegalArgumentException("At least one result must be provided and greater than 0");
+        }
+
+        Result entity = resultRepository.findById(result.getId()).orElseThrow(
+                () -> new EntityNotFoundException("Result not found")
+        );
+
+        if (result.getBenchpress() != null && result.getBenchpress() > 0) {
+            entity.setBenchpress(result.getBenchpress());
+        }
+        if (result.getDeadlift() != null && result.getDeadlift() > 0) {
+            entity.setDeadlift(result.getDeadlift());
+        }
+        if (result.getSquat() != null && result.getSquat() > 0) {
+            entity.setSquat(result.getSquat());
+        }
+
+        entity.setDate(result.getDate());
+
+        resultRepository.save(entity);
+        return resultDTOMapper.mapEntityToDTO(entity);
+    }
+
+    public void deleteResult(long resultId, Authentication authentication) {
+
+        Result result = resultRepository.findById(resultId).orElseThrow(
+                () -> new EntityNotFoundException("Result not found")
+        );
+
+        long clientId = result.getClient().getId();
+        if (!checkAccess(authentication, clientId)) {
+            throw new AuthorizationException("You are not authorized");
+        }
+
+        resultRepository.deleteById(result.getId());
     }
 
     private Optional<Result> findNearestResult(List<Result> results, String exercise) {
@@ -108,7 +155,7 @@ public class ResultService {
                             return false;
                     }
                 })
-                .min(Comparator.comparing(result -> Math.abs(result.getDate().until(LocalDateTime.now(), ChronoUnit.SECONDS))));
+                .min(Comparator.comparing(result -> Math.abs(result.getDate().until(LocalDate.now(), ChronoUnit.DAYS))));
     }
 
     private boolean checkAccess(Authentication authentication, long clientId) {

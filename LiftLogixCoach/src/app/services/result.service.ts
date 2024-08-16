@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Result} from "../interfaces/Result";
+import {Coach} from "../interfaces/Coach";
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,8 @@ export class ResultService {
   private getUrl = 'http://localhost:8080/api/result';
   private getCurrentUrl = 'http://localhost:8080/api/result/current'
   private addUrl = 'http://localhost:8080/api/result/add';
+  private updateUrl = 'http://localhost:8080/api/result/update';
+  private deleteUrl = 'http://localhost:8080/api/result/delete';
 
   constructor(private http: HttpClient) {}
 
@@ -31,6 +34,18 @@ export class ResultService {
     if (squat) params = params.set('squat', squat.toString());
 
     return this.http.post(`${this.addUrl}/${clientId}`, null, { params, headers });
+  }
+
+  updateResult(result: Result, token: string): Observable<any> {
+    const headers = this.createHeaders(token);
+    return this.http.put<Result>(this.updateUrl, result, { headers: headers });
+  }
+
+  deleteResult(resultId: number, token: string): Observable<any> {
+    const headers = this.createHeaders(token);
+    const url = `${this.deleteUrl}?id=${resultId}`;
+
+    return this.http.delete(url, { headers: headers });
   }
 
   private createHeaders(token: string) {

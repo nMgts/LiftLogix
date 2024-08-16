@@ -6,6 +6,8 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { ChartDataset, ChartOptions } from 'chart.js';
 import { ClientService } from "../../services/client.service";
 import { Subscription } from "rxjs";
+import { EditResultDialogComponent } from "../edit-result-dialog/edit-result-dialog.component";
+import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   selector: 'app-client-results',
@@ -52,7 +54,8 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
     private clientsComponent: ClientsComponent,
     private resultService: ResultService,
     private snackBar: MatSnackBar,
-    private clientService: ClientService
+    private clientService: ClientService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -98,12 +101,81 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
     );
   }
 
-  editResult(result: Result) {
+  editResult(result: Result): void {
+    const dialogRef = this.dialog.open(EditResultDialogComponent, {
+      data: {
+        benchpress: result.benchpress,
+        squat: result.squat,
+        deadlift: result.deadlift,
+        date: result.date
+      }
+    });
 
+    dialogRef.afterClosed().subscribe(updatedResult => {
+      if (updatedResult) {
+        this.updateResult({
+          ...result,
+          ...updatedResult
+        });
+      }
+    });
+  }
+
+  updateResult(result: Result) {
+    const token = localStorage.getItem('token') || '';
+
+    const benchpressValue: number | null =
+      result.benchpress !== undefined && result.benchpress !== null ? Number(result.benchpress) : null;
+    const deadliftValue: number | null =
+      result.deadlift !== undefined && result.deadlift !== null ? Number(result.deadlift) : null;
+    const squatValue: number | null =
+      result.squat !== undefined && result.squat !== null ? Number(result.squat) : null;
+
+    if (!this.validateResult(benchpressValue, deadliftValue, squatValue)) {
+      this.openSnackBar('Wprowadź dodatnią liczbę lub zostaw pole puste.');
+      return;
+    }
+
+    this.resultService.updateResult(result, token).subscribe({
+      next: () => {
+        this.openSnackBar('Wynik został zaktualizowany!');
+        if (this.clientId !== null) {
+          this.loadCurrentResult(this.clientId);
+          this.loadResults(this.clientId);
+          this.tableResults = this.results;
+        }
+      },
+      error: (error) => {
+        if (error.status === 400) {
+          this.openSnackBar('Wprowadź przynajmiej jeden wynik');
+        } else {
+          this.openSnackBar('Nie udało sie wprowadzić wyniku');
+        }
+      }
+    });
   }
 
   deleteResult(result: Result) {
+    const token = localStorage.getItem('token') || '';
 
+    if (result.id === undefined) {
+      this.openSnackBar('Nie można usunąć wyniku bez id.');
+      return;
+    }
+
+    this.resultService.deleteResult(result.id, token).subscribe({
+      next: () => {
+        this.openSnackBar('Usunięto wynik');
+        if (this.clientId !== null) {
+          this.loadCurrentResult(this.clientId);
+          this.loadResults(this.clientId);
+        }
+      },
+      error: (error) => {
+        console.error('Error deleting result', error);
+        this.openSnackBar('Nie udało się usunąć wyniku.');
+      }
+    });
   }
 
   filterResults(): void {
@@ -235,7 +307,7 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
     this.resultService.addResult(this.clientId, token, this.benchpress, this.deadlift, this.squat)
       .subscribe({
         next: () => {
-          this.openSnackBar('Result added successfully!');
+          this.openSnackBar('Dodano nowy wynik');
           this.benchpress = null;
           this.deadlift = null;
           this.squat = null;

@@ -45,7 +45,7 @@ public class ResultController {
         }
     }
 
-    @PostMapping("/add/{client_id}") //Trzeba zabezpieczyć aby trener tylko swojemnu klientowi
+    @PostMapping("/add/{client_id}")
     public ResponseEntity<?> addResult(
             @PathVariable long client_id,
             @RequestParam(required = false) Double benchpress,
@@ -58,6 +58,35 @@ public class ResultController {
             return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateResult(@RequestBody ResultDTO result, Authentication authentication) {
+        try {
+            return ResponseEntity.ok(resultService.updateResult(result, authentication));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteResult(@RequestParam long id, Authentication authentication) {
+        try {
+            resultService.deleteResult(id, authentication);
+            return ResponseEntity.ok().body("{\"message\": \"Result deleted successfully\"}");
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (AuthorizationException e) {
