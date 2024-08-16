@@ -1,9 +1,7 @@
-import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AddExerciseToWorkoutDialogComponent } from "../add-exercise-to-workout-dialog/add-exercise-to-workout-dialog.component";
-import { Exercise } from "../../interfaces/Exercise";
-import { ExerciseDetailsDialogComponent } from "../exercise-details-dialog/exercise-details-dialog.component";
 import { WorkoutExercise } from "../../interfaces/WorkoutExercise";
 import { Workout } from "../../interfaces/Workout";
 import { Microcycle } from "../../interfaces/Microcycle";
@@ -16,9 +14,7 @@ import {ExerciseOptionsDialogComponent} from "../exercise-options-dialog/exercis
   templateUrl: './workout-creator.component.html',
   styleUrl: './workout-creator.component.scss'
 })
-export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
-  @Input() isBoxExpanded = false;
-  @Output() closeBox = new EventEmitter<void>();
+export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   protected readonly window = window;
   dropdownOpen: boolean = false;
 
@@ -68,13 +64,11 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnChanges() {
-    if (this.isBoxExpanded) {
-      this.generateMicrocycleTable();
-      this.detectTouchDevice();
-      this.addTouchListener();
-      this.addClickListener();
-    }
+  ngOnInit() {
+    this.generateMicrocycleTable();
+    this.detectTouchDevice();
+    this.addTouchListener();
+    this.addClickListener();
   }
 
   ngOnDestroy() {
@@ -273,7 +267,7 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        const { exercise: updatedExercise, showAdvancedOptions } = result;
+        const { exercise: updatedExercise } = result;
         const index = this.selectedWorkout.workoutExercises.findIndex(e => e.exercise.id === updatedExercise.exercise.id);
         if (index !== -1) {
           this.selectedWorkout.workoutExercises[index] = { ...this.selectedWorkout.workoutExercises[index], ...updatedExercise };
@@ -676,6 +670,5 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     if (this.touchListener) {
       document.removeEventListener('touchstart', this.touchListener);
     }
-    this.closeBox.emit();
   }
 }

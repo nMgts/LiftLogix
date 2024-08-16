@@ -49,7 +49,10 @@ import { AddExerciseToWorkoutDialogComponent } from './components/add-exercise-t
 import { MatCardModule } from '@angular/material/card';
 import { ExerciseOptionsDialogComponent } from './components/exercise-options-dialog/exercise-options-dialog.component';
 import { MatTableModule } from '@angular/material/table';
-import { EditResultDialogComponent } from './components/edit-result-dialog/edit-result-dialog.component'
+import { EditResultDialogComponent } from './components/edit-result-dialog/edit-result-dialog.component';
+import { WorkoutMenuComponent } from './components/workout-menu/workout-menu.component';
+import { WorkoutLibaryPublicComponent } from './components/workout-libary-public/workout-libary-public.component';
+import { WorkoutLibaryPrivateComponent } from './components/workout-libary-private/workout-libary-private.component'
 
 @NgModule({
   declarations: [
@@ -82,7 +85,10 @@ import { EditResultDialogComponent } from './components/edit-result-dialog/edit-
     WorkoutCreatorComponent,
     AddExerciseToWorkoutDialogComponent,
     ExerciseOptionsDialogComponent,
-    EditResultDialogComponent
+    EditResultDialogComponent,
+    WorkoutMenuComponent,
+    WorkoutLibaryPublicComponent,
+    WorkoutLibaryPrivateComponent
   ],
   imports: [
     BrowserModule,

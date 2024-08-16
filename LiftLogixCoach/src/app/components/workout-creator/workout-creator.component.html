@@ -1,13 +1,4 @@
-<div class="not-expanded-box" *ngIf="!isBoxExpanded">
-  <h1 class="header" *ngIf="window.innerWidth > 650">Kreator planów</h1>
-  <div class="content">
-    <img ngSrc="/icons/workout.png" alt="Workout creator Icon" class="workout-creator-image" width="136" height="136"/>
-  </div>
-</div>
-
-<button *ngIf="isBoxExpanded" (click)="close($event)" class="close-button">&times;</button>
-
-<div class="expanded-box" *ngIf="isBoxExpanded" (click)="closeDropdown()">
+<div class="expanded-box" (click)="closeDropdown()">
 
   <h1 class="creator-header">Stwórz plan</h1>
 
