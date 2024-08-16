@@ -2,12 +2,17 @@ package com.liftlogix.services;
 
 import com.liftlogix.convert.ResultDTOMapper;
 import com.liftlogix.dto.ResultDTO;
+import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.models.Client;
 import com.liftlogix.models.Result;
+import com.liftlogix.models.User;
 import com.liftlogix.repositories.ClientRepository;
 import com.liftlogix.repositories.ResultRepository;
+import com.liftlogix.repositories.UserRepository;
+import com.liftlogix.types.Role;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,15 +28,26 @@ public class ResultService {
     private final ResultRepository resultRepository;
     private final ClientRepository clientRepository;
     private final ResultDTOMapper resultDTOMapper;
+    private final UserRepository userRepository;
 
-    public List<ResultDTO> getAllResults(long clientId) {
+    public List<ResultDTO> getAllResults(long clientId, Authentication authentication) {
+
+        if (!checkAccess(authentication, clientId)) {
+            throw new AuthorizationException("You are not authorized");
+        }
+
         List<Result> results = resultRepository.findByClientId(clientId);
         return results.stream()
                 .map(resultDTOMapper::mapEntityToDTO)
                 .collect(Collectors.toList());
     }
 
-    public ResultDTO getCurrentResult(long clientId) {
+    public ResultDTO getCurrentResult(long clientId, Authentication authentication) {
+
+        if (!checkAccess(authentication, clientId)) {
+            throw new AuthorizationException("You are not authorized");
+        }
+
         List<Result> results = resultRepository.findByClientId(clientId);
 
         ResultDTO currentResult = new ResultDTO();
@@ -45,7 +61,11 @@ public class ResultService {
         return currentResult;
     }
 
-    public ResultDTO addResult(long clientId, Double benchpress, Double deadlift, Double squat) throws IllegalArgumentException {
+    public ResultDTO addResult(long clientId, Double benchpress, Double deadlift, Double squat, Authentication authentication) throws IllegalArgumentException {
+
+        if (!checkAccess(authentication, clientId)) {
+            throw new AuthorizationException("You are not authorized");
+        }
 
         if ((benchpress == null || benchpress <= 0) &&
                 (deadlift == null || deadlift <= 0) &&
@@ -89,5 +109,23 @@ public class ResultService {
                     }
                 })
                 .min(Comparator.comparing(result -> Math.abs(result.getDate().until(LocalDateTime.now(), ChronoUnit.SECONDS))));
+    }
+
+    private boolean checkAccess(Authentication authentication, long clientId) {
+
+        Client client = clientRepository.findById(clientId).orElseThrow(
+                () -> new EntityNotFoundException("Client not found")
+        );
+
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new EntityNotFoundException("User not found"));
+
+        if (user.getRole() == Role.COACH) {
+            return client.getCoach().getId() == user.getId();
+        } else if (user.getRole() == Role.ADMIN) return true;
+        else {
+            return user.getId() == client.getId();
+        }
     }
 }

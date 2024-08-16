@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ClientsComponent } from "../clients/clients.component";
 import { ResultService } from "../../services/result.service";
 import { Result } from "../../interfaces/Result";
@@ -12,7 +12,7 @@ import { Subscription } from "rxjs";
   templateUrl: './client-results.component.html',
   styleUrl: './client-results.component.scss'
 })
-export class ClientResultsComponent implements OnInit, OnDestroy {
+export class ClientResultsComponent implements OnInit, OnDestroy{
   @Input() clientId: number | null = null;
   @Output() closeRightComponent = new EventEmitter<void>();
   currentResult: Result | null = null;
@@ -40,6 +40,11 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
   showBenchpress: boolean = true;
   showDeadlift: boolean = true;
   showSquat: boolean = true;
+
+  showAllResults: boolean = false;
+  displayedColumns: string[] = ['benchpress', 'squat', 'deadlift', 'date', 'actions'];
+  tableResults: Result[] = [];
+  sortOrder: 'asc' | 'desc' = 'asc';
 
   private clientIdSubscription!: Subscription;
 
@@ -71,8 +76,8 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
     this.resultService.getAllResults(clientId, token).subscribe({
       next: (results) => {
         this.results = results;
+        this.tableResults = results;
         this.filterResults();
-        console.log(results);
       },
       error: (error) => {
         console.error("Nie udało się pobrać wykresu" + error);
@@ -93,7 +98,17 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
     );
   }
 
+  editResult(result: Result) {
+
+  }
+
+  deleteResult(result: Result) {
+
+  }
+
   filterResults(): void {
+    this.results.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
     if (this.showLastYear) {
       const oneYearAgo = new Date();
       oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
@@ -102,9 +117,22 @@ export class ClientResultsComponent implements OnInit, OnDestroy {
       this.filteredResults = this.results;
     }
 
-    this.filteredResults.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
     this.updateChartData();
+  }
+
+  updateTableResults() {
+    this.tableResults.sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      return this.sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+    });
+    this.tableResults = [...this.tableResults];
+  }
+
+  toggleSortOrder(): void {
+    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    console.log(this.sortOrder);
+    this.updateTableResults();
   }
 
   updateChartData() {

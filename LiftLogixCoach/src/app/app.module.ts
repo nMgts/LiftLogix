@@ -48,6 +48,7 @@ import { WorkoutCreatorComponent } from './components/workout-creator/workout-cr
 import { AddExerciseToWorkoutDialogComponent } from './components/add-exercise-to-workout-dialog/add-exercise-to-workout-dialog.component';
 import { MatCardModule } from '@angular/material/card';
 import { ExerciseOptionsDialogComponent } from './components/exercise-options-dialog/exercise-options-dialog.component';
+import { MatTableModule } from '@angular/material/table'
 
 @NgModule({
   declarations: [
@@ -81,26 +82,27 @@ import { ExerciseOptionsDialogComponent } from './components/exercise-options-di
     AddExerciseToWorkoutDialogComponent,
     ExerciseOptionsDialogComponent
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        NgOptimizedImage,
-        FormsModule,
-        HttpClientModule,
-        ReactiveFormsModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatIconModule,
-        MatPaginatorModule,
-        CdkDropList,
-        MatListModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatInputModule,
-        BaseChartDirective,
-        MatCheckbox,
-        MatCardModule
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    NgOptimizedImage,
+    FormsModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    MatPaginatorModule,
+    CdkDropList,
+    MatListModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    BaseChartDirective,
+    MatCheckbox,
+    MatCardModule,
+    MatTableModule
+  ],
   providers: [
     provideAnimationsAsync(),
     {
