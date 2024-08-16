@@ -26,14 +26,9 @@ export class ResultService {
     return this.http.get<Result>(`${this.getCurrentUrl}/${clientId}`, { headers: headers });
   }
 
-  addResult(clientId: number, token: string, benchpress: number | null, deadlift: number | null, squat: number | null): Observable<any> {
+  addResult(clientId: number, token: string, result: Result): Observable<any> {
     const headers = this.createHeaders(token);
-    let params = new HttpParams();
-    if (benchpress) params = params.set('benchpress', benchpress.toString());
-    if (deadlift) params = params.set('deadlift', deadlift.toString());
-    if (squat) params = params.set('squat', squat.toString());
-
-    return this.http.post(`${this.addUrl}/${clientId}`, null, { params, headers });
+    return this.http.post(`${this.addUrl}/${clientId}`, result, {  headers: headers });
   }
 
   updateResult(result: Result, token: string): Observable<any> {

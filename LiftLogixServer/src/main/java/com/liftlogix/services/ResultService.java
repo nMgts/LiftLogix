@@ -3,6 +3,7 @@ package com.liftlogix.services;
 import com.liftlogix.convert.ResultDTOMapper;
 import com.liftlogix.dto.ResultDTO;
 import com.liftlogix.exceptions.AuthorizationException;
+import com.liftlogix.exceptions.ResultAlreadyExistsException;
 import com.liftlogix.models.Client;
 import com.liftlogix.models.Result;
 import com.liftlogix.models.User;
@@ -61,37 +62,48 @@ public class ResultService {
         return currentResult;
     }
 
-    public ResultDTO addResult(long clientId, Double benchpress, Double deadlift, Double squat, Authentication authentication) throws IllegalArgumentException {
+    public ResultDTO addResult(long clientId, ResultDTO result, Authentication authentication) throws IllegalArgumentException {
 
         if (!checkAccess(authentication, clientId)) {
             throw new AuthorizationException("You are not authorized");
         }
 
-        if ((benchpress == null || benchpress <= 0) &&
-                (deadlift == null || deadlift <= 0) &&
-                (squat == null || squat <= 0)) {
+        if (!validateDate(result.getDate())) {
+            throw new IllegalArgumentException("Date cannot be in the future");
+        }
+
+        if ((result.getBenchpress() == null || result.getBenchpress() <= 0) &&
+                (result.getDeadlift() == null || result.getDeadlift() <= 0) &&
+                (result.getSquat() == null || result.getSquat() <= 0)) {
             throw new IllegalArgumentException("At least one result must be provided and greater than 0");
         }
 
-        Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new EntityNotFoundException("Client not found"));
+        Result existingResult = updateIfExists(clientId, result);
 
-        Result result = new Result();
-        result.setClient(client);
+        if (existingResult == null) {
+            Client client = clientRepository.findById(clientId)
+                    .orElseThrow(() -> new EntityNotFoundException("Client not found"));
 
-        if (benchpress != null && benchpress > 0) {
-            result.setBenchpress(benchpress);
-        }
-        if (deadlift != null && deadlift > 0) {
-            result.setDeadlift(deadlift);
-        }
-        if (squat != null && squat > 0) {
-            result.setSquat(squat);
-        }
-        result.setDate(LocalDate.now());
-        resultRepository.save(result);
+            Result newResult = new Result();
+            newResult.setClient(client);
 
-        return resultDTOMapper.mapEntityToDTO(result);
+            if (result.getBenchpress() != null && result.getBenchpress() > 0) {
+                newResult.setBenchpress(result.getBenchpress());
+            }
+            if (result.getDeadlift() != null && result.getDeadlift() > 0) {
+                newResult.setDeadlift(result.getDeadlift());
+            }
+            if (result.getSquat() != null && result.getSquat() > 0) {
+                newResult.setSquat(result.getSquat());
+            }
+
+            newResult.setDate(result.getDate());
+            resultRepository.save(newResult);
+
+            return resultDTOMapper.mapEntityToDTO(newResult);
+        } else {
+            return resultDTOMapper.mapEntityToDTO(existingResult);
+        }
     }
 
     public ResultDTO updateResult(ResultDTO result, Authentication authentication) {
@@ -99,6 +111,10 @@ public class ResultService {
         long clientId = result.getClient_id();
         if (!checkAccess(authentication, clientId)) {
             throw new AuthorizationException("You are not authorized");
+        }
+
+        if (!validateDate(result.getDate())) {
+            throw new IllegalArgumentException("Date cannot be in the future");
         }
 
         if ((result.getBenchpress() == null || result.getBenchpress() <= 0) &&
@@ -111,14 +127,26 @@ public class ResultService {
                 () -> new EntityNotFoundException("Result not found")
         );
 
+        if (!entity.getDate().isEqual(result.getDate())) {
+            if (resultRepository.findByClientIdAndDate(clientId, result.getDate()).isPresent()) {
+                throw new ResultAlreadyExistsException("Result with the same date already exists");
+            }
+        }
+
         if (result.getBenchpress() != null && result.getBenchpress() > 0) {
             entity.setBenchpress(result.getBenchpress());
+        } else {
+            entity.setBenchpress(null);
         }
         if (result.getDeadlift() != null && result.getDeadlift() > 0) {
             entity.setDeadlift(result.getDeadlift());
+        } else {
+            entity.setDeadlift(null);
         }
         if (result.getSquat() != null && result.getSquat() > 0) {
             entity.setSquat(result.getSquat());
+        } else {
+            entity.setSquat(null);
         }
 
         entity.setDate(result.getDate());
@@ -158,6 +186,41 @@ public class ResultService {
                 .min(Comparator.comparing(result -> Math.abs(result.getDate().until(LocalDate.now(), ChronoUnit.DAYS))));
     }
 
+    private Result updateIfExists(long clientId, ResultDTO result) {
+        Result existingResult = resultRepository.findByClientIdAndDate(clientId, result.getDate())
+                .orElse(null);
+
+        if (existingResult != null) {
+
+            boolean hasBenchpress = existingResult.getBenchpress() != null;
+            boolean hasDeadlift = existingResult.getDeadlift() != null;
+            boolean hasSquat = existingResult.getSquat() != null;
+
+            boolean newBenchpress = result.getBenchpress() != null;
+            boolean newDeadlift = result.getDeadlift() != null;
+            boolean newSquat = result.getSquat() != null;
+
+            if ((hasBenchpress && newBenchpress) || (hasDeadlift && newDeadlift) || (hasSquat && newSquat)) {
+                throw new ResultAlreadyExistsException("Result with the same date and conflicting values already exists");
+            }
+
+            if (newBenchpress) {
+                existingResult.setBenchpress(result.getBenchpress());
+            }
+            if (newDeadlift) {
+                existingResult.setDeadlift(result.getDeadlift());
+            }
+            if (newSquat) {
+                existingResult.setSquat(result.getSquat());
+            }
+
+            resultRepository.save(existingResult);
+            return existingResult;
+        } else {
+            return null;
+        }
+    }
+
     private boolean checkAccess(Authentication authentication, long clientId) {
 
         Client client = clientRepository.findById(clientId).orElseThrow(
@@ -174,5 +237,10 @@ public class ResultService {
         else {
             return user.getId() == client.getId();
         }
+    }
+
+    private boolean validateDate(LocalDate date) {
+        LocalDate today = LocalDate.now();
+        return !date.isAfter(today);
     }
 }

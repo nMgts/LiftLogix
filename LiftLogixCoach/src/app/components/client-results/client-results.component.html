@@ -35,6 +35,11 @@
       <input matInput id="squat" type="number" [(ngModel)]="squat" name="squat">
     </mat-form-field>
 
+    <mat-form-field appearance="fill">
+      <mat-label>Data</mat-label>
+      <input matInput id="date" [(ngModel)]="date"  type="date" name="date">
+    </mat-form-field>
+
     <button mat-raised-button color="primary" type="submit">Dodaj wynik</button>
   </form>
 
@@ -91,11 +96,9 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let result">
-        <!-- Ikona edycji -->
         <button mat-icon-button (click)="editResult(result)">
           <span class="material-icons">edit</span>
         </button>
-        <!-- Ikona usuwania -->
         <button mat-icon-button (click)="deleteResult(result)">
           <span class="material-icons">delete</span>
         </button>

@@ -25,6 +25,8 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
   benchpress: number | null = null;
   deadlift: number | null = null;
   squat: number | null = null;
+  date: string = '';
+  currentDate: string = '';
   total: number = 0;
 
   public lineChartData: ChartDataset[] = [
@@ -56,7 +58,11 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
     private snackBar: MatSnackBar,
     private clientService: ClientService,
     private dialog: MatDialog
-  ) {}
+  ) {
+    const today = new Date();
+    this.currentDate = today.toISOString().split('T')[0];
+    this.date = this.currentDate;
+  }
 
   ngOnInit(): void {
     this.clientIdSubscription = this.clientService.selectedClientId$.subscribe(clientId => {
@@ -83,7 +89,7 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
         this.filterResults();
       },
       error: (error) => {
-        console.error("Nie udało się pobrać wykresu" + error);
+        console.error('Error during loading results' + error);
       }
     })
   }
@@ -93,9 +99,9 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
     this.resultService.getCurrentResult(clientId, token).subscribe(
       (result) => {
         this.currentResult = this.formatResult(result);
-        if (typeof this.currentResult.benchpress === "number") this.total = this.currentResult.benchpress;
-        if (typeof this.currentResult.deadlift === "number") this.total += this.currentResult.deadlift;
-        if (typeof this.currentResult.squat === "number") this.total += this.currentResult.squat;
+        if (typeof this.currentResult.benchpress === 'number') this.total = this.currentResult.benchpress;
+        if (typeof this.currentResult.deadlift === 'number') this.total += this.currentResult.deadlift;
+        if (typeof this.currentResult.squat === 'number') this.total += this.currentResult.squat;
       },
       (error) => console.error('Error loading current result', error)
     );
@@ -117,6 +123,11 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
           ...result,
           ...updatedResult
         });
+
+        if (this.clientId !== null) {
+          this.loadCurrentResult(this.clientId);
+          this.loadResults(this.clientId);
+        }
       }
     });
   }
@@ -148,6 +159,8 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
       error: (error) => {
         if (error.status === 400) {
           this.openSnackBar('Wprowadź przynajmiej jeden wynik');
+        } else if (error.status === 409) {
+          this.openSnackBar("W tym dniu wynik jest już zapisany");
         } else {
           this.openSnackBar('Nie udało sie wprowadzić wyniku');
         }
@@ -166,6 +179,11 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
     this.resultService.deleteResult(result.id, token).subscribe({
       next: () => {
         this.openSnackBar('Usunięto wynik');
+        if (this.clientId !== null) {
+          this.loadCurrentResult(this.clientId);
+          this.loadResults(this.clientId);
+        }
+
         if (this.clientId !== null) {
           this.loadCurrentResult(this.clientId);
           this.loadResults(this.clientId);
@@ -203,7 +221,6 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
 
   toggleSortOrder(): void {
     this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
-    console.log(this.sortOrder);
     this.updateTableResults();
   }
 
@@ -303,14 +320,37 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
       return;
     }
 
+    const result: Result = {
+      id: 0,
+      date: this.date
+    };
+
+    if (typeof this.benchpress === 'number') {
+      result.benchpress = this.benchpress;
+    }
+
+    if (typeof this.squat === 'number') {
+      result.squat = this.squat;
+    }
+
+    if (typeof this.deadlift === 'number') {
+      result.deadlift = this.deadlift;
+    }
+
+    if (!this.validateDate(this.date)) {
+      this.openSnackBar('Data nie może być późniejsza niż dzisiejsza.');
+      return;
+    }
+
     const token = localStorage.getItem('token') || '';
-    this.resultService.addResult(this.clientId, token, this.benchpress, this.deadlift, this.squat)
+    this.resultService.addResult(this.clientId, token, result)
       .subscribe({
         next: () => {
           this.openSnackBar('Dodano nowy wynik');
           this.benchpress = null;
           this.deadlift = null;
           this.squat = null;
+          this.date = this.currentDate;
           if (this.clientId !== null) {
             this.loadCurrentResult(this.clientId);
             this.loadResults(this.clientId);
@@ -319,6 +359,8 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
         error: (error) => {
           if (error.status === 400) {
             this.openSnackBar('Wprowadź przynajmiej jeden wynik');
+          } else if (error.status === 409) {
+            this.openSnackBar('Wynik dla podanego ćwiczenia istnieje w danym dniu');
           } else {
             this.openSnackBar('Nie udało sie wprowadzić wyniku');
           }
@@ -327,12 +369,18 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
   }
 
   validateResult(benchpress: number | null, deadlift: number | null, squat: number | null): boolean {
-    if ((benchpress != null && benchpress <= 0) ||
-        (deadlift != null && deadlift <= 0) ||
-        (squat != null && squat <= 0)) {
-      return false;
-    }
-    return true;
+    return !((benchpress != null && benchpress <= 0) ||
+      (deadlift != null && deadlift <= 0) ||
+      (squat != null && squat <= 0));
+  }
+
+  validateDate(date: string): boolean {
+    const inputDate = new Date(date);
+    inputDate.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return inputDate <= today;
   }
 
   private openSnackBar(message: string): void {

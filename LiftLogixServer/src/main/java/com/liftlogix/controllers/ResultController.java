@@ -2,6 +2,7 @@ package com.liftlogix.controllers;
 
 import com.liftlogix.dto.ResultDTO;
 import com.liftlogix.exceptions.AuthorizationException;
+import com.liftlogix.exceptions.ResultAlreadyExistsException;
 import com.liftlogix.services.ResultService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -46,16 +48,12 @@ public class ResultController {
     }
 
     @PostMapping("/add/{client_id}")
-    public ResponseEntity<?> addResult(
-            @PathVariable long client_id,
-            @RequestParam(required = false) Double benchpress,
-            @RequestParam(required = false) Double deadlift,
-            @RequestParam(required = false) Double squat,
-            Authentication authentication
-    ) {
+    public ResponseEntity<?> addResult(@PathVariable long client_id, @RequestBody ResultDTO result, Authentication authentication) {
         try {
-            ResultDTO result = resultService.addResult(client_id, benchpress, deadlift, squat, authentication);
-            return ResponseEntity.ok(result);
+            ResultDTO dto = resultService.addResult(client_id, result, authentication);
+            return ResponseEntity.ok(dto);
+        } catch (ResultAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (EntityNotFoundException e) {
@@ -71,6 +69,8 @@ public class ResultController {
     public ResponseEntity<?> updateResult(@RequestBody ResultDTO result, Authentication authentication) {
         try {
             return ResponseEntity.ok(resultService.updateResult(result, authentication));
+        } catch (ResultAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (EntityNotFoundException e) {
