@@ -803,3 +803,13 @@ button.delete-microcycle, button.delete-mesocycle {
   color: aliceblue;
   z-index: 100;
 }
+
+.save-plan-button {
+  margin: 25px auto 0 auto;
+  display: flex;
+  width: 90%;
+
+  span {
+    color: inherit;
+  }
+}

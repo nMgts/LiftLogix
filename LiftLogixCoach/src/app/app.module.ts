@@ -51,8 +51,9 @@ import { ExerciseOptionsDialogComponent } from './components/exercise-options-di
 import { MatTableModule } from '@angular/material/table';
 import { EditResultDialogComponent } from './components/edit-result-dialog/edit-result-dialog.component';
 import { WorkoutMenuComponent } from './components/workout-menu/workout-menu.component';
-import { WorkoutLibaryPublicComponent } from './components/workout-libary-public/workout-libary-public.component';
-import { WorkoutLibaryPrivateComponent } from './components/workout-libary-private/workout-libary-private.component'
+import { WorkoutLibraryPrivateComponent } from './components/workout-library-private/workout-library-private.component';
+import { WorkoutLibraryPublicComponent } from './components/workout-library-public/workout-library-public.component';
+import { SavePlanDialogComponent } from './components/save-plan-dialog/save-plan-dialog.component'
 
 @NgModule({
   declarations: [
@@ -87,8 +88,9 @@ import { WorkoutLibaryPrivateComponent } from './components/workout-libary-priva
     ExerciseOptionsDialogComponent,
     EditResultDialogComponent,
     WorkoutMenuComponent,
-    WorkoutLibaryPublicComponent,
-    WorkoutLibaryPrivateComponent
+    WorkoutLibraryPrivateComponent,
+    WorkoutLibraryPublicComponent,
+    SavePlanDialogComponent
   ],
   imports: [
     BrowserModule,

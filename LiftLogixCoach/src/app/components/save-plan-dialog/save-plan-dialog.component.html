@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>Zapisz Plan</h2>
+<div mat-dialog-content>
+  <form [formGroup]="savePlanForm">
+    <mat-form-field appearance="fill">
+      <mat-label>Nazwa Planu</mat-label>
+      <input matInput formControlName="planName" />
+    </mat-form-field>
+    <mat-checkbox formControlName="isPublic">Udostępnij plan publicznie</mat-checkbox>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Anuluj</button>
+  <button mat-button (click)="onSave()" [disabled]="savePlanForm.invalid">Zapisz</button>
+</div>

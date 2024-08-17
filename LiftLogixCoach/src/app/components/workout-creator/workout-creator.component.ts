@@ -8,6 +8,7 @@ import { Microcycle } from "../../interfaces/Microcycle";
 import { Mesocycle } from "../../interfaces/Mesocycle";
 import { Macrocycle } from "../../interfaces/Macrocycle";
 import {ExerciseOptionsDialogComponent} from "../exercise-options-dialog/exercise-options-dialog.component";
+import {SavePlanDialogComponent} from "../save-plan-dialog/save-plan-dialog.component";
 
 @Component({
   selector: 'app-workout-creator',
@@ -460,6 +461,12 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     } else {
       this.openSnackBar("Nie można usunąć wszystkich mezocykli");
     }
+  }
+
+  /** Plan Methods **/
+
+  savePlan() {
+    this.dialog.open(SavePlanDialogComponent);
   }
 
   /** Validate / TextFormat Methods **/
