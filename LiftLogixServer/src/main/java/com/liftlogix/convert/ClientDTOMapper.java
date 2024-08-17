@@ -9,6 +9,7 @@ import java.util.Base64;
 @Mapper(componentModel = "spring")
 public interface ClientDTOMapper {
     ClientDTO mapEntityToDTO(Client client);
+    Client mapDTOToEntity(ClientDTO dto);
 
     default String map(byte[] image) {
         if (image != null) {

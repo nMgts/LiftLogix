@@ -21,6 +21,7 @@ public class PlanService {
         Plan plan = planDTOMapper.mapDTOToEntity(planDTO);
         plan.setAuthor(author);
         Plan savedPlan = planRepository.save(plan);
+        System.out.println(savedPlan.getAuthor().getRole());
         return planDTOMapper.mapEntityToDTO(savedPlan);
     }
 

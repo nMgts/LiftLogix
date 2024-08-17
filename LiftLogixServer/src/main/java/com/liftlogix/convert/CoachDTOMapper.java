@@ -7,4 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface CoachDTOMapper {
     CoachDTO mapEntityToDTO(Coach coach);
+    Coach mapDTOToEntity(CoachDTO dto);
 }

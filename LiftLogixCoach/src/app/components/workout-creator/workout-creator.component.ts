@@ -466,7 +466,11 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   /** Plan Methods **/
 
   savePlan() {
-    this.dialog.open(SavePlanDialogComponent);
+    this.dialog.open(SavePlanDialogComponent, {
+      data: {
+        macrocycle: this.macrocycle
+      }
+    });
   }
 
   /** Validate / TextFormat Methods **/

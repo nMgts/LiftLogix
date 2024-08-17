@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {UserDTOMapper.class, MesocycleDTOMapper.class})
 public interface PlanDTOMapper {
 
-    @Mapping(source = "author", target = "author", qualifiedByName = "mapUserToUserDTO")
+    @Mapping(source = "author", target = "author", qualifiedByName = "mapUserToDTO")
     PlanDTO mapEntityToDTO(Plan plan);
 
     @Mapping(source = "author", target = "author", qualifiedByName = "mapUserDTOToUser")
