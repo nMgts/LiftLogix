@@ -30,14 +30,9 @@
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       margin-bottom: 20px;
-      transition: transform 0.3s ease;
       display: flex;
       background-color: rgba(52, 52, 52, 0.3);
       flex-direction: column;
-
-      &:hover {
-        transform: translateY(-5px);
-      }
 
       .plan-name {
         font-size: 20px;
@@ -57,6 +52,7 @@
       .plan-actions {
         margin-top: 15px;
         display: flex;
+        flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
 
@@ -67,20 +63,16 @@
           align-items: center;
           color: aliceblue;
 
-          &:hover {
-            text-decoration: underline;
-          }
-
-          .preview-icon, .edit-icon {
+          .preview-icon, .edit-icon, .delete-icon {
             margin-right: 5px;
             font-size: 16px;
           }
 
-          .preview-icon {
+          .delete-icon {
             color: grey;
           }
 
-          .edit-icon {
+          .edit-icon, .preview-icon {
             color: darkviolet;
           }
 
@@ -103,6 +95,20 @@
 }
 
 @media (max-width: 768px) {
+
+  .plan-actions {
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 10px;
+  }
+
+  .action-button {
+    flex: 1 1 45%;
+    max-width: 45%;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
   .plan-card {
     max-width: 100%;
   }
@@ -117,10 +123,6 @@
 
   .plan-actions .action-button {
     font-size: 12px;
-  }
-
-  .preview-icon, .edit-icon, .excel-icon {
-    font-size: 14px;
   }
 }
 
@@ -147,9 +149,5 @@
 
   .plan-actions .action-button {
     font-size: 10px;
-  }
-
-  .preview-icon, .edit-icon, .excel-icon {
-    font-size: 12px;
   }
 }

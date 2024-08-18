@@ -3,5 +3,5 @@ export interface BasicPlan {
   name: string;
   author: string;
   length: number;
-  isPublic: boolean;
+  public: boolean;
 }

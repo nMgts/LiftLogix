@@ -1,1 +1,39 @@
-<p>works!</p>
+<div class="plan-list-container">
+  <h1 class="title">Dostępne plany</h1>
+
+  <mat-form-field appearance="fill" class="search-field">
+    <mat-label>Wyszukaj plan</mat-label>
+    <input matInput [(ngModel)]="searchTerm" (input)="onSearchChange()" placeholder="Wpisz nazwę planu" />
+  </mat-form-field>
+
+  <div class="plan-list">
+    <ng-container *ngFor="let plan of displayedPlans">
+      <mat-card class="plan-card">
+        <mat-card-title class="plan-name">{{ plan.name }}</mat-card-title>
+        <mat-card-subtitle class="plan-details">
+          <span class="plan-author">{{ plan.author }}</span>
+          <span class="plan-duration">{{ getPlanDuration(plan.length) }}</span>
+        </mat-card-subtitle>
+
+        <div class="plan-actions">
+          <button mat-raised-button (click)="previewPlan(plan.id)" class="action-button">
+            <mat-icon *ngIf="window.innerWidth > 499" class="preview-icon">visibility</mat-icon>
+            Podgląd
+          </button>
+          <button mat-raised-button (click)="addToMyPlans(plan.id)" class="action-button">
+            <mat-icon *ngIf="window.innerWidth > 499" class="add-icon">add</mat-icon>
+            <ng-container *ngIf="window.innerWidth < 601; else fullText">Dodaj</ng-container>
+            <ng-template #fullText>Dodaj do moich planów</ng-template>
+          </button>
+          <button mat-raised-button (click)="downloadPlan(plan.id)" class="action-button">
+            <img *ngIf="window.innerWidth > 499" src="/icons/excel.svg" alt="Excel Icon" class="excel-icon">
+            Pobierz
+          </button>
+        </div>
+      </mat-card>
+    </ng-container>
+  </div>
+
+  <mat-paginator [length]="filteredPlans.length" [pageSize]="pageSize" (page)="onPageChange($event)"></mat-paginator>
+</div>
+

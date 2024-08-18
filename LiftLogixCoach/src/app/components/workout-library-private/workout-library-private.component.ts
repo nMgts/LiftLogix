@@ -16,6 +16,8 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
   page: number = 0;
   pageSize: number = 10;
 
+  protected readonly window = window;
+
   constructor(private planService: PlanService) {}
 
   ngOnInit(): void {
@@ -52,6 +54,10 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
   }
 
   downloadPlan(id: number) {
+
+  }
+
+  deletePlan(id: number) {
 
   }
 

@@ -5,6 +5,6 @@ export interface Plan {
   id: number;
   name: string;
   author: User;
-  isPublic: boolean;
+  public: boolean;
   mesocycles: Mesocycle[];
 }

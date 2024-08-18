@@ -36,7 +36,7 @@ export class SavePlanDialogComponent {
         id: 0,
         name: formValues.planName,
         author: { id: 0, first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com', role: 'COACH' },
-        isPublic: formValues.isPublic,
+        public: formValues.isPublic,
         mesocycles: this.data.macrocycle.mesocycles || []
       };
 

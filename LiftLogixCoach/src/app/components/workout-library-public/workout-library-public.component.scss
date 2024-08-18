@@ -1,25 +1,141 @@
 .plan-list-container {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+  max-width: 100%;
+  margin: 20px auto;
+  padding: 0 15px;
+
+  .title {
+    color: aliceblue;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .search-field {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 20px;
+    display: block;
+  }
+
+  .plan-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .plan-card {
+      width: 100%;
+      max-width: 600px;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      margin-bottom: 20px;
+      display: flex;
+      background-color: rgba(52, 52, 52, 0.3);
+      flex-direction: column;
+
+      .plan-name {
+        font-size: 20px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: aliceblue;
+      }
+
+      .plan-details {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        color: #666;
+        margin-top: 5px;
+      }
+
+      .plan-author {
+        font-style: italic;
+      }
+
+      .plan-actions {
+        margin-top: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .action-button {
+          font-size: 14px;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          color: aliceblue;
+
+          .preview-icon, .add-icon {
+            margin-right: 5px;
+            font-size: 16px;
+            display: block;
+          }
+
+          .preview-icon {
+            color: darkviolet;
+          }
+
+          .add-icon {
+            color: darkviolet;
+          }
+
+          .excel-icon {
+            margin-right: 5px;
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
+
+  mat-paginator {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
 }
 
-.search-field {
-  width: 100%;
-  margin-bottom: 20px;
+@media (max-width: 768px) {
+  .plan-card {
+    max-width: 100%;
+  }
+
+  .plan-name {
+    font-size: 18px;
+  }
+
+  .plan-duration, .plan-author {
+    font-size: 12px;
+  }
+
+  .plan-actions .action-button {
+    font-size: 12px;
+  }
 }
 
-.plan-list {
-  margin-bottom: 20px;
-}
+@media (max-width: 480px) {
+  .search-field {
+    max-width: 100%;
+  }
 
-mat-list-item {
-  border-bottom: 1px solid #e0e0e0;
-  padding: 10px 0;
-}
+  .title {
+    font-size: 20px;
+  }
 
-mat-paginator {
-  display: flex;
-  justify-content: center;
+  .plan-card {
+    padding: 10px;
+  }
+
+  .plan-name {
+    font-size: 16px;
+  }
+
+  .plan-actions .action-button {
+    font-size: 10px;
+  }
 }

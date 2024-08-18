@@ -14,16 +14,20 @@
 
         <div class="plan-actions">
           <button mat-raised-button (click)="previewPlan(plan.id)" class="action-button">
-            <mat-icon class="preview-icon">visibility</mat-icon>
+            <mat-icon *ngIf="window.innerWidth > 399" class="preview-icon">visibility</mat-icon>
             Podgląd
           </button>
           <button mat-raised-button (click)="editPlan(plan.id)" class="action-button">
-            <mat-icon class="edit-icon">edit</mat-icon>
+            <mat-icon *ngIf="window.innerWidth > 399" class="edit-icon">edit</mat-icon>
             Edytuj
           </button>
           <button mat-raised-button (click)="downloadPlan(plan.id)" class="action-button">
-            <img src="/icons/excel.svg" alt="Excel Icon" class="excel-icon">
+            <img *ngIf="window.innerWidth > 399" src="/icons/excel.svg" alt="Excel Icon" class="excel-icon">
             Pobierz
+          </button>
+          <button mat-raised-button (click)="deletePlan(plan.id)" class="action-button">
+            <mat-icon *ngIf="window.innerWidth > 399" class="delete-icon">delete</mat-icon>
+            Usuń
           </button>
         </div>
       </mat-card>
