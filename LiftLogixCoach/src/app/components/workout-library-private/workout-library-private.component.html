@@ -1,1 +1,34 @@
-<p>workout-library-private works!</p>
+<div class="plan-list-container">
+  <h1 class="title">Moje Plany</h1>
+
+  <mat-form-field appearance="fill" class="search-field">
+    <mat-label>Wyszukaj plan</mat-label>
+    <input matInput [(ngModel)]="searchTerm" (input)="onSearchChange()" placeholder="Wpisz nazwę planu" />
+  </mat-form-field>
+
+  <div class="plan-list">
+    <ng-container *ngFor="let plan of displayedPlans">
+      <mat-card class="plan-card">
+        <mat-card-title class="plan-name">{{ plan.name }}</mat-card-title>
+        <mat-card-subtitle class="plan-duration">{{ getPlanDuration(plan.length) }}</mat-card-subtitle>
+
+        <div class="plan-actions">
+          <button mat-raised-button (click)="previewPlan(plan.id)" class="action-button">
+            <mat-icon class="preview-icon">visibility</mat-icon>
+            Podgląd
+          </button>
+          <button mat-raised-button (click)="editPlan(plan.id)" class="action-button">
+            <mat-icon class="edit-icon">edit</mat-icon>
+            Edytuj
+          </button>
+          <button mat-raised-button (click)="downloadPlan(plan.id)" class="action-button">
+            <img src="/icons/excel.svg" alt="Excel Icon" class="excel-icon">
+            Pobierz
+          </button>
+        </div>
+      </mat-card>
+    </ng-container>
+  </div>
+
+  <mat-paginator [length]="filteredPlans.length" [pageSize]="pageSize" (page)="onPageChange($event)"></mat-paginator>
+</div>

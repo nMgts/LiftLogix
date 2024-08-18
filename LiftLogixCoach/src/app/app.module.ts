@@ -54,6 +54,9 @@ import { WorkoutMenuComponent } from './components/workout-menu/workout-menu.com
 import { WorkoutLibraryPrivateComponent } from './components/workout-library-private/workout-library-private.component';
 import { WorkoutLibraryPublicComponent } from './components/workout-library-public/workout-library-public.component';
 import { SavePlanDialogComponent } from './components/save-plan-dialog/save-plan-dialog.component'
+import { MatLine } from "@angular/material/core";
+import { NgxPaginationModule } from 'ngx-pagination';
+import {MatGridList, MatGridTile} from "@angular/material/grid-list";
 
 @NgModule({
   declarations: [
@@ -111,7 +114,11 @@ import { SavePlanDialogComponent } from './components/save-plan-dialog/save-plan
     BaseChartDirective,
     MatCheckbox,
     MatCardModule,
-    MatTableModule
+    MatTableModule,
+    MatLine,
+    NgxPaginationModule,
+    MatGridList,
+    MatGridTile
   ],
   providers: [
     provideAnimationsAsync(),

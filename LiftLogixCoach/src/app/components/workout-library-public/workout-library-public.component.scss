@@ -1,0 +1,25 @@
+.plan-list-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.search-field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.plan-list {
+  margin-bottom: 20px;
+}
+
+mat-list-item {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 10px 0;
+}
+
+mat-paginator {
+  display: flex;
+  justify-content: center;
+}
