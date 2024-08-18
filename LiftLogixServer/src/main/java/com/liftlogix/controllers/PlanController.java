@@ -47,4 +47,33 @@ public class PlanController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deletePlan(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
+        try {
+            planService.deletePlan(id, currentUser);
+            return ResponseEntity.ok().body("{\"message\": \"Plan deleted successfully\"}");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @PutMapping("add-to-my-plans/{id}")
+    public ResponseEntity<?> addToMyPlans(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
+        try {
+            planService.addToMyPlans(id, currentUser);
+            return ResponseEntity.ok().body("{\"message\": \"Plan saved in myPlans\"}");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
 }

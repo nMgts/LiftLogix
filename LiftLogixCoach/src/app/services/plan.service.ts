@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Plan} from "../interfaces/Plan";
-import {Observable} from "rxjs";
-import {BasicPlan} from "../interfaces/BasicPlan";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Plan } from "../interfaces/Plan";
+import { Observable } from "rxjs";
+import { BasicPlan } from "../interfaces/BasicPlan";
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +12,8 @@ export class PlanService {
   private getMyUrl = 'http://localhost:8080/api/plans/my';
   private getPublicUrl = 'http://localhost:8080/api/plans/public';
   private getDetailsUrl = 'http://localhost:8080/api/plans/details';
+  private deleteUrl = 'http://localhost:8080/api/plans/delete';
+  private addToMyPlansUrl = 'http://localhost:8080/api/plans/add-to-my-plans';
 
   constructor(private http: HttpClient) {}
 
@@ -33,6 +35,16 @@ export class PlanService {
   getPlanDetails(planId: number, token: string): Observable<Plan> {
     const headers = this.createHeaders(token);
     return this.http.get<Plan>(`${this.getDetailsUrl}/${planId}`, { headers: headers });
+  }
+
+  deletePlan(planId: number, token: string): Observable<any> {
+    const headers = this.createHeaders(token);
+    return this.http.delete(`${this.deleteUrl}/${planId}`, { headers: headers });
+  }
+
+  addToMyPlans(planId: number, token: string): Observable<any> {
+    const headers = this.createHeaders(token);
+    return this.http.put(`${this.addToMyPlansUrl}/${planId}`, '', { headers: headers })
   }
 
   private createHeaders(token: string) {

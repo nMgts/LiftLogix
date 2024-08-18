@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,11 +52,42 @@ public class PlanService {
         );
 
         if (!plan.isPublic()) {
-            if (!plan.getAuthor().equals(user) && !user.getRole().equals(Role.ADMIN)) {
+            if (!Objects.equals(plan.getAuthor().getEmail(), user.getEmail()) && !user.getRole().equals(Role.ADMIN)) {
                 throw new AuthorizationException("You are not authorized");
             }
         }
 
         return planDTOMapper.mapEntityToDTO(plan);
+    }
+
+    public void deletePlan(Long planId, User user) {
+        Plan plan = planRepository.findById(planId).orElseThrow(
+                () -> new EntityNotFoundException("Plan not found")
+        );
+
+        if (!Objects.equals(plan.getAuthor().getEmail(), user.getEmail()) && !user.getRole().equals(Role.ADMIN)) {
+            throw new AuthorizationException("You are not authorized");
+        }
+
+        planRepository.deleteById(planId);
+    }
+
+    public void addToMyPlans(Long planId, User user) {
+        Plan plan = planRepository.findById(planId).orElseThrow(
+                () -> new EntityNotFoundException("Plan not found")
+        );
+
+        if (Objects.equals(plan.getAuthor().getEmail(), user.getEmail())) {
+            throw new IllegalArgumentException("It is already your plan");
+        }
+
+        Plan newPlan = new Plan();
+        newPlan.setMesocycles(plan.getMesocycles());
+        newPlan.setName(plan.getName());
+        newPlan.setPublic(false);
+        newPlan.setAuthor(user);
+
+        PlanDTO dto = planDTOMapper.mapEntityToDTO(newPlan);
+        savePlan(dto, user);
     }
 }

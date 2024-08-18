@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BasicPlan } from "../../interfaces/BasicPlan";
 import { PlanService } from "../../services/plan.service";
 import { PageEvent } from "@angular/material/paginator";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-workout-library-private',
@@ -18,7 +19,7 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
 
   protected readonly window = window;
 
-  constructor(private planService: PlanService) {}
+  constructor(private planService: PlanService, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     this.loadPlans();
@@ -58,7 +59,14 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
   }
 
   deletePlan(id: number) {
-
+    const token = localStorage.getItem('token') || '';
+    this.planService.deletePlan(id, token).subscribe(
+      () => {
+      this.loadPlans();
+    },
+      (error) => {
+      this.openSnackBar('Wystąpił błąd');
+    });
   }
 
   onSearchChange(): void {
@@ -91,5 +99,12 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
     } else if (weeks > 1 && days > 3) {
       return `~${weeks + 1} tyg.`;
     } else return '';
+  }
+
+  private openSnackBar(message: string) {
+    this.snackBar.open(message, 'Zamknij', {
+      duration: 3000,
+      verticalPosition: 'top'
+    });
   }
 }
