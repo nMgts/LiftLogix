@@ -60,7 +60,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/exercise/add",
                                 "/api/result/add/{client_id}",
-                                "/api/plans/public", "/api/plans/my", "/api/plans/save", "/api/plans/details/{id}", "/api/plans/delete/{id}", "/api/plans/add-to-my-plans/{id}", "/api/plans/edit")
+                                "/api/plans/public", "/api/plans/my", "/api/plans/save", "/api/plans/details/{id}", "/api/plans/delete/{id}",
+                                "/api/plans/add-to-my-plans/{id}", "/api/plans/edit", "/api/plans/rename/{id}", "/api/plans/visibility/{id}")
                         .hasAnyAuthority("ADMIN", "COACH")
 
                         // Admin and client endpoints

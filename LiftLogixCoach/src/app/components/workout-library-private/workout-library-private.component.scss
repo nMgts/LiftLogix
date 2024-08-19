@@ -33,14 +33,36 @@
       display: flex;
       background-color: rgba(52, 52, 52, 0.3);
       flex-direction: column;
+      position: relative;
 
       .plan-name {
+        display: flex;
+        align-items: center;
         font-size: 20px;
         font-weight: 600;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
         color: aliceblue;
+        position: relative;
+
+        .mat-icon-button {
+          margin-left: 8px;
+          color: white;
+
+          &.public-icon {
+            color: green;
+          }
+
+          &.private-icon {
+            color: grey;
+          }
+        }
+
+        .edit-field {
+          width: 100%;
+        }
+
+        .save-button {
+          margin: 0 0 15px 10px;
+        }
       }
 
       .plan-duration {
@@ -95,7 +117,6 @@
 }
 
 @media (max-width: 768px) {
-
   .plan-actions {
     flex-direction: row;
     justify-content: space-around;
@@ -115,6 +136,8 @@
 
   .plan-name {
     font-size: 18px;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .plan-duration {

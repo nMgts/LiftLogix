@@ -58,6 +58,7 @@ import { MatLine } from "@angular/material/core";
 import { NgxPaginationModule } from 'ngx-pagination';
 import {MatGridList, MatGridTile} from "@angular/material/grid-list";
 import { BackArrowComponent } from './components/back-arrow/back-arrow.component';
+import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 
 @NgModule({
   declarations: [
@@ -120,7 +121,10 @@ import { BackArrowComponent } from './components/back-arrow/back-arrow.component
     MatLine,
     NgxPaginationModule,
     MatGridList,
-    MatGridTile
+    MatGridTile,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem
   ],
   providers: [
     provideAnimationsAsync(),

@@ -15,6 +15,8 @@ export class PlanService {
   private deleteUrl = 'http://localhost:8080/api/plans/delete';
   private addToMyPlansUrl = 'http://localhost:8080/api/plans/add-to-my-plans';
   private editPlanUrl = 'http://localhost:8080/api/plans/edit';
+  private renamePlanUrl = 'http://localhost:8080/api/plans/rename';
+  private changePlanVisibilityUrl = 'http://localhost:8080/api/plans/visibility';
 
   constructor(private http: HttpClient) {}
 
@@ -51,6 +53,16 @@ export class PlanService {
   editPlan(plan: Plan, token: string): Observable<Plan> {
     const headers = this.createHeaders(token);
     return this.http.put<Plan>(this.editPlanUrl, plan, { headers: headers })
+  }
+
+  renamePlan(planId: number, newName: string, token: string): Observable<any> {
+    const headers = this.createHeaders(token);
+    return this.http.patch(`${this.renamePlanUrl}/${planId}`, newName, { headers: headers, responseType: 'text' });
+  }
+
+  changePlanVisibility(planId: number, visibility: boolean, token: string): Observable<any> {
+    const headers = this.createHeaders(token);
+    return this.http.patch(`${this.changePlanVisibilityUrl}/${planId}`, visibility, { headers: headers, responseType: 'text' });
   }
 
   private createHeaders(token: string) {

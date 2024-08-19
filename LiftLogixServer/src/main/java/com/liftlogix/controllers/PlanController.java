@@ -90,7 +90,34 @@ public class PlanController {
         } catch (AuthorizationException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @PatchMapping("/rename/{id}")
+    public ResponseEntity<String> renamePlan(@PathVariable Long id, @RequestBody String name, @AuthenticationPrincipal User currentUser) {
+        try {
+            planService.renamePlan(id, name, currentUser);
+            return ResponseEntity.ok().body("{\"message\": \"Plan renamed successfully\"}");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @PatchMapping("/visibility/{id}")
+    public ResponseEntity<String> changePlanVisibility(@PathVariable Long id, @RequestBody boolean visibility, @AuthenticationPrincipal User currentUser) {
+        try {
+            planService.changePlanVisibility(id, visibility, currentUser);
+            return ResponseEntity.ok().body("{\"message\": \"Plan visibility changed successfully\"}");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }

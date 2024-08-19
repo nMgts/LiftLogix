@@ -1,10 +1,8 @@
 package com.liftlogix.services;
 
 import com.liftlogix.convert.BasicPlanDTOMapper;
-import com.liftlogix.convert.MesocycleDTOMapper;
 import com.liftlogix.convert.PlanDTOMapper;
 import com.liftlogix.dto.BasicPlanDTO;
-import com.liftlogix.dto.MesocycleDTO;
 import com.liftlogix.dto.PlanDTO;
 import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.models.*;
@@ -23,7 +21,6 @@ public class PlanService {
     private final PlanRepository planRepository;
     private final PlanDTOMapper planDTOMapper;
     private final BasicPlanDTOMapper basicPlanDTOMapper;
-    private final MesocycleDTOMapper mesocycleDTOMapper;
 
     public PlanDTO savePlan(PlanDTO planDTO, User author) {
 
@@ -116,4 +113,31 @@ public class PlanService {
         return planDTOMapper.mapEntityToDTO(newPlan);
     }
 
+    public void renamePlan(Long id, String name, User user) {
+
+        Plan plan = planRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Plan not found")
+        );
+
+        if (!Objects.equals(plan.getAuthor().getEmail(), user.getEmail()) && !user.getRole().equals(Role.ADMIN)) {
+            throw new AuthorizationException("You are not authorized");
+        }
+
+        plan.setName(name);
+        planRepository.save(plan);
+    }
+
+    public void changePlanVisibility(Long id, boolean visible, User user) {
+
+        Plan plan = planRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Plan not found")
+        );
+
+        if (!Objects.equals(plan.getAuthor().getEmail(), user.getEmail()) && !user.getRole().equals(Role.ADMIN)) {
+            throw new AuthorizationException("You are not authorized");
+        }
+
+        plan.setPublic(visible);
+        planRepository.save(plan);
+    }
 }

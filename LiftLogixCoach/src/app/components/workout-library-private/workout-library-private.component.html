@@ -1,6 +1,6 @@
 <app-back-arrow *ngIf="!selectedPlan" (goBack)="onGoBack()"></app-back-arrow>
 
-<div class="plan-list-container" *ngIf="!selectedPlan">
+<div class="plan-list-container" *ngIf="!selectedPlan" (click)="cancelEdit()">
   <h1 class="title">Moje Plany</h1>
 
   <mat-form-field appearance="fill" class="search-field">
@@ -11,7 +11,32 @@
   <div class="plan-list">
     <ng-container *ngFor="let plan of displayedPlans">
       <mat-card class="plan-card">
-        <mat-card-title class="plan-name">{{ plan.name }}</mat-card-title>
+
+        <mat-card-title class="plan-name">
+          <ng-container *ngIf="plan.id !== editingPlan">
+            {{ plan.name }}
+            <button mat-icon-button (click)="startEdit(plan, $event)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button [matMenuTriggerFor]="visibilityMenu">
+              <mat-icon [ngClass]="{'public-icon': plan.public, 'private-icon': !plan.public}">{{ plan.public ? 'public' : 'lock' }}</mat-icon>
+            </button>
+            <mat-menu #visibilityMenu="matMenu">
+              <button mat-menu-item (click)="changeVisibility(plan, !plan.public)">
+                <mat-icon>{{ plan.public ? 'lock' : 'public' }}</mat-icon>
+                {{ plan.public ? 'Ustaw jako prywatny' : 'Ustaw jako publiczny' }}
+              </button>
+            </mat-menu>
+          </ng-container>
+          <ng-container *ngIf="plan.id === editingPlan">
+            <mat-form-field appearance="fill" class="edit-field" (click)="$event.stopPropagation()">
+              <mat-label>Edytuj nazwę</mat-label>
+              <input matInput [(ngModel)]="newName" autofocus/>
+            </mat-form-field>
+            <button mat-raised-button class="save-button" (click)="saveEdit(plan, $event)">Zapisz</button>
+          </ng-container>
+        </mat-card-title>
+
         <mat-card-subtitle class="plan-duration">{{ getPlanDuration(plan.length) }}</mat-card-subtitle>
 
         <div class="plan-actions">

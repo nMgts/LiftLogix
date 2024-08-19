@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BasicPlan } from "../../interfaces/BasicPlan";
 import { PlanService } from "../../services/plan.service";
 import { PageEvent } from "@angular/material/paginator";
@@ -20,6 +20,8 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
   pageSize: number = 10;
 
   selectedPlan: number | null = null;
+  editingPlan: number | null = null;
+  newName: string = '';
 
   protected readonly window = window;
 
@@ -56,6 +58,43 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
 
   editPlan(id: number) {
     this.selectedPlan = id;
+  }
+
+  startEdit(plan: BasicPlan, event: Event) {
+    event.stopPropagation();
+    this.editingPlan = plan.id;
+  }
+
+  cancelEdit() {
+    this.editingPlan = null;
+  }
+
+  saveEdit(plan: BasicPlan, event: Event) {
+    event.stopPropagation();
+    if (this.newName !== plan.name && this.newName !== '') {
+      const token = localStorage.getItem('token') || '';
+      this.planService.renamePlan(plan.id , this.newName, token).subscribe(
+        () => {
+          this.editingPlan = null;
+          plan.name = this.newName;
+          this.openSnackBar('Nazwa planu została zmieniona');
+        },
+        () => this.openSnackBar('Wystąpił błąd podczas zmiany nazwy planu')
+      );
+    } else {
+      this.editingPlan = null;
+    }
+  }
+
+  changeVisibility(plan: BasicPlan, isPublic: boolean) {
+    const token = localStorage.getItem('token') || '';
+    this.planService.changePlanVisibility(plan.id, isPublic, token).subscribe(
+      () => {
+        this.openSnackBar(`Plan został ${isPublic ? 'ustawiony jako publiczny' : 'ustawiony jako prywatny'}`);
+        plan.public = isPublic;
+      },
+      () => this.openSnackBar('Wystąpił błąd podczas zmiany widoczności planu')
+    );
   }
 
   onCancel() {
