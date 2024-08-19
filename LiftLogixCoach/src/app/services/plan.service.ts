@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpResponse } from "@angular/common/http";
 import { Plan } from "../interfaces/Plan";
-import { Observable } from "rxjs";
+import { Observable, tap } from "rxjs";
 import { BasicPlan } from "../interfaces/BasicPlan";
+import { saveAs } from 'file-saver';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class PlanService {
   private editPlanUrl = 'http://localhost:8080/api/plans/edit';
   private renamePlanUrl = 'http://localhost:8080/api/plans/rename';
   private changePlanVisibilityUrl = 'http://localhost:8080/api/plans/visibility';
+  private exportUrl = 'http://localhost:8080/api/plans/export';
 
   constructor(private http: HttpClient) {}
 
@@ -63,6 +65,34 @@ export class PlanService {
   changePlanVisibility(planId: number, visibility: boolean, token: string): Observable<any> {
     const headers = this.createHeaders(token);
     return this.http.patch(`${this.changePlanVisibilityUrl}/${planId}`, visibility, { headers: headers, responseType: 'text' });
+  }
+
+  exportPlanToExcel(planId: number, token: string): Observable<any> {
+    const headers = this.createHeaders(token);
+    return this.http.get(`${this.exportUrl}/${planId}`, {
+      headers: headers,
+      responseType: 'blob',
+      observe: 'response'
+    }).pipe(
+      tap((response: HttpResponse<Blob>) => {
+        const contentDisposition = response.headers.get('Content-Disposition');
+        const filename = this.extractFilename(contentDisposition);
+
+        if (response.body) {
+          saveAs(response.body, filename);
+        } else {
+          console.error('Error: response.body is null');
+        }
+      })
+    );
+  }
+
+  private extractFilename(contentDisposition: string | null): string {
+    if (!contentDisposition) {
+      return 'plan.xls';
+    }
+    const matches = /filename="([^"]+)"/.exec(contentDisposition);
+    return (matches && matches[1]) ? matches[1] : 'plan.xls';
   }
 
   private createHeaders(token: string) {

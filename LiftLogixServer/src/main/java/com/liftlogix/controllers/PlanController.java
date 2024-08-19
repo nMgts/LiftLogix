@@ -4,14 +4,20 @@ import com.liftlogix.dto.BasicPlanDTO;
 import com.liftlogix.dto.PlanDTO;
 import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.models.User;
+import com.liftlogix.services.ExcelService;
 import com.liftlogix.services.PlanService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.rmi.server.ExportException;
 import java.util.List;
 
 @RestController
@@ -19,6 +25,7 @@ import java.util.List;
 @RequestMapping("/api/plans")
 public class PlanController {
     private final PlanService planService;
+    private final ExcelService excelService;
 
     @PostMapping("/save")
     public PlanDTO createPlan(@RequestBody PlanDTO planDTO, @AuthenticationPrincipal User currentUser) {
@@ -118,6 +125,29 @@ public class PlanController {
         } catch (AuthorizationException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @GetMapping("/export/{id}")
+    public ResponseEntity<?> exportPlanToExcel(@PathVariable Long id, @AuthenticationPrincipal User currentUser) throws IOException {
+        try {
+            ByteArrayResource excelFile = excelService.exportPlanToExcel(id, currentUser);
+
+            String filename = planService.getPlanName(id) + ".xlsx";
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                    .body(excelFile);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }

@@ -23,6 +23,4 @@ public class Mesocycle {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id", nullable = false)
     private Plan plan;
-
-
 }

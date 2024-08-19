@@ -69,7 +69,11 @@ export class WorkoutLibraryPublicComponent implements OnInit {
   }
 
   downloadPlan(id: number) {
-
+    const token = localStorage.getItem('token') || '';
+    this.planService.exportPlanToExcel(id, token).subscribe({
+      next: () => console.log('Plan został pomyślnie wyeksportowany'),
+      error: (err) => console.error('Błąd podczas eksportowania planu', err)
+    });
   }
 
   onSearchChange(): void {

@@ -140,4 +140,13 @@ public class PlanService {
         plan.setPublic(visible);
         planRepository.save(plan);
     }
+
+    public String getPlanName(Long id) {
+
+        Plan plan = planRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Plan not found")
+        );
+
+        return plan.getName();
+    }
 }
