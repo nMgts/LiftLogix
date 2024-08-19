@@ -134,7 +134,7 @@ public class PlanController {
         try {
             ByteArrayResource excelFile = excelService.exportPlanToExcel(id, currentUser);
 
-            String filename = planService.getPlanName(id) + ".xlsx";
+            String filename = planService.getPlanName(id) + ".xls";
 
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)

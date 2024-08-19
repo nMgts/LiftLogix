@@ -16,7 +16,9 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOriginPatterns("http://localhost:4200")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH");
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+                        .allowedHeaders("*")
+                        .exposedHeaders("Content-Disposition");
                         //.exposedHeaders(HttpHeaders.SET_COOKIE)
                         //.allowedHeaders("Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization", "refreshToken");
                         //.allowCredentials(true);

@@ -76,6 +76,7 @@ export class PlanService {
     }).pipe(
       tap((response: HttpResponse<Blob>) => {
         const contentDisposition = response.headers.get('Content-Disposition');
+        console.log(response.headers.get('Content-Disposition'));
         const filename = this.extractFilename(contentDisposition);
 
         if (response.body) {
@@ -88,11 +89,17 @@ export class PlanService {
   }
 
   private extractFilename(contentDisposition: string | null): string {
+    console.log(contentDisposition)
     if (!contentDisposition) {
       return 'plan.xls';
     }
-    const matches = /filename="([^"]+)"/.exec(contentDisposition);
-    return (matches && matches[1]) ? matches[1] : 'plan.xls';
+    const matches = /filename\*=UTF-8''(.+)|filename="([^"]+)"|filename=(\S+)/.exec(contentDisposition);
+
+    if (matches) {
+      return decodeURIComponent(matches[1] || matches[2] || matches[3]);
+    }
+
+    return 'plan.xls';
   }
 
   private createHeaders(token: string) {
