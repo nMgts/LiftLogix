@@ -70,8 +70,8 @@ export class ExerciseOptionsDialogComponent {
     }
 
     // Validate break
-    if (exercise.break.value !== null && exercise.break.value < 1) {
-      exercise.break = { value: null, unit: 's' };
+    if (exercise.breakTime.value !== null && exercise.breakTime.value < 1) {
+      exercise.breakTime = { value: null, unit: 's' };
     }
   }
 

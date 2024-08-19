@@ -1,6 +1,6 @@
-<app-back-arrow (goBack)="onGoBack()"></app-back-arrow>
+<app-back-arrow *ngIf="!selectedPlan" (goBack)="onGoBack()"></app-back-arrow>
 
-<div class="plan-list-container">
+<div class="plan-list-container" *ngIf="!selectedPlan">
   <h1 class="title">Dostępne plany</h1>
 
   <mat-form-field appearance="fill" class="search-field">
@@ -39,3 +39,6 @@
   <mat-paginator [length]="filteredPlans.length" [pageSize]="pageSize" (page)="onPageChange($event)"></mat-paginator>
 </div>
 
+<div *ngIf="selectedPlan">
+  <app-workout-view [planId]="selectedPlan" (goBack)="onCancel()"></app-workout-view>
+</div>

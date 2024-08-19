@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>Szczegóły ćwiczenia</h1>
+<div mat-dialog-content>
+  <p><strong>Nazwa ćwiczenia:</strong> {{ exercise.exercise.name }}</p>
+  <p *ngIf="exercise.series !== null"><strong>Serie:</strong> {{ exercise.series }}</p>
+  <p *ngIf="exercise.repetitionsFrom !== null && exercise.repetitionsTo !== null">
+    <strong>Powtórzenia:</strong> {{ formatRepetitions(exercise) }}
+  </p>
+  <p *ngIf="exercise.weight !== null"><strong>Waga:</strong> {{ exercise.weight }} kg</p>
+  <p *ngIf="exercise.percentage !== null"><strong>Procent ciężaru:</strong> {{ exercise.percentage }}%</p>
+  <p *ngIf="exercise.tempo"><strong>Tempo:</strong> {{ exercise.tempo }}</p>
+  <p *ngIf="exercise.rpe !== null"><strong>RPE:</strong> {{ exercise.rpe }}</p>
+  <p *ngIf="exercise.breakTime?.value !== null"><strong>Przerwa:</strong> {{ exercise.breakTime.value }} {{ exercise.breakTime.unit }}</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onClose()">Zamknij</button>
+</div>
+

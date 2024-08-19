@@ -21,6 +21,7 @@ import {ExerciseOptionsDialogComponent} from "../exercise-options-dialog/exercis
 import {SavePlanDialogComponent} from "../save-plan-dialog/save-plan-dialog.component";
 import {Plan} from "../../interfaces/Plan";
 import {PlanService} from "../../services/plan.service";
+import {ExerciseDetailsDialogComponent} from "../exercise-details-dialog/exercise-details-dialog.component";
 
 @Component({
   selector: 'app-workout-creator',
@@ -277,11 +278,8 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
 
   openExerciseDetails(exercise: any, event: Event): void {
     event.stopPropagation();
-    this.dialog.open(ExerciseOptionsDialogComponent, {
-      data: {
-        exercise: exercise,
-        showAdvancedOptions: this.showAdvancedOptions
-      }
+    this.dialog.open(ExerciseDetailsDialogComponent, {
+      data: exercise
     });
   }
 

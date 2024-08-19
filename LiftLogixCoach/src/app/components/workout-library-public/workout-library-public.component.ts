@@ -18,6 +18,8 @@ export class WorkoutLibraryPublicComponent implements OnInit {
   page: number = 0;
   pageSize: number = 10;
 
+  selectedPlan: number | null = null;
+
   protected readonly window = window;
 
   constructor(private planService: PlanService, private snackBar: MatSnackBar) {}
@@ -48,7 +50,7 @@ export class WorkoutLibraryPublicComponent implements OnInit {
   }
 
   previewPlan(id: number) {
-
+    this.selectedPlan = id;
   }
 
   addToMyPlans(id: number) {
@@ -107,6 +109,10 @@ export class WorkoutLibraryPublicComponent implements OnInit {
       duration: 3000,
       verticalPosition: 'top'
     });
+  }
+
+  onCancel() {
+    this.selectedPlan = null;
   }
 
   onGoBack() {

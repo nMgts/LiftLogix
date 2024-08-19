@@ -56,9 +56,11 @@ import { WorkoutLibraryPublicComponent } from './components/workout-library-publ
 import { SavePlanDialogComponent } from './components/save-plan-dialog/save-plan-dialog.component'
 import { MatLine } from "@angular/material/core";
 import { NgxPaginationModule } from 'ngx-pagination';
-import {MatGridList, MatGridTile} from "@angular/material/grid-list";
+import { MatGridList, MatGridTile } from "@angular/material/grid-list";
 import { BackArrowComponent } from './components/back-arrow/back-arrow.component';
-import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
+import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
+import { WorkoutViewComponent } from './components/workout-view/workout-view.component';
+import { WorkoutExerciseDetailsDialogComponent } from './components/workout-exercise-details-dialog/workout-exercise-details-dialog.component';
 
 @NgModule({
   declarations: [
@@ -96,7 +98,9 @@ import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
     WorkoutLibraryPrivateComponent,
     WorkoutLibraryPublicComponent,
     SavePlanDialogComponent,
-    BackArrowComponent
+    BackArrowComponent,
+    WorkoutViewComponent,
+    WorkoutExerciseDetailsDialogComponent
   ],
   imports: [
     BrowserModule,

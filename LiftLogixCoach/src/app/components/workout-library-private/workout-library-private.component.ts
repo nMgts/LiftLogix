@@ -20,6 +20,7 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
   pageSize: number = 10;
 
   selectedPlan: number | null = null;
+  viewPlan: number | null = null;
   editingPlan: number | null = null;
   newName: string = '';
 
@@ -53,7 +54,7 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
   }
 
   previewPlan(id: number) {
-
+    this.viewPlan = id;
   }
 
   editPlan(id: number) {
@@ -99,6 +100,7 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
 
   onCancel() {
     this.selectedPlan = null;
+    this.viewPlan = null;
     this.loadPlans();
   }
 
