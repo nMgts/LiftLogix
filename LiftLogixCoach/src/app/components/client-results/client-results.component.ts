@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { ClientsComponent } from "../clients/clients.component";
 import { ResultService } from "../../services/result.service";
 import { Result } from "../../interfaces/Result";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -16,7 +15,7 @@ import { MatDialog } from "@angular/material/dialog";
 })
 export class ClientResultsComponent implements OnInit, OnDestroy{
   @Input() clientId: number | null = null;
-  @Output() closeRightComponent = new EventEmitter<void>();
+  @Output() goBack = new EventEmitter<void>();
   currentResult: Result | null = null;
   results: Result[] = [];
   filteredResults: Result[] = [];
@@ -53,7 +52,6 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
   private clientIdSubscription!: Subscription;
 
   constructor(
-    private clientsComponent: ClientsComponent,
     private resultService: ResultService,
     private snackBar: MatSnackBar,
     private clientService: ClientService,
@@ -390,7 +388,7 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
     });
   }
 
-  goBack(): void {
-    this.clientsComponent.clearSelectedComponent();
+  onGoBack(): void {
+    this.goBack.emit();
   }
 }

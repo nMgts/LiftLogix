@@ -2,25 +2,6 @@
   padding: 20px;
 }
 
-.back-arrow {
-  position: absolute;
-  background: none;
-  border: none;
-  top: 10px;
-  left: 10px;
-  cursor: pointer;
-  color: aliceblue;
-  z-index: 1000;
-}
-
-.back-arrow span {
-  font-size: 36px;
-}
-
-.back-arrow:hover {
-  color: darkviolet;
-}
-
 mat-card {
   margin: 10px 0 20px 0;
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import { BasicPlan } from "../../interfaces/BasicPlan";
 import { PlanService } from "../../services/plan.service";
 import { PageEvent } from "@angular/material/paginator";
@@ -10,12 +10,16 @@ import { MatSnackBar } from "@angular/material/snack-bar";
   styleUrl: './workout-library-private.component.scss'
 })
 export class WorkoutLibraryPrivateComponent implements OnInit {
+  @Output() goBack = new EventEmitter<void>();
+
   plans: BasicPlan[] = [];
   filteredPlans: BasicPlan[] = [];
   displayedPlans: BasicPlan[] = [];
   searchTerm: string = '';
   page: number = 0;
   pageSize: number = 10;
+
+  selectedPlan: number | null = null;
 
   protected readonly window = window;
 
@@ -51,7 +55,12 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
   }
 
   editPlan(id: number) {
+    this.selectedPlan = id;
+  }
 
+  onCancel() {
+    this.selectedPlan = null;
+    this.loadPlans();
   }
 
   downloadPlan(id: number) {
@@ -106,5 +115,9 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
       duration: 3000,
       verticalPosition: 'top'
     });
+  }
+
+  onGoBack() {
+    this.goBack.emit();
   }
 }

@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { ClientsComponent } from "../clients/clients.component";
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-client-plan',
@@ -7,10 +6,11 @@ import { ClientsComponent } from "../clients/clients.component";
   styleUrl: './client-plan.component.scss'
 })
 export class ClientPlanComponent {
-  constructor(private clientsComponent: ClientsComponent) {}
+  @Output() goBack = new EventEmitter<void>();
 
-  goBack(event: Event) {
-    event.stopPropagation();
-    this.clientsComponent.clearSelectedComponent();
+  constructor() {}
+
+  onGoBack() {
+    this.goBack.emit();
   }
 }

@@ -1,4 +1,14 @@
-import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AddExerciseToWorkoutDialogComponent } from "../add-exercise-to-workout-dialog/add-exercise-to-workout-dialog.component";
@@ -9,6 +19,8 @@ import { Mesocycle } from "../../interfaces/Mesocycle";
 import { Macrocycle } from "../../interfaces/Macrocycle";
 import {ExerciseOptionsDialogComponent} from "../exercise-options-dialog/exercise-options-dialog.component";
 import {SavePlanDialogComponent} from "../save-plan-dialog/save-plan-dialog.component";
+import {Plan} from "../../interfaces/Plan";
+import {PlanService} from "../../services/plan.service";
 
 @Component({
   selector: 'app-workout-creator',
@@ -16,6 +28,10 @@ import {SavePlanDialogComponent} from "../save-plan-dialog/save-plan-dialog.comp
   styleUrl: './workout-creator.component.scss'
 })
 export class WorkoutCreatorComponent implements OnInit, OnDestroy {
+  @Output() goBack = new EventEmitter<void>();
+  @Input() planId!: number;
+  plan!: Plan;
+
   protected readonly window = window;
   dropdownOpen: boolean = false;
 
@@ -46,12 +62,19 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   activeCell: any = null;
 
   selectedMicrocycle = this.exampleMicrocycle;
-  exampleMesocycle: Mesocycle = { microcycles: [this.exampleMicrocycle] };
+  exampleMesocycle: Mesocycle = {
+    microcycles: [
+      this.exampleMicrocycle
+    ]
+  };
   microcycleCount: number = 1;
   showMesocycle = true;
 
   showMacrocycle = true;
-  macrocycle: Macrocycle = { mesocycles: [this.exampleMesocycle] };
+  macrocycle: Macrocycle = {
+    mesocycles:
+      [this.exampleMesocycle]
+  };
   selectedMesocycle = this.exampleMesocycle;
   mesocycleCount: number = 1;
 
@@ -62,10 +85,15 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   constructor(
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private planService: PlanService
   ) {}
 
   ngOnInit() {
+    if (this.planId) {
+      this.loadPlan(this.planId);
+    }
+
     this.generateMicrocycleTable();
     this.detectTouchDevice();
     this.addTouchListener();
@@ -79,6 +107,43 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     if (this.touchListener) {
       document.removeEventListener('touchstart', this.touchListener);
     }
+  }
+
+  /** Plan Edit Methods **/
+
+  loadPlan(id: number) {
+    const token = localStorage.getItem('token') || '';
+    this.planService.getPlanDetails(id, token).subscribe({
+      next: (plan: Plan) => {
+        this.plan = plan;
+        this.macrocycle = { mesocycles: this.plan.mesocycles };
+        this.selectMesocycle(0);
+        this.generateMicrocycleTable();
+      },
+      error: () => {
+        this.openSnackBar('Nie udało się załadować planu');
+      }
+    });
+  }
+
+  editPlan() {
+    const token = localStorage.getItem('token') || '';
+    const newPlan: Plan = {
+      id: this.plan.id,
+      name: this.plan.name,
+      author: { id: 0, first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com', role: 'COACH' },
+      public: this.plan.public,
+      mesocycles: this.macrocycle.mesocycles
+    };
+    this.planService.editPlan(newPlan, token).subscribe({
+      next: () => {
+        this.openSnackBar('Plan został zaktualizowany');
+        this.onGoBack();
+      },
+      error: () => {
+        this.openSnackBar('Nie udało się zaktualizować planu');
+      }
+    })
   }
 
   /** Workout Unit Methods **/
@@ -185,7 +250,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
           percentage: null,
           tempo: '1-0-1-0',
           rpe: null,
-          break: {value: null, unit: 's'}
+          breakTime: {value: null, unit: 's'}
         });
       }
     });
@@ -250,7 +315,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
         percentage: exercise.percentage,
         tempo: exercise.tempo,
         rpe: exercise.rpe,
-        break: { ...exercise.break }
+        breakTime: { ...exercise.breakTime }
       })),
       days: []
     };
@@ -368,7 +433,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
             workoutExercises: workout.workoutExercises.map(exercise => ({
               ...exercise,
               exercise: { ...exercise.exercise },
-              break: { ...exercise.break }
+              break: { ...exercise.breakTime }
             })),
             days: [...workout.days]
           }))
@@ -426,7 +491,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
               workoutExercises: workout.workoutExercises.map(exercise => ({
                 ...exercise,
                 exercise: { ...exercise.exercise },
-                break: { ...exercise.break }
+                break: { ...exercise.breakTime }
               })),
               days: [...workout.days]
             }))
@@ -601,8 +666,8 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   }
 
   validateBreak(exercise: WorkoutExercise) {
-    if (exercise.break.value != null) {
-      if (exercise.break.value < 1) exercise.break = { value: null, unit: 's' };
+    if (exercise.breakTime.value != null) {
+      if (exercise.breakTime.value < 1) exercise.breakTime = { value: null, unit: 's' };
     }
   }
 
@@ -673,13 +738,13 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     });
   }
 
-  close(event: Event) {
-    event.stopPropagation();
+  onGoBack() {
     if (this.clickListener) {
       document.removeEventListener('click', this.clickListener);
     }
     if (this.touchListener) {
       document.removeEventListener('touchstart', this.touchListener);
     }
+    this.goBack.emit();
   }
 }

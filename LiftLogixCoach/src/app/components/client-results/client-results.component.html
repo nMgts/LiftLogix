@@ -1,7 +1,6 @@
+<app-back-arrow (goBack)="onGoBack()"></app-back-arrow>
+
 <div class="component-container">
-  <button class="back-arrow" (click)="goBack()">
-    <span class="material-icons">arrow_back</span>
-  </button>
   <div *ngIf="currentResult; else loading">
     <mat-card>
       <mat-card-header>

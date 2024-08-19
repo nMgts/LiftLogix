@@ -9,7 +9,7 @@ export interface WorkoutExercise {
   percentage: number | null;
   tempo: string;
   rpe: number | null;
-  break: {
+  breakTime: {
     value: number | null;
     unit: string;
   };

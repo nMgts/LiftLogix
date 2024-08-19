@@ -57,6 +57,7 @@ import { SavePlanDialogComponent } from './components/save-plan-dialog/save-plan
 import { MatLine } from "@angular/material/core";
 import { NgxPaginationModule } from 'ngx-pagination';
 import {MatGridList, MatGridTile} from "@angular/material/grid-list";
+import { BackArrowComponent } from './components/back-arrow/back-arrow.component';
 
 @NgModule({
   declarations: [
@@ -93,7 +94,8 @@ import {MatGridList, MatGridTile} from "@angular/material/grid-list";
     WorkoutMenuComponent,
     WorkoutLibraryPrivateComponent,
     WorkoutLibraryPublicComponent,
-    SavePlanDialogComponent
+    SavePlanDialogComponent,
+    BackArrowComponent
   ],
   imports: [
     BrowserModule,

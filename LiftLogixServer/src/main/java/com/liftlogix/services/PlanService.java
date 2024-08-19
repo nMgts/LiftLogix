@@ -1,20 +1,20 @@
 package com.liftlogix.services;
 
 import com.liftlogix.convert.BasicPlanDTOMapper;
+import com.liftlogix.convert.MesocycleDTOMapper;
 import com.liftlogix.convert.PlanDTOMapper;
 import com.liftlogix.dto.BasicPlanDTO;
+import com.liftlogix.dto.MesocycleDTO;
 import com.liftlogix.dto.PlanDTO;
 import com.liftlogix.exceptions.AuthorizationException;
-import com.liftlogix.models.Plan;
-import com.liftlogix.models.User;
+import com.liftlogix.models.*;
 import com.liftlogix.repositories.PlanRepository;
 import com.liftlogix.types.Role;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,12 +23,15 @@ public class PlanService {
     private final PlanRepository planRepository;
     private final PlanDTOMapper planDTOMapper;
     private final BasicPlanDTOMapper basicPlanDTOMapper;
+    private final MesocycleDTOMapper mesocycleDTOMapper;
 
     public PlanDTO savePlan(PlanDTO planDTO, User author) {
-        Plan plan = planDTOMapper.mapDTOToEntity(planDTO);
+
+        Plan plan = planDTOMapper.mapDTOToEntityWithPlanAssociation(planDTO);
         plan.setAuthor(author);
+
         Plan savedPlan = planRepository.save(plan);
-        System.out.println(savedPlan.getAuthor().getRole());
+
         return planDTOMapper.mapEntityToDTO(savedPlan);
     }
 
@@ -90,4 +93,27 @@ public class PlanService {
         PlanDTO dto = planDTOMapper.mapEntityToDTO(newPlan);
         savePlan(dto, user);
     }
+
+
+    /** CAN SOMEBODY HELP??? Works but ... omg **/
+    public PlanDTO editPlan(PlanDTO planDTO, User user) {
+
+        Plan existingPlan = planRepository.findById(planDTO.getId()).orElseThrow(
+                () -> new EntityNotFoundException("Plan not found")
+        );
+
+        if (!Objects.equals(existingPlan.getAuthor().getEmail(), user.getEmail()) && !user.getRole().equals(Role.ADMIN)) {
+            throw new AuthorizationException("You are not authorized");
+        }
+
+        planRepository.delete(existingPlan);
+
+        Plan newPlan = planDTOMapper.mapDTOToEntityWithPlanAssociation(planDTO);
+        newPlan.setAuthor(user);
+
+        planRepository.save(newPlan);
+
+        return planDTOMapper.mapEntityToDTO(newPlan);
+    }
+
 }

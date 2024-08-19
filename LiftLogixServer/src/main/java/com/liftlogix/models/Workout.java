@@ -22,7 +22,7 @@ public class Workout {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "workout_id")
-    private Set<WorkoutExercise> workoutExercises;
+    private List<WorkoutExercise> workoutExercises;
 
     @ElementCollection
     @CollectionTable(name = "workout_days", joinColumns = @JoinColumn(name = "workout_id"))

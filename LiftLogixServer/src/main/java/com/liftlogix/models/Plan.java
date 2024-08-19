@@ -29,4 +29,9 @@ public class Plan {
 
     @Column(nullable = false)
     private boolean isPublic;
+
+    public void addMesocycle(Mesocycle mesocycle) {
+        mesocycles.add(mesocycle);
+        mesocycle.setPlan(this);
+    }
 }

@@ -5,10 +5,6 @@
   </div>
 </div>
 
-<button class="back-arrow" *ngIf="isBoxExpanded && selectedComponent" (click)="goBack()">
-  <span class="material-icons">arrow_back</span>
-</button>
-
 <button *ngIf="isBoxExpanded" (click)="close($event)" class="close-button">&times;</button>
 
 <div class="expanded-box" *ngIf="isBoxExpanded">
@@ -45,9 +41,9 @@
   </div>
 
     <ng-container [ngSwitch]="selectedComponent">
-      <app-workout-creator *ngSwitchCase="'workout-creator'"></app-workout-creator>
-      <app-workout-library-private *ngSwitchCase="'workout-library-private'"></app-workout-library-private>
-      <app-workout-library-public *ngSwitchCase="'workout-library-public'"></app-workout-library-public>
+      <app-workout-creator *ngSwitchCase="'workout-creator'" (goBack)="goBack()"></app-workout-creator>
+      <app-workout-library-private *ngSwitchCase="'workout-library-private'" (goBack)="goBack()"></app-workout-library-private>
+      <app-workout-library-public *ngSwitchCase="'workout-library-public'" (goBack)="goBack()"></app-workout-library-public>
     </ng-container>
 
 </div>

@@ -39,18 +39,4 @@ public interface ExerciseDTOMapper {
         }
         return null;
     }
-
-    @Mapping(target = "aliases", source = "aliases")
-    default Set<ExerciseAliasDTO> mapAliases(Set<ExerciseAlias> aliases, @Context ExerciseAliasDTOMapper mapper) {
-        return aliases.stream()
-                .map(mapper::mapEntityToDTO)
-                .collect(Collectors.toSet());
-    }
-
-    @Mapping(target = "aliases", source = "aliases")
-    default Set<ExerciseAlias> mapAliasesDTO(Set<ExerciseAliasDTO> dtos, @Context ExerciseAliasDTOMapper mapper) {
-        return dtos.stream()
-                .map(mapper::mapDTOToEntity)
-                .collect(Collectors.toSet());
-    }
 }

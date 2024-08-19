@@ -57,10 +57,10 @@
     <button (click)="close($event)" class="close-button">&times;</button>
     <h1 class="component-header">{{ switchHeader(selectedComponent) }}</h1>
     <ng-container [ngSwitch]="selectedComponent">
-      <app-client-plan *ngSwitchCase="'plan'"></app-client-plan>
-      <app-client-results *ngSwitchCase="'results'" [clientId]="selectedClientId"></app-client-results>
-      <app-client-hours *ngSwitchCase="'hours'"></app-client-hours>
-      <app-client-diet *ngSwitchCase="'diet'"></app-client-diet>
+      <app-client-plan *ngSwitchCase="'plan'" (goBack)="goBack()"></app-client-plan>
+      <app-client-results *ngSwitchCase="'results'" [clientId]="selectedClientId" (goBack)="goBack()"></app-client-results>
+      <app-client-hours *ngSwitchCase="'hours'" (goBack)="goBack()"></app-client-hours>
+      <app-client-diet *ngSwitchCase="'diet'" (goBack)="goBack()"></app-client-diet>
     </ng-container>
   </div>
 
@@ -68,10 +68,10 @@
     <button (click)="close($event)" class="close-button">&times;</button>
     <h1 class="component-header">{{ switchHeader(selectedComponent) }}</h1>
     <ng-container [ngSwitch]="selectedComponent">
-      <app-client-plan *ngSwitchCase="'plan'"></app-client-plan>
-      <app-client-results *ngSwitchCase="'results'" [clientId]="selectedClientId"></app-client-results>
-      <app-client-hours *ngSwitchCase="'hours'"></app-client-hours>
-      <app-client-diet *ngSwitchCase="'diet'"></app-client-diet>
+      <app-client-plan *ngSwitchCase="'plan'" (goBack)="goBack()"></app-client-plan>
+      <app-client-results *ngSwitchCase="'results'" [clientId]="selectedClientId" (goBack)="goBack()"></app-client-results>
+      <app-client-hours *ngSwitchCase="'hours'" (goBack)="goBack()"></app-client-hours>
+      <app-client-diet *ngSwitchCase="'diet'" (goBack)="goBack()"></app-client-diet>
     </ng-container>
   </div>
 </div>

@@ -1,3 +1,5 @@
+<app-back-arrow (goBack)="onGoBack()"></app-back-arrow>
+
 <div class="expanded-box" (click)="closeDropdown()">
 
   <h1 class="creator-header">Kreator</h1>
@@ -198,17 +200,17 @@
       </td>
       <td *ngIf="showAdvancedOptions && window.innerWidth > 999" class="break-cell" (click)="editCell(exercise, 'break')">
         <ng-container *ngIf="!isEditing(exercise, 'break'); else editBreak">
-          {{ exercise.break.value ? exercise.break.value + exercise.break.unit : '' }}
+          {{ exercise.breakTime.value ? exercise.breakTime.value + exercise.breakTime.unit : '' }}
         </ng-container>
         <ng-template #editBreak>
           <div class="break-input">
             <input #inputElement
-                   [(ngModel)]="exercise.break.value"
+                   [(ngModel)]="exercise.breakTime.value"
                    (focus)="selectAllText($event)"
                    (blur)="validateBreak(exercise); endEditIfNotFocusedOnOtherInput('break', $event)"
                    (keydown.enter)="endEdit()"
                    tabindex="1" type="number" min="0"/>
-            <select [(ngModel)]="exercise.break.unit"
+            <select [(ngModel)]="exercise.breakTime.unit"
                     (click)="$event.stopPropagation()"
                     (blur)="validateBreak(exercise); endEditIfNotFocusedOnOtherInput('break', $event)"
                     tabindex="2">
@@ -409,7 +411,11 @@
     </div>
   </div>
 
-  <button (click)="savePlan()" mat-raised-button class="save-plan-button" color="primary">
+  <button *ngIf="!plan" (click)="savePlan()" mat-raised-button class="save-plan-button" color="primary">
+    <span>Zapisz plan</span>
+  </button>
+
+  <button *ngIf="plan" (click)="editPlan()" mat-raised-button class="save-plan-button" color="primary">
     <span>Zapisz plan</span>
   </button>
 

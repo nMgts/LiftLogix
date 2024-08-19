@@ -19,4 +19,10 @@ public class Mesocycle {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "mesocycle_id")
     private List<Microcycle> microcycles;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_id", nullable = false)
+    private Plan plan;
+
+
 }

@@ -14,6 +14,7 @@ export class PlanService {
   private getDetailsUrl = 'http://localhost:8080/api/plans/details';
   private deleteUrl = 'http://localhost:8080/api/plans/delete';
   private addToMyPlansUrl = 'http://localhost:8080/api/plans/add-to-my-plans';
+  private editPlanUrl = 'http://localhost:8080/api/plans/edit';
 
   constructor(private http: HttpClient) {}
 
@@ -45,6 +46,11 @@ export class PlanService {
   addToMyPlans(planId: number, token: string): Observable<any> {
     const headers = this.createHeaders(token);
     return this.http.put(`${this.addToMyPlansUrl}/${planId}`, '', { headers: headers })
+  }
+
+  editPlan(plan: Plan, token: string): Observable<Plan> {
+    const headers = this.createHeaders(token);
+    return this.http.put<Plan>(this.editPlanUrl, plan, { headers: headers })
   }
 
   private createHeaders(token: string) {
