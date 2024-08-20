@@ -18,8 +18,8 @@ export class ExercisesComponent implements OnChanges {
   @Input() isBoxExpanded = false;
   @Output() closeBox = new EventEmitter<void>();
 
-  exercises: BasicExercise[] = [];  // Tylko BasicExercise
-  filteredExercises: BasicExercise[] = [];  // Tylko BasicExercise
+  exercises: BasicExercise[] = [];
+  filteredExercises: BasicExercise[] = [];
   displayedExercises: (BasicExercise & { imageSafeUrl: SafeUrl })[] = [];
 
   pageSize = 0;
@@ -155,7 +155,6 @@ export class ExercisesComponent implements OnChanges {
     const end = start + this.pageSize;
     const token = localStorage.getItem('token') || '';
 
-    // Najpierw przygotuj tablicę ćwiczeń z cache'owanymi obrazami (lub domyślnym obrazem, jeśli obraz nie jest cache'owany)
     this.displayedExercises = this.filteredExercises.slice(start, end).map(exercise => {
       const cachedImage = this.exerciseService.imageCache[exercise.id];
       return {
@@ -222,6 +221,8 @@ export class ExercisesComponent implements OnChanges {
 
   close(event: Event) {
     event.stopPropagation();
+    this.searchKeyword = '';
+    this.clearFilters(event);
     this.closeBox.emit();
   }
 

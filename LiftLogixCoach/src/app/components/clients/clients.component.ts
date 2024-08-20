@@ -121,6 +121,7 @@ export class ClientsComponent implements OnChanges {
 
   close(event: Event) {
     event.stopPropagation();
+    this.clearSelectedComponent();
     this.closeBox.emit();
   }
 }

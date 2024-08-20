@@ -5,6 +5,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { ApplicationDetailsDialogComponent } from '../application-details-dialog/application-details-dialog.component';
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import { Client } from "../../interfaces/Client";
 
 @Component({
   selector: 'app-applications',
@@ -14,6 +16,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 export class ApplicationsComponent implements OnChanges {
   @Input() isBoxExpanded = false;
   @Output() closeBox = new EventEmitter<void>();
+
   applications: Application[] = [];
   displayedApplications: Application[] = [];
   showArchivedApplications = false;
@@ -22,11 +25,15 @@ export class ApplicationsComponent implements OnChanges {
   totalApplications = 0;
   truncateLength = 200;
 
+  private readonly defaultImageUrl: string = '/icons/user.jpg';
+  protected readonly window = window;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private applicationService: ApplicationService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnChanges(): void {
@@ -114,6 +121,14 @@ export class ApplicationsComponent implements OnChanges {
     }
   }
 
+  getSafeImageUrl(client: Client): SafeUrl {
+    if (client.image) {
+      return this.sanitizer.bypassSecurityTrustUrl(client.image);
+    } else {
+      return this.sanitizer.bypassSecurityTrustUrl(this.defaultImageUrl);
+    }
+  }
+
   calculateIndex(index: number): number {
     return index + this.pageIndex * this.pageSize;
   }
@@ -156,4 +171,6 @@ export class ApplicationsComponent implements OnChanges {
     event.stopPropagation();
     this.closeBox.emit();
   }
+
+  protected readonly innerWidth = innerWidth;
 }

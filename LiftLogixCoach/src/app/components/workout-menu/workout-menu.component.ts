@@ -23,6 +23,7 @@ export class WorkoutMenuComponent {
 
   close(event: Event) {
     event.stopPropagation();
+    this.goBack();
     this.closeBox.emit();
   }
 }
