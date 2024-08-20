@@ -77,7 +77,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/user/details", "/api/user/change-password", "/api/user/verify", "/api/user/check", "/api/user/image/{user_id}", "/api/user/image/update",
                                 "/api/client/unsubscribe/{client_id}",
-                                "/api/exercise/{id}", "/api/exercise/all", "/api/exercise/image/{id}", "/api/exercise/searchByAlias",
+                                "/api/exercise/{id}", "/api/exercise/all", "/api/exercise/image/{id}", "/api/exercise/searchByAlias", "/api/exercise/images/batch",
                                 "/api/email/send-verification-code", "/api/email/update-email",
                                 "/api/result/{client_id}", "/api/result/current/{client_id}", "/api/result/update", "/api/result/delete")
                         .authenticated()

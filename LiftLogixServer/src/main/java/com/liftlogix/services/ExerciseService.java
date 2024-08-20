@@ -1,6 +1,8 @@
 package com.liftlogix.services;
 
+import com.liftlogix.convert.BasicExerciseDTOMapper;
 import com.liftlogix.convert.ExerciseDTOMapper;
+import com.liftlogix.dto.BasicExerciseDTO;
 import com.liftlogix.dto.ExerciseDTO;
 import com.liftlogix.exceptions.DuplicateExerciseNameException;
 import com.liftlogix.models.Exercise;
@@ -15,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,16 +28,17 @@ import java.util.stream.Collectors;
 public class ExerciseService {
     private final ExerciseRepository exerciseRepository;
     private final ExerciseDTOMapper exerciseDTOMapper;
+    private final BasicExerciseDTOMapper basicExerciseDTOMapper;
 
     public ExerciseDTO getExerciseDetails(long id) {
         Exercise exercise = exerciseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Exercise not found"));
         return exerciseDTOMapper.mapExerciseToDTO(exercise);
     }
 
-    public List<ExerciseDTO> getAllExercises() {
+    public List<BasicExerciseDTO> getAllExercises() {
         List<Exercise> exercises = exerciseRepository.findAll();
         return exercises.stream()
-                .map(exerciseDTOMapper::mapExerciseToDTO)
+                .map(basicExerciseDTOMapper::mapExerciseToBasicDTO)
                 .collect(Collectors.toList());
     }
 
@@ -85,5 +90,21 @@ public class ExerciseService {
         } catch (IOException e) {
             throw new IOException("Failed to process the image file");
         }
+    }
+
+    public Map<Long, String> getBatchImagesAsBase64(List<Long> ids) {
+        List<Exercise> exercises = exerciseRepository.findAllById(ids);
+        return exercises.stream()
+                .collect(Collectors.toMap(
+                        Exercise::getId,
+                        exercise -> {
+                            byte[] imageBytes = exercise.getImage();
+                            if (imageBytes != null) {
+                                return "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(imageBytes);
+                            } else {
+                                return "";
+                            }
+                        }
+                ));
     }
 }

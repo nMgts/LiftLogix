@@ -7,6 +7,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { ExerciseDetailsDialogComponent } from "../exercise-details-dialog/exercise-details-dialog.component";
 import { AddExerciseDialogComponent } from "../add-exercise-dialog/add-exercise-dialog.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { BasicExercise } from "../../interfaces/BasicExercise";
 
 @Component({
   selector: 'app-exercises',
@@ -16,9 +17,11 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 export class ExercisesComponent implements OnChanges {
   @Input() isBoxExpanded = false;
   @Output() closeBox = new EventEmitter<void>();
-  exercises: (Exercise & { imageSafeUrl: SafeUrl })[] = [];
-  filteredExercises: (Exercise & { imageSafeUrl: SafeUrl })[] = [];
-  displayedExercises: (Exercise & { imageSafeUrl: SafeUrl })[] = [];
+
+  exercises: BasicExercise[] = [];  // Tylko BasicExercise
+  filteredExercises: BasicExercise[] = [];  // Tylko BasicExercise
+  displayedExercises: (BasicExercise & { imageSafeUrl: SafeUrl })[] = [];
+
   pageSize = 0;
   pageIndex = 0;
   totalExercises = 0;
@@ -50,14 +53,8 @@ export class ExercisesComponent implements OnChanges {
   async loadExercises() {
     const token = localStorage.getItem('token') || '';
     this.exerciseService.getExercises(token).subscribe(
-      (data: Exercise[]) => {
-        this.exercises = data.map(exercise => ({
-          ...exercise,
-          imageSafeUrl: this.sanitizer.bypassSecurityTrustUrl(
-            exercise.image ? exercise.image : this.defaultImageUrl
-          ),
-          body_parts : exercise.body_parts || []
-        }));
+      (data: BasicExercise[]) => {
+        this.exercises = data;
 
         this.filterExercises();
         this.updatePageSize();
@@ -154,10 +151,42 @@ export class ExercisesComponent implements OnChanges {
   }
 
   updateDisplayedExercises(): void {
-      const start = this.pageIndex * this.pageSize;
-      const end = start + this.pageSize;
-      this.displayedExercises = this.filteredExercises.slice(start, end);
-      this.totalExercises = this.filteredExercises.length;
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    const token = localStorage.getItem('token') || '';
+
+    // Najpierw przygotuj tablicę ćwiczeń z cache'owanymi obrazami (lub domyślnym obrazem, jeśli obraz nie jest cache'owany)
+    this.displayedExercises = this.filteredExercises.slice(start, end).map(exercise => {
+      const cachedImage = this.exerciseService.imageCache[exercise.id];
+      return {
+        ...exercise,
+        imageSafeUrl: cachedImage ?
+          this.sanitizer.bypassSecurityTrustUrl(cachedImage) :
+          this.sanitizer.bypassSecurityTrustUrl(this.defaultImageUrl)
+      };
+    });
+
+    this.totalExercises = this.filteredExercises.length;
+
+    const uncachedIds = this.displayedExercises
+      .filter(exercise => !this.exerciseService.imageCache[exercise.id])
+      .map(exercise => exercise.id);
+
+    if (uncachedIds.length > 0) {
+      this.exerciseService.getCachedBatchImages(uncachedIds, token).subscribe(
+        (images: { [key: number]: string }) => {
+          this.displayedExercises = this.displayedExercises.map(exercise => ({
+            ...exercise,
+            imageSafeUrl: images[exercise.id] ?
+              this.sanitizer.bypassSecurityTrustUrl(images[exercise.id]) :
+              exercise.imageSafeUrl  // Zachowaj już ustawiony obraz (cache lub domyślny)
+          }));
+        },
+        (error) => {
+          console.error('Error loading images', error);
+        }
+      );
+    }
   }
 
   onPageChange(event: PageEvent): void {
@@ -166,9 +195,17 @@ export class ExercisesComponent implements OnChanges {
     this.updateDisplayedExercises();
   }
 
-  openDetails(exercise: Exercise): void {
-    this.dialog.open(ExerciseDetailsDialogComponent, {
-      data: exercise
+  openDetails(exercise: BasicExercise): void {
+    const token = localStorage.getItem('token') || '';
+    this.exerciseService.getExerciseDetails(exercise.id, token).subscribe({
+      next: (exercise: Exercise) => {
+        this.dialog.open(ExerciseDetailsDialogComponent, {
+          data: exercise
+        });
+      },
+      error: (err) => {
+        console.error('Error fetching exercise details:', err);
+      }
     });
   }
 
