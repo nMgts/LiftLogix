@@ -69,7 +69,7 @@ export class AddExerciseToWorkoutDialogComponent implements OnInit {
 
   onConfirm(): void {
     if (this.exercise) {
-      this.dialogRef.close(this.exercise);
+      this.dialogRef.close({exerciseId: this.exercise.id, exerciseName: this.exercise.name});
     } else {
       this.openSnackBar('Musisz wybrać ćwiczenie');
     }

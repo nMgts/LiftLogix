@@ -107,9 +107,9 @@
     </thead>
     <tbody>
     <tr *ngFor="let exercise of selectedWorkout.workoutExercises">
-      <td (click)="openEditExerciseNameDialog(exercise)">
-        {{ exercise.exercise.name }}
-        <mat-icon class="info-icon" (click)="openExerciseDetails(exercise.exercise, $event)">info</mat-icon>
+      <td (click)="openEditExerciseNameDialog(exercise.exerciseId)">
+        {{ exercise.exerciseName }}
+        <mat-icon class="info-icon" (click)="openExerciseDetails(exercise.exerciseId, $event)">info</mat-icon>
       </td>
       <td *ngIf="window.innerWidth > 499" (click)="editCell(exercise, 'series')">
         <ng-container *ngIf="!isEditing(exercise, 'series'); else editSeries">

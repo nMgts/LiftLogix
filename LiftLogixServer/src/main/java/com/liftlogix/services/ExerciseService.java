@@ -7,13 +7,9 @@ import com.liftlogix.models.Exercise;
 import com.liftlogix.models.ExerciseAlias;
 import com.liftlogix.repositories.ExerciseRepository;
 import com.liftlogix.types.BodyPart;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,11 +25,9 @@ public class ExerciseService {
     private final ExerciseRepository exerciseRepository;
     private final ExerciseDTOMapper exerciseDTOMapper;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    public Exercise getExerciseDetails(long id) {
-        return exerciseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Exercise not found"));
+    public ExerciseDTO getExerciseDetails(long id) {
+        Exercise exercise = exerciseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Exercise not found"));
+        return exerciseDTOMapper.mapExerciseToDTO(exercise);
     }
 
     public List<ExerciseDTO> getAllExercises() {

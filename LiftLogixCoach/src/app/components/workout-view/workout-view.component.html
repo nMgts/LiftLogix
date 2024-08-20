@@ -127,8 +127,8 @@
       <tbody>
       <tr *ngFor="let exercise of workoutExercises">
         <td>
-          {{ exercise.exercise.name }}
-          <mat-icon class="info-icon" (click)="openExerciseDetails(exercise.exercise, $event)">info</mat-icon>
+          {{ exercise.exerciseName }}
+          <mat-icon class="info-icon" (click)="openExerciseDetails(exercise.exerciseId, $event)">info</mat-icon>
         </td>
         <td *ngIf="window.innerWidth > 499">
           {{ exercise.series || '' }}

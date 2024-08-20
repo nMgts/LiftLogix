@@ -22,6 +22,8 @@ import {SavePlanDialogComponent} from "../save-plan-dialog/save-plan-dialog.comp
 import {Plan} from "../../interfaces/Plan";
 import {PlanService} from "../../services/plan.service";
 import {ExerciseDetailsDialogComponent} from "../exercise-details-dialog/exercise-details-dialog.component";
+import {Exercise} from "../../interfaces/Exercise";
+import {ExerciseService} from "../../services/exercise.service";
 
 @Component({
   selector: 'app-workout-creator',
@@ -87,7 +89,8 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef,
-    private planService: PlanService
+    private planService: PlanService,
+    private exerciseService: ExerciseService
   ) {}
 
   ngOnInit() {
@@ -243,7 +246,8 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.selectedWorkout.workoutExercises.push({
-          exercise: result,
+          exerciseId: result.exerciseId,
+          exerciseName: result.exerciseName,
           series: null,
           repetitionsFrom: null,
           repetitionsTo: null,
@@ -257,15 +261,19 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     });
   }
 
-  openEditExerciseNameDialog(exercise: any): void {
+  openEditExerciseNameDialog(exerciseId: number): void {
     const dialogRef = this.dialog.open(AddExerciseToWorkoutDialogComponent);
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        const index = this.selectedWorkout.workoutExercises.findIndex(e => e.exercise.id === exercise.exercise.id);
+        const index = this.selectedWorkout.workoutExercises.findIndex(e => e.exerciseId === exerciseId);
         if (index !== -1) {
           const updatedWorkoutExercises = [...this.selectedWorkout.workoutExercises];
-          updatedWorkoutExercises[index] = { ...this.selectedWorkout.workoutExercises[index], exercise: result };
+          updatedWorkoutExercises[index] = {
+            ...this.selectedWorkout.workoutExercises[index],
+            exerciseId: result.exerciseId,
+            exerciseName: result.exerciseName
+          };
           this.selectedWorkout.workoutExercises = updatedWorkoutExercises;
         }
       }
@@ -276,10 +284,19 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     this.selectedWorkout.workoutExercises = this.selectedWorkout.workoutExercises.filter(e => e !== exercise);
   }
 
-  openExerciseDetails(exercise: any, event: Event): void {
+  openExerciseDetails(exerciseId: number, event: Event): void {
     event.stopPropagation();
-    this.dialog.open(ExerciseDetailsDialogComponent, {
-      data: exercise
+
+    const token = localStorage.getItem('token') || '';
+    this.exerciseService.getExerciseDetails(exerciseId, token).subscribe({
+      next: (exercise: Exercise) => {
+        this.dialog.open(ExerciseDetailsDialogComponent, {
+          data: exercise
+        });
+      },
+      error: (err) => {
+        console.error('Error fetching exercise details:', err);
+      }
     });
   }
 
@@ -305,7 +322,8 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     const newWorkout: Workout = {
       name: `${this.selectedWorkout.name.replace(/\d+$/, '')}${maxNumber + 1}`,
       workoutExercises: this.selectedWorkout.workoutExercises.map(exercise => ({
-        exercise: { ...exercise.exercise },
+        exerciseId: exercise.exerciseId,
+        exerciseName: exercise.exerciseName,
         series: exercise.series,
         repetitionsFrom: exercise.repetitionsFrom,
         repetitionsTo: exercise.repetitionsTo,
@@ -332,7 +350,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const { exercise: updatedExercise } = result;
-        const index = this.selectedWorkout.workoutExercises.findIndex(e => e.exercise.id === updatedExercise.exercise.id);
+        const index = this.selectedWorkout.workoutExercises.findIndex(e => e.exerciseId === updatedExercise.exerciseId);
         if (index !== -1) {
           this.selectedWorkout.workoutExercises[index] = { ...this.selectedWorkout.workoutExercises[index], ...updatedExercise };
         }
@@ -430,7 +448,8 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
             ...workout,
             workoutExercises: workout.workoutExercises.map(exercise => ({
               ...exercise,
-              exercise: { ...exercise.exercise },
+              exerciseId: exercise.exerciseId,
+              exerciseName: exercise.exerciseName,
               break: { ...exercise.breakTime }
             })),
             days: [...workout.days]
@@ -488,7 +507,8 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
               ...workout,
               workoutExercises: workout.workoutExercises.map(exercise => ({
                 ...exercise,
-                exercise: { ...exercise.exercise },
+                exerciseId: exercise.exerciseId,
+                exerciseName: exercise.exerciseName,
                 break: { ...exercise.breakTime }
               })),
               days: [...workout.days]
@@ -529,9 +549,15 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   /** Plan Methods **/
 
   savePlan() {
-    this.dialog.open(SavePlanDialogComponent, {
+     const dialogRef = this.dialog.open(SavePlanDialogComponent, {
       data: {
         macrocycle: this.macrocycle
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.onGoBack();
       }
     });
   }

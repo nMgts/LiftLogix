@@ -4,6 +4,7 @@ import com.liftlogix.dto.ExerciseDTO;
 import com.liftlogix.exceptions.DuplicateExerciseNameException;
 import com.liftlogix.models.Exercise;
 import com.liftlogix.models.ExerciseAlias;
+import com.liftlogix.repositories.ExerciseRepository;
 import com.liftlogix.services.ExerciseService;
 import com.liftlogix.types.BodyPart;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,6 +28,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class ExerciseController {
     private final ExerciseService exerciseService;
+    private final ExerciseRepository exerciseRepository;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getExerciseDetails(@PathVariable long id) {
@@ -92,7 +94,7 @@ public class ExerciseController {
     @GetMapping("/image/{id}")
     public ResponseEntity<?> getImage(@PathVariable long id) {  //byte[]
         try {
-            Exercise exercise = exerciseService.getExerciseDetails(id);
+            Exercise exercise = exerciseRepository.findById(id).orElseThrow();
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"image.jpg\"")
                     .contentType(MediaType.IMAGE_JPEG)

@@ -9,6 +9,8 @@ import { WorkoutExercise } from "../../interfaces/WorkoutExercise";
 import { MatDialog } from "@angular/material/dialog";
 import { ExerciseDetailsDialogComponent } from "../exercise-details-dialog/exercise-details-dialog.component";
 import { WorkoutExerciseDetailsDialogComponent } from "../workout-exercise-details-dialog/workout-exercise-details-dialog.component";
+import {ExerciseService} from "../../services/exercise.service";
+import {Exercise} from "../../interfaces/Exercise";
 
 @Component({
   selector: 'app-workout-view',
@@ -33,6 +35,7 @@ export class WorkoutViewComponent implements OnInit {
 
   constructor(
     private planService: PlanService,
+    private exerciseService: ExerciseService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog
   ) {}
@@ -131,10 +134,19 @@ export class WorkoutViewComponent implements OnInit {
     return result;
   }
 
-  openExerciseDetails(exercise: any, event: Event): void {
+  openExerciseDetails(exerciseId: number, event: Event): void {
     event.stopPropagation();
-    this.dialog.open(ExerciseDetailsDialogComponent, {
-      data: exercise
+
+    const token = localStorage.getItem('token') || '';
+    this.exerciseService.getExerciseDetails(exerciseId, token).subscribe({
+      next: (exercise: Exercise) => {
+        this.dialog.open(ExerciseDetailsDialogComponent, {
+          data: exercise
+        });
+      },
+      error: (err) => {
+        console.error('Error fetching exercise details:', err);
+      }
     });
   }
 

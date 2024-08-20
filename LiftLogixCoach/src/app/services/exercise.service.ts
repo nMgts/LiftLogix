@@ -7,6 +7,7 @@ import { Exercise } from "../interfaces/Exercise";
   providedIn: 'root'
 })
 export class ExerciseService {
+  private baseUrl = 'http://localhost:8080/api/exercise';
   private getUrl = 'http://localhost:8080/api/exercise/all';
   private searchByAliasUrl = 'http://localhost:8080/api/exercise/searchByAlias';
   private addUrl = 'http://localhost:8080/api/exercise/add';
@@ -16,6 +17,11 @@ export class ExerciseService {
   getExercises(token: string): Observable<Exercise[]> {
     const headers = this.createHeaders(token);
     return this.http.get<Exercise[]>(this.getUrl, { headers: headers });
+  }
+
+  getExerciseDetails(exerciseId: number, token: string): Observable<Exercise> {
+    const headers = this.createHeaders(token);
+    return this.http.get<Exercise>(`${this.baseUrl}/${exerciseId}`, { headers: headers });
   }
 
   addExercise(token: string, data: FormData): Observable<any> {

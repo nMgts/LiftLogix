@@ -1,7 +1,6 @@
-import { Exercise } from "./Exercise";
-
 export interface WorkoutExercise {
-  exercise: Exercise;
+  exerciseId: number;
+  exerciseName: string;
   series: number | null;
   repetitionsFrom: number | null;
   repetitionsTo: number | null;

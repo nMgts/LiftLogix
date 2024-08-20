@@ -10,6 +10,6 @@ import java.util.List;
 public class WorkoutDTO {
     private long id;
     private String name;
-    private List<WorkoutExerciseDTO> workoutExercises; // Używamy DTO dla encji WorkoutExercise
+    private List<WorkoutExerciseDTO> workoutExercises;
     private List<Integer> days;
 }
