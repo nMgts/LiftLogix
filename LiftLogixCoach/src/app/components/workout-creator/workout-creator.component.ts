@@ -42,7 +42,9 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   exampleWorkout: Workout = {
     name: 'Trening A',
     workoutExercises: [],
-    days: []
+    days: [],
+    individual: false,
+    dates: []
   }
 
   selectedWorkout = this.exampleWorkout;
@@ -160,7 +162,9 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     const newWorkout: Workout = {
       name: this.generateWorkoutName(),
       workoutExercises: [],
-      days: []
+      days: [],
+      individual: false,
+      dates: []
     };
     this.selectedMicrocycle.workouts.push(newWorkout);
     this.selectedWorkout = newWorkout;
@@ -333,7 +337,9 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
         rpe: exercise.rpe,
         breakTime: { ...exercise.breakTime }
       })),
-      days: []
+      days: [],
+      individual: false,
+      dates: []
     };
 
     this.selectedMicrocycle.workouts.push(newWorkout);

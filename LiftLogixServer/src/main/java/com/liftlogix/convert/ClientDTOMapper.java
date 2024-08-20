@@ -3,12 +3,17 @@ package com.liftlogix.convert;
 import com.liftlogix.dto.ClientDTO;
 import com.liftlogix.models.Client;
 import org.mapstruct.Mapper;
+import org.mapstruct.Named;
 
 import java.util.Base64;
 
 @Mapper(componentModel = "spring")
 public interface ClientDTOMapper {
+
+    @Named("mapEntityToDTO")
     ClientDTO mapEntityToDTO(Client client);
+
+    @Named("mapDTOToEntity")
     Client mapDTOToEntity(ClientDTO dto);
 
     default String map(byte[] image) {

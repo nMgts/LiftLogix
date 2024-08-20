@@ -3,6 +3,7 @@ package com.liftlogix.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -12,4 +13,6 @@ public class WorkoutDTO {
     private String name;
     private List<WorkoutExerciseDTO> workoutExercises;
     private List<Integer> days;
+    private boolean isIndividual;
+    private List<LocalDateTime> date;
 }
