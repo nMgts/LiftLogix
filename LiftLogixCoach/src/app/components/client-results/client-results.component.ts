@@ -13,7 +13,7 @@ import { MatDialog } from "@angular/material/dialog";
   templateUrl: './client-results.component.html',
   styleUrl: './client-results.component.scss'
 })
-export class ClientResultsComponent implements OnInit, OnDestroy{
+export class ClientResultsComponent implements OnInit, OnDestroy {
   @Input() clientId: number | null = null;
   @Output() goBack = new EventEmitter<void>();
   currentResult: Result | null = null;
@@ -62,7 +62,7 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
     this.date = this.currentDate;
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.clientIdSubscription = this.clientService.selectedClientId$.subscribe(clientId => {
       this.clientId = clientId;
       if (this.clientId !== null) {
@@ -72,13 +72,13 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
     });
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     if (this.clientIdSubscription) {
       this.clientIdSubscription.unsubscribe();
     }
   }
 
-  loadResults(clientId: number): void {
+  loadResults(clientId: number) {
     const token = localStorage.getItem('token') || '';
     this.resultService.getAllResults(clientId, token).subscribe({
       next: (results) => {
@@ -92,7 +92,7 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
     })
   }
 
-  loadCurrentResult(clientId: number): void {
+  loadCurrentResult(clientId: number) {
     const token = localStorage.getItem('token') || '';
     this.resultService.getCurrentResult(clientId, token).subscribe(
       (result) => {
@@ -105,7 +105,7 @@ export class ClientResultsComponent implements OnInit, OnDestroy{
     );
   }
 
-  editResult(result: Result): void {
+  editResult(result: Result) {
     const dialogRef = this.dialog.open(EditResultDialogComponent, {
       data: {
         benchpress: result.benchpress,

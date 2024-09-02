@@ -53,18 +53,7 @@
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
   </div>
 
-  <div class="right-side" *ngIf="selectedComponent && window.innerWidth >= 1024">
-    <button (click)="close($event)" class="close-button">&times;</button>
-    <h1 class="component-header">{{ switchHeader(selectedComponent) }}</h1>
-    <ng-container [ngSwitch]="selectedComponent">
-      <app-client-plan *ngSwitchCase="'plan'" (goBack)="goBack()"></app-client-plan>
-      <app-client-results *ngSwitchCase="'results'" [clientId]="selectedClientId" (goBack)="goBack()"></app-client-results>
-      <app-client-hours *ngSwitchCase="'hours'" (goBack)="goBack()"></app-client-hours>
-      <app-client-diet *ngSwitchCase="'diet'" (goBack)="goBack()"></app-client-diet>
-    </ng-container>
-  </div>
-
-  <div class="left-side" *ngIf="selectedComponent && window.innerWidth < 1024">
+  <div class="right-side" *ngIf="selectedComponent">
     <button (click)="close($event)" class="close-button">&times;</button>
     <h1 class="component-header">{{ switchHeader(selectedComponent) }}</h1>
     <ng-container [ngSwitch]="selectedComponent">

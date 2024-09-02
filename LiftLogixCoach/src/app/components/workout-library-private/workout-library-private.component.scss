@@ -85,16 +85,16 @@
           align-items: center;
           color: aliceblue;
 
-          .preview-icon, .edit-icon, .delete-icon {
+          .preview-icon, .edit-icon, .delete-icon, .copy-icon {
             margin-right: 5px;
             font-size: 16px;
           }
 
           .delete-icon {
-            color: grey;
+            color: red;
           }
 
-          .edit-icon, .preview-icon {
+          .edit-icon, .preview-icon, .copy-icon {
             color: darkviolet;
           }
 
@@ -134,10 +134,8 @@
     max-width: 100%;
   }
 
-  .plan-name {
+  .name {
     font-size: 18px;
-    flex-direction: column;
-    align-items: flex-start;
   }
 
   .plan-duration {
@@ -162,7 +160,7 @@
     padding: 10px;
   }
 
-  .plan-name {
+  .name {
     font-size: 16px;
   }
 
@@ -172,5 +170,25 @@
 
   .plan-actions .action-button {
     font-size: 10px;
+  }
+}
+
+@media (max-width: 410px) {
+  .plan-actions {
+    gap: 5px;
+    scale: 0.9;
+  }
+
+  .name {
+    font-size: 14px;
+  }
+
+  .name-icon, .public-icon, .private-icon {
+    margin-left: 0;
+    scale: 0.9;
+  }
+
+  .public-icon, .private-icon {
+    left: -5px;
   }
 }

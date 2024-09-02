@@ -16,7 +16,8 @@
     </mat-select>
   </mat-form-field>
 
-  <div class="actions-container">
+  <div class="actions-container"
+       [ngClass]="{'personal-plan': (window.innerWidth > 1023 && window.innerWidth < 1201 && personalPlan)}">
     <div class="button-container">
       <button (click)="createNewWorkout()" mat-raised-button color="primary">
         <mat-icon>add</mat-icon>
@@ -61,14 +62,15 @@
   </div>
 
   <table class="exercise-table"
-         [ngClass]="{'advanced-options': showAdvancedOptions, 'basic-options': !showAdvancedOptions}">
+         [ngClass]="{'advanced-options': showAdvancedOptions, 'basic-options': !showAdvancedOptions,
+         'personal-plan': (personalPlan && window.innerWidth > 1023)}">
     <thead>
     <tr>
       <th>Ćwiczenie</th>
       <th *ngIf="window.innerWidth > 499">Ilość serii</th>
       <th *ngIf="window.innerWidth > 499">Powtórzenia</th>
       <th *ngIf="window.innerWidth > 499">Ciężar</th>
-      <th class="tooltip" *ngIf="showAdvancedOptions && window.innerWidth > 999">
+      <th class="tooltip" *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023)">
         %1RM
         <mat-icon>info</mat-icon>
         <span class="tooltip-text">
@@ -78,7 +80,7 @@
           <br> Jeśli dodatkowo wypełnisz pole <span class="important-text">RPE</span> (Rating of Perceived Exertion), <span class="important-text">system automatycznie wyliczy liczbę powtórzeń.</span>
         </span>
       </th>
-      <th class="tooltip" *ngIf="showAdvancedOptions && window.innerWidth > 999">
+      <th class="tooltip" *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023)">
         Tempo
         <mat-icon>info</mat-icon>
         <span class="tooltip-text">
@@ -91,7 +93,7 @@
           <br>Jeżeli którąkolwiek fazę zostawisz jako pustą - tempo nie będzie uwzględniane.
         </span>
       </th>
-      <th class="tooltip" *ngIf="showAdvancedOptions && window.innerWidth > 999">
+      <th class="tooltip" *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023)">
         RPE
         <mat-icon>info</mat-icon>
         <span class="tooltip-text">
@@ -101,7 +103,7 @@
           na podstawie tych danych.
         </span>
       </th>
-      <th *ngIf="showAdvancedOptions && window.innerWidth > 999">Przerwa</th>
+      <th *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023)">Przerwa</th>
 
     </tr>
     </thead>
@@ -158,7 +160,8 @@
                  type="number" min="0"/>
         </ng-template>
       </td>
-      <td *ngIf="showAdvancedOptions && window.innerWidth > 999" (click)="editCell(exercise, 'percentage')">
+      <td *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023)"
+          (click)="editCell(exercise, 'percentage')">
         <ng-container *ngIf="!isEditing(exercise, 'percentage'); else editPercentage">
           {{ exercise.percentage ? exercise.percentage + '%' : '' }}
         </ng-container>
@@ -171,7 +174,8 @@
                  type="number" min="0"/>
         </ng-template>
       </td>
-      <td *ngIf="showAdvancedOptions && window.innerWidth > 999" (click)="editCell(exercise, 'tempo')">
+      <td *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023)"
+          (click)="editCell(exercise, 'tempo')">
         <ng-container *ngIf="!isEditing(exercise, 'tempo'); else editTempo">
           {{ exercise.tempo || '' }}
         </ng-container>
@@ -185,7 +189,8 @@
                  placeholder="1-1-1-1"/>
         </ng-template>
       </td>
-      <td *ngIf="showAdvancedOptions && window.innerWidth > 999" (click)="editCell(exercise, 'rpe')">
+      <td *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023)"
+          (click)="editCell(exercise, 'rpe')">
         <ng-container *ngIf="!isEditing(exercise, 'rpe'); else editRpe">
           {{ exercise.rpe || '' }}
         </ng-container>
@@ -198,7 +203,8 @@
                  type="number" min="1" max="10"/>
         </ng-template>
       </td>
-      <td *ngIf="showAdvancedOptions && window.innerWidth > 999" class="break-cell" (click)="editCell(exercise, 'break')">
+      <td *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023)"
+          class="break-cell" (click)="editCell(exercise, 'break')">
         <ng-container *ngIf="!isEditing(exercise, 'break'); else editBreak">
           {{ exercise.breakTime.value ? exercise.breakTime.value + exercise.breakTime.unit : '' }}
         </ng-container>
@@ -221,7 +227,7 @@
         </ng-template>
       </td>
       <td class="workout-exercise-details-column"
-          *ngIf="(window.innerWidth < 1000 && showAdvancedOptions) || window.innerWidth < 500">
+          *ngIf="(window.innerWidth < 1000 && showAdvancedOptions) || window.innerWidth < 500 || (personalPlan && window.innerWidth > 1023)">
         <mat-icon (click)="openExerciseOptionsDialog(exercise)">more_vert</mat-icon>
       </td>
       <td class="delete-column">
@@ -231,23 +237,46 @@
 
     <tr class="add-exercise-row">
       <td [attr.colspan]=
-            "showAdvancedOptions
-              ? (window.innerWidth < 500
-                  ? 1
-                  : (window.innerWidth < 1000 ? 4 : 8))
-              : (window.innerWidth < 500 ? 1 : 4)">
+            "(personalPlan && window.innerWidth > 1023) ?
+               4 : showAdvancedOptions
+                ? (window.innerWidth < 500
+                    ? 1
+                    : (window.innerWidth < 1000 ? 4 : 8))
+                : (window.innerWidth < 500 ? 1 : 4)">
         <button mat-raised-button color="primary" (click)="openAddExerciseDialog()">
           <mat-icon>add</mat-icon> Dodaj ćwiczenie
         </button>
       </td>
     </tr>
-
     </tbody>
+
+    <tfoot>
+    <tr>
+      <td [attr.colspan]=
+            "(personalPlan && window.innerWidth > 1023) ?
+               4 : showAdvancedOptions
+                ? (window.innerWidth < 500
+                    ? 1
+                    : (window.innerWidth < 1000 ? 4 : 8))
+                : (window.innerWidth < 500 ? 1 : 4)">
+        <div class="delete-exercises">
+          <button *ngIf="selectedWorkout.workoutExercises.length > 0" mat-raised-button color="accent"
+                  (click)="removeAllExercises()">
+            <mat-icon>delete</mat-icon> Wyczyść ćwiczenia
+          </button>
+        </div>
+      </td>
+      <td>
+      </td>
+    </tr>
+    </tfoot>
+
   </table>
 
   <!-- Microcycle -->
 
-  <div class="tables-container" [ngClass]="{'show-advanced': showAdvancedOptions}">
+  <div class="tables-container"
+       [ngClass]="{'show-advanced': showAdvancedOptions, 'personal-plan': (personalPlan && window.innerWidth > 1023)}">
 
     <div class="microcycle-table-container">
 
@@ -263,7 +292,7 @@
                min="1" max="28"/>
       </mat-form-field>
 
-      <table>
+      <table [ngClass]="{'personal-plan': (personalPlan && window.innerWidth > 1023 && window.innerWidth < 1201)}">
         <thead>
         <tr>
           <th *ngFor="let day of daysInWeek">{{ day }}</th>
@@ -312,6 +341,11 @@
                  min="1" max="10"/>
         </mat-form-field>
 
+        <button mat-raised-button color="accent" *ngIf="isTouchDevice" class="delete-microcycle"
+                (click)="clearMicrocycle(selectedMesocycle.microcycles.indexOf(selectedMicrocycle), $event)">
+          <mat-icon>clear</mat-icon> Wyczyść wybrany mikrocykl
+        </button>
+
         <button mat-raised-button color="primary" *ngIf="isTouchDevice" class="delete-microcycle"
                 (click)="deleteMicrocycle(selectedMesocycle.microcycles.indexOf(selectedMicrocycle), $event)">
           <mat-icon>delete</mat-icon> Usuń wybrany mikrocykl
@@ -329,6 +363,7 @@
               {{ toRoman(i + 1) }}
             </span>
                   <div class="microcycle-management">
+                    <mat-icon class='clear' (click)="clearMicrocycle(i, $event)">clear</mat-icon>
                     <mat-icon class='delete' (click)="deleteMicrocycle(i, $event)">delete</mat-icon>
                   </div>
                 </div>
@@ -343,6 +378,7 @@
               {{ toRoman(i + 6) }}
             </span>
                   <div class="microcycle-management">
+                    <mat-icon class='clear' (click)="clearMicrocycle(i + 5, $event)">clear</mat-icon>
                     <mat-icon class='delete' (click)="deleteMicrocycle(i + 5, $event)">delete</mat-icon>
                   </div>
                 </div>
@@ -368,9 +404,14 @@
                  min="1" max="10"/>
         </mat-form-field>
 
+        <button mat-raised-button color="accent" *ngIf="isTouchDevice" class="delete-mesocycle"
+                (click)="clearMesocycle(macrocycle.mesocycles.indexOf(selectedMesocycle), $event)">
+          <mat-icon>clear</mat-icon> Wyczyść wybrany mezocykl
+        </button>
+
         <button mat-raised-button color="primary" *ngIf="isTouchDevice" class="delete-mesocycle"
                 (click)="deleteMesocycle(macrocycle.mesocycles.indexOf(selectedMesocycle), $event)">
-          <mat-icon>delete</mat-icon> Usuń wybrany mikrocykl
+          <mat-icon>delete</mat-icon> Usuń wybrany mezocykl
         </button>
 
         <div class="macrocycle-table" *ngIf="showMesocycle && showMacrocycle && showAdvancedOptions">
@@ -385,6 +426,7 @@
               {{ toRoman(i + 1) }}
             </span>
                   <div class="mesocycle-management">
+                    <mat-icon class='clear' (click)="clearMesocycle(i, $event)">clear</mat-icon>
                     <mat-icon class='delete' (click)="deleteMesocycle(i, $event)">delete</mat-icon>
                   </div>
                 </div>
@@ -399,6 +441,7 @@
               {{ toRoman(i + 6) }}
             </span>
                   <div class="mesocycle-management">
+                    <mat-icon class='clear' (click)="clearMesocycle(i + 5, $event)">clear</mat-icon>
                     <mat-icon class='delete' (click)="deleteMesocycle(i + 5, $event)">delete</mat-icon>
                   </div>
                 </div>
@@ -415,8 +458,16 @@
     <span>Zapisz plan</span>
   </button>
 
-  <button *ngIf="plan" (click)="editPlan()" mat-raised-button class="save-plan-button" color="primary">
+  <button *ngIf="plan && !personalPlan" (click)="editPlan()" mat-raised-button class="save-plan-button" color="primary">
     <span>Zapisz plan</span>
+  </button>
+
+  <button *ngIf="plan && personalPlan" (click)="adjustPersonalPlan()" mat-raised-button class="save-plan-button" color="accent">
+    <span>Dostosuj</span>
+  </button>
+
+  <button *ngIf="plan && personalPlan" (click)="savePersonalPlan()" mat-raised-button class="save-plan-button" color="primary">
+    <span>Dalej</span>
   </button>
 
 </div>

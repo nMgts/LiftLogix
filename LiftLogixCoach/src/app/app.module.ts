@@ -61,6 +61,7 @@ import { BackArrowComponent } from './components/back-arrow/back-arrow.component
 import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { WorkoutViewComponent } from './components/workout-view/workout-view.component';
 import { WorkoutExerciseDetailsDialogComponent } from './components/workout-exercise-details-dialog/workout-exercise-details-dialog.component';
+import { AdjustPersonalPlanDialogComponent } from './components/adjust-personal-plan-dialog/adjust-personal-plan-dialog.component';
 
 @NgModule({
   declarations: [
@@ -100,7 +101,8 @@ import { WorkoutExerciseDetailsDialogComponent } from './components/workout-exer
     SavePlanDialogComponent,
     BackArrowComponent,
     WorkoutViewComponent,
-    WorkoutExerciseDetailsDialogComponent
+    WorkoutExerciseDetailsDialogComponent,
+    AdjustPersonalPlanDialogComponent
   ],
   imports: [
     BrowserModule,

@@ -130,7 +130,7 @@ public class PlanController {
     }
 
     @GetMapping("/export/{id}")
-    public ResponseEntity<?> exportPlanToExcel(@PathVariable Long id, @AuthenticationPrincipal User currentUser) throws IOException {
+    public ResponseEntity<?> exportPlanToExcel(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
         try {
             ByteArrayResource excelFile = excelService.exportPlanToExcel(id, currentUser);
 
@@ -147,7 +147,20 @@ public class PlanController {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @PostMapping("/copy/{id}")
+    public ResponseEntity<String> duplicatePlan(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
+        try {
+            planService.duplicatePlan(id, currentUser);
+            return ResponseEntity.ok().body("{\"message\": \"Plan duplicated successfully\"}");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }

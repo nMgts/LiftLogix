@@ -76,6 +76,15 @@ mat-option mat-icon:hover {
   display: none;
 }
 
+.actions-container.personal-plan button span.full-text {
+  display: none;
+}
+
+.actions-container.personal-plan button span.short-text {
+  display: inline;
+  font-size: 12px;
+}
+
 @media (max-width: 650px) {
   .actions-container button span.full-text {
     display: none;
@@ -145,6 +154,11 @@ mat-option mat-icon:hover {
   }
 }
 
+.exercise-table.personal-plan {
+  max-width: 600px;
+  min-width: 420px;
+}
+
 .exercise-table.basic-options {
   min-width: 400px;
   max-width: 750px;
@@ -180,6 +194,10 @@ tr.add-exercise-row td button {
   }
 }
 
+.exercise-table.personal-plan th:nth-child(1) {
+  width: 42%;
+}
+
 .exercise-table.basic-options th:nth-child(1),
 .exercise-table.basic-options td:nth-child(1) {
   width: 42%;
@@ -200,6 +218,10 @@ tr.add-exercise-row td button {
   @media (max-width: 499px) {
     width: 5%;
   }
+}
+
+.exercise-table.personal-plan th:nth-child(2) {
+  width: 19%;
 }
 
 .exercise-table.basic-options th:nth-child(2),
@@ -224,6 +246,10 @@ tr.add-exercise-row td button {
   }
 }
 
+.exercise-table.personal-plan th:nth-child(3) {
+  width: 19%;
+}
+
 .exercise-table.basic-options th:nth-child(3),
 .exercise-table.basic-options td:nth-child(3) {
   width: 19%;
@@ -242,14 +268,13 @@ tr.add-exercise-row td button {
   }
 }
 
-.exercise-table.basic-options th:nth-child(4),
-.exercise-table.basic-options td:nth-child(4) {
+.exercise-table.personal-plan th:nth-child(4) {
   width: 18%;
 }
 
-.exercise-table th:nth-child(5),
-.exercise-table td:nth-child(5) {
-  width: 19%;
+.exercise-table.basic-options th:nth-child(4),
+.exercise-table.basic-options td:nth-child(4) {
+  width: 18%;
 }
 
 .exercise-table th:nth-child(5),
@@ -419,6 +444,19 @@ td.break-cell {
   opacity: 1;
 }
 
+.exercise-table tfoot td {
+  text-align: right;
+  border: none;
+  background: transparent;
+}
+
+.delete-exercises {
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
 /* Style for microcycle */
 
 .tables-container {
@@ -437,6 +475,11 @@ td.break-cell {
   .tables-container.show-advanced {
     min-width: 100%;
   }
+}
+
+.tables-container.personal-plan {
+  flex-direction: column;
+  align-items: center;
 }
 
 .microcycle-table-container {
@@ -487,6 +530,10 @@ td.break-cell {
   }
 }
 
+.microcycle-table-container table.personal-plan {
+  width: 428px;
+}
+
 .microcycle-table-container th {
   border: 1px solid black;
   background-color: rgba(128, 0, 128, 0.8);
@@ -532,6 +579,12 @@ td.break-cell {
     line-height: 10px;
     height: 10px;
   }
+}
+
+.microcycle-table-container table.personal-plan td {
+  min-height: 30px;
+  line-height: 30px;
+  height: 30px;
 }
 
 .microcycle-table-container td.hidden-cell {
@@ -599,6 +652,13 @@ td.break-cell {
     line-height: 20px;
     font-size: 12px;
   }
+}
+
+table.personal-plan .workout-letter {
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  font-size: 13px;
 }
 
 .workout-letter:hover {
@@ -729,6 +789,7 @@ button.delete-microcycle, button.delete-mesocycle {
   height: 70px;
   font-weight: bold;
   text-align: center;
+  cursor: pointer;
 
   @media (max-width: 974px) {
     width: 60px;
@@ -772,13 +833,17 @@ button.delete-microcycle, button.delete-mesocycle {
   display: flex;
   gap: 10px;
 
+  @media (max-width: 974px) {
+    gap: 5px;
+  }
+
   mat-icon {
     cursor: pointer;
   }
 
-  mat-icon.select:hover {
+  mat-icon.clear:hover {
     scale: 1.2;
-    color: #0056b3 !important;
+    color: grey !important;
   }
 
   mat-icon.delete:hover {

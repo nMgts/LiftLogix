@@ -14,11 +14,13 @@
 
         <mat-card-title class="plan-name">
           <ng-container *ngIf="plan.id !== editingPlan">
-            {{ plan.name }}
-            <button mat-icon-button (click)="startEdit(plan, $event)">
-              <mat-icon>edit</mat-icon>
+            <div class="name">
+              {{ truncateText(plan.name) }}
+            </div>
+            <button mat-icon-button (click)="startEdit(plan, $event)" *ngIf="!personalPlan">
+              <mat-icon class="name-icon">edit</mat-icon>
             </button>
-            <button mat-icon-button [matMenuTriggerFor]="visibilityMenu">
+            <button mat-icon-button [matMenuTriggerFor]="visibilityMenu" *ngIf="!personalPlan">
               <mat-icon [ngClass]="{'public-icon': plan.public, 'private-icon': !plan.public}">{{ plan.public ? 'public' : 'lock' }}</mat-icon>
             </button>
             <mat-menu #visibilityMenu="matMenu">
@@ -39,7 +41,7 @@
 
         <mat-card-subtitle class="plan-duration">{{ getPlanDuration(plan.length) }}</mat-card-subtitle>
 
-        <div class="plan-actions">
+        <div class="plan-actions" *ngIf="!personalPlan">
           <button mat-raised-button (click)="previewPlan(plan.id)" class="action-button">
             <mat-icon *ngIf="window.innerWidth > 399" class="preview-icon">visibility</mat-icon>
             Podgląd
@@ -47,6 +49,10 @@
           <button mat-raised-button (click)="editPlan(plan.id)" class="action-button">
             <mat-icon *ngIf="window.innerWidth > 399" class="edit-icon">edit</mat-icon>
             Edytuj
+          </button>
+          <button mat-raised-button (click)="duplicatePlan(plan.id)" class="action-button">
+            <mat-icon *ngIf="window.innerWidth > 399" class="copy-icon">content_copy</mat-icon>
+            Duplikuj
           </button>
           <button mat-raised-button (click)="downloadPlan(plan.id)" class="action-button">
             <img *ngIf="window.innerWidth > 399" src="/icons/excel.svg" alt="Excel Icon" class="excel-icon">
@@ -57,6 +63,18 @@
             Usuń
           </button>
         </div>
+
+        <div class="plan-actions" *ngIf="personalPlan">
+          <button mat-raised-button (click)="previewPlan(plan.id)" class="action-button">
+            <mat-icon *ngIf="window.innerWidth > 399" class="preview-icon">visibility</mat-icon>
+            Podgląd
+          </button>
+          <button mat-raised-button (click)="editPlan(plan.id)" class="action-button">
+            <mat-icon *ngIf="window.innerWidth > 399" class="edit-icon">edit</mat-icon>
+            Dostosuj
+          </button>
+        </div>
+
       </mat-card>
     </ng-container>
   </div>
@@ -66,8 +84,8 @@
 
 
 <div *ngIf="selectedPlan">
-  <app-workout-creator [planId]="selectedPlan" (goBack)="onCancel()"></app-workout-creator>
+  <app-workout-creator [planId]="selectedPlan" [personalPlan]="personalPlan" [clientId]="clientId" (goBack)="onCancel()"></app-workout-creator>
 </div>
 <div *ngIf="viewPlan">
-  <app-workout-view [planId]="viewPlan" (goBack)="onCancel()"></app-workout-view>
+  <app-workout-view [planId]="viewPlan" [personalPlan]="personalPlan" (goBack)="onCancel()"></app-workout-view>
 </div>

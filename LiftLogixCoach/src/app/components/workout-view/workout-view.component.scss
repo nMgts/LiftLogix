@@ -25,6 +25,11 @@
   margin-top: 20px;
 }
 
+.tables-container.personal-plan {
+  flex-direction: column;
+  align-items: center;
+}
+
 @media (max-width: 1023px) {
   .tables-container {
     flex-direction: column;
@@ -171,6 +176,10 @@
   }
 }
 
+.microcycle-table.personal-plan table {
+  width: 428px;
+}
+
 .microcycle-table th {
   border: 1px solid black;
   background-color: rgba(128, 0, 128, 0.8);
@@ -218,6 +227,12 @@
   }
 }
 
+.microcycle-table.personal-plan td {
+  min-height: 30px;
+  line-height: 30px;
+  height: 30px;
+}
+
 .microcycle-table td.hidden-cell {
   color: transparent !important;
   border: none !important;
@@ -243,6 +258,10 @@
   @media (max-width: 368px) {
     min-height: 13px;
   }
+}
+
+.microcycle-table.personal-plan .cell-content {
+  min-height: 40px;
 }
 
 .workout-names {
@@ -285,6 +304,13 @@
   }
 }
 
+.microcycle-table.personal-plan .workout-letter {
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  font-size: 13px;
+}
+
 .workout-letter:hover {
   transform: scale(1.1);
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
@@ -313,6 +339,10 @@
   @media (max-width: 999px) {
     min-width: 200px;
   }
+}
+
+.exercise-table.personal-plan {
+  min-width: 420px;
 }
 
 .exercise-table th:nth-child(1),

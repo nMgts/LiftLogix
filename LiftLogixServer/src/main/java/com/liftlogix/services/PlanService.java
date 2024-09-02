@@ -82,17 +82,21 @@ public class PlanService {
         }
 
         Plan newPlan = new Plan();
-        newPlan.setMesocycles(plan.getMesocycles());
         newPlan.setName(plan.getName());
         newPlan.setPublic(false);
         newPlan.setAuthor(user);
+
+        List<Mesocycle> newMesocycles = plan.getMesocycles().stream()
+                .map(this::copyMesocycle)
+                .collect(Collectors.toList());
+
+        newPlan.setMesocycles(newMesocycles);
 
         PlanDTO dto = planDTOMapper.mapEntityToDTO(newPlan);
         savePlan(dto, user);
     }
 
 
-    /** CAN SOMEBODY HELP??? Works but ... omg **/
     public PlanDTO editPlan(PlanDTO planDTO, User user) {
 
         Plan existingPlan = planRepository.findById(planDTO.getId()).orElseThrow(
@@ -148,5 +152,86 @@ public class PlanService {
         );
 
         return plan.getName();
+    }
+
+    public void duplicatePlan(Long planId, User user) {
+        Plan plan = planRepository.findById(planId).orElseThrow(
+                () -> new EntityNotFoundException("Plan not found")
+        );
+
+        if (!Objects.equals(plan.getAuthor().getEmail(), user.getEmail()) && !user.getRole().equals(Role.ADMIN)) {
+            throw new AuthorizationException("You are not authorized");
+        }
+
+        Plan newPlan = new Plan();
+        newPlan.setPublic(false);
+        newPlan.setAuthor(user);
+
+        String planName = plan.getName();
+        if (!planName.endsWith(" kopia")) {
+            planName += " kopia";
+        }
+        newPlan.setName(planName);
+
+        List<Mesocycle> newMesocycles = plan.getMesocycles().stream()
+                .map(this::copyMesocycle)
+                .collect(Collectors.toList());
+
+        newPlan.setMesocycles(newMesocycles);
+
+        PlanDTO dto = planDTOMapper.mapEntityToDTO(newPlan);
+        savePlan(dto, user);
+    }
+
+    private Mesocycle copyMesocycle(Mesocycle oldMesocycle) {
+        Mesocycle newMesocycle = new Mesocycle();
+        newMesocycle.setMicrocycles(oldMesocycle.getMicrocycles().stream()
+                .map(this::copyMicrocycle)
+                .collect(Collectors.toList()));
+        newMesocycle.setPlan(null);
+        return newMesocycle;
+    }
+
+    private Microcycle copyMicrocycle(Microcycle oldMicrocycle) {
+        Microcycle newMicrocycle = new Microcycle();
+        newMicrocycle.setLength(oldMicrocycle.getLength());
+        newMicrocycle.setWorkouts(oldMicrocycle.getWorkouts().stream()
+                .map(this::copyWorkout)
+                .collect(Collectors.toList()));
+        return newMicrocycle;
+    }
+
+    private Workout copyWorkout(Workout oldWorkout) {
+        Workout newWorkout = new Workout();
+        newWorkout.setName(oldWorkout.getName());
+        newWorkout.setIndividual(oldWorkout.isIndividual());
+
+        newWorkout.setDays(new ArrayList<>(oldWorkout.getDays()));
+        newWorkout.setDates(new ArrayList<>(oldWorkout.getDates()));
+
+        List<WorkoutExercise> newExercises = oldWorkout.getWorkoutExercises().stream()
+                .map(oldExercise -> copyWorkoutExercise(oldExercise, newWorkout))
+                .collect(Collectors.toList());
+
+        newWorkout.setWorkoutExercises(newExercises);
+        return newWorkout;
+    }
+
+    private WorkoutExercise copyWorkoutExercise(WorkoutExercise oldExercise, Workout newWorkout) {
+        WorkoutExercise newExercise = new WorkoutExercise();
+
+        newExercise.setSeries(oldExercise.getSeries());
+        newExercise.setRepetitionsFrom(oldExercise.getRepetitionsFrom());
+        newExercise.setRepetitionsTo(oldExercise.getRepetitionsTo());
+        newExercise.setWeight(oldExercise.getWeight());
+        newExercise.setPercentage(oldExercise.getPercentage());
+        newExercise.setTempo(oldExercise.getTempo());
+        newExercise.setRpe(oldExercise.getRpe());
+        newExercise.setBreakTime(oldExercise.getBreakTime());
+
+        newExercise.setExercise(oldExercise.getExercise());
+        newExercise.setWorkout(newWorkout);
+
+        return newExercise;
     }
 }

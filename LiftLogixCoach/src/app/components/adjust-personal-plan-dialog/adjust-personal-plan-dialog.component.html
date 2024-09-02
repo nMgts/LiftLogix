@@ -1,0 +1,22 @@
+<h1 mat-dialog-title>Adjust Personal Plan</h1>
+<div mat-dialog-content>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Bieżący rekord</mat-card-title>
+    </mat-card-header>
+    <mat-card-content *ngIf="result">
+      <p>Wyciskanie leżąc: {{ result.benchpress }}</p>
+      <p>Martwy ciąg: {{ result.deadlift }}</p>
+      <p>Przysiad: {{ result.squat }}</p>
+    </mat-card-content>
+    <mat-card-content *ngIf="!result">
+      <p>Klient nie posiada zapisanych wyników.</p>
+    </mat-card-content>
+  </mat-card>
+  <mat-checkbox [(ngModel)]="adjustBy1RM">Dostosuj ciężar według %1RM</mat-checkbox>
+  <mat-checkbox [(ngModel)]="adjustByRPE">Dostosuj seria według RPE i %1RM</mat-checkbox>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Anuluj</button>
+  <button mat-button (click)="onConfirm()">Potwierdź</button>
+</div>

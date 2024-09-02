@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { BasicPlan } from "../../interfaces/BasicPlan";
 import { PlanService } from "../../services/plan.service";
 import { PageEvent } from "@angular/material/paginator";
@@ -11,6 +11,8 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 })
 export class WorkoutLibraryPrivateComponent implements OnInit {
   @Output() goBack = new EventEmitter<void>();
+  @Input() personalPlan = false;
+  @Input() clientId: number | null = null;
 
   plans: BasicPlan[] = [];
   filteredPlans: BasicPlan[] = [];
@@ -118,8 +120,16 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
       () => {
       this.loadPlans();
     },
-      (error) => {
+      () => {
       this.openSnackBar('Wystąpił błąd');
+    });
+  }
+
+  duplicatePlan(id: number) {
+    const token = localStorage.getItem('token') || '';
+    this.planService.duplicatePlan(id, token).subscribe({
+      next: () => this.loadPlans(),
+      error: (err) => console.error('Error during duplicating plan', err)
     });
   }
 
@@ -132,6 +142,17 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
     this.page = event.pageIndex;
     this.pageSize = event.pageSize;
     this.updateFilteredPlans();
+  }
+
+  truncateText(text: string): string {
+    if (text.length > 30) {
+      if (window.innerWidth < 601 && window.innerWidth > 430) return text.substring(0, 20) + '...';
+      if (window.innerWidth < 431) return text.substring(0, 15) + '...';
+      if (window.innerWidth < 381) return text.substring(0, 10) + '...';
+      return text.substring(0, 30) + '...';
+    } else {
+      return text;
+    }
   }
 
   getPlanDuration(length: number): string {

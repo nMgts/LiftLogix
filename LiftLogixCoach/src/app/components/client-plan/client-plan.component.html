@@ -1,1 +1,48 @@
 <app-back-arrow (goBack)="onGoBack()"></app-back-arrow>
+
+<div class="component-container" *ngIf="choice === ''">
+  <div *ngIf="plan; else loading">
+    <mat-card *ngIf="!notFound">
+      <mat-card-header>
+        <mat-card-title>Plan treningowy</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ plan.name }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <ng-template #loading>
+    <p *ngIf="!notFound">Ładowanie planu...</p>
+  </ng-template>
+
+  <ng-container *ngIf="notFound && choice === ''">
+    <mat-card>
+      <mat-card-content>
+        <div class="content">
+          Obecnie klient nie ma przypisanego aktywnego planu. Możesz stworzyć nowy plan lub wybrać
+          jeden z dostępnych w Twojej bibliotece. Wybierając istniejący plan, masz możliwość pozostawienia
+          go bez zmian, ręcznej modyfikacji i automatycznego dostosowania.
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="actions">
+      <button mat-raised-button color="primary" (click)="createNewPlan()">
+        <span class="full-text">Stwórz nowy plan</span>
+        <span class="short-text">Stwórz nowy</span>
+      </button>
+      <button mat-raised-button color="accent" (click)="selectExistingPlan()">
+        <span class="full-text">Wybierz istniejący plan</span>
+        <span class="short-text">Wybierz plan</span>
+      </button>
+    </div>
+  </ng-container>
+</div>
+
+<div *ngIf="choice === 'create'">
+  <app-workout-creator [personalPlan]="true" [clientId]="clientId" (goBack)="onCancel()"></app-workout-creator>
+</div>
+<div *ngIf="choice === 'select'">
+  <app-workout-library-private [personalPlan]="true" [clientId]="clientId" (goBack)="onCancel()"></app-workout-library-private>
+</div>

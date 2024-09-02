@@ -19,6 +19,7 @@ export class PlanService {
   private renamePlanUrl = 'http://localhost:8080/api/plans/rename';
   private changePlanVisibilityUrl = 'http://localhost:8080/api/plans/visibility';
   private exportUrl = 'http://localhost:8080/api/plans/export';
+  private duplicateUrl = 'http://localhost:8080/api/plans/copy';
 
   constructor(private http: HttpClient) {}
 
@@ -76,7 +77,6 @@ export class PlanService {
     }).pipe(
       tap((response: HttpResponse<Blob>) => {
         const contentDisposition = response.headers.get('Content-Disposition');
-        console.log(response.headers.get('Content-Disposition'));
         const filename = this.extractFilename(contentDisposition);
 
         if (response.body) {
@@ -86,6 +86,11 @@ export class PlanService {
         }
       })
     );
+  }
+
+  duplicatePlan(id: number, token: string): Observable<string> {
+    const headers = this.createHeaders(token);
+    return this.http.post<string>(`${this.duplicateUrl}/${id}`, '', { headers: headers });
   }
 
   private extractFilename(contentDisposition: string | null): string {
