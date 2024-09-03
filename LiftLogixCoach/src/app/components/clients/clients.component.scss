@@ -75,6 +75,24 @@ h1 {
   color: red;
 }
 
+.full-screen-button {
+  position: absolute;
+  top: 26px;
+  right: 50px;
+  background: none;
+  border: none;
+  scale: 1.5;
+}
+
+.full-screen-button mat-icon {
+  color: aliceblue;
+  cursor: pointer;
+}
+
+.full-screen-button mat-icon:hover {
+  color: blue;
+}
+
 .component-header {
   position: absolute;
   top: 0;

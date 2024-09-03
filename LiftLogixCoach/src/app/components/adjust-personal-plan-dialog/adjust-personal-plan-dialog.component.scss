@@ -1,0 +1,41 @@
+h1 {
+  margin: 0 auto;
+  text-align: center;
+  width: 500px;
+
+  @media (max-width: 600px) {
+    width: 250px;
+  }
+}
+
+.checkbox-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.adjust-weight-container {
+  display: flex;
+  flex-direction: row;
+  gap: 2em;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 1em;
+  }
+}
+
+.round-input {
+  max-width: 200px;
+  margin: 0;
+}
+
+.purple-text {
+  color: #800080;
+  font-weight: bold;
+}
+
+mat-dialog-content {
+  display: flex;
+  flex-direction: column;
+}

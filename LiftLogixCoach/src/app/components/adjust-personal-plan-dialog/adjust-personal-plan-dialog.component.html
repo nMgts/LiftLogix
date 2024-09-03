@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Adjust Personal Plan</h1>
+<h1 mat-dialog-title>Dostosuj plan personalny</h1>
 <div mat-dialog-content>
   <mat-card>
     <mat-card-header>
@@ -13,8 +13,22 @@
       <p>Klient nie posiada zapisanych wyników.</p>
     </mat-card-content>
   </mat-card>
-  <mat-checkbox [(ngModel)]="adjustBy1RM">Dostosuj ciężar według %1RM</mat-checkbox>
-  <mat-checkbox [(ngModel)]="adjustByRPE">Dostosuj seria według RPE i %1RM</mat-checkbox>
+  <div class="checkbox-container">
+    <div class="adjust-weight-container">
+      <mat-checkbox [(ngModel)]="adjustBy1RM" class="adjust-weight-checkbox">
+        Dostosuj ciężar według <span class="purple-text">%1RM</span>
+      </mat-checkbox>
+
+      <mat-form-field class="round-input" *ngIf="adjustBy1RM">
+        <mat-label>Zaokrąglij do (kg)</mat-label>
+        <input matInput type="number" [(ngModel)]="roundTo" min="0.01" step="0.01"/>
+      </mat-form-field>
+    </div>
+
+    <mat-checkbox [(ngModel)]="adjustByRPE">
+      Dostosuj serie według <span class="purple-text">RPE</span> i <span class="purple-text">%1RM</span>
+    </mat-checkbox>
+  </div>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onCancel()">Anuluj</button>

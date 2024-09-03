@@ -13,6 +13,7 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
   @Output() goBack = new EventEmitter<void>();
   @Input() personalPlan = false;
   @Input() clientId: number | null = null;
+  @Input() isFullScreen = false;
 
   plans: BasicPlan[] = [];
   filteredPlans: BasicPlan[] = [];

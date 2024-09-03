@@ -36,6 +36,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   @Input() planId!: number;
   @Input() personalPlan = false;
   @Input() clientId: number | null = null;
+  @Input() isFullScreen: boolean = false;
   plan!: Plan;
 
   protected readonly window = window;
@@ -107,6 +108,8 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     this.detectTouchDevice();
     this.addTouchListener();
     this.addClickListener();
+
+    console.log(this.isFullScreen);
   }
 
   ngOnDestroy() {
@@ -374,7 +377,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   openExerciseOptionsDialog(exercise: WorkoutExercise): void {
     const dialogRef = this.dialog.open(ExerciseOptionsDialogComponent, {
       data: {
-        exercise,
+        exercise: { ...exercise },
         showAdvancedOptions: this.showAdvancedOptions
       }
     });
@@ -657,6 +660,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
 
   validateSeries(exercise: WorkoutExercise) {
     if (exercise.series !== null) {
+      exercise.series = Math.floor(exercise.series);
       if (exercise.series < 1) exercise.series = null;
     }
     this.endEdit();
@@ -664,9 +668,11 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
 
   validateRepetitions(exercise: WorkoutExercise) {
     if (exercise.repetitionsFrom !== null) {
+      exercise.repetitionsFrom = Math.floor(exercise.repetitionsFrom);
       if (exercise.repetitionsFrom < 1) exercise.repetitionsFrom = null;
     }
     if (exercise.repetitionsTo !== null) {
+      exercise.repetitionsTo = Math.floor(exercise.repetitionsTo);
       if (exercise.repetitionsTo < 1) exercise.repetitionsTo = null;
     }
     if (exercise.repetitionsTo !== null && exercise.repetitionsFrom !== null) {
@@ -754,6 +760,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
 
   validateBreak(exercise: WorkoutExercise) {
     if (exercise.breakTime.value != null) {
+      exercise.breakTime.value = Math.floor(exercise.breakTime.value);
       if (exercise.breakTime.value < 1) exercise.breakTime = { value: null, unit: 's' };
     }
   }

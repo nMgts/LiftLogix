@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Szczegóły ćwiczenia</h1>
 <div mat-dialog-content>
-  <p><strong>Nazwa ćwiczenia:</strong> {{ exercise.exercise.name }}</p>
+  <p><strong>Nazwa ćwiczenia:</strong> {{ exercise.exerciseName }}</p>
   <p *ngIf="exercise.series !== null"><strong>Serie:</strong> {{ exercise.series }}</p>
   <p *ngIf="exercise.repetitionsFrom !== null && exercise.repetitionsTo !== null">
     <strong>Powtórzenia:</strong> {{ formatRepetitions(exercise) }}

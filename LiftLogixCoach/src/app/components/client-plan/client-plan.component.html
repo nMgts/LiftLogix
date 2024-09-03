@@ -41,8 +41,8 @@
 </div>
 
 <div *ngIf="choice === 'create'">
-  <app-workout-creator [personalPlan]="true" [clientId]="clientId" (goBack)="onCancel()"></app-workout-creator>
+  <app-workout-creator [personalPlan]="true" [clientId]="clientId" [isFullScreen]="isFullScreen" (goBack)="onCancel()"></app-workout-creator>
 </div>
 <div *ngIf="choice === 'select'">
-  <app-workout-library-private [personalPlan]="true" [clientId]="clientId" (goBack)="onCancel()"></app-workout-library-private>
+  <app-workout-library-private [personalPlan]="true" [clientId]="clientId" [isFullScreen]="isFullScreen" (goBack)="onCancel()"></app-workout-library-private>
 </div>

@@ -12,6 +12,9 @@ import { ApplicationService } from "../../services/application.service";
 export class ClientsComponent implements OnChanges {
   @Input() isBoxExpanded = false;
   @Output() closeBox = new EventEmitter<void>();
+
+  isFullScreen = false;
+
   clientsQuantity: number = 0;
   protected readonly window = window;
   selectedComponent: string | null = null;
@@ -62,6 +65,11 @@ export class ClientsComponent implements OnChanges {
         this.dropdownOpenClientId = null;
       }
     )
+  }
+
+  toggleFullScreen(event: Event): void {
+    event.stopPropagation();
+    this.isFullScreen = !this.isFullScreen;
   }
 
   toggleDropdown(client: Client) {

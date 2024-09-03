@@ -15,6 +15,6 @@ public class WorkoutExerciseDTO {
     private Double weight;
     private Double percentage;
     private String tempo;
-    private Integer rpe;
+    private Double rpe;
     private BreakDTO breakTime;
 }

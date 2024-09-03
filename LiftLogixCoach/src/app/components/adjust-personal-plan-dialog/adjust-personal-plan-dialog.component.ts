@@ -14,6 +14,7 @@ export class AdjustPersonalPlanDialogComponent implements OnInit {
   adjustByRPE: boolean = false;
   result: Result | null = null;
   updatedMacrocycle: Macrocycle;
+  roundTo: number = 2.5;
 
   k_ratio = 0.12;
 
@@ -63,15 +64,15 @@ export class AdjustPersonalPlanDialogComponent implements OnInit {
           workout.workoutExercises.forEach(exercise => {
             if (exercise.exerciseName === 'Low Bar Squat') {
               if (squat1RM != null && exercise.percentage) {
-                exercise.weight = squat1RM * exercise.percentage / 100;
+                exercise.weight = this.roundDown(squat1RM * exercise.percentage / 100);
               }
             } else if (exercise.exerciseName === 'Sumo Deadlift') {
               if (deadlift1RM != null && exercise.percentage) {
-                exercise.weight = deadlift1RM * exercise.percentage / 100;
+                exercise.weight = this.roundDown(deadlift1RM * exercise.percentage / 100);
               }
             } else if (exercise.exerciseName === 'Bench Press') {
               if (benchpress1RM != null && exercise.percentage) {
-                exercise.weight = benchpress1RM * exercise.percentage / 100;
+                exercise.weight = this.roundDown(benchpress1RM * exercise.percentage / 100);
               }
             }
           })
@@ -109,6 +110,20 @@ export class AdjustPersonalPlanDialogComponent implements OnInit {
     });
   }
 
+  private convertToNumber = (value: number | string | undefined): number | null => {
+    if (value === undefined || value === null) {
+      return null;
+    }
+    return typeof value === 'number' ? value : parseFloat(value);
+  };
+
+  private roundDown(weight: number): number {
+    if (this.roundTo > 0) {
+      return Math.floor(weight / this.roundTo) * this.roundTo;
+    }
+    return weight;
+  }
+
   private calculateReps(maxReps: number, rpe: number): { repetitionsFrom: number, repetitionsTo: number } {
     const reps = Math.max(1, maxReps * Math.exp(-this.k_ratio * (10 - rpe)));
     const integerPart = Math.floor(reps);
@@ -126,11 +141,4 @@ export class AdjustPersonalPlanDialogComponent implements OnInit {
       };
     }
   }
-
-  private convertToNumber = (value: number | string | undefined): number | null => {
-    if (value === undefined || value === null) {
-      return null;
-    }
-    return typeof value === 'number' ? value : parseFloat(value);
-  };
 }

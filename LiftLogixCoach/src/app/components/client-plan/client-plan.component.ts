@@ -11,6 +11,7 @@ import {PersonalPlanService} from "../../services/personal-plan.service";
 })
 export class ClientPlanComponent implements OnInit, OnDestroy {
   @Input() clientId: number | null = null;
+  @Input() isFullScreen: boolean = false;
   @Output() goBack = new EventEmitter<void>();
   private clientIdSubscription!: Subscription;
 

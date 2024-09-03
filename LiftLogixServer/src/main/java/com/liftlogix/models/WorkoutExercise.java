@@ -32,7 +32,7 @@ public class WorkoutExercise {
     private Double weight;
     private Double percentage;
     private String tempo;
-    private Integer rpe;
+    private Double rpe;
 
     @Embedded
     private Break breakTime;

@@ -21,6 +21,7 @@ export class WorkoutViewComponent implements OnInit {
   @Output() goBack = new EventEmitter<void>();
   @Input() planId!: number;
   @Input() personalPlan: boolean = false;
+  @Input() isFullScreen: boolean = false;
   plan!: Plan;
 
   mesocycles: Mesocycle[] = [];
