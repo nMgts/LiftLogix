@@ -9,6 +9,8 @@ public class WorkoutExerciseDTO {
     private long id;
     private long exerciseId;
     private String exerciseName;
+    private String exerciseType;
+    private double difficultyFactor;
     private Integer series;
     private Integer repetitionsFrom;
     private Integer repetitionsTo;

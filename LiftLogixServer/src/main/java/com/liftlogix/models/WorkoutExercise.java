@@ -22,6 +22,9 @@ public class WorkoutExercise {
     @JoinColumn(name = "workout_id")
     private Workout workout;
 
+    @Column(nullable = false)
+    private double difficultyFactor;
+
     private Integer series;
 
     @Column(name = "repetitions_from")

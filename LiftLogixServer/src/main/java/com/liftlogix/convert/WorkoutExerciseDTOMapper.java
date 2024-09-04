@@ -3,6 +3,7 @@ package com.liftlogix.convert;
 import com.liftlogix.dto.WorkoutExerciseDTO;
 import com.liftlogix.models.Exercise;
 import com.liftlogix.models.WorkoutExercise;
+import com.liftlogix.types.ExerciseType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -12,6 +13,7 @@ public interface WorkoutExerciseDTOMapper {
 
     @Mapping(source = "exercise.id", target = "exerciseId")
     @Mapping(source = "exercise.name", target = "exerciseName")
+    @Mapping(source = "exercise.exercise_type", target = "exerciseType")
     @Mapping(source = "breakTime", target = "breakTime")
     WorkoutExerciseDTO mapEntityToDTO(WorkoutExercise workoutExercise);
 

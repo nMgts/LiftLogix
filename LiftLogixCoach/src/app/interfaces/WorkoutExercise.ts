@@ -1,6 +1,8 @@
 export interface WorkoutExercise {
   exerciseId: number;
   exerciseName: string;
+  exerciseType: string;
+  difficultyFactor: number;
   series: number | null;
   repetitionsFrom: number | null;
   repetitionsTo: number | null;

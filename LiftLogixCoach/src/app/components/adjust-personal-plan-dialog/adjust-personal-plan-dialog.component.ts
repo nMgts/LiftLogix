@@ -62,17 +62,17 @@ export class AdjustPersonalPlanDialogComponent implements OnInit {
       mesocycle.microcycles.forEach(microcycle => {
         microcycle.workouts.forEach(workout => {
           workout.workoutExercises.forEach(exercise => {
-            if (exercise.exerciseName === 'Low Bar Squat') {
+            if (exercise.exerciseType === 'SQUAT') {
               if (squat1RM != null && exercise.percentage) {
-                exercise.weight = this.roundDown(squat1RM * exercise.percentage / 100);
+                exercise.weight = this.roundDown(squat1RM * exercise.percentage / 100 * exercise.difficultyFactor);
               }
-            } else if (exercise.exerciseName === 'Sumo Deadlift') {
+            } else if (exercise.exerciseType === 'DEADLIFT') {
               if (deadlift1RM != null && exercise.percentage) {
-                exercise.weight = this.roundDown(deadlift1RM * exercise.percentage / 100);
+                exercise.weight = this.roundDown(deadlift1RM * exercise.percentage / 100 * exercise.difficultyFactor);
               }
-            } else if (exercise.exerciseName === 'Bench Press') {
+            } else if (exercise.exerciseType === 'BENCHPRESS') {
               if (benchpress1RM != null && exercise.percentage) {
-                exercise.weight = this.roundDown(benchpress1RM * exercise.percentage / 100);
+                exercise.weight = this.roundDown(benchpress1RM * exercise.percentage / 100 * exercise.difficultyFactor);
               }
             }
           })
@@ -91,12 +91,12 @@ export class AdjustPersonalPlanDialogComponent implements OnInit {
         microcycle.workouts.forEach(workout => {
           workout.workoutExercises.forEach(exercise => {
             let maxReps = 0;
-            if (exercise.exerciseName === 'Low Bar Squat' && squat1RM != null && exercise.weight != null && exercise.weight != 0 && exercise.rpe != null) {
-              maxReps = Math.max(1, (squat1RM * 30 / exercise.weight) - 30);
-            } else if (exercise.exerciseName === 'Sumo Deadlift' && deadlift1RM != null && exercise.weight != null && exercise.weight != 0 && exercise.rpe != null) {
-              maxReps = Math.max(1, (deadlift1RM * 30 / exercise.weight) - 30);
-            } else if (exercise.exerciseName === 'Bench Press' && benchpress1RM != null && exercise.weight != null && exercise.weight != 0 && exercise.rpe != null) {
-              maxReps = Math.max(1, (benchpress1RM * 30 / exercise.weight) - 30);
+            if (exercise.exerciseType === 'SQUAT' && squat1RM != null && exercise.weight != null && exercise.weight != 0 && exercise.rpe != null) {
+              maxReps = Math.max(1, (squat1RM * 30 * exercise.difficultyFactor / exercise.weight) - 30);
+            } else if (exercise.exerciseType === 'DEADLIFT' && deadlift1RM != null && exercise.weight != null && exercise.weight != 0 && exercise.rpe != null) {
+              maxReps = Math.max(1, (deadlift1RM * 30 * exercise.difficultyFactor / exercise.weight) - 30);
+            } else if (exercise.exerciseType === 'BENCHPRESS' && benchpress1RM != null && exercise.weight != null && exercise.weight != 0 && exercise.rpe != null) {
+              maxReps = Math.max(1, (benchpress1RM * 30 * exercise.difficultyFactor / exercise.weight) - 30);
             }
 
             if (maxReps > 0 && exercise.rpe != null) {

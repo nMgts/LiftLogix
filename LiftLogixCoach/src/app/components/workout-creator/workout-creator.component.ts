@@ -277,6 +277,8 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
         this.selectedWorkout.workoutExercises.push({
           exerciseId: result.exerciseId,
           exerciseName: result.exerciseName,
+          exerciseType: result.exerciseType,
+          difficultyFactor: result.difficultyFactor,
           series: null,
           repetitionsFrom: null,
           repetitionsTo: null,
@@ -291,23 +293,35 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   }
 
   openEditExerciseNameDialog(exerciseId: number): void {
-    const dialogRef = this.dialog.open(AddExerciseToWorkoutDialogComponent);
+    const exercise = this.selectedWorkout.workoutExercises.find(e => e.exerciseId === exerciseId);
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        const index = this.selectedWorkout.workoutExercises.findIndex(e => e.exerciseId === exerciseId);
-        if (index !== -1) {
-          const updatedWorkoutExercises = [...this.selectedWorkout.workoutExercises];
-          updatedWorkoutExercises[index] = {
-            ...this.selectedWorkout.workoutExercises[index],
-            exerciseId: result.exerciseId,
-            exerciseName: result.exerciseName
-          };
-          this.selectedWorkout.workoutExercises = updatedWorkoutExercises;
+    if (exercise) {
+      const dialogRef = this.dialog.open(AddExerciseToWorkoutDialogComponent, {
+        data: {
+          exerciseId: exercise.exerciseId,
+          difficultyFactor: exercise.difficultyFactor
         }
-      }
-    });
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          const index = this.selectedWorkout.workoutExercises.findIndex(e => e.exerciseId === exerciseId);
+          if (index !== -1) {
+            const updatedWorkoutExercises = [...this.selectedWorkout.workoutExercises];
+            updatedWorkoutExercises[index] = {
+              ...this.selectedWorkout.workoutExercises[index],
+              exerciseId: result.exerciseId,
+              exerciseName: result.exerciseName,
+              exerciseType: result.exerciseType,
+              difficultyFactor: result.difficultyFactor
+            };
+            this.selectedWorkout.workoutExercises = updatedWorkoutExercises;
+          }
+        }
+      });
+    }
   }
+
 
   removeExercise(exercise: any): void {
     this.selectedWorkout.workoutExercises = this.selectedWorkout.workoutExercises.filter(e => e !== exercise);
@@ -357,6 +371,8 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
       workoutExercises: this.selectedWorkout.workoutExercises.map(exercise => ({
         exerciseId: exercise.exerciseId,
         exerciseName: exercise.exerciseName,
+        exerciseType: exercise.exerciseType,
+        difficultyFactor: exercise.difficultyFactor,
         series: exercise.series,
         repetitionsFrom: exercise.repetitionsFrom,
         repetitionsTo: exercise.repetitionsTo,
