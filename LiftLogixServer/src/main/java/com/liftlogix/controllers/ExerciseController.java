@@ -6,6 +6,7 @@ import com.liftlogix.exceptions.DuplicateExerciseNameException;
 import com.liftlogix.models.ExerciseAlias;
 import com.liftlogix.services.ExerciseService;
 import com.liftlogix.types.BodyPart;
+import com.liftlogix.types.ExerciseType;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -52,7 +53,9 @@ public class ExerciseController {
             @RequestParam(value = "url", required = false) String url,
             @RequestParam(value = "image", required = false) MultipartFile image,
             @RequestParam(value = "body_parts", required = false) String bodyParts,
-            @RequestParam(value = "aliases", required = false) String aliases
+            @RequestParam(value = "aliases", required = false) String aliases,
+            @RequestParam(value = "exercise_type", required = true) String exerciseType,
+            @RequestParam(value = "difficulty_factor", required = true) double difficultyFactor
     ) {
         try {
             Set<BodyPart> bodyPartSet = (bodyParts != null && !bodyParts.isEmpty())
@@ -74,7 +77,10 @@ public class ExerciseController {
             description = (description != null) ? description : "";
             url = (url != null) ? url : "";
 
-            return ResponseEntity.ok(exerciseService.addExercise(name, description, url, image, bodyPartSet, aliasSet));
+            ExerciseType exerciseTypeEnum = ExerciseType.valueOf(exerciseType.toUpperCase());
+
+            return ResponseEntity.ok(exerciseService.addExercise(
+                    name, description, url, image, bodyPartSet, aliasSet, exerciseTypeEnum, difficultyFactor));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         } catch (IllegalArgumentException e) {

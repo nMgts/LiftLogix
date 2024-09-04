@@ -1,6 +1,7 @@
 package com.liftlogix.models;
 
 import com.liftlogix.types.BodyPart;
+import com.liftlogix.types.ExerciseType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +29,16 @@ public class Exercise {
 
     @Lob
     private byte[] image;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ExerciseType exercise_type;
+
+    @Column(nullable = false)
+    private double difficulty_factor;
+
+    @Column(nullable = false)
+    private boolean isCertificated;
 
     @ElementCollection(targetClass = BodyPart.class)
     @Enumerated(EnumType.STRING)

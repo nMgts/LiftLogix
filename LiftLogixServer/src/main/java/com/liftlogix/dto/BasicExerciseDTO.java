@@ -12,5 +12,7 @@ public class BasicExerciseDTO {
     private long id;
     private String name;
     private List<String> body_parts;
+    private boolean isCertificated;
+    private String exercise_type;
     private Set<ExerciseAliasDTO> aliases;
 }

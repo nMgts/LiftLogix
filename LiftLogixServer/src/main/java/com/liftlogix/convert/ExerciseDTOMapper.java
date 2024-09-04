@@ -16,13 +16,17 @@ public interface ExerciseDTOMapper {
     @Mappings({
             @Mapping(target = "body_parts", source = "body_parts"),
             @Mapping(target = "image", source = "image"),
-            @Mapping(target = "aliases", source = "aliases")
+            @Mapping(target = "aliases", source = "aliases"),
+            @Mapping(target = "exercise_type", source = "exercise_type")
     })
     ExerciseDTO mapExerciseToDTO(Exercise exercise);
 
-    @Mapping(target = "body_parts", source = "body_parts")
-    @Mapping(target = "image", ignore = true)
-    @Mapping(target = "aliases", source = "aliases")
+    @Mappings({
+            @Mapping(target = "body_parts", source = "body_parts"),
+            @Mapping(target = "image", ignore = true),
+            @Mapping(target = "aliases", source = "aliases"),
+            @Mapping(target = "exercise_type", source = "exercise_type")
+    })
     Exercise mapDTOToExercise(ExerciseDTO dto);
 
     default String map(byte[] image) {

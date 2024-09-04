@@ -15,6 +15,31 @@ h1 {
   color: var(--mdc-dialog-supporting-text-color, rgba(0, 0, 0, 0.6));
 }
 
+.exercise-info {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+
+  .icon-certificated, .icon-exercise-type {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    img {
+      width: 32px;
+      height: 32px;
+      background-color: white;
+      border-radius: 50%;
+    }
+  }
+
+  .icon-exercise-type {
+    font-size: 16px;
+    color: var(--mdc-dialog-supporting-text-color, rgba(0, 0, 0, 0.6));
+    font-weight: bold;
+  }
+}
+
 .content {
   width: 100%;
   color: var(--mdc-dialog-supporting-text-color, rgba(0, 0, 0, 0.6));

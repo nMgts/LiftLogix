@@ -9,6 +9,7 @@ import com.liftlogix.models.Exercise;
 import com.liftlogix.models.ExerciseAlias;
 import com.liftlogix.repositories.ExerciseRepository;
 import com.liftlogix.types.BodyPart;
+import com.liftlogix.types.ExerciseType;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
@@ -64,8 +65,9 @@ public class ExerciseService {
     }
 
     public ExerciseDTO addExercise(String name, String description, String url,
-                                MultipartFile image, Set<BodyPart> bodyParts,
-                                Set<ExerciseAlias> aliasSet) throws IOException {
+                                   MultipartFile image, Set<BodyPart> bodyParts,
+                                   Set<ExerciseAlias> aliasSet, ExerciseType exerciseType,
+                                   double difficultyFactor) throws IOException {
         if (exerciseRepository.existsByName(name)) {
             throw new DuplicateExerciseNameException("Exercise with name " + name + " already exists.");
         }
@@ -75,6 +77,10 @@ public class ExerciseService {
             exercise.setName(name);
             exercise.setDescription(description);
             exercise.setUrl(url);
+            exercise.setExercise_type(exerciseType);
+            exercise.setDifficulty_factor(difficultyFactor);
+            exercise.setCertificated(false);
+
             if (image != null) {
                 exercise.setImage(image.getBytes());
             }

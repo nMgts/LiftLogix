@@ -11,13 +11,15 @@ public interface BasicExerciseDTOMapper {
 
     @Mappings({
             @Mapping(source = "body_parts", target = "body_parts"),
-            @Mapping(source = "aliases", target = "aliases")
+            @Mapping(source = "aliases", target = "aliases"),
+            @Mapping(target = "exercise_type", source = "exercise_type")
     })
     BasicExerciseDTO mapExerciseToBasicDTO(Exercise exercise);
 
     @Mappings({
             @Mapping(source = "body_parts", target = "body_parts"),
-            @Mapping(source = "aliases", target = "aliases")
+            @Mapping(source = "aliases", target = "aliases"),
+            @Mapping(target = "exercise_type", source = "exercise_type")
     })
     Exercise mapBasicDTOToExercise(BasicExerciseDTO basicExerciseDTO);
 }

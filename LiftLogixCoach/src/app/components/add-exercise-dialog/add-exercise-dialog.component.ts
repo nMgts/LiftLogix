@@ -23,6 +23,9 @@ export class AddExerciseDialogComponent implements AfterViewInit {
     'CHEST', 'BACK', 'BICEPS', 'TRICEPS', 'SHOULDERS',
     'FOREARMS', 'ABS', 'CALVES', 'QUAD', 'HAMSTRING', 'GLUTE'
   ];
+  exercise_types = [
+    'SQUAT', 'BENCHPRESS', 'DEADLIFT', 'OTHER'
+  ];
 
   scrollTimeout: any;
   @ViewChild('dialog', { static: true }) dialog!: ElementRef;
@@ -37,6 +40,8 @@ export class AddExerciseDialogComponent implements AfterViewInit {
   ) {
     this.exerciseForm = this.fb.group({
       name: ['', Validators.required],
+      exercise_type: ['OTHER'],
+      difficulty_factor: [1],
       body_parts: [[]],
       description: [''],
       url: [''],
@@ -49,6 +54,20 @@ export class AddExerciseDialogComponent implements AfterViewInit {
     this.renderer.listen(this.dialog.nativeElement, 'scroll', () => {
       this.onWindowScroll();
     });
+  }
+
+  onExerciseTypeChange(event: any): void {
+    const selectedType = event.value;
+    const difficultyControl = this.exerciseForm.get('difficulty_factor');
+
+    if (selectedType !== 'OTHER') {
+      difficultyControl?.setValidators([Validators.required, Validators.min(0.1)]);
+    } else {
+      difficultyControl?.clearValidators();
+      difficultyControl?.setValue(1);
+    }
+
+    difficultyControl?.updateValueAndValidity();
   }
 
   onFileSelected(event: any): void {
@@ -92,6 +111,8 @@ export class AddExerciseDialogComponent implements AfterViewInit {
       formData.append('name', name);
       formData.append('body_parts', this.exerciseForm.get('body_parts')?.value);
       formData.append('description', this.exerciseForm.get('description')?.value);
+      formData.append('exercise_type', this.exerciseForm.get('exercise_type')?.value);
+      formData.append('difficulty_factor', this.exerciseForm.get('difficulty_factor')?.value);
 
       const url = this.exerciseForm.get('url')?.value;
       const embeddedUrl = this.youtubeEmbedPipe.transform(url);

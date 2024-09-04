@@ -33,6 +33,12 @@ export class ExercisesComponent implements OnChanges {
     'CHEST', 'BACK', 'BICEPS', 'TRICEPS', 'SHOULDERS',
     'FOREARMS', 'ABS', 'CALVES', 'QUAD', 'HAMSTRING', 'GLUTE'
   ];
+  selectedExerciseTypes: string[] = [];
+  exercise_types = [
+    'SQUAT', 'BENCHPRESS', 'DEADLIFT'
+  ];
+
+  filterCertificated = false;
 
   private readonly defaultImageUrl: string = '/icons/dumbbell.jpg';
   protected readonly window = window;
@@ -77,6 +83,12 @@ export class ExercisesComponent implements OnChanges {
       filtered = [...this.exercises];
     }
 
+    if (this.selectedExerciseTypes.length > 0) {
+      filtered = filtered.filter(exercise =>
+        this.selectedExerciseTypes.includes(exercise.exercise_type)
+      );
+    }
+
     if (this.searchKeyword.trim()) {
       const keyword = this.searchKeyword.trim().toLowerCase();
       const keywordWords = keyword.split(' ').filter(Boolean);
@@ -95,6 +107,10 @@ export class ExercisesComponent implements OnChanges {
       );
     }
 
+    if (this.filterCertificated) {
+      filtered = filtered.filter(exercise => exercise.certificated);
+    }
+
     this.filteredExercises = filtered;
     this.pageIndex = 0;
     this.updateDisplayedExercises();
@@ -110,17 +126,17 @@ export class ExercisesComponent implements OnChanges {
     this.isDropdownOpen = false;
   }
 
-  onSearchChange(event: Event): void {
+  onSearchChange(event: Event) {
     const input = event.target as HTMLInputElement;
     this.searchKeyword = input.value;
     this.filterExercises();
   }
 
-  onCheckboxChange(event: Event): void {
+  onCheckboxChange(event: Event) {
     event.stopPropagation();
     const checkbox = event.target as HTMLInputElement;
     const value = checkbox.value;
-    console.log(value);
+
     if (checkbox.checked) {
       if (!this.selectedBodyParts.includes(value)) {
         this.selectedBodyParts.push(value);
@@ -131,9 +147,33 @@ export class ExercisesComponent implements OnChanges {
     this.filterExercises();
   }
 
-  clearFilters(event: Event): void {
+  onCertificatedCheckboxChange(event: Event) {
+    event.stopPropagation();
+    const checkbox = event.target as HTMLInputElement;
+    this.filterCertificated = checkbox.checked;
+    this.filterExercises();
+  }
+
+  onTypesCheckboxChange(event: Event) {
+    event.stopPropagation();
+    const checkbox = event.target as HTMLInputElement;
+    const value = checkbox.value;
+
+    if (checkbox.checked) {
+      if (!this.selectedExerciseTypes.includes(value)) {
+        this.selectedExerciseTypes.push(value);
+      }
+    } else {
+      this.selectedExerciseTypes = this.selectedExerciseTypes.filter(part => part !== value);
+    }
+    this.filterExercises();
+  }
+
+  clearFilters(event: Event) {
     event.stopPropagation();
     this.selectedBodyParts = [];
+    this.selectedExerciseTypes = [];
+    this.filterCertificated = false;
     this.filterExercises();
   }
 
@@ -143,14 +183,14 @@ export class ExercisesComponent implements OnChanges {
     this.updateDisplayedExercises();
   }
 
-  updatePageSize(): void {
+  updatePageSize() {
     const containerWidth = document.querySelector('.exercise-grid')?.clientWidth || 0;
     const cardWidth = 170;
     const columns = Math.floor((containerWidth + 20) / cardWidth);
     this.pageSize = columns * 3;
   }
 
-  updateDisplayedExercises(): void {
+  updateDisplayedExercises() {
     const start = this.pageIndex * this.pageSize;
     const end = start + this.pageSize;
     const token = localStorage.getItem('token') || '';
@@ -188,13 +228,13 @@ export class ExercisesComponent implements OnChanges {
     }
   }
 
-  onPageChange(event: PageEvent): void {
+  onPageChange(event: PageEvent) {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.updateDisplayedExercises();
   }
 
-  openDetails(exercise: BasicExercise): void {
+  openDetails(exercise: BasicExercise) {
     const token = localStorage.getItem('token') || '';
     this.exerciseService.getExerciseDetails(exercise.id, token).subscribe({
       next: (exercise: Exercise) => {
@@ -208,7 +248,7 @@ export class ExercisesComponent implements OnChanges {
     });
   }
 
-  addExercise(): void {
+  addExercise() {
     const dialogRef = this.dialog.open(AddExerciseDialogComponent);
 
     dialogRef.afterClosed().subscribe(result => {
@@ -226,7 +266,7 @@ export class ExercisesComponent implements OnChanges {
     this.closeBox.emit();
   }
 
-  private openSnackBar(message: string): void {
+  private openSnackBar(message: string) {
     this.snackBar.open(message, 'Close', {
       duration: 3000,
       verticalPosition: 'top'
