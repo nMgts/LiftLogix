@@ -171,6 +171,4 @@ export class ApplicationsComponent implements OnChanges {
     event.stopPropagation();
     this.closeBox.emit();
   }
-
-  protected readonly innerWidth = innerWidth;
 }

@@ -1,6 +1,6 @@
 <app-back-arrow (goBack)="onGoBack()"></app-back-arrow>
 
-<div class="component-container" *ngIf="choice === ''">
+<div class="component-container" *ngIf="choice===''">
   <div *ngIf="plan; else loading">
     <mat-card *ngIf="!notFound">
       <mat-card-header>
@@ -10,6 +10,18 @@
         <p>{{ plan.name }}</p>
       </mat-card-content>
     </mat-card>
+
+    <div class="actions" *ngIf="!notFound">
+      <button mat-raised-button color="primary" (click)="viewPersonalPlan()">
+        <span>Pogląd</span>
+      </button>
+      <button mat-raised-button color="accent" (click)="editPersonalPlan()">
+        <span>Edytuj</span>
+      </button>
+      <button mat-raised-button color="accent" (click)="deactivatePersonalPlan()">
+        <span>Zakończ</span>
+      </button>
+    </div>
   </div>
 
   <ng-template #loading>
@@ -45,4 +57,8 @@
 </div>
 <div *ngIf="choice === 'select'">
   <app-workout-library-private [personalPlan]="true" [clientId]="clientId" [isFullScreen]="isFullScreen" (goBack)="onCancel()"></app-workout-library-private>
+</div>
+
+<div *ngIf="choice === 'view' && plan">
+  <app-workout-view [personalPlan]="plan" [isPersonalPlan]="true" [isFullScreen]="isFullScreen" (goBack)="onCancel()"></app-workout-view>
 </div>

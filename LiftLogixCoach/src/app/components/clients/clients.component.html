@@ -14,7 +14,7 @@
     </div>
 
     <div class="clients-list">
-      <div class="client-row" *ngFor="let client of clients">
+      <div class="client-row" *ngFor="let client of clients" [ngClass]="{'selected-client': client.id === selectedClientId}">
         <img [src]="client.imageSafeUrl" alt="{{client.email}}" class="profile-image"/>
         <div class="client-info">
           <div class="client-name">{{client.first_name}} {{getDisplayLastName(client)}}</div>

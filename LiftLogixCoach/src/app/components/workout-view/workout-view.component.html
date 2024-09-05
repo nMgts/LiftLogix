@@ -2,9 +2,9 @@
 
 <div class="plan-view-container">
 
-  <h1 class="view-header" *ngIf="!personalPlan">Plan</h1>
+  <h1 class="view-header" *ngIf="!isPersonalPlan">Plan</h1>
 
-  <div class="tables-container" [ngClass]="{'personal-plan': (personalPlan && window.innerWidth > 1023 && !isFullScreen)}">
+  <div class="tables-container" [ngClass]="{'personal-plan': (isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)}">
     <div class="meso-macro-tables-container">
       <div class="macrocycle-container" *ngIf="mesocycles.length > 1">
         <h1>Makrocykl</h1>
@@ -76,7 +76,7 @@
     <div class="microcycle-container">
       <h1>Mikrocykl</h1>
 
-      <div class="microcycle-table" [ngClass]="{'personal-plan' : personalPlan && window.innerWidth > 1023 && !isFullScreen}">
+      <div class="microcycle-table" [ngClass]="{'personal-plan' : isPersonalPlan && window.innerWidth > 1023 && !isFullScreen}">
         <table>
           <thead>
           <tr>
@@ -109,17 +109,17 @@
   <div class="workout-container">
     <h1>Trening</h1>
 
-    <table class="exercise-table" [ngClass]="{'personal-plan': personalPlan && window.innerWidth > 1023 && !isFullScreen}">
+    <table class="exercise-table" [ngClass]="{'personal-plan': isPersonalPlan && window.innerWidth > 1023 && !isFullScreen}">
       <thead>
       <tr>
         <th>Ćwiczenie</th>
         <th *ngIf="window.innerWidth > 499">Ilość serii</th>
         <th *ngIf="window.innerWidth > 499">Powtórzenia</th>
         <th *ngIf="window.innerWidth > 499">Ciężar</th>
-        <th *ngIf="window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023 && !isFullScreen)"> %1RM </th>
-        <th *ngIf="window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023 && !isFullScreen)"> Tempo </th>
-        <th *ngIf="window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023 && !isFullScreen)"> RPE </th>
-        <th *ngIf="window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023 && !isFullScreen)">Przerwa</th>
+        <th *ngIf="window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)"> %1RM </th>
+        <th *ngIf="window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)"> Tempo </th>
+        <th *ngIf="window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)"> RPE </th>
+        <th *ngIf="window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)">Przerwa</th>
       </tr>
 
       </thead>
@@ -138,20 +138,20 @@
         <td *ngIf="window.innerWidth > 499">
           {{ exercise.weight ? exercise.weight + 'kg' : '' }}
         </td>
-        <td *ngIf="window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023 && !isFullScreen)">
+        <td *ngIf="window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)">
           {{ exercise.percentage ? exercise.percentage + '%' : '' }}
         </td>
-        <td *ngIf="window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023 && !isFullScreen)">
+        <td *ngIf="window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)">
           {{ exercise.tempo || '' }}
         </td>
-        <td *ngIf="window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023 && !isFullScreen)">
+        <td *ngIf="window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)">
           {{ exercise.rpe || '' }}
         </td>
-        <td *ngIf="window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023 && !isFullScreen)">
+        <td *ngIf="window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)">
           {{ exercise.breakTime.value ? exercise.breakTime.value + exercise.breakTime.unit : '' }}
         </td>
         <td class="workout-exercise-details-column"
-            *ngIf="window.innerWidth < 1000 || (personalPlan && window.innerWidth > 1023 && !isFullScreen)">
+            *ngIf="window.innerWidth < 1000 || (isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)">
           <mat-icon (click)="openWorkoutExerciseDetails(exercise)">more_vert</mat-icon>
         </td>
       </tr>

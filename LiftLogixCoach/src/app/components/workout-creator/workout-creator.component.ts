@@ -876,8 +876,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     if (this.touchListener) {
       document.removeEventListener('touchstart', this.touchListener);
     }
-    if (this.success) {
-      this.success.emit();
-    }
+    this.success.emit();
+    this.goBack.emit();
   }
 }

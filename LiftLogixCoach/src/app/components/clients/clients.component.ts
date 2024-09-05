@@ -125,6 +125,7 @@ export class ClientsComponent implements OnChanges {
 
   goBack() {
     this.clearSelectedComponent();
+    this.selectedClientId = 0;
   }
 
   close(event: Event) {

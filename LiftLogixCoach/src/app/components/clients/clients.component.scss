@@ -162,6 +162,11 @@ h1 {
   position: relative;
 }
 
+.selected-client {
+  border: 2px solid deepskyblue;
+  box-shadow: 0 0 10px deepskyblue;
+}
+
 .profile-image {
   width: 50px;
   height: 50px;

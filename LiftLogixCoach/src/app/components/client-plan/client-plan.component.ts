@@ -3,6 +3,7 @@ import {Subscription} from "rxjs";
 import {PersonalPlan} from "../../interfaces/PersonalPlan";
 import {ClientService} from "../../services/client.service";
 import {PersonalPlanService} from "../../services/personal-plan.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-client-plan',
@@ -21,7 +22,8 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
 
   constructor(
     private clientService: ClientService,
-    private personalPlanService: PersonalPlanService
+    private personalPlanService: PersonalPlanService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -62,6 +64,30 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
     this.choice = 'select';
   }
 
+  viewPersonalPlan() {
+    this.choice = 'view';
+  }
+
+  editPersonalPlan() {
+  }
+
+  deactivatePersonalPlan() {
+    const token = localStorage.getItem('token') || '';
+    const id = this.plan?.id;
+
+    if (id) {
+      this.personalPlanService.deactivatePlan(id, token).subscribe(
+        () => {
+          this.plan = null;
+          this.notFound = true;
+        },
+        () => {
+          this.openSnackBar('Nie udało się zakończyć planu');
+        }
+      )
+    }
+  }
+
   onCancel() {
     this.choice = '';
     if (this.clientId) {
@@ -71,5 +97,12 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
 
   onGoBack() {
     this.goBack.emit();
+  }
+
+  private openSnackBar(message: string) {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      verticalPosition: 'top'
+    });
   }
 }

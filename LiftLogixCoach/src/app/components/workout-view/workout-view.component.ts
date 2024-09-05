@@ -9,8 +9,9 @@ import { WorkoutExercise } from "../../interfaces/WorkoutExercise";
 import { MatDialog } from "@angular/material/dialog";
 import { ExerciseDetailsDialogComponent } from "../exercise-details-dialog/exercise-details-dialog.component";
 import { WorkoutExerciseDetailsDialogComponent } from "../workout-exercise-details-dialog/workout-exercise-details-dialog.component";
-import {ExerciseService} from "../../services/exercise.service";
-import {Exercise} from "../../interfaces/Exercise";
+import { ExerciseService} from "../../services/exercise.service";
+import { Exercise } from "../../interfaces/Exercise";
+import { PersonalPlan } from "../../interfaces/PersonalPlan";
 
 @Component({
   selector: 'app-workout-view',
@@ -20,7 +21,8 @@ import {Exercise} from "../../interfaces/Exercise";
 export class WorkoutViewComponent implements OnInit {
   @Output() goBack = new EventEmitter<void>();
   @Input() planId!: number;
-  @Input() personalPlan: boolean = false;
+  @Input() personalPlan!: PersonalPlan;
+  @Input() isPersonalPlan: boolean = false;
   @Input() isFullScreen: boolean = false;
   plan!: Plan;
 
@@ -46,6 +48,9 @@ export class WorkoutViewComponent implements OnInit {
     if (this.planId) {
       this.loadPlan(this.planId);
     }
+    if (this.personalPlan) {
+      this.loadPersonalPlan()
+    }
   }
 
   loadPlan(id: number) {
@@ -60,6 +65,11 @@ export class WorkoutViewComponent implements OnInit {
         this.openSnackBar('Nie udało się załadować planu');
       }
     });
+  }
+
+  loadPersonalPlan() {
+    this.mesocycles = this.personalPlan.mesocycles;
+    this.selectMesocycle(0);
   }
 
   selectWorkout(workoutName: string) {
