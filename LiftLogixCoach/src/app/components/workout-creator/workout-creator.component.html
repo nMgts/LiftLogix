@@ -457,7 +457,7 @@
     </div>
   </div>
 
-  <button *ngIf="!plan" (click)="savePlan()" mat-raised-button class="save-plan-button" color="primary">
+  <button *ngIf="!plan && !personalPlan" (click)="savePlan()" mat-raised-button class="save-plan-button" color="primary">
     <span>Zapisz plan</span>
   </button>
 
@@ -469,7 +469,7 @@
     <span>Dostosuj</span>
   </button>
 
-  <button *ngIf="plan && personalPlan" (click)="savePersonalPlan()" mat-raised-button class="save-plan-button" color="primary">
+  <button *ngIf="personalPlan" (click)="savePersonalPlan()" mat-raised-button class="save-plan-button" color="primary">
     <span>Dalej</span>
   </button>
 

@@ -15,11 +15,5 @@ import java.util.List;
 public interface PlanRepository extends JpaRepository<Plan, Long> {
 
     List<Plan> findByAuthor(User author);
-
     List<Plan> findByIsPublicTrue();
-
-    @Transactional
-    @Modifying
-    @Query("DELETE FROM Mesocycle m WHERE m.plan.id = :planId")
-    void deleteAllMesocyclesByPlanId(@Param("planId") Long planId);
 }

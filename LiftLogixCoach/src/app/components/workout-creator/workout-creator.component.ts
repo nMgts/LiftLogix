@@ -108,8 +108,6 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     this.detectTouchDevice();
     this.addTouchListener();
     this.addClickListener();
-
-    console.log(this.isFullScreen);
   }
 
   ngOnDestroy() {
@@ -137,7 +135,20 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   }
 
   savePersonalPlan() {
+    console.log(this.clientId);
+    const dialogRef = this.dialog.open(SavePlanDialogComponent, {
+      data: {
+        macrocycle: this.macrocycle,
+        planName: this.plan?.name ?? '',
+        clientId: this.clientId
+      }
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.onGoBack();
+      }
+    });
   }
 
   /** Plan Edit Methods **/

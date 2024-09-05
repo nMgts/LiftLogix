@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import { Observable } from "rxjs";
 import { PersonalPlan } from "../interfaces/PersonalPlan";
 import { Plan } from "../interfaces/Plan";
+import {formatDate} from "@angular/common";
 
 @Injectable({
   providedIn: 'root'
@@ -26,9 +27,11 @@ export class PersonalPlanService {
 
   createPlan(plan: Plan, clientId: number, date: string, token: string): Observable<any> {
     const headers = this.createHeaders(token);
-    let params = new HttpParams();
-    params.set('clientId', clientId);
-    params.set('date', date);
+    const formattedDate = formatDate(new Date(date), 'yyyy-MM-dd', 'en');
+    let params = new HttpParams()
+      .set('clientId', clientId.toString())
+      .set('startDate', formattedDate);
+
     return this.http.post<PersonalPlan>(this.createUrl, plan, { params: params, headers: headers});
   }
 

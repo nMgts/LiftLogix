@@ -54,7 +54,7 @@ import { WorkoutMenuComponent } from './components/workout-menu/workout-menu.com
 import { WorkoutLibraryPrivateComponent } from './components/workout-library-private/workout-library-private.component';
 import { WorkoutLibraryPublicComponent } from './components/workout-library-public/workout-library-public.component';
 import { SavePlanDialogComponent } from './components/save-plan-dialog/save-plan-dialog.component'
-import { MatLine } from "@angular/material/core";
+import {MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatLine} from "@angular/material/core";
 import { NgxPaginationModule } from 'ngx-pagination';
 import { MatGridList, MatGridTile } from "@angular/material/grid-list";
 import { BackArrowComponent } from './components/back-arrow/back-arrow.component';
@@ -62,6 +62,9 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { WorkoutViewComponent } from './components/workout-view/workout-view.component';
 import { WorkoutExerciseDetailsDialogComponent } from './components/workout-exercise-details-dialog/workout-exercise-details-dialog.component';
 import { AdjustPersonalPlanDialogComponent } from './components/adjust-personal-plan-dialog/adjust-personal-plan-dialog.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MY_DATE_FORMATS } from "./providers/MY_DATE_FORMATS";
 
 @NgModule({
   declarations: [
@@ -130,7 +133,9 @@ import { AdjustPersonalPlanDialogComponent } from './components/adjust-personal-
     MatGridTile,
     MatMenuTrigger,
     MatMenu,
-    MatMenuItem
+    MatMenuItem,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   providers: [
     provideAnimationsAsync(),
@@ -140,7 +145,9 @@ import { AdjustPersonalPlanDialogComponent } from './components/adjust-personal-
       multi: true
     },
     YoutubeEmbedPipe,
-    provideCharts(withDefaultRegisterables())
+    provideCharts(withDefaultRegisterables()),
+    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: 'pl-PL' }
   ],
   bootstrap: [AppComponent]
 })

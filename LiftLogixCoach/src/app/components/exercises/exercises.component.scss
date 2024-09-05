@@ -86,9 +86,12 @@ h1.header {
   .filter-exercises, .add-exercise {
     display: flex;
     align-items: center;
-    cursor: pointer;
     transition: transform 0.3s;
     z-index: 100;
+  }
+
+  .filter-exercises-icon, .add-exercise {
+    cursor: pointer;
   }
 
   .filter-exercises:hover, .add-exercise:hover {
@@ -117,8 +120,6 @@ h1.header {
       z-index: 100;
 
       .dropdown-section {
-        margin: 0;
-        padding: 0;
 
         .dropdown-section-title {
           font-weight: bold;
@@ -127,6 +128,7 @@ h1.header {
           color: black;
           background-color: #f9f9f9;
           border-bottom: 1px solid #ddd;
+          margin: 0;
         }
 
         label {
@@ -143,12 +145,13 @@ h1.header {
 
         input[type="checkbox"] {
           margin-right: 8px;
+          cursor: pointer;
         }
       }
     }
 
     button {
-      margin: 10px 10px 5px 10px;
+      margin: 10px;
       padding: 5px;
       background-color: darkmagenta;
       color: white;

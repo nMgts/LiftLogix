@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, OnChanges, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, Renderer2, ViewChild } from '@angular/core';
 import { Exercise } from "../../interfaces/Exercise";
 import { ExerciseService } from "../../services/exercise.service";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
@@ -17,6 +17,8 @@ import { BasicExercise } from "../../interfaces/BasicExercise";
 export class ExercisesComponent implements OnChanges {
   @Input() isBoxExpanded = false;
   @Output() closeBox = new EventEmitter<void>();
+  @ViewChild('elem', { static: true }) elem!: ElementRef;
+  scrollTimeout: any;
 
   exercises: BasicExercise[] = [];
   filteredExercises: BasicExercise[] = [];
@@ -47,7 +49,8 @@ export class ExercisesComponent implements OnChanges {
     private exerciseService: ExerciseService,
     private sanitizer: DomSanitizer,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private renderer: Renderer2
     ) {}
 
   ngOnChanges(): void {
@@ -257,6 +260,20 @@ export class ExercisesComponent implements OnChanges {
         this.loadExercises();
       }
     });
+  }
+
+  onScroll(event: Event): void {
+    const target = event.target as HTMLElement;
+
+    if (target) {
+      this.renderer.addClass(document.body, 'show-scrollbar');
+
+      clearTimeout(this.scrollTimeout);
+
+      this.scrollTimeout = setTimeout(() => {
+        this.renderer.removeClass(document.body, 'show-scrollbar');
+      }, 3000);
+    }
   }
 
   close(event: Event) {

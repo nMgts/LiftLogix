@@ -11,12 +11,12 @@
     <h1 class="library-title">Biblioteka ćwiczeń</h1>
     <div class="header-actions">
       <div class="filter-exercises">
-        <div (click)="toggleDropdown($event)">
+        <div (click)="toggleDropdown($event)" class="filter-exercises-icon">
           <img ngSrc="/icons/filter.png" alt="Filter Icon" class="filter-icon" height="24" width="24"/>
           <span>Filtruj</span>
         </div>
 
-        <div class="dropdown-menu" *ngIf="isDropdownOpen">
+        <div class="dropdown-menu" *ngIf="isDropdownOpen" #elem (scroll)="onScroll($event)">
           <button (click)="clearFilters($event)">Wyczyść filtry</button>
 
           <div class="dropdown-section">
