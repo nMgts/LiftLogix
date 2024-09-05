@@ -24,7 +24,7 @@ public class PlanService {
 
     public PlanDTO savePlan(PlanDTO planDTO, User author) {
 
-        Plan plan = planDTOMapper.mapDTOToEntityWithPlanAssociation(planDTO);
+        Plan plan = planDTOMapper.mapDTOToEntity(planDTO);
         plan.setAuthor(author);
 
         Plan savedPlan = planRepository.save(plan);
@@ -109,7 +109,7 @@ public class PlanService {
 
         planRepository.delete(existingPlan);
 
-        Plan newPlan = planDTOMapper.mapDTOToEntityWithPlanAssociation(planDTO);
+        Plan newPlan = planDTOMapper.mapDTOToEntity(planDTO);
         newPlan.setAuthor(user);
 
         planRepository.save(newPlan);
@@ -188,7 +188,6 @@ public class PlanService {
         newMesocycle.setMicrocycles(oldMesocycle.getMicrocycles().stream()
                 .map(this::copyMicrocycle)
                 .collect(Collectors.toList()));
-        newMesocycle.setPlan(null);
         return newMesocycle;
     }
 

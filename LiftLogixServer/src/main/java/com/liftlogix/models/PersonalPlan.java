@@ -21,7 +21,7 @@ public class PersonalPlan {
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "plan_id")
+    @JoinColumn(name = "personal_plan_id")
     private List<Mesocycle> mesocycles;
 
     @ManyToOne(fetch = FetchType.LAZY)

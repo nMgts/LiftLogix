@@ -21,10 +21,6 @@ public class Mesocycle {
     private List<Microcycle> microcycles;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "plan_id")
-    private Plan plan;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "personal_plan_id")
     private PersonalPlan personalPlan;
 }
