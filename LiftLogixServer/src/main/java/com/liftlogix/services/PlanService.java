@@ -2,8 +2,8 @@ package com.liftlogix.services;
 
 import com.liftlogix.convert.BasicPlanDTOMapper;
 import com.liftlogix.convert.PlanDTOMapper;
-import com.liftlogix.dto.BasicPlanDTO;
-import com.liftlogix.dto.PlanDTO;
+import com.liftlogix.convert.WorkoutDTOMapper;
+import com.liftlogix.dto.*;
 import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.models.*;
 import com.liftlogix.repositories.PlanRepository;
@@ -57,7 +57,17 @@ public class PlanService {
             }
         }
 
-        return planDTOMapper.mapEntityToDTO(plan);
+        PlanDTO planDTO = planDTOMapper.mapEntityToDTO(plan);
+
+        for (MesocycleDTO mesocycle : planDTO.getMesocycles()) {
+            for (MicrocycleDTO microcycle : mesocycle.getMicrocycles()) {
+                for (WorkoutDTO workout : microcycle.getWorkouts()) {
+                    workout.getWorkoutExercises().sort(Comparator.comparingLong(WorkoutExerciseDTO::getId));
+                }
+            }
+        }
+
+        return planDTO;
     }
 
     public void deletePlan(Long planId, User user) {

@@ -12,7 +12,7 @@ public class WorkoutExercise {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "exercise_id", nullable = false)

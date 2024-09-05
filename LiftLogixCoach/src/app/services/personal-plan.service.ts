@@ -25,14 +25,9 @@ export class PersonalPlanService {
     return this.http.patch(`${this.deactivateUrl}/${planId}`, '', { headers: headers });
   }
 
-  createPlan(plan: Plan, clientId: number, date: string, token: string): Observable<any> {
+  createPlan(personalPlan: PersonalPlan, token: string): Observable<any> {
     const headers = this.createHeaders(token);
-    const formattedDate = formatDate(new Date(date), 'yyyy-MM-dd', 'en');
-    let params = new HttpParams()
-      .set('clientId', clientId.toString())
-      .set('startDate', formattedDate);
-
-    return this.http.post<PersonalPlan>(this.createUrl, plan, { params: params, headers: headers});
+    return this.http.post<PersonalPlan>(this.createUrl, personalPlan, { headers: headers});
   }
 
   private createHeaders(token: string) {

@@ -14,16 +14,4 @@ public interface PersonalPlanDTOMapper {
 
     @Mapping(source = "client", target = "client", qualifiedByName = "mapDTOToEntity")
     PersonalPlan mapDTOToEntity(PersonalPlanDTO planDTO);
-
-    default PersonalPlan mapDTOToEntityWithPlanAssociation(PersonalPlanDTO planDTO) {
-        PersonalPlan plan = mapDTOToEntity(planDTO);
-
-        if (plan.getMesocycles() != null) {
-            for (Mesocycle mesocycle : plan.getMesocycles()) {
-                mesocycle.setPersonalPlan(plan);
-            }
-        }
-
-        return plan;
-    }
 }

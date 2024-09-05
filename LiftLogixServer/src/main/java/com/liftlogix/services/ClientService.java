@@ -27,7 +27,13 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final CoachRepository coachRepository;
     private final ClientDTOMapper clientDTOMapper;
-    private final JWTUtils jwtUtils;
+
+    public ClientDTO findClientById(long id) {
+        Client client = clientRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Client not found")
+        );
+        return clientDTOMapper.mapEntityToDTO(client);
+    }
 
     public List<ClientDTO> findAllClients() {
         List<Client> clients = clientRepository.findAll();

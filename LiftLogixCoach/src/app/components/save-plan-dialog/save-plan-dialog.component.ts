@@ -6,6 +6,9 @@ import { PlanService } from "../../services/plan.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { PersonalPlanService } from "../../services/personal-plan.service";
 import { formatDate } from "@angular/common";
+import { ClientService } from "../../services/client.service";
+import { Client } from "../../interfaces/Client";
+import { PersonalPlan } from "../../interfaces/PersonalPlan";
 
 @Component({
   selector: 'app-save-plan-dialog',
@@ -15,11 +18,13 @@ import { formatDate } from "@angular/common";
 export class SavePlanDialogComponent {
   savePlanForm: FormGroup;
   today: string = formatDate(new Date(), 'yyyy.MM.dd', 'en');
+  client: Client | null = null;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<SavePlanDialogComponent>,
+    private clientService: ClientService,
     private planService: PlanService,
     private personalPlanService: PersonalPlanService,
     private snackBar: MatSnackBar,
@@ -29,6 +34,10 @@ export class SavePlanDialogComponent {
       isPublic: [false],
       startDate: [this.today, this.data.clientId ? [Validators.required, this.dateValidator] : []]
     });
+
+    if (data.clientId) {
+      this.getClient();
+    }
   }
 
   onCancel(): void {
@@ -50,14 +59,29 @@ export class SavePlanDialogComponent {
       const token = localStorage.getItem('token') || "";
 
       if (this.data.clientId) {
-        const startDate = formValues.startDate;
-        this.personalPlanService.createPlan(newPlan, this.data.clientId, startDate, token).subscribe(plan => {
-          this.dialogRef.close(true);
-          this.openSnackBar('Plan ' + formValues.planName + ' został przypisany do klienta');
-        }, error => {
+        const formattedDate = formatDate(formValues.startDate, 'yyyy-MM-dd', 'en');
+
+        if (this.client === null) {
+          this.openSnackBar('Nie udało się wczytać klienta')
           this.dialogRef.close(false);
-          this.openSnackBar('Przypisanie planu nie powiodło się');
-        })
+        } else {
+          const personalPlan: PersonalPlan = {
+            id: 0,
+            name: formValues.planName,
+            mesocycles: this.data.macrocycle.mesocycles || [],
+            client: this.client,
+            startDate: formattedDate,
+            active: true
+          }
+
+          this.personalPlanService.createPlan(personalPlan, token).subscribe(plan => {
+            this.dialogRef.close(true);
+            this.openSnackBar('Plan ' + formValues.planName + ' został przypisany do klienta');
+          }, error => {
+            this.dialogRef.close(false);
+            this.openSnackBar('Przypisanie planu nie powiodło się');
+          })
+        }
       } else {
         this.planService.createPlan(newPlan, token).subscribe(plan => {
           this.dialogRef.close(true);
@@ -68,6 +92,14 @@ export class SavePlanDialogComponent {
         });
       }
       }
+  }
+
+  getClient() {
+    const token = localStorage.getItem('token') || '';
+    this.clientService.getClient(this.data.clientId, token).subscribe( client => {
+      this.client = client;
+      }
+    )
   }
 
   dateValidator(control: AbstractControl) {

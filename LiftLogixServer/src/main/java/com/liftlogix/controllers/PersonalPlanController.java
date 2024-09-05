@@ -1,7 +1,6 @@
 package com.liftlogix.controllers;
 
 import com.liftlogix.dto.PersonalPlanDTO;
-import com.liftlogix.dto.PlanDTO;
 import com.liftlogix.services.PersonalPlanService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -9,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 @RestController
@@ -36,14 +34,10 @@ public class PersonalPlanController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createPersonalPlan(
-            @RequestBody PlanDTO planDTO,
-            @RequestParam Long clientId,
-            @RequestParam LocalDate startDate) {
+            @RequestBody PersonalPlanDTO plan) {
         try {
-            PersonalPlanDTO createdPlan = personalPlanService.createPersonalPlan(planDTO, clientId, startDate);
+            PersonalPlanDTO createdPlan = personalPlanService.createPersonalPlan(plan);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdPlan);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
