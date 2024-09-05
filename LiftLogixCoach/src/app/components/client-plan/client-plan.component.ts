@@ -42,6 +42,7 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
     this.personalPlanService.getActivePlan(clientId, token).subscribe({
       next: (plan) => {
         this.plan = plan;
+        this.notFound = false;
       },
       error: (error) => {
         if (error.status === 404) {
@@ -63,6 +64,9 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
 
   onCancel() {
     this.choice = '';
+    if (this.clientId) {
+      this.loadPlan(this.clientId);
+    }
   }
 
   onGoBack() {

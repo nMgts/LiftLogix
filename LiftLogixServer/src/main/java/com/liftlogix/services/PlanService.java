@@ -237,6 +237,7 @@ public class PlanService {
         newExercise.setTempo(oldExercise.getTempo());
         newExercise.setRpe(oldExercise.getRpe());
         newExercise.setBreakTime(oldExercise.getBreakTime());
+        newExercise.setDifficultyFactor(oldExercise.getDifficultyFactor());
 
         newExercise.setExercise(oldExercise.getExercise());
         newExercise.setWorkout(newWorkout);

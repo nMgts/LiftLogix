@@ -107,6 +107,10 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
     this.loadPlans();
   }
 
+  onSuccess() {
+    this.onGoBack();
+  }
+
   downloadPlan(id: number) {
     const token = localStorage.getItem('token') || '';
     this.planService.exportPlanToExcel(id, token).subscribe({

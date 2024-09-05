@@ -33,6 +33,7 @@ import {AdjustPersonalPlanDialogComponent} from "../adjust-personal-plan-dialog/
 })
 export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   @Output() goBack = new EventEmitter<void>();
+  @Output() success = new EventEmitter<void>();
   @Input() planId!: number;
   @Input() personalPlan = false;
   @Input() clientId: number | null = null;
@@ -135,7 +136,6 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   }
 
   savePersonalPlan() {
-    console.log(this.clientId);
     const dialogRef = this.dialog.open(SavePlanDialogComponent, {
       data: {
         macrocycle: this.macrocycle,
@@ -146,7 +146,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.onGoBack();
+        this.onPersonalPlanSaveSuccess();
       }
     });
   }
@@ -867,5 +867,17 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
       document.removeEventListener('touchstart', this.touchListener);
     }
     this.goBack.emit();
+  }
+
+  onPersonalPlanSaveSuccess() {
+    if (this.clickListener) {
+      document.removeEventListener('click', this.clickListener);
+    }
+    if (this.touchListener) {
+      document.removeEventListener('touchstart', this.touchListener);
+    }
+    if (this.success) {
+      this.success.emit();
+    }
   }
 }
