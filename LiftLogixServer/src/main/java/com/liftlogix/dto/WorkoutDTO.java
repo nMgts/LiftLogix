@@ -14,5 +14,5 @@ public class WorkoutDTO {
     private List<WorkoutExerciseDTO> workoutExercises;
     private List<Integer> days;
     private boolean isIndividual;
-    private List<LocalDateTime> date;
+    private List<LocalDateTime> dates;
 }
