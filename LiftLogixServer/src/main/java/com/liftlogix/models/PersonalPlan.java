@@ -31,6 +31,8 @@ public class PersonalPlan {
     @Column(nullable = false)
     private LocalDate startDate;
 
+    private LocalDate endDate;
+
     @Column(nullable = false)
     private boolean isActive;
 }

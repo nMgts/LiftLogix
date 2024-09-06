@@ -64,7 +64,8 @@ public class SecurityConfig {
                                 "/api/plans/public", "/api/plans/my", "/api/plans/save", "/api/plans/details/{id}", "/api/plans/delete/{id}",
                                 "/api/plans/add-to-my-plans/{id}", "/api/plans/edit", "/api/plans/rename/{id}", "/api/plans/visibility/{id}",
                                 "/api/plans/export/{id}", "/api/plans/copy/{id}",
-                                "/api/personal-plan/is-active/{client_id}", "/api/personal-plan/deactivate/{plan_id}", "/api/personal-plan/create")
+                                "/api/personal-plan/is-active/{client_id}", "/api/personal-plan/deactivate/{plan_id}", "/api/personal-plan/create",
+                                "/api/personal-plan/all/{client_id}", "/api/personal-plan/delete/{id}", "/api/personal-plan/details/{id}")
                         .hasAnyAuthority("ADMIN", "COACH")
 
                         // Admin and client endpoints

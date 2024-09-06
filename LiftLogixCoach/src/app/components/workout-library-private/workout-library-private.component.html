@@ -14,7 +14,7 @@
 
         <mat-card-title class="plan-name">
           <ng-container *ngIf="plan.id !== editingPlan">
-            <div class="name">
+            <div class="name" [attr.title]="plan.name">
               {{ truncateText(plan.name) }}
             </div>
             <button mat-icon-button (click)="startEdit(plan, $event)" *ngIf="!personalPlan">

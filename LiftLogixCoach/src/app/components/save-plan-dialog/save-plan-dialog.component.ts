@@ -71,6 +71,7 @@ export class SavePlanDialogComponent {
             mesocycles: this.data.macrocycle.mesocycles || [],
             client: this.client,
             startDate: formattedDate,
+            length: 0,
             active: true
           }
 

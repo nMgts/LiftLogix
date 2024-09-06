@@ -11,7 +11,7 @@
   <div class="plan-list">
     <ng-container *ngFor="let plan of displayedPlans">
       <mat-card class="plan-card">
-        <mat-card-title class="plan-name">{{ plan.name }}</mat-card-title>
+        <mat-card-title class="plan-name" [attr.title]="plan.name">{{ plan.name }}</mat-card-title>
         <mat-card-subtitle class="plan-details">
           <span class="plan-author">{{ plan.author }}</span>
           <span class="plan-duration">{{ getPlanDuration(plan.length) }}</span>

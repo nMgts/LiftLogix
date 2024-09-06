@@ -1,9 +1,10 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {Subscription} from "rxjs";
-import {PersonalPlan} from "../../interfaces/PersonalPlan";
-import {ClientService} from "../../services/client.service";
-import {PersonalPlanService} from "../../services/personal-plan.service";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Subscription } from "rxjs";
+import { PersonalPlan } from "../../interfaces/PersonalPlan";
+import { ClientService } from "../../services/client.service";
+import { PersonalPlanService } from "../../services/personal-plan.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { BasicPersonalPlan } from "../../interfaces/BasicPersonalPlan";
 
 @Component({
   selector: 'app-client-plan',
@@ -17,8 +18,11 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
   private clientIdSubscription!: Subscription;
 
   plan: PersonalPlan | null = null;
+  plans: BasicPersonalPlan[] = [];
   notFound: boolean = false;
   choice: string = '';
+
+  selectedOldPlanId: number = 0;
 
   constructor(
     private clientService: ClientService,
@@ -31,6 +35,7 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
       this.clientId = clientId;
       if (this.clientId !== null) {
         this.loadPlan(this.clientId);
+        this.loadClientPlans(this.clientId);
       }
     });
   }
@@ -56,6 +61,30 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
     })
   }
 
+  loadClientPlans(clientId: number) {
+    const token = localStorage.getItem('token') || '';
+    this.personalPlanService.getClientPlans(clientId, token).subscribe({
+      next: (plans) => {
+        this.plans = plans.filter(plan => !plan.active);
+      },
+      error: () => {
+        this.openSnackBar('Nie udało się załadować nieaktywnych planów');
+      }
+    })
+  }
+
+  deletePlan(planId: number) {
+    const token = localStorage.getItem('token') || '';
+    this.personalPlanService.deletePlan(planId, token).subscribe(
+      () => {
+        this.plans = this.plans.filter(plan => plan.id !== planId);
+      },
+      () => {
+        this.openSnackBar('Nie udało się usunąć planu');
+      }
+    )
+  }
+
   createNewPlan() {
     this.choice = 'create';
   }
@@ -71,6 +100,11 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
   editPersonalPlan() {
   }
 
+  viewOldPlan(planId: number) {
+    this.choice = 'viewOld'
+    this.selectedOldPlanId = planId;
+  }
+
   deactivatePersonalPlan() {
     const token = localStorage.getItem('token') || '';
     const id = this.plan?.id;
@@ -80,6 +114,9 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
         () => {
           this.plan = null;
           this.notFound = true;
+          if (this.clientId) {
+            this.loadClientPlans(this.clientId);
+          }
         },
         () => {
           this.openSnackBar('Nie udało się zakończyć planu');
@@ -90,9 +127,31 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
 
   onCancel() {
     this.choice = '';
+    this.selectedOldPlanId = 0;
     if (this.clientId) {
       this.loadPlan(this.clientId);
     }
+  }
+
+  getPlanDuration(length: number): string {
+    const weeks = Math.floor(length / 7);
+    const days = length % 7;
+
+    if (weeks === 0 && days < 7) {
+      return '<1 tydz.';
+    } else if (weeks === 1 && days === 0) {
+      return `${weeks} tydz.`;
+    } else if (weeks === 1 && days > 0 && days < 4) {
+      return `~${weeks} tydz.`;
+    } else if (weeks === 1 && days > 3) {
+      return `~${weeks + 1} tyg.`
+    } else if (weeks > 1 && days == 0) {
+      return `${weeks} tyg.`;
+    } else if (weeks > 1 && days > 0 && days < 4){
+      return `~${weeks} tyg.`;
+    } else if (weeks > 1 && days > 3) {
+      return `~${weeks + 1} tyg.`;
+    } else return '';
   }
 
   onGoBack() {

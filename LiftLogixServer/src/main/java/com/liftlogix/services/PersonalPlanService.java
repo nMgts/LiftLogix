@@ -1,10 +1,8 @@
 package com.liftlogix.services;
 
+import com.liftlogix.convert.BasicPersonalPlanDTOMapper;
 import com.liftlogix.convert.PersonalPlanDTOMapper;
-import com.liftlogix.dto.MesocycleDTO;
-import com.liftlogix.dto.MicrocycleDTO;
-import com.liftlogix.dto.PersonalPlanDTO;
-import com.liftlogix.dto.WorkoutDTO;
+import com.liftlogix.dto.*;
 import com.liftlogix.models.PersonalPlan;
 import com.liftlogix.repositories.PersonalPlanRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,14 +13,43 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class PersonalPlanService {
     private final PersonalPlanRepository personalPlanRepository;
     private final PersonalPlanDTOMapper personalPlanDTOMapper;
+    private final BasicPersonalPlanDTOMapper basicPersonalPlanDTOMapper;
+
+    public List<BasicPersonalPlanDTO> getAllClientPlans(Long clientId) {
+        List<PersonalPlan> personalPlans = personalPlanRepository.findByClientId(clientId);
+
+        return personalPlans.stream()
+                .map(basicPersonalPlanDTOMapper::mapEntityToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public PersonalPlanDTO getPlanDetails(Long id) {
+        PersonalPlan plan = personalPlanRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Personal plan not found")
+        );
+
+        PersonalPlanDTO planDTO = personalPlanDTOMapper.mapEntityToDTO(plan);
+
+        for (MesocycleDTO mesocycle : planDTO.getMesocycles()) {
+            for (MicrocycleDTO microcycle : mesocycle.getMicrocycles()) {
+                for (WorkoutDTO workout : microcycle.getWorkouts()) {
+                    workout.getWorkoutExercises().sort(Comparator.comparingLong(WorkoutExerciseDTO::getId));
+                }
+            }
+        }
+
+        return planDTO;
+    }
 
     public Optional<PersonalPlanDTO> getActivePlanByClientId(Long clientId) {
         return personalPlanRepository.findByClientIdAndIsActiveTrue(clientId)
@@ -34,6 +61,7 @@ public class PersonalPlanService {
                 () -> new EntityNotFoundException("Plan not found")
         );
         plan.setActive(false);
+        plan.setEndDate(LocalDate.now());
         personalPlanRepository.save(plan);
     }
 
@@ -70,6 +98,14 @@ public class PersonalPlanService {
         PersonalPlan savedPlan = personalPlanRepository.save(plan);
 
         return personalPlanDTOMapper.mapEntityToDTO(savedPlan);
+    }
+
+    public void deletePlan(Long id) {
+        PersonalPlan plan = personalPlanRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Personal plan not found")
+        );
+
+        personalPlanRepository.deleteById(id);
     }
 
     private void setWorkoutDatesForPlan(PersonalPlanDTO personalPlanDTO) {

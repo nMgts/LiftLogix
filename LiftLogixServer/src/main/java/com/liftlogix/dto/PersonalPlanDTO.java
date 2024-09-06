@@ -14,5 +14,7 @@ public class PersonalPlanDTO {
     private List<MesocycleDTO> mesocycles;
     private ClientDTO client;
     private LocalDate startDate;
+    private LocalDate endDate;
+    private int length;
     private boolean isActive;
 }

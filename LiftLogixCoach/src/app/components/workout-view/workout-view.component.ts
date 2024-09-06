@@ -12,6 +12,7 @@ import { WorkoutExerciseDetailsDialogComponent } from "../workout-exercise-detai
 import { ExerciseService} from "../../services/exercise.service";
 import { Exercise } from "../../interfaces/Exercise";
 import { PersonalPlan } from "../../interfaces/PersonalPlan";
+import { PersonalPlanService } from "../../services/personal-plan.service";
 
 @Component({
   selector: 'app-workout-view',
@@ -22,6 +23,7 @@ export class WorkoutViewComponent implements OnInit {
   @Output() goBack = new EventEmitter<void>();
   @Input() planId!: number;
   @Input() personalPlan!: PersonalPlan;
+  @Input() oldPlanId!: number;
   @Input() isPersonalPlan: boolean = false;
   @Input() isFullScreen: boolean = false;
   plan!: Plan;
@@ -39,6 +41,7 @@ export class WorkoutViewComponent implements OnInit {
 
   constructor(
     private planService: PlanService,
+    private personalPlanService: PersonalPlanService,
     private exerciseService: ExerciseService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog
@@ -50,6 +53,9 @@ export class WorkoutViewComponent implements OnInit {
     }
     if (this.personalPlan) {
       this.loadPersonalPlan()
+    }
+    if (this.oldPlanId) {
+      this.loadOldPlan();
     }
   }
 
@@ -70,6 +76,19 @@ export class WorkoutViewComponent implements OnInit {
   loadPersonalPlan() {
     this.mesocycles = this.personalPlan.mesocycles;
     this.selectMesocycle(0);
+  }
+
+  loadOldPlan() {
+    const token = localStorage.getItem('token') || '';
+    this.personalPlanService.getPlanDetails(this.oldPlanId, token).subscribe(
+      plan => {
+      this.mesocycles = plan.mesocycles;
+      this.selectMesocycle(0);
+      },
+      error => {
+        this.openSnackBar('Nie udało się załadować planu');
+      }
+    )
   }
 
   selectWorkout(workoutName: string) {

@@ -3,11 +3,13 @@
 <div class="component-container" *ngIf="choice===''">
   <div *ngIf="plan; else loading">
     <mat-card *ngIf="!notFound">
-      <mat-card-header>
-        <mat-card-title>Plan treningowy</mat-card-title>
+      <mat-card-header class="plan-header">
+        <mat-card-title class="plan-name" [attr.title]="plan.name">{{ plan.name }}</mat-card-title>
       </mat-card-header>
-      <mat-card-content>
-        <p>{{ plan.name }}</p>
+
+      <mat-card-content class="plan-content">
+        <p>Data rozpoczęcia: {{ plan.startDate | date:'dd.MM.yyyy' }}</p>
+        <p>Długość: {{ getPlanDuration(plan.length) }}</p>
       </mat-card-content>
     </mat-card>
 
@@ -50,6 +52,35 @@
       </button>
     </div>
   </ng-container>
+
+  <div class="plan-list-container" *ngIf="plans.length > 0 && choice === ''">
+    <h1 class="title">Zakończone plany</h1>
+
+    <div class="plan-list">
+      <ng-container *ngFor="let plan of plans">
+        <mat-card class="plan-card">
+          <mat-card-title class="plan-name">
+            <div class="name" [attr.title]="plan.name">{{ plan.name }}</div>
+            <button mat-icon-button class="delete-button" (click)="deletePlan(plan.id)">
+              <mat-icon class="delete-icon">delete</mat-icon>
+            </button>
+          </mat-card-title>
+
+          <mat-card-content>
+            <p>Data rozpoczęcia: {{ plan.startDate | date:'dd.MM.yyyy' }}</p>
+            <p>Data zakończenia: {{ plan.endDate | date:'dd.MM.yyyy' }}</p>
+          </mat-card-content>
+
+          <div class="plan-actions">
+            <button mat-raised-button color="primary" (click)="viewOldPlan(plan.id)">
+              <mat-icon class="preview-icon">visibility</mat-icon>
+              Podgląd
+            </button>
+          </div>
+        </mat-card>
+      </ng-container>
+    </div>
+  </div>
 </div>
 
 <div *ngIf="choice === 'create'">
@@ -61,4 +92,8 @@
 
 <div *ngIf="choice === 'view' && plan">
   <app-workout-view [personalPlan]="plan" [isPersonalPlan]="true" [isFullScreen]="isFullScreen" (goBack)="onCancel()"></app-workout-view>
+</div>
+
+<div *ngIf="choice === 'viewOld' && selectedOldPlanId">
+  <app-workout-view [oldPlanId]="selectedOldPlanId" [isPersonalPlan]="true" [isFullScreen]="isFullScreen" (goBack)="onCancel()"></app-workout-view>
 </div>

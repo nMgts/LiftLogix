@@ -7,5 +7,6 @@ export interface PersonalPlan {
   mesocycles: Mesocycle[];
   client: Client;
   startDate: string;
+  length: number;
   active: boolean;
 }

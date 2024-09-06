@@ -1,6 +1,6 @@
 package com.liftlogix.convert;
 
-import com.liftlogix.dto.PersonalPlanDTO;
+import com.liftlogix.dto.BasicPersonalPlanDTO;
 import com.liftlogix.models.Mesocycle;
 import com.liftlogix.models.Microcycle;
 import com.liftlogix.models.PersonalPlan;
@@ -10,15 +10,11 @@ import org.mapstruct.Named;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {ClientDTOMapper.class, MesocycleDTOMapper.class})
-public interface PersonalPlanDTOMapper {
+@Mapper(componentModel = "spring")
+public interface BasicPersonalPlanDTOMapper {
 
-    @Mapping(source = "client", target = "client", qualifiedByName = "mapEntityToDTO")
     @Mapping(source = "mesocycles", target = "length", qualifiedByName = "mapMesocyclesToLength")
-    PersonalPlanDTO mapEntityToDTO(PersonalPlan plan);
-
-    @Mapping(source = "client", target = "client", qualifiedByName = "mapDTOToEntity")
-    PersonalPlan mapDTOToEntity(PersonalPlanDTO planDTO);
+    BasicPersonalPlanDTO mapEntityToDTO(PersonalPlan plan);
 
     @Named("mapMesocyclesToLength")
     default int mapMesocyclesToLength(List<Mesocycle> mesocycles) {
