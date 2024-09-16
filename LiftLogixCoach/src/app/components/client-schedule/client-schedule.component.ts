@@ -14,7 +14,10 @@ import { Day } from "../../interfaces/Day";
 export class ClientScheduleComponent implements OnInit {
   @Output() goBack = new EventEmitter<void>();
   @Input() clientId: number | null = null;
+  @Input() isFullScreen: boolean = false;
   private clientIdSubscription!: Subscription;
+
+  protected readonly window = window;
 
   nav = 0;
   clicked = null;

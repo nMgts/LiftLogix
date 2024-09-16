@@ -12,6 +12,16 @@ button {
   padding: 5px;
   border-radius: 5px;
   color: white;
+
+  @media (max-width: 509px) {
+    font-size: 11px;
+    width: 60px;
+  }
+
+  @media (max-width: 415px) {
+    font-size: 8px;
+    width: 48px;
+  }
 }
 
 #header {
@@ -21,9 +31,14 @@ button {
   font-family: sans-serif;
   display: flex;
   justify-content: space-between;
+
+  @media (max-width: 509px) {
+    font-size: 18px;
+  }
 }
 
 #header button {
+  justify-content: right;
   background-color: darkviolet;
   font-weight: bold;
 }
@@ -38,6 +53,34 @@ button {
 
 #schedule-container {
   width: 770px;
+
+  @media (max-width: 855px) {
+    width: 630px;
+  }
+
+  @media (max-width: 700px) {
+    width: 560px;
+  }
+
+  @media (max-width: 624px) {
+    width: 448px;
+  }
+
+  @media (max-width: 509px) {
+    width: 350px;
+  }
+
+  @media (max-width: 415px) {
+    width: 280px;
+  }
+
+  @media (max-width: 340px) {
+    width: 252px;
+  }
+}
+
+#schedule-container.half-screen {
+  width: 448px;
 }
 
 #weekdays {
@@ -50,6 +93,63 @@ button {
 #weekdays div {
   width: 100px;
   padding: 10px;
+  font-size: 14px;
+}
+
+.weekday-full {
+  display: block;
+}
+
+.weekday-short {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  #weekdays div {
+    font-size: 12px;
+  }
+
+  #weekdays {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  #weekdays div {
+    flex: 1 0 14%;
+    box-sizing: border-box;
+  }
+}
+
+
+@media (max-width: 626px) {
+  .weekday-full {
+    display: none;
+  }
+
+  .weekday-short {
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  #weekdays div {
+    font-size: 10px;
+    padding: 5px;
+  }
+}
+
+.half-screen {
+  #weekdays div {
+    font-size: 12px;
+  }
+
+  .weekday-full {
+    display: none;
+  }
+
+  .weekday-short {
+    display: block;
+  }
 }
 
 #calendar {
@@ -57,10 +157,7 @@ button {
   margin: auto;
   display: flex;
   flex-wrap: wrap;
-}
-
-.day-number {
-  padding: 10px 0 0 10px;
+  padding-top: 10px;
 }
 
 .day {
@@ -73,6 +170,46 @@ button {
   box-shadow: 0 0 3px #CBD4C2;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 855px) {
+    width: 80px;
+    height: 80px;
+  }
+
+  @media (max-width: 700px) {
+    width: 70px;
+    height: 70px;
+  }
+
+  @media (max-width: 624px) {
+    width: 60px;
+    height: 60px;
+    margin: 2px;
+  }
+
+  @media (max-width: 509px) {
+    width: 50px;
+    height: 50px;
+    margin: 0;
+  }
+
+  @media (max-width: 415px) {
+    width: 40px;
+    height: 40px;
+  }
+
+  @media (max-width: 340px) {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+#calendar.half-screen {
+  .day {
+    width: 60px;
+    height: 60px;
+    margin: 2px;
+  }
 }
 
 .day:hover {
@@ -80,7 +217,32 @@ button {
 }
 
 .day + #currentDay {
-  background-color:#e8f4fa;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.day-number {
+  padding: 10px 0 0 10px;
+
+  @media (max-width: 728px) {
+    font-size: 12px;
+  }
+
+  @media (max-width: 599px) {
+    font-size: 10px;
+    padding: 5px 0 0 5px;
+  }
+
+  @media (max-width: 438px) {
+    font-size: 9px;
+    padding: 3px 0 0 3px;
+  }
+}
+
+#calendar.half-screen {
+  .day-number {
+    font-size: 10px;
+    padding: 5px 0 0 5px;
+  }
 }
 
 .events {
@@ -107,6 +269,36 @@ button {
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+  @media (max-width: 728px) {
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    font-size: 13px;
+  }
+
+  @media (max-width: 599px) {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 12px;
+  }
+
+  @media (max-width: 438px) {
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    font-size: 10px;
+  }
+}
+
+#calendar.half-screen {
+  .event {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 12px;
+  }
 }
 
 .individual-workout {
@@ -115,22 +307,6 @@ button {
 
 .non-individual-workout {
   background-color: #28A745;
-}
-
-.more-events {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  background-color: rgba(32, 32, 32, 0.5);
-  color: white;
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
-  text-align: center;
-  font-size: 14px;
-  font-weight: bold;
-  border-radius: 50%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .padding {
@@ -161,11 +337,34 @@ button {
   height: 20px;
   border-radius: 50%;
   margin-right: 10px;
+
+  @media (max-width: 509px) {
+    width: 15px;
+    height: 15px;
+  }
+
+  @media (max-width: 415px) {
+    width: 12px;
+    height: 12px;
+    margin-right: 5px;
+  }
 }
 
 .legend-text {
   font-size: 14px;
   color: aliceblue;
+
+  @media (max-width: 509px) {
+    font-size: 12px;
+  }
+
+  @media (max-width: 415px) {
+    font-size: 10px;
+  }
+
+  @media (max-width: 340px) {
+    font-size: 8px;
+  }
 }
 
 .individual-workout {

@@ -62,7 +62,7 @@
     <ng-container [ngSwitch]="selectedComponent">
       <app-client-plan *ngSwitchCase="'plan'" (goBack)="goBack()" [isFullScreen]="isFullScreen"></app-client-plan>
       <app-client-results *ngSwitchCase="'results'" [clientId]="selectedClientId" (goBack)="goBack()"></app-client-results>
-      <app-client-schedule *ngSwitchCase="'schedule'" (goBack)="goBack()"></app-client-schedule>
+      <app-client-schedule *ngSwitchCase="'schedule'" (goBack)="goBack()" [isFullScreen]="isFullScreen"></app-client-schedule>
       <app-client-diet *ngSwitchCase="'diet'" (goBack)="goBack()"></app-client-diet>
     </ng-container>
   </div>
