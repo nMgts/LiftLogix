@@ -1,0 +1,177 @@
+.component-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+button {
+  width: 75px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
+}
+
+#header {
+  padding: 10px;
+  color: darkviolet;
+  font-size: 26px;
+  font-family: sans-serif;
+  display: flex;
+  justify-content: space-between;
+}
+
+#header button {
+  background-color: darkviolet;
+  font-weight: bold;
+}
+
+#header button:hover {
+  background-color: rgb(120, 0, 155);
+}
+
+#header button:first-child {
+  margin-right: 10px;
+}
+
+#schedule-container {
+  width: 770px;
+}
+
+#weekdays {
+  width: 100%;
+  display: flex;
+  color: aliceblue;
+  text-align: center;
+}
+
+#weekdays div {
+  width: 100px;
+  padding: 10px;
+}
+
+#calendar {
+  width: 100%;
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.day-number {
+  padding: 10px 0 0 10px;
+}
+
+.day {
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+  box-sizing: border-box;
+  background-color: rgba(32, 32, 32, 0.5);
+  margin: 5px;
+  box-shadow: 0 0 3px #CBD4C2;
+  display: flex;
+  flex-direction: column;
+}
+
+.day:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.day + #currentDay {
+  background-color:#e8f4fa;
+}
+
+.events {
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.event {
+  color: white;
+  border-radius: 50%;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.individual-workout {
+  background-color: #6A0DAD;
+}
+
+.non-individual-workout {
+  background-color: #28A745;
+}
+
+.more-events {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(32, 32, 32, 0.5);
+  color: white;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 50%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.padding {
+  cursor: default !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.padding:hover {
+  background-color: transparent !important;
+}
+
+#legend {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  padding: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.legend-text {
+  font-size: 14px;
+  color: aliceblue;
+}
+
+.individual-workout {
+  background-color: #6A0DAD;
+}
+
+.non-individual-workout {
+  background-color: #28A745;
+}

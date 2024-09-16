@@ -37,7 +37,6 @@ import { MatSelectModule} from "@angular/material/select";
 import { MatInputModule} from "@angular/material/input";
 import { YoutubeEmbedPipe } from './pipes/youtube-embed.pipe';
 import { ClientDietComponent } from './components/client-diet/client-diet.component';
-import { ClientHoursComponent } from './components/client-hours/client-hours.component';
 import { ClientPlanComponent } from './components/client-plan/client-plan.component';
 import { ClientResultsComponent } from './components/client-results/client-results.component';
 import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
@@ -54,7 +53,7 @@ import { WorkoutMenuComponent } from './components/workout-menu/workout-menu.com
 import { WorkoutLibraryPrivateComponent } from './components/workout-library-private/workout-library-private.component';
 import { WorkoutLibraryPublicComponent } from './components/workout-library-public/workout-library-public.component';
 import { SavePlanDialogComponent } from './components/save-plan-dialog/save-plan-dialog.component'
-import {MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatLine} from "@angular/material/core";
+import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatLine } from "@angular/material/core";
 import { NgxPaginationModule } from 'ngx-pagination';
 import { MatGridList, MatGridTile } from "@angular/material/grid-list";
 import { BackArrowComponent } from './components/back-arrow/back-arrow.component';
@@ -65,6 +64,7 @@ import { AdjustPersonalPlanDialogComponent } from './components/adjust-personal-
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MY_DATE_FORMATS } from "./providers/MY_DATE_FORMATS";
+import { ClientScheduleComponent } from './components/client-schedule/client-schedule.component';
 
 @NgModule({
   declarations: [
@@ -89,7 +89,6 @@ import { MY_DATE_FORMATS } from "./providers/MY_DATE_FORMATS";
     AddExerciseDialogComponent,
     YoutubeEmbedPipe,
     ClientDietComponent,
-    ClientHoursComponent,
     ClientPlanComponent,
     ClientResultsComponent,
     ScheduleComponent,
@@ -105,7 +104,8 @@ import { MY_DATE_FORMATS } from "./providers/MY_DATE_FORMATS";
     BackArrowComponent,
     WorkoutViewComponent,
     WorkoutExerciseDetailsDialogComponent,
-    AdjustPersonalPlanDialogComponent
+    AdjustPersonalPlanDialogComponent,
+    ClientScheduleComponent
   ],
   imports: [
     BrowserModule,

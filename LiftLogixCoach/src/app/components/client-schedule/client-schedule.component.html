@@ -1,0 +1,56 @@
+<app-back-arrow (goBack)="onGoBack()"></app-back-arrow>
+
+<div class="component-container">
+
+  <div id="schedule-container">
+
+    <div id="header">
+      <div id="monthDisplay">{{ displayedMonth }}</div>
+
+      <div>
+        <button id="backButton" (click)="onPreviousMonth()">Poprzedni</button>
+        <button id="nextButton" (click)="onNextMonth()">Następny</button>
+      </div>
+    </div>
+
+    <div id="weekdays">
+      <div>Poniedziałek</div>
+      <div>Wtorek</div>
+      <div>Środa</div>
+      <div>Czwartek</div>
+      <div>Piątek</div>
+      <div>Sobota</div>
+      <div>Niedziela</div>
+    </div>
+
+    <div id="calendar">
+      <div *ngFor="let i of [].constructor(paddingDays)" class="day padding"></div>
+
+      <div *ngFor="let day of days" class="day">
+        <div class="day-number">{{ day.day }}</div>
+
+        <div class="events">
+          <div class="event" *ngFor="let event of day.events" [ngClass]="getEventClass(event)">
+            {{ getWorkoutInitials(event.name) }}
+          </div>
+
+          <div class="more-events" *ngIf="day.events.length > 6">...</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="legend">
+      <div class="legend-item">
+        <div class="legend-color individual-workout"></div>
+        <div class="legend-text">Trening indywidualny</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color non-individual-workout"></div>
+        <div class="legend-text">Trening z trenerem</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

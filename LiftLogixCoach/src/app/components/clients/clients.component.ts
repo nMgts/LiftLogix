@@ -114,8 +114,8 @@ export class ClientsComponent implements OnChanges {
         return 'Wyniki';
       case 'plan':
         return 'Plan';
-      case 'hours':
-        return 'Godziny';
+      case 'schedule':
+        return 'Harmonogram';
       case 'diet':
         return 'Dieta';
       default:

@@ -25,7 +25,7 @@
         <div class="client-actions">
           <button (click)="showComponent('plan', client.id, $event)">Plan</button>
           <button (click)="showComponent('results', client.id, $event)">Wyniki</button>
-          <button (click)="showComponent('hours', client.id, $event)">Godziny</button>
+          <button (click)="showComponent('schedule', client.id, $event)">Harmonogram</button>
           <button (click)="showComponent('diet', client.id, $event)">Dieta</button>
         </div>
         <div class="client-icons">
@@ -37,7 +37,7 @@
         <div class="dropdown" *ngIf="dropdownOpenClientId && dropdownOpenClientId === client.id && window.innerWidth < 1200">
           <button (click)="showComponent('plan', client.id, $event)">Plan</button>
           <button (click)="showComponent('results', client.id, $event)">Wyniki</button>
-          <button (click)="showComponent('hours', client.id, $event)">Godziny</button>
+          <button (click)="showComponent('schedule', client.id, $event)">Harmonogram</button>
           <button (click)="showComponent('diet', client.id, $event)">Diety</button>
           <button class="optional">Napisz</button>
           <button class="optional">Usuń</button>
@@ -62,7 +62,7 @@
     <ng-container [ngSwitch]="selectedComponent">
       <app-client-plan *ngSwitchCase="'plan'" (goBack)="goBack()" [isFullScreen]="isFullScreen"></app-client-plan>
       <app-client-results *ngSwitchCase="'results'" [clientId]="selectedClientId" (goBack)="goBack()"></app-client-results>
-      <app-client-hours *ngSwitchCase="'hours'" (goBack)="goBack()"></app-client-hours>
+      <app-client-schedule *ngSwitchCase="'schedule'" (goBack)="goBack()"></app-client-schedule>
       <app-client-diet *ngSwitchCase="'diet'" (goBack)="goBack()"></app-client-diet>
     </ng-container>
   </div>
