@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 public class WorkoutController {
     private final WorkoutService workoutService;
 
+    /*
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getWorkout(@PathVariable Long id) {
         try {
@@ -27,6 +28,7 @@ public class WorkoutController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
+    */
 
     @PatchMapping("/toggle-individual/{id}")
     public ResponseEntity<String> toggleIndividual(

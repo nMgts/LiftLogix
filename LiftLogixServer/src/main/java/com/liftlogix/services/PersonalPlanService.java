@@ -94,6 +94,13 @@ public class PersonalPlanService {
         personalPlanRepository.deleteById(id);
     }
 
+    public PersonalPlanDTO getPersonalPlanByWorkoutId(Long workoutId) {
+        PersonalPlan personalPlan = personalPlanRepository.findByWorkoutId(workoutId).orElseThrow(
+                () -> new EntityNotFoundException("Personal plan not found for the given workout ID")
+        );
+        return personalPlanDTOMapper.mapEntityToDTO(personalPlan);
+    }
+
     private void setWorkoutDatesForPlan(PersonalPlanDTO personalPlanDTO) {
         LocalDate currentDate = personalPlanDTO.getStartDate();
         int dayCount = 0;

@@ -4,6 +4,8 @@ import { PersonalPlanService } from "../../services/personal-plan.service";
 import { Workout } from "../../interfaces/Workout";
 import { Day } from "../../interfaces/Day";
 import { Subscription } from "rxjs";
+import { PersonalPlan } from "../../interfaces/PersonalPlan";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-client-schedule',
@@ -43,9 +45,13 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
 
   workouts: Workout[] = [];
 
+  selectedPlan: PersonalPlan | null = null;
+  selectedWorkoutId: number = 0;
+
   constructor(
     private clientService: ClientService,
-    private personalPlanService: PersonalPlanService
+    private personalPlanService: PersonalPlanService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -183,10 +189,36 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
     this.clickedDay = null;
   }
 
+  viewWorkout(workoutId: number) {
+    this.selectedWorkoutId = workoutId;
+
+    const token = localStorage.getItem('token') || '';
+    this.personalPlanService.getPersonalPlanByWorkout(workoutId, token).subscribe(
+      (plan) => {
+        this.selectedPlan = plan;
+      },
+      () => {
+        this.openSnackBar('Nie udało się wczytać planu');
+      }
+    )
+  }
+
+  closeWorkoutView() {
+    this.selectedWorkoutId = 0;
+    this.selectedPlan = null;
+  }
+
   onUpdate() {
     if (this.clientId) {
       this.loadWorkouts(this.clientId);
     }
+  }
+
+  private openSnackBar(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      verticalPosition: 'top'
+    });
   }
 
   onGoBack() {

@@ -16,6 +16,7 @@ export class PersonalPlanService {
   private deactivateUrl = 'http://localhost:8080/api/personal-plan/deactivate';
   private createUrl = 'http://localhost:8080/api/personal-plan/create';
   private deleteUrl = 'http://localhost:8080/api/personal-plan/delete'
+  private getByWorkoutUrl = 'http://localhost:8080/api/personal-plan/workout';
 
   constructor(private http: HttpClient) {}
 
@@ -47,6 +48,11 @@ export class PersonalPlanService {
   deletePlan(planId: number, token: string): Observable<any> {
     const headers = this.createHeaders(token);
     return this.http.delete(`${this.deleteUrl}/${planId}`, { headers: headers });
+  }
+
+  getPersonalPlanByWorkout(workoutId: number, token: string): Observable<PersonalPlan> {
+    const headers = this.createHeaders(token);
+    return this.http.get<PersonalPlan>(`${this.getByWorkoutUrl}/${workoutId}`, { headers: headers });
   }
 
   private createHeaders(token: string) {

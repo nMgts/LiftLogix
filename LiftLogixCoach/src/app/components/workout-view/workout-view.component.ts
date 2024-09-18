@@ -26,6 +26,7 @@ export class WorkoutViewComponent implements OnInit {
   @Input() oldPlanId!: number;
   @Input() isPersonalPlan: boolean = false;
   @Input() isFullScreen: boolean = false;
+  @Input() workoutId: number = 0;
   plan!: Plan;
 
   mesocycles: Mesocycle[] = [];
@@ -56,6 +57,9 @@ export class WorkoutViewComponent implements OnInit {
     }
     if (this.oldPlanId) {
       this.loadOldPlan();
+    }
+    if (this.workoutId !== 0) {
+      this.findCyclesByWorkoutId(this.workoutId);
     }
   }
 
@@ -89,6 +93,25 @@ export class WorkoutViewComponent implements OnInit {
         this.openSnackBar('Nie udało się załadować planu');
       }
     )
+  }
+
+  findCyclesByWorkoutId(workoutId: number) {
+    for (let mesocycle of this.mesocycles) {
+      for (let microcycle of mesocycle.microcycles) {
+        const workout = microcycle.workouts.find(w => w.id === workoutId);
+        if (workout) {
+          this.selectedMesocycle = mesocycle;
+          this.microcycles = mesocycle.microcycles;
+          this.selectedMicrocycle = microcycle;
+          this.workouts = microcycle.workouts;
+          this.selectedWorkout = workout;
+          this.workoutExercises = this.selectedWorkout.workoutExercises;
+          this.generateMicrocycleTable();
+          return;
+        }
+      }
+    }
+    this.openSnackBar('Nie udało się zaznaczyć wybranego treningu');
   }
 
   selectWorkout(workoutName: string) {

@@ -17,6 +17,7 @@ public class WorkoutService {
     private final WorkoutRepository workoutRepository;
     private final WorkoutDTOMapper workoutDTOMapper;
 
+    /*
     public WorkoutDTO getWorkout(Long id) {
         Workout workout = workoutRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Workout not found")
@@ -24,6 +25,7 @@ public class WorkoutService {
 
         return workoutDTOMapper.mapEntityToDTO(workout);
     }
+    */
 
     public void toggleIndividual(Long id, LocalDateTime date) {
         Workout workout = workoutRepository.findById(id).orElseThrow(

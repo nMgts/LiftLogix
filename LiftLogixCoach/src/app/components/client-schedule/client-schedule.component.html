@@ -1,6 +1,6 @@
-<app-back-arrow (goBack)="onGoBack()"></app-back-arrow>
+<app-back-arrow *ngIf="selectedWorkoutId == 0 && !selectedPlan" (goBack)="onGoBack()"></app-back-arrow>
 
-<div class="component-container">
+<div class="component-container" *ngIf="selectedWorkoutId == 0 && !selectedPlan">
 
   <div id="schedule-container" [ngClass]="{'half-screen': !isFullScreen && window.innerWidth > 1023}">
 
@@ -66,9 +66,17 @@
 
 </div>
 
-<app-workout-day-details *ngIf="clickedDay && clickedDay.events.length > 0"
+<app-workout-day-details *ngIf="clickedDay && clickedDay.events.length > 0 && selectedWorkoutId == 0 && !selectedPlan"
                          [day]="clickedDay"
                          (update)="onUpdate()"
                          (close)="closeDayDetails()"
+                         (viewWorkoutEvent)="viewWorkout($event)"
                          id="workout-day-details">
 </app-workout-day-details>
+
+<app-workout-view *ngIf="selectedWorkoutId !== 0 && selectedPlan"
+                  [personalPlan]="selectedPlan"
+                  [workoutId]="selectedWorkoutId"
+                  [isPersonalPlan] = true
+                  (goBack)="closeWorkoutView()">
+</app-workout-view>

@@ -14,6 +14,7 @@ import { WorkoutDateChangeDialogComponent } from "../workout-date-change-dialog/
 export class WorkoutDayDetailsComponent {
   @Output() close = new EventEmitter<void>();
   @Output() update = new EventEmitter<void>();
+  @Output() viewWorkoutEvent = new EventEmitter<number>();
   @Input() day!: Day;
 
   constructor(
@@ -32,7 +33,7 @@ export class WorkoutDayDetailsComponent {
   }
 
   viewWorkout(workout: Workout) {
-
+    this.viewWorkoutEvent.emit(workout.id);
   }
 
   toggleWorkoutType(workout: Workout) {

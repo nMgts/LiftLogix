@@ -73,4 +73,16 @@ public class PersonalPlanController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
+
+    @GetMapping("/workout/{workout_id}")
+    public ResponseEntity<?> getPersonalPlanByWorkoutId(@PathVariable Long workout_id) {
+        try {
+            PersonalPlanDTO personalPlanDTO = personalPlanService.getPersonalPlanByWorkoutId(workout_id);
+            return ResponseEntity.ok().body(personalPlanDTO);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
 }
