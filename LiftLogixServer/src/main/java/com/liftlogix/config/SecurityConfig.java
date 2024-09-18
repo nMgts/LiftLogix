@@ -65,7 +65,8 @@ public class SecurityConfig {
                                 "/api/plans/add-to-my-plans/{id}", "/api/plans/edit", "/api/plans/rename/{id}", "/api/plans/visibility/{id}",
                                 "/api/plans/export/{id}", "/api/plans/copy/{id}",
                                 "/api/personal-plan/is-active/{client_id}", "/api/personal-plan/deactivate/{plan_id}", "/api/personal-plan/create",
-                                "/api/personal-plan/all/{client_id}", "/api/personal-plan/delete/{id}", "/api/personal-plan/details/{id}")
+                                "/api/personal-plan/all/{client_id}", "/api/personal-plan/delete/{id}", "/api/personal-plan/details/{id}",
+                                "/api/workout/toggle-individual/{id}", "/api/workout/set-date")
                         .hasAnyAuthority("ADMIN", "COACH")
 
                         // Admin and client endpoints
@@ -82,7 +83,8 @@ public class SecurityConfig {
                                 "/api/client/unsubscribe/{client_id}",
                                 "/api/exercise/{id}", "/api/exercise/all", "/api/exercise/image/{id}", "/api/exercise/searchByAlias", "/api/exercise/images/batch",
                                 "/api/email/send-verification-code", "/api/email/update-email",
-                                "/api/result/{client_id}", "/api/result/current/{client_id}", "/api/result/update", "/api/result/delete")
+                                "/api/result/{client_id}", "/api/result/current/{client_id}", "/api/result/update", "/api/result/delete",
+                                "/api/workout/get/{id}")
                         .authenticated()
 
                         // Other endpoints

@@ -65,6 +65,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MY_DATE_FORMATS } from "./providers/MY_DATE_FORMATS";
 import { ClientScheduleComponent } from './components/client-schedule/client-schedule.component';
+import { WorkoutDayDetailsComponent } from './components/workout-day-details/workout-day-details.component';
+import {MatSlideToggle} from "@angular/material/slide-toggle";
 
 @NgModule({
   declarations: [
@@ -105,7 +107,8 @@ import { ClientScheduleComponent } from './components/client-schedule/client-sch
     WorkoutViewComponent,
     WorkoutExerciseDetailsDialogComponent,
     AdjustPersonalPlanDialogComponent,
-    ClientScheduleComponent
+    ClientScheduleComponent,
+    WorkoutDayDetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -135,7 +138,8 @@ import { ClientScheduleComponent } from './components/client-schedule/client-sch
     MatMenu,
     MatMenuItem,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatSlideToggle
   ],
   providers: [
     provideAnimationsAsync(),

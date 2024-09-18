@@ -1,0 +1,29 @@
+<div class="workout-details">
+  <mat-card>
+    <mat-card-title>Treningi w dniu {{ day.day }}.{{ day.month + 1 }}.{{ day.year }}</mat-card-title>
+
+    <mat-card-content>
+      <div *ngFor="let workout of day.events" class="workout-item">
+        <p>{{ workout.name }}</p>
+
+        <mat-slide-toggle
+          [checked]="workout.individual"
+          (change)="toggleWorkoutType(workout)">
+          {{ workout.individual ? 'Indywidualny' : 'Z trenerem' }}
+        </mat-slide-toggle>
+
+        <button mat-raised-button color="accent" (click)="changeWorkoutDate(workout)">
+          <mat-icon>event</mat-icon> Zmień datę
+        </button>
+
+        <button mat-raised-button color="primary" (click)="viewWorkout(workout)">
+          <mat-icon>visibility</mat-icon> Podgląd
+        </button>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-raised-button (click)="onClose()">Zamknij</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

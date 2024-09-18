@@ -45,6 +45,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
 
   showAdvancedOptions = false;
   exampleWorkout: Workout = {
+    id: 0,
     name: 'Trening A',
     workoutExercises: [],
     days: [],
@@ -196,6 +197,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
 
   createNewWorkout() {
     const newWorkout: Workout = {
+      id: 0,
       name: this.generateWorkoutName(),
       workoutExercises: [],
       days: [],
@@ -378,6 +380,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     }
 
     const newWorkout: Workout = {
+      id: 0,
       name: `${this.selectedWorkout.name.replace(/\d+$/, '')}${maxNumber + 1}`,
       workoutExercises: this.selectedWorkout.workoutExercises.map(exercise => ({
         exerciseId: exercise.exerciseId,

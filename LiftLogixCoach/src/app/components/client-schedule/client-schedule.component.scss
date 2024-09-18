@@ -163,7 +163,6 @@ button {
 .day {
   width: 100px;
   height: 100px;
-  cursor: pointer;
   box-sizing: border-box;
   background-color: rgba(32, 32, 32, 0.5);
   margin: 5px;
@@ -202,6 +201,10 @@ button {
     width: 36px;
     height: 36px;
   }
+}
+
+.day.clickable {
+  cursor: pointer;
 }
 
 #calendar.half-screen {

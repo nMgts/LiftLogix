@@ -20,7 +20,7 @@ export class ClientScheduleComponent implements OnInit {
   protected readonly window = window;
 
   nav = 0;
-  clicked = null;
+  clickedDay: Day | null = null;
 
   weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   days: Day[] = [];
@@ -140,6 +140,17 @@ export class ClientScheduleComponent implements OnInit {
 
   getEventClass(event: Workout): string {
     return event.individual ?  'non-individual-workout' : 'individual-workout';
+  }
+
+  openDayDetails(day: Day) {
+    this.clickedDay = day;
+  }
+
+  closeDayDetails() {
+    this.clickedDay = null;
+    if (this.clientId) {
+      this.loadWorkouts(this.clientId);
+    }
   }
 
   private openSnackBar(message: string): void {

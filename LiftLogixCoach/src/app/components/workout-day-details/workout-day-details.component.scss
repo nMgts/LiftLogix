@@ -1,0 +1,83 @@
+.workout-details {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  mat-card {
+    width: 100%;
+    max-width: 600px;
+
+    mat-card-title {
+      text-align: center;
+      font-size: 1.5rem;
+      padding: 16px 0;
+      margin-bottom: 10px;
+    }
+
+    mat-card-content {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+
+      .workout-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+
+        @media (min-width: 666px) {
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        p {
+          margin: 0;
+          text-align: center;
+        }
+
+        mat-slide-toggle {
+          margin-right: 16px;
+        }
+
+        button {
+          margin-right: 8px;
+        }
+      }
+    }
+
+    mat-card-actions {
+      display: flex;
+      justify-content: flex-end;
+
+      button {
+        margin: 0 8px;
+      }
+    }
+  }
+
+  @media (max-width: 665px) {
+    mat-card {
+      padding: 16px;
+      text-align: center;
+
+      .workout-item {
+        justify-content: center;
+        align-items: center;
+
+        button {
+          width: 100%;
+          margin: 8px 0;
+        }
+      }
+
+      mat-card-actions {
+        justify-content: center;
+      }
+    }
+  }
+}
