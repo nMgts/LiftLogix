@@ -43,7 +43,7 @@
         <div class="day-number">{{ day.day }}</div>
 
         <div class="events">
-          <div class="event" *ngFor="let event of day.events" [ngClass]="getEventClass(event)">
+          <div class="event" *ngFor="let event of day.events" [ngClass]="getEventClass(event, day)">
             {{ getWorkoutInitials(event.name) }}
           </div>
         </div>
@@ -66,7 +66,7 @@
 
 </div>
 
-<app-workout-day-details *ngIf="clickedDay"
+<app-workout-day-details *ngIf="clickedDay && clickedDay.events.length > 0"
                          [day]="clickedDay"
                          (close)="closeDayDetails()">
 </app-workout-day-details>

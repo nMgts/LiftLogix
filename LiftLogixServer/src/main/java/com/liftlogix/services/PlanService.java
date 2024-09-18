@@ -213,7 +213,6 @@ public class PlanService {
     private Workout copyWorkout(Workout oldWorkout) {
         Workout newWorkout = new Workout();
         newWorkout.setName(oldWorkout.getName());
-        newWorkout.setIndividual(oldWorkout.isIndividual());
 
         newWorkout.setDays(new ArrayList<>(oldWorkout.getDays()));
         newWorkout.setDates(new ArrayList<>(oldWorkout.getDates()));

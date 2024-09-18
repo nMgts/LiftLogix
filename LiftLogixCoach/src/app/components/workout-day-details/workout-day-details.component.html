@@ -7,9 +7,9 @@
         <p>{{ workout.name }}</p>
 
         <mat-slide-toggle
-          [checked]="workout.individual"
+          [checked]="!getWorkoutIndividualStatus(workout)"
           (change)="toggleWorkoutType(workout)">
-          {{ workout.individual ? 'Indywidualny' : 'Z trenerem' }}
+          Z trenerem
         </mat-slide-toggle>
 
         <button mat-raised-button color="accent" (click)="changeWorkoutDate(workout)">

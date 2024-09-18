@@ -4,9 +4,12 @@ import com.liftlogix.dto.WorkoutDTO;
 import com.liftlogix.services.WorkoutService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/workout")
@@ -26,16 +29,19 @@ public class WorkoutController {
     }
 
     @PatchMapping("/toggle-individual/{id}")
-    public ResponseEntity<String> toggleIndividual(@PathVariable Long id) {
+    public ResponseEntity<String> toggleIndividual(
+            @PathVariable Long id,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date) {
         try {
-            workoutService.toggleIndividual(id);
-            return ResponseEntity.ok().body("{\"message\": \"Workout is individual toggled\"}");
+            workoutService.toggleIndividual(id, date);
+            return ResponseEntity.ok().body("{\"message\": \"Workout individual status toggled\"}");
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
+
 
     @PutMapping("/set-date")
     public ResponseEntity<?> changeDate(@RequestBody WorkoutDTO workout) {

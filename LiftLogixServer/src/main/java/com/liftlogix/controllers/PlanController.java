@@ -17,7 +17,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.rmi.server.ExportException;
 import java.util.List;
 
 @RestController
@@ -28,12 +27,12 @@ public class PlanController {
     private final ExcelService excelService;
 
     @PostMapping("/save")
-    public PlanDTO createPlan(@RequestBody PlanDTO planDTO, @AuthenticationPrincipal User currentUser) {
+    public ResponseEntity<?> createPlan(@RequestBody PlanDTO planDTO, @AuthenticationPrincipal User currentUser) {
         try {
-            return planService.savePlan(planDTO, currentUser);
+            return ResponseEntity.ok().body(planService.savePlan(planDTO, currentUser));
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
 

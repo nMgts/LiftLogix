@@ -1,4 +1,4 @@
-import {Workout} from "./Workout";
+import { Workout } from "./Workout";
 
 export interface Day {
   day: number;

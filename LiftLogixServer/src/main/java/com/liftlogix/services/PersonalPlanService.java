@@ -71,25 +71,11 @@ public class PersonalPlanService {
 
         plan.getMesocycles().forEach(mesocycle -> {
             mesocycle.setId(null);
-
             mesocycle.getMicrocycles().forEach(microcycle -> {
                 microcycle.setId(null);
-
                 microcycle.getWorkouts().forEach(workout -> {
                     workout.setId(null);
-                    List<LocalDateTime> workoutDates = workout.getDates();
-
-                    if (workoutDates != null) {
-                        for (LocalDateTime date : workoutDates) {
-                            System.out.println(date);
-                        }
-                    } else {
-                        System.out.println("No dates available for this workout.");
-                    }
-
-                    workout.getWorkoutExercises().forEach(exercise -> {
-                        exercise.setId(null);
-                    });
+                    workout.getWorkoutExercises().forEach(exercise -> exercise.setId(null));
                 });
             });
         });
@@ -101,7 +87,7 @@ public class PersonalPlanService {
     }
 
     public void deletePlan(Long id) {
-        PersonalPlan plan = personalPlanRepository.findById(id).orElseThrow(
+        personalPlanRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Personal plan not found")
         );
 
@@ -117,19 +103,28 @@ public class PersonalPlanService {
                 Integer microcycleLength = microcycle.getLength();
 
                 for (WorkoutDTO workout : microcycle.getWorkouts()) {
-                    List<LocalDateTime> workoutDates = new ArrayList<>();
-
-                    for (Integer day : workout.getDays()) {
-                        LocalDate workoutDate = currentDate.plusDays(dayCount + (day - 1));
-                        LocalDateTime workoutDateTime = LocalDateTime.of(workoutDate, LocalTime.of(0, 0));
-
-                        workoutDates.add(workoutDateTime);
-                    }
+                    List<WorkoutDateDTO> workoutDates = createWorkoutDates(workout, currentDate, dayCount);
 
                     workout.setDates(workoutDates);
                 }
                 dayCount += microcycleLength;
             }
         }
+    }
+
+    private static List<WorkoutDateDTO> createWorkoutDates(WorkoutDTO workout, LocalDate currentDate, int dayCount) {
+        List<WorkoutDateDTO> workoutDates = new ArrayList<>();
+
+        for (Integer day : workout.getDays()) {
+            WorkoutDateDTO workoutDate = new WorkoutDateDTO();
+            LocalDate date = currentDate.plusDays(dayCount + (day - 1));
+            LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(0, 0));
+
+            workoutDate.setDate(dateTime);
+            workoutDate.setIndividual(true);
+
+            workoutDates.add(workoutDate);
+        }
+        return workoutDates;
     }
 }

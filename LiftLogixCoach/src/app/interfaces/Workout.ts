@@ -1,10 +1,10 @@
 import { WorkoutExercise } from "./WorkoutExercise";
+import { WorkoutDate } from "./WorkoutDate";
 
 export interface Workout {
   id: number;
   name: string;
   workoutExercises: WorkoutExercise[];
   days: number[];
-  individual: boolean;
-  dates: string[];
+  dates: WorkoutDate[];
 }

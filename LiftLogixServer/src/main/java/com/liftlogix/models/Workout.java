@@ -30,11 +30,7 @@ public class Workout {
     @Column(name = "day")
     private List<Integer> days;
 
-    @Column(nullable = false)
-    boolean isIndividual;
-
     @ElementCollection
     @CollectionTable(name = "workout_dates", joinColumns = @JoinColumn(name = "workout_id"))
-    @Column(name = "date")
-    private List<LocalDateTime> dates;
+    private List<WorkoutDate> dates;
 }

@@ -2,7 +2,6 @@ package com.liftlogix.controllers;
 
 import com.liftlogix.dto.BasicPersonalPlanDTO;
 import com.liftlogix.dto.PersonalPlanDTO;
-import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.services.PersonalPlanService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;

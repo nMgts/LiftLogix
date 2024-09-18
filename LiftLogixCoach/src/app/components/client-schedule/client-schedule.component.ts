@@ -1,17 +1,17 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Subscription } from "rxjs";
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ClientService } from "../../services/client.service";
 import { PersonalPlanService } from "../../services/personal-plan.service";
 import { Workout } from "../../interfaces/Workout";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Day } from "../../interfaces/Day";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: 'app-client-schedule',
   templateUrl: './client-schedule.component.html',
   styleUrl: './client-schedule.component.scss'
 })
-export class ClientScheduleComponent implements OnInit {
+export class ClientScheduleComponent implements OnInit, OnDestroy {
   @Output() goBack = new EventEmitter<void>();
   @Input() clientId: number | null = null;
   @Input() isFullScreen: boolean = false;
@@ -51,7 +51,7 @@ export class ClientScheduleComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.clientIdSubscription = this.clientService.selectedClientId$.subscribe(clientId => {
+    this.clientIdSubscription =this.clientService.selectedClientId$.subscribe(clientId => {
       this.clientId = clientId;
       if (this.clientId !== null) {
         this.loadWorkouts(this.clientId);
@@ -59,6 +59,10 @@ export class ClientScheduleComponent implements OnInit {
     });
 
     this.loadCalendar();
+  }
+
+  ngOnDestroy() {
+    this.clientIdSubscription.unsubscribe();
   }
 
   loadCalendar() {
@@ -99,7 +103,7 @@ export class ClientScheduleComponent implements OnInit {
     this.updateDaysWithWorkouts();
   }
 
-  loadWorkouts(clientId: number) {
+  async loadWorkouts(clientId: number) {
     const token = localStorage.getItem('token') || '';
     this.personalPlanService.getActivePlan(clientId, token).subscribe(
       (plan) => {
@@ -109,7 +113,8 @@ export class ClientScheduleComponent implements OnInit {
         this.updateDaysWithWorkouts();
       },
       () => {
-        this.openSnackBar('Klient nie posiada aktywnego planu');
+        this.workouts = [];
+        this.updateDaysWithWorkouts();
       }
     )
   }
@@ -117,9 +122,9 @@ export class ClientScheduleComponent implements OnInit {
   updateDaysWithWorkouts() {
     this.days.forEach(day => {
       day.events = this.workouts.filter(workout =>
-        workout.dates.some(date => new Date(date).getDate() === day.day &&
-          new Date(date).getMonth() === day.month &&
-          new Date(date).getFullYear() === day.year)
+        workout.dates.some(workoutDate => new Date(workoutDate.date).getDate() === day.day &&
+          new Date(workoutDate.date).getMonth() === day.month &&
+          new Date(workoutDate.date).getFullYear() === day.year)
       );
     });
   }
@@ -138,8 +143,15 @@ export class ClientScheduleComponent implements OnInit {
     return name.replace('Trening ', '');
   }
 
-  getEventClass(event: Workout): string {
-    return event.individual ?  'individual-workout' : 'non-individual-workout';
+  getEventClass(event: Workout, day: Day): string {
+    const targetDate = new Date(day.year, day.month, day.day).toISOString().split('T')[0];
+
+    const workoutDate = event.dates.find(d => {
+      const dateStr = new Date(d.date).toISOString().split('T')[0];
+      return dateStr === targetDate;
+    });
+
+    return workoutDate && workoutDate.individual ? 'individual-workout' : 'non-individual-workout';
   }
 
   openDayDetails(day: Day) {
