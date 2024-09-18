@@ -49,7 +49,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     name: 'Trening A',
     workoutExercises: [],
     days: [],
-    individual: false,
+    individual: true,
     dates: []
   }
 
@@ -201,7 +201,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
       name: this.generateWorkoutName(),
       workoutExercises: [],
       days: [],
-      individual: false,
+      individual: true,
       dates: []
     };
     this.selectedMicrocycle.workouts.push(newWorkout);
@@ -397,7 +397,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
         breakTime: { ...exercise.breakTime }
       })),
       days: [],
-      individual: false,
+      individual: true,
       dates: []
     };
 

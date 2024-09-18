@@ -139,7 +139,7 @@ export class ClientScheduleComponent implements OnInit {
   }
 
   getEventClass(event: Workout): string {
-    return event.individual ?  'non-individual-workout' : 'individual-workout';
+    return event.individual ?  'individual-workout' : 'non-individual-workout';
   }
 
   openDayDetails(day: Day) {
