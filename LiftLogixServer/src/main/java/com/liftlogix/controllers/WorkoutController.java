@@ -1,6 +1,6 @@
 package com.liftlogix.controllers;
 
-import com.liftlogix.dto.WorkoutDTO;
+import com.liftlogix.dto.ChangeDateRequest;
 import com.liftlogix.services.WorkoutService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -44,9 +44,9 @@ public class WorkoutController {
 
 
     @PutMapping("/set-date")
-    public ResponseEntity<?> changeDate(@RequestBody WorkoutDTO workout) {
+    public ResponseEntity<?> changeDate(@RequestBody ChangeDateRequest request) {
         try {
-            return ResponseEntity.ok(workoutService.changeDate(workout));
+            return ResponseEntity.ok(workoutService.changeDate(request.getId(), request.getOldDate(), request.getNewDate()));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {

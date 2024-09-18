@@ -67,6 +67,7 @@ import { MY_DATE_FORMATS } from "./providers/MY_DATE_FORMATS";
 import { ClientScheduleComponent } from './components/client-schedule/client-schedule.component';
 import { WorkoutDayDetailsComponent } from './components/workout-day-details/workout-day-details.component';
 import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { WorkoutDateChangeDialogComponent } from './components/workout-date-change-dialog/workout-date-change-dialog.component';
 
 @NgModule({
   declarations: [
@@ -108,7 +109,8 @@ import { MatSlideToggle } from "@angular/material/slide-toggle";
     WorkoutExerciseDetailsDialogComponent,
     AdjustPersonalPlanDialogComponent,
     ClientScheduleComponent,
-    WorkoutDayDetailsComponent
+    WorkoutDayDetailsComponent,
+    WorkoutDateChangeDialogComponent
   ],
   imports: [
     BrowserModule,

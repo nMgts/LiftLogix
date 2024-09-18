@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { ClientService } from "../../services/client.service";
 import { PersonalPlanService } from "../../services/personal-plan.service";
 import { Workout } from "../../interfaces/Workout";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { Day } from "../../interfaces/Day";
 import { Subscription } from "rxjs";
 
@@ -46,8 +45,7 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
 
   constructor(
     private clientService: ClientService,
-    private personalPlanService: PersonalPlanService,
-    private snackBar: MatSnackBar
+    private personalPlanService: PersonalPlanService
   ) {}
 
   ngOnInit() {
@@ -121,11 +119,27 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
 
   updateDaysWithWorkouts() {
     this.days.forEach(day => {
-      day.events = this.workouts.filter(workout =>
-        workout.dates.some(workoutDate => new Date(workoutDate.date).getDate() === day.day &&
-          new Date(workoutDate.date).getMonth() === day.month &&
-          new Date(workoutDate.date).getFullYear() === day.year)
-      );
+      day.events = this.workouts
+        .filter(workout =>
+          workout.dates.some(workoutDate => new Date(workoutDate.date).getDate() === day.day &&
+            new Date(workoutDate.date).getMonth() === day.month &&
+            new Date(workoutDate.date).getFullYear() === day.year)
+        )
+        .sort((a, b) => {
+          const timeA = new Date(a.dates.find(d =>
+            new Date(d.date).getDate() === day.day &&
+            new Date(d.date).getMonth() === day.month &&
+            new Date(d.date).getFullYear() === day.year
+          )?.date || '').getTime();
+
+          const timeB = new Date(b.dates.find(d =>
+            new Date(d.date).getDate() === day.day &&
+            new Date(d.date).getMonth() === day.month &&
+            new Date(d.date).getFullYear() === day.year
+          )?.date || '').getTime();
+
+          return timeA - timeB;
+        });
     });
   }
 
@@ -144,10 +158,10 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
   }
 
   getEventClass(event: Workout, day: Day): string {
-    const targetDate = new Date(day.year, day.month, day.day).toISOString().split('T')[0];
+    const targetDate = new Date(day.year, day.month, day.day).toDateString();
 
     const workoutDate = event.dates.find(d => {
-      const dateStr = new Date(d.date).toISOString().split('T')[0];
+      const dateStr = new Date(d.date).toDateString();
       return dateStr === targetDate;
     });
 
@@ -156,20 +170,23 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
 
   openDayDetails(day: Day) {
     this.clickedDay = day;
+
+    setTimeout(() => {
+      const element = document.getElementById('workout-day-details');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 1);
   }
 
   closeDayDetails() {
     this.clickedDay = null;
+  }
+
+  onUpdate() {
     if (this.clientId) {
       this.loadWorkouts(this.clientId);
     }
-  }
-
-  private openSnackBar(message: string): void {
-    this.snackBar.open(message, 'Close', {
-      duration: 3000,
-      verticalPosition: 'top'
-    });
   }
 
   onGoBack() {

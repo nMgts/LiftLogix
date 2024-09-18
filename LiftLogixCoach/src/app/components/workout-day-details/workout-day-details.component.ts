@@ -2,7 +2,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Day } from "../../interfaces/Day";
 import { Workout } from "../../interfaces/Workout";
 import { WorkoutService } from "../../services/workout.service";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatDialog } from "@angular/material/dialog";
+import { WorkoutDateChangeDialogComponent } from "../workout-date-change-dialog/workout-date-change-dialog.component";
 
 @Component({
   selector: 'app-workout-day-details',
@@ -11,11 +13,13 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 })
 export class WorkoutDayDetailsComponent {
   @Output() close = new EventEmitter<void>();
+  @Output() update = new EventEmitter<void>();
   @Input() day!: Day;
 
   constructor(
     private workoutService: WorkoutService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   getWorkoutIndividualStatus(workout: Workout): boolean {
@@ -51,7 +55,6 @@ export class WorkoutDayDetailsComponent {
             } : w
           );
 
-          // Notify user of success
           this.openSnackBar('Status treningu został zmieniony');
         },
         () => {
@@ -63,9 +66,41 @@ export class WorkoutDayDetailsComponent {
     }
   }
 
-
   changeWorkoutDate(workout: Workout) {
+    const dialogRef = this.dialog.open(WorkoutDateChangeDialogComponent, {
+      data: {
+        workoutId: workout.id,
+        oldDate: workout.dates[0].date
+      }
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const token = localStorage.getItem('token') || '';
+        this.workoutService.changeDate(result.workoutId, result.oldDate, result.newDate, token).subscribe(
+          () => {
+            this.onUpdate();
+
+            this.openSnackBar('Data treningu została zmieniona');
+          },
+          () => {
+            this.openSnackBar('Błąd przy zmianie daty treningu');
+          }
+        );
+      }
+    });
+  }
+
+  getWorkoutTime(workout: Workout): string {
+    const workoutDate = workout.dates.find(d =>
+      new Date(d.date).getDate() === this.day.day &&
+      new Date(d.date).getMonth() === this.day.month &&
+      new Date(d.date).getFullYear() === this.day.year
+    );
+    if (workoutDate) {
+      return new Date(workoutDate.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    return '';
   }
 
   private openSnackBar(message: string): void {
@@ -73,6 +108,10 @@ export class WorkoutDayDetailsComponent {
       duration: 3000,
       verticalPosition: 'top'
     });
+  }
+
+  onUpdate() {
+    this.update.emit();
   }
 
   onClose() {

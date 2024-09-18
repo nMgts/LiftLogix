@@ -46,16 +46,27 @@ public class WorkoutService {
         workoutRepository.save(workout);
     }
 
-    public WorkoutDTO changeDate(WorkoutDTO dto) {
-        Workout workout = workoutRepository.findById(dto.getId()).orElseThrow(
+    public WorkoutDTO changeDate(Long id, LocalDateTime oldDate, LocalDateTime newDate) {
+        Workout workout = workoutRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Workout not found")
         );
 
+        boolean dateChanged = false;
+
         for (WorkoutDate workoutDate : workout.getDates()) {
-            workoutDate.setIndividual(!workoutDate.isIndividual());
+            if (workoutDate.getDate().equals(oldDate)) {
+                workoutDate.setDate(newDate);
+                dateChanged = true;
+                break;
+            }
+        }
+
+        if (!dateChanged) {
+            throw new IllegalArgumentException("Workout with date: " + oldDate + " not found");
         }
 
         workoutRepository.save(workout);
         return workoutDTOMapper.mapEntityToDTO(workout);
     }
+
 }

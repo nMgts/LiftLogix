@@ -4,21 +4,28 @@
 
     <mat-card-content>
       <div *ngFor="let workout of day.events" class="workout-item">
-        <p>{{ workout.name }}</p>
 
-        <mat-slide-toggle
-          [checked]="!getWorkoutIndividualStatus(workout)"
-          (change)="toggleWorkoutType(workout)">
-          Z trenerem
-        </mat-slide-toggle>
+        <div class="workout-header">
+          <p class="workout-name">{{ workout.name }}</p>
+          <p class="workout-time">{{ getWorkoutTime(workout) }}</p>
+        </div>
 
-        <button mat-raised-button color="accent" (click)="changeWorkoutDate(workout)">
-          <mat-icon>event</mat-icon> Zmień datę
-        </button>
+        <div class="workout-controls">
+          <mat-slide-toggle
+            [checked]="!getWorkoutIndividualStatus(workout)"
+            (change)="toggleWorkoutType(workout)">
+            Z trenerem
+          </mat-slide-toggle>
 
-        <button mat-raised-button color="primary" (click)="viewWorkout(workout)">
-          <mat-icon>visibility</mat-icon> Podgląd
-        </button>
+          <button mat-raised-button color="accent" (click)="changeWorkoutDate(workout)">
+            <mat-icon>event</mat-icon> Zmień datę
+          </button>
+
+          <button mat-raised-button color="primary" (click)="viewWorkout(workout)">
+            <mat-icon>visibility</mat-icon> Podgląd
+          </button>
+        </div>
+
       </div>
     </mat-card-content>
 

@@ -68,5 +68,7 @@
 
 <app-workout-day-details *ngIf="clickedDay && clickedDay.events.length > 0"
                          [day]="clickedDay"
-                         (close)="closeDayDetails()">
+                         (update)="onUpdate()"
+                         (close)="closeDayDetails()"
+                         id="workout-day-details">
 </app-workout-day-details>

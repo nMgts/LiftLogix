@@ -25,27 +25,46 @@
       .workout-item {
         display: flex;
         flex-direction: column;
-        align-items: center;
         gap: 16px;
         margin-bottom: 24px;
 
-        @media (min-width: 666px) {
-          flex-direction: row;
-          align-items: center;
+        .workout-header {
+          display: flex;
           justify-content: space-between;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 16px;
+
+          .workout-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+          }
+
+          .workout-time {
+            font-size: 1rem;
+            color: gray;
+          }
         }
 
-        p {
-          margin: 0;
-          text-align: center;
-        }
+        .workout-controls {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 16px;
 
-        mat-slide-toggle {
-          margin-right: 16px;
-        }
+          @media (min-width: 666px) {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+          }
 
-        button {
-          margin-right: 8px;
+          mat-slide-toggle {
+            margin-right: 16px;
+          }
+
+          button {
+            margin-right: 8px;
+          }
         }
       }
     }
@@ -65,8 +84,8 @@
       padding: 16px;
       text-align: center;
 
-      .workout-item {
-        justify-content: center;
+      .workout-controls {
+        flex-direction: column;
         align-items: center;
 
         button {
