@@ -17,6 +17,7 @@ import java.util.Objects;
 public class WorkoutService {
     private final WorkoutRepository workoutRepository;
     private final WorkoutDTOMapper workoutDTOMapper;
+    private final CoachSchedulerService coachSchedulerService;
 
     /*
     public WorkoutDTO getWorkout(Long id) {
@@ -37,6 +38,13 @@ public class WorkoutService {
         for (WorkoutDate workoutDate : workout.getDates()) {
             if (workoutDate.getDate().isEqual(date)) {
                 workoutDate.setIndividual(!workoutDate.isIndividual());
+
+                if (!workoutDate.isIndividual()) {
+                    coachSchedulerService.addWorkout(id, workoutDate);
+                } else {
+                    coachSchedulerService.removeWorkout(id, workoutDate);
+                }
+
                 updated = true;
                 break;
             }
@@ -60,6 +68,9 @@ public class WorkoutService {
             if (workoutDate.getDate().equals(oldDate)) {
                 workoutDate.setDuration(Objects.requireNonNullElse(duration, 60));
                 workoutDate.setDate(newDate);
+
+                coachSchedulerService.onChangeWorkoutDate(id, oldDate, newDate, duration);
+
                 dateChanged = true;
                 break;
             }

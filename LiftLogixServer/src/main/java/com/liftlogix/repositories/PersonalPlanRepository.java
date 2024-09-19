@@ -1,5 +1,6 @@
 package com.liftlogix.repositories;
 
+import com.liftlogix.models.Client;
 import com.liftlogix.models.PersonalPlan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,4 +16,6 @@ public interface PersonalPlanRepository extends JpaRepository<PersonalPlan, Long
     List<PersonalPlan> findByClientId(Long clientId);
     @Query("SELECT p FROM PersonalPlan p JOIN p.mesocycles m JOIN m.microcycles mic JOIN mic.workouts w WHERE w.id = :workoutId")
     Optional<PersonalPlan> findByWorkoutId(@Param("workoutId") Long workoutId);
+    @Query("SELECT p.client FROM PersonalPlan p JOIN p.mesocycles m JOIN m.microcycles mic JOIN mic.workouts w WHERE w.id = :workoutId")
+    Optional<Client> findClientByWorkout(@Param("workoutId") Long workoutId);
 }
