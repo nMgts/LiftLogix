@@ -84,7 +84,7 @@
 </div>
 
 <div *ngIf="choice === 'create'">
-  <app-workout-creator [personalPlan]="true" [clientId]="clientId" [isFullScreen]="isFullScreen" (goBack)="onCancel()"></app-workout-creator>
+  <app-workout-creator [isPersonalPlan]="true" [clientId]="clientId" [isFullScreen]="isFullScreen" (goBack)="onCancel()"></app-workout-creator>
 </div>
 <div *ngIf="choice === 'select'">
   <app-workout-library-private [personalPlan]="true" [clientId]="clientId" [isFullScreen]="isFullScreen" (goBack)="onCancel()"></app-workout-library-private>
@@ -96,4 +96,8 @@
 
 <div *ngIf="choice === 'viewOld' && selectedOldPlanId">
   <app-workout-view [oldPlanId]="selectedOldPlanId" [isPersonalPlan]="true" [isFullScreen]="isFullScreen" (goBack)="onCancel()"></app-workout-view>
+</div>
+
+<div *ngIf="choice === 'update' && plan">
+  <app-workout-creator [personalPlan]="plan" [isPersonalPlan]="true" [isFullScreen]="isFullScreen" (goBack)="onCancel()"></app-workout-creator>
 </div>

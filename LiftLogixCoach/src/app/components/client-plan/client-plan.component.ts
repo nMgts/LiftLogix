@@ -98,6 +98,7 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
   }
 
   editPersonalPlan() {
+    this.choice = 'update';
   }
 
   viewOldPlan(planId: number) {

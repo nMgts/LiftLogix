@@ -17,14 +17,16 @@ import { Workout } from "../../interfaces/Workout";
 import { Microcycle } from "../../interfaces/Microcycle";
 import { Mesocycle } from "../../interfaces/Mesocycle";
 import { Macrocycle } from "../../interfaces/Macrocycle";
-import {ExerciseOptionsDialogComponent} from "../exercise-options-dialog/exercise-options-dialog.component";
-import {SavePlanDialogComponent} from "../save-plan-dialog/save-plan-dialog.component";
-import {Plan} from "../../interfaces/Plan";
-import {PlanService} from "../../services/plan.service";
-import {ExerciseDetailsDialogComponent} from "../exercise-details-dialog/exercise-details-dialog.component";
-import {Exercise} from "../../interfaces/Exercise";
-import {ExerciseService} from "../../services/exercise.service";
-import {AdjustPersonalPlanDialogComponent} from "../adjust-personal-plan-dialog/adjust-personal-plan-dialog.component";
+import { ExerciseOptionsDialogComponent } from "../exercise-options-dialog/exercise-options-dialog.component";
+import { SavePlanDialogComponent } from "../save-plan-dialog/save-plan-dialog.component";
+import { Plan } from "../../interfaces/Plan";
+import { PlanService } from "../../services/plan.service";
+import { ExerciseDetailsDialogComponent } from "../exercise-details-dialog/exercise-details-dialog.component";
+import { Exercise } from "../../interfaces/Exercise";
+import { ExerciseService } from "../../services/exercise.service";
+import { AdjustPersonalPlanDialogComponent } from "../adjust-personal-plan-dialog/adjust-personal-plan-dialog.component";
+import { PersonalPlan } from "../../interfaces/PersonalPlan";
+import { PersonalPlanService } from "../../services/personal-plan.service";
 
 @Component({
   selector: 'app-workout-creator',
@@ -35,7 +37,8 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   @Output() goBack = new EventEmitter<void>();
   @Output() success = new EventEmitter<void>();
   @Input() planId!: number;
-  @Input() personalPlan = false;
+  @Input() personalPlan!: PersonalPlan;
+  @Input() isPersonalPlan = false;
   @Input() clientId: number | null = null;
   @Input() isFullScreen: boolean = false;
   plan!: Plan;
@@ -97,12 +100,17 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef,
     private planService: PlanService,
+    private personalPlanService: PersonalPlanService,
     private exerciseService: ExerciseService
   ) {}
 
   ngOnInit() {
     if (this.planId) {
       this.loadPlan(this.planId);
+    }
+
+    if (this.personalPlan) {
+      this.loadPersonalPlan();
     }
 
     this.generateMicrocycleTable();
@@ -121,6 +129,26 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   }
 
   /** Personal Plan Methods **/
+
+  loadPersonalPlan() {
+    console.log(this.personalPlan);
+    this.macrocycle = { mesocycles: this.personalPlan.mesocycles };
+    this.selectMesocycle(0);
+    this.generateMicrocycleTable();
+  }
+
+  updatePersonalPlan() {
+    const token = localStorage.getItem('token') || '';
+    this.personalPlanService.editPersonalPlan(this.personalPlan, token).subscribe(
+      () => {
+        this.openSnackBar('Plan został zaktualizowany');
+        this.onPersonalPlanSaveSuccess();
+      },
+      () => {
+        this.openSnackBar('Nie udało się zaktualizować planu');
+      }
+    )
+  }
 
   adjustPersonalPlan() {
     const dialogRef = this.dialog.open(AdjustPersonalPlanDialogComponent, {

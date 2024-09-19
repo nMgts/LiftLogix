@@ -17,7 +17,7 @@
   </mat-form-field>
 
   <div class="actions-container"
-       [ngClass]="{'personal-plan': (window.innerWidth > 1023 && window.innerWidth < 1201 && personalPlan && !isFullScreen)}">
+       [ngClass]="{'personal-plan': (window.innerWidth > 1023 && window.innerWidth < 1201 && isPersonalPlan && !isFullScreen)}">
     <div class="button-container">
       <button (click)="createNewWorkout()" mat-raised-button color="primary">
         <mat-icon>add</mat-icon>
@@ -63,14 +63,14 @@
 
   <table class="exercise-table"
          [ngClass]="{'advanced-options': showAdvancedOptions, 'basic-options': !showAdvancedOptions,
-         'personal-plan': (personalPlan && window.innerWidth > 1023 && !isFullScreen)}">
+         'personal-plan': (isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)}">
     <thead>
     <tr>
       <th>Ćwiczenie</th>
       <th *ngIf="window.innerWidth > 499">Ilość serii</th>
       <th *ngIf="window.innerWidth > 499">Powtórzenia</th>
       <th *ngIf="window.innerWidth > 499">Ciężar</th>
-      <th class="tooltip" *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023 && !isFullScreen)">
+      <th class="tooltip" *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)">
         %1RM
         <mat-icon>info</mat-icon>
         <span class="tooltip-text">
@@ -80,7 +80,7 @@
           <br> Jeśli dodatkowo wypełnisz pole <span class="important-text">RPE</span> (Rating of Perceived Exertion), <span class="important-text">system automatycznie wyliczy liczbę powtórzeń.</span>
         </span>
       </th>
-      <th class="tooltip" *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023 && !isFullScreen)">
+      <th class="tooltip" *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)">
         Tempo
         <mat-icon>info</mat-icon>
         <span class="tooltip-text">
@@ -93,7 +93,7 @@
           <br>Jeżeli którąkolwiek fazę zostawisz jako pustą - tempo nie będzie uwzględniane.
         </span>
       </th>
-      <th class="tooltip" *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023 && !isFullScreen)">
+      <th class="tooltip" *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)">
         RPE
         <mat-icon>info</mat-icon>
         <span class="tooltip-text">
@@ -103,7 +103,7 @@
           na podstawie tych danych.
         </span>
       </th>
-      <th *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023 && !isFullScreen)">Przerwa</th>
+      <th *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)">Przerwa</th>
 
     </tr>
     </thead>
@@ -160,7 +160,7 @@
                  type="number" min="0" step="0.01"/>
         </ng-template>
       </td>
-      <td *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023 && !isFullScreen)"
+      <td *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)"
           (click)="editCell(exercise, 'percentage')">
         <ng-container *ngIf="!isEditing(exercise, 'percentage'); else editPercentage">
           {{ exercise.percentage ? exercise.percentage + '%' : '' }}
@@ -174,7 +174,7 @@
                  type="number" min="0" step="0.1"/>
         </ng-template>
       </td>
-      <td *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023 && !isFullScreen)"
+      <td *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)"
           (click)="editCell(exercise, 'tempo')">
         <ng-container *ngIf="!isEditing(exercise, 'tempo'); else editTempo">
           {{ exercise.tempo || '' }}
@@ -189,7 +189,7 @@
                  placeholder="1-1-1-1"/>
         </ng-template>
       </td>
-      <td *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023 && !isFullScreen)"
+      <td *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)"
           (click)="editCell(exercise, 'rpe')">
         <ng-container *ngIf="!isEditing(exercise, 'rpe'); else editRpe">
           {{ exercise.rpe || '' }}
@@ -203,7 +203,7 @@
                  type="number" min="1" max="10" step="0.5"/>
         </ng-template>
       </td>
-      <td *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(personalPlan && window.innerWidth > 1023 && !isFullScreen)"
+      <td *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)"
           class="break-cell" (click)="editCell(exercise, 'break')">
         <ng-container *ngIf="!isEditing(exercise, 'break'); else editBreak">
           {{ exercise.breakTime.value ? exercise.breakTime.value + exercise.breakTime.unit : '' }}
@@ -230,7 +230,7 @@
       <td class="workout-exercise-details-column"
           *ngIf="(window.innerWidth < 1000 && showAdvancedOptions)
           || window.innerWidth < 500
-          || (personalPlan && window.innerWidth > 1023 && showAdvancedOptions && !isFullScreen)">
+          || (isPersonalPlan && window.innerWidth > 1023 && showAdvancedOptions && !isFullScreen)">
         <mat-icon (click)="openExerciseOptionsDialog(exercise)">more_vert</mat-icon>
       </td>
       <td class="delete-column">
@@ -240,7 +240,7 @@
 
     <tr class="add-exercise-row">
       <td [attr.colspan]=
-            "(personalPlan && !isFullScreen && window.innerWidth > 1023) ?
+            "(isPersonalPlan && !isFullScreen && window.innerWidth > 1023) ?
                4 : showAdvancedOptions
                 ? (window.innerWidth < 500
                     ? 1
@@ -256,7 +256,7 @@
     <tfoot>
     <tr>
       <td [attr.colspan]=
-            "(personalPlan && !isFullScreen && window.innerWidth > 1023) ?
+            "(isPersonalPlan && !isFullScreen && window.innerWidth > 1023) ?
                4 : showAdvancedOptions
                 ? (window.innerWidth < 500
                     ? 1
@@ -279,7 +279,7 @@
   <!-- Microcycle -->
 
   <div class="tables-container"
-       [ngClass]="{'show-advanced': showAdvancedOptions, 'personal-plan': (personalPlan && window.innerWidth > 1023 && !isFullScreen)}">
+       [ngClass]="{'show-advanced': showAdvancedOptions, 'personal-plan': (isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)}">
 
     <div class="microcycle-table-container">
 
@@ -295,7 +295,7 @@
                min="1" max="28"/>
       </mat-form-field>
 
-      <table [ngClass]="{'personal-plan': (personalPlan && window.innerWidth > 1023 && window.innerWidth < 1201 && !isFullScreen)}">
+      <table [ngClass]="{'personal-plan': (isPersonalPlan && window.innerWidth > 1023 && window.innerWidth < 1201 && !isFullScreen)}">
         <thead>
         <tr>
           <th *ngFor="let day of daysInWeek">{{ day }}</th>
@@ -457,20 +457,28 @@
     </div>
   </div>
 
-  <button *ngIf="!plan && !personalPlan" (click)="savePlan()" mat-raised-button class="save-plan-button" color="primary">
+  <button *ngIf="!plan && !isPersonalPlan" (click)="savePlan()" mat-raised-button class="save-plan-button" color="primary">
     <span>Zapisz plan</span>
   </button>
 
-  <button *ngIf="plan && !personalPlan" (click)="editPlan()" mat-raised-button class="save-plan-button" color="primary">
+  <button *ngIf="plan && !isPersonalPlan" (click)="editPlan()" mat-raised-button class="save-plan-button" color="primary">
     <span>Zapisz plan</span>
   </button>
 
-  <button *ngIf="plan && personalPlan" (click)="adjustPersonalPlan()" mat-raised-button class="save-plan-button" color="accent">
+  <button *ngIf="plan && isPersonalPlan" (click)="adjustPersonalPlan()" mat-raised-button class="save-plan-button" color="accent">
     <span>Dostosuj</span>
   </button>
 
-  <button *ngIf="personalPlan" (click)="savePersonalPlan()" mat-raised-button class="save-plan-button" color="primary">
+  <button *ngIf="isPersonalPlan && !personalPlan" (click)="savePersonalPlan()" mat-raised-button class="save-plan-button" color="primary">
     <span>Dalej</span>
+  </button>
+
+  <p class="warning-message" *ngIf="personalPlan">
+    Uwaga, aktualizacja planu spowoduje zresetowanie jego harmonogramu.
+  </p>
+
+  <button *ngIf="personalPlan" (click)="updatePersonalPlan()" mat-raised-button class="save-plan-button" color="primary">
+    <span>Zapisz</span>
   </button>
 
 </div>

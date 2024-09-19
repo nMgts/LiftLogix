@@ -123,7 +123,6 @@ public class PlanService {
         newPlan.setAuthor(user);
 
         planRepository.save(newPlan);
-
         return planDTOMapper.mapEntityToDTO(newPlan);
     }
 

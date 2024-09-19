@@ -84,7 +84,7 @@
 
 
 <div *ngIf="selectedPlan">
-  <app-workout-creator [planId]="selectedPlan" [personalPlan]="personalPlan" [clientId]="clientId" [isFullScreen]="isFullScreen" (goBack)="onCancel()"
+  <app-workout-creator [planId]="selectedPlan" [isPersonalPlan]="personalPlan" [clientId]="clientId" [isFullScreen]="isFullScreen" (goBack)="onCancel()"
                        (success)="onSuccess()"></app-workout-creator>
 </div>
 <div *ngIf="viewPlan">

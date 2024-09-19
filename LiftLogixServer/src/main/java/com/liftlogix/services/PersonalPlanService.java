@@ -3,8 +3,12 @@ package com.liftlogix.services;
 import com.liftlogix.convert.BasicPersonalPlanDTOMapper;
 import com.liftlogix.convert.PersonalPlanDTOMapper;
 import com.liftlogix.dto.*;
+import com.liftlogix.exceptions.AuthorizationException;
+import com.liftlogix.models.Coach;
 import com.liftlogix.models.PersonalPlan;
+import com.liftlogix.models.User;
 import com.liftlogix.repositories.PersonalPlanRepository;
+import com.liftlogix.types.Role;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,10 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -99,6 +100,31 @@ public class PersonalPlanService {
                 () -> new EntityNotFoundException("Personal plan not found for the given workout ID")
         );
         return personalPlanDTOMapper.mapEntityToDTO(personalPlan);
+    }
+
+    public PersonalPlanDTO editPlan(PersonalPlanDTO personalPlanDTO, User user) {
+        PersonalPlan personalPlan = personalPlanRepository.findById(personalPlanDTO.getId()).orElseThrow(
+                () -> new EntityNotFoundException("Personal plan not found")
+        );
+
+        LocalDate startDate = personalPlan.getStartDate();
+
+        Coach coach = personalPlan.getClient().getCoach();
+
+        if (!Objects.equals(coach.getEmail(), user.getEmail()) && !user.getRole().equals(Role.ADMIN)) {
+            throw new AuthorizationException("You are not authorized");
+        }
+
+        personalPlanRepository.delete(personalPlan);
+
+        personalPlanDTO.setStartDate(startDate);
+        setWorkoutDatesForPlan(personalPlanDTO);
+
+        PersonalPlan newPersonalPlan = personalPlanDTOMapper.mapDTOToEntity(personalPlanDTO);
+        newPersonalPlan.setActive(true);
+
+        personalPlanRepository.save(newPersonalPlan);
+        return personalPlanDTOMapper.mapEntityToDTO(newPersonalPlan);
     }
 
     private void setWorkoutDatesForPlan(PersonalPlanDTO personalPlanDTO) {

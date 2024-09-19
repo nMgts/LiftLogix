@@ -17,6 +17,7 @@ export class PersonalPlanService {
   private createUrl = 'http://localhost:8080/api/personal-plan/create';
   private deleteUrl = 'http://localhost:8080/api/personal-plan/delete'
   private getByWorkoutUrl = 'http://localhost:8080/api/personal-plan/workout';
+  private editUrl = 'http://localhost:8080/api/personal-plan/edit'
 
   constructor(private http: HttpClient) {}
 
@@ -53,6 +54,11 @@ export class PersonalPlanService {
   getPersonalPlanByWorkout(workoutId: number, token: string): Observable<PersonalPlan> {
     const headers = this.createHeaders(token);
     return this.http.get<PersonalPlan>(`${this.getByWorkoutUrl}/${workoutId}`, { headers: headers });
+  }
+
+  editPersonalPlan(personalPlan: PersonalPlan, token: string): Observable<PersonalPlan> {
+    const headers = this.createHeaders(token);
+    return this.http.put<PersonalPlan>(this.editUrl, personalPlan, { headers: headers });
   }
 
   private createHeaders(token: string) {
