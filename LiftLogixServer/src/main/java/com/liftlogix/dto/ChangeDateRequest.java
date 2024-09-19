@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 public class ChangeDateRequest {
     private Long id;
+    private Integer duration;
     private LocalDateTime oldDate;
     private LocalDateTime newDate;
 }

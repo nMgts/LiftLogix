@@ -154,6 +154,7 @@ public class PersonalPlanService {
             LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(0, 0));
 
             workoutDate.setDate(dateTime);
+            workoutDate.setDuration(60);
             workoutDate.setIndividual(true);
 
             workoutDates.add(workoutDate);

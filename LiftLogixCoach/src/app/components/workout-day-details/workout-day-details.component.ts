@@ -68,28 +68,38 @@ export class WorkoutDayDetailsComponent {
   }
 
   changeWorkoutDate(workout: Workout) {
-    const dialogRef = this.dialog.open(WorkoutDateChangeDialogComponent, {
-      data: {
-        workoutId: workout.id,
-        oldDate: workout.dates[0].date
-      }
-    });
+    const workoutDate = workout.dates.find(d =>
+      new Date(d.date).getDate() === this.day.day &&
+      new Date(d.date).getMonth() === this.day.month &&
+      new Date(d.date).getFullYear() === this.day.year
+    );
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        const token = localStorage.getItem('token') || '';
-        this.workoutService.changeDate(result.workoutId, result.oldDate, result.newDate, token).subscribe(
-          () => {
-            this.onUpdate();
+    if (workoutDate) {
+      const dialogRef = this.dialog.open(WorkoutDateChangeDialogComponent, {
+        data: {
+          workoutId: workout.id,
+          oldDate: workoutDate.date,
+          duration: workoutDate.duration
+        }
+      });
 
-            this.openSnackBar('Data treningu została zmieniona');
-          },
-          () => {
-            this.openSnackBar('Błąd przy zmianie daty treningu');
-          }
-        );
-      }
-    });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          const token = localStorage.getItem('token') || '';
+          this.workoutService.changeDate(result.workoutId, result.oldDate, result.newDate, result.duration, token).subscribe(
+            () => {
+              this.onUpdate();
+              this.openSnackBar('Data treningu została zmieniona');
+            },
+            () => {
+              this.openSnackBar('Błąd przy zmianie daty treningu');
+            }
+          );
+        }
+      });
+    } else {
+      this.openSnackBar('Nie znaleziono daty treningu dla wybranego dnia');
+    }
   }
 
   getWorkoutTime(workout: Workout): string {
@@ -98,9 +108,15 @@ export class WorkoutDayDetailsComponent {
       new Date(d.date).getMonth() === this.day.month &&
       new Date(d.date).getFullYear() === this.day.year
     );
+
     if (workoutDate) {
-      return new Date(workoutDate.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const startTime = new Date(workoutDate.date);
+      const endTime = new Date(startTime.getTime() + workoutDate.duration * 60000);
+      const formatTime = (date: Date) => date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      return `${formatTime(startTime)} - ${formatTime(endTime)}`;
     }
+
     return '';
   }
 

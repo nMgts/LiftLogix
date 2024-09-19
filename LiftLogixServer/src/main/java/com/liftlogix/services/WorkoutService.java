@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -48,7 +49,7 @@ public class WorkoutService {
         workoutRepository.save(workout);
     }
 
-    public WorkoutDTO changeDate(Long id, LocalDateTime oldDate, LocalDateTime newDate) {
+    public WorkoutDTO changeDate(Long id, LocalDateTime oldDate, LocalDateTime newDate, Integer duration) {
         Workout workout = workoutRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Workout not found")
         );
@@ -57,6 +58,7 @@ public class WorkoutService {
 
         for (WorkoutDate workoutDate : workout.getDates()) {
             if (workoutDate.getDate().equals(oldDate)) {
+                workoutDate.setDuration(Objects.requireNonNullElse(duration, 60));
                 workoutDate.setDate(newDate);
                 dateChanged = true;
                 break;

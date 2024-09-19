@@ -10,4 +10,5 @@ import java.time.LocalDateTime;
 public class WorkoutDateDTO {
     private LocalDateTime date;
     private boolean isIndividual;
+    private int duration;
 }

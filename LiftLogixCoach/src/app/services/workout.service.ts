@@ -18,9 +18,9 @@ export class WorkoutService {
     return this.http.patch(url, {}, { headers });
   }
 
-  changeDate(id: number, oldDate: string, newDate: string, token: string): Observable<any> {
+  changeDate(id: number, oldDate: string, newDate: string, duration: number, token: string): Observable<any> {
     const headers = this.createHeaders(token);
-    const body = { id, oldDate, newDate };
+    const body = { id, oldDate, newDate, duration };
     return this.http.put(this.setDateUrl, body, { headers });
   }
 

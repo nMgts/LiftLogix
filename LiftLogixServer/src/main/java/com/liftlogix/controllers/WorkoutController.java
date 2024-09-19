@@ -48,7 +48,7 @@ public class WorkoutController {
     @PutMapping("/set-date")
     public ResponseEntity<?> changeDate(@RequestBody ChangeDateRequest request) {
         try {
-            return ResponseEntity.ok(workoutService.changeDate(request.getId(), request.getOldDate(), request.getNewDate()));
+            return ResponseEntity.ok(workoutService.changeDate(request.getId(), request.getOldDate(), request.getNewDate(), request.getDuration()));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {

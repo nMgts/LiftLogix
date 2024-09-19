@@ -10,8 +10,13 @@
   </mat-form-field>
 
   <mat-form-field appearance="fill">
-    <mat-label>Wybierz godzinę</mat-label>
-    <input matInput [(ngModel)]="newTime" placeholder="Wybierz godzinę" type="time">
+    <mat-label>Godzina rozpoczęcia</mat-label>
+    <input matInput [(ngModel)]="startTime" placeholder="Wybierz godzinę rozpoczęcia" type="time">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Godzina zakończenia</mat-label>
+    <input matInput [(ngModel)]="endTime" placeholder="Wybierz godzinę zakończenia" type="time">
   </mat-form-field>
 
 </mat-dialog-content>

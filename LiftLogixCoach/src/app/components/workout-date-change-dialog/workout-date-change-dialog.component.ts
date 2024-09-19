@@ -9,27 +9,52 @@ import { format } from "date-fns";
 })
 export class WorkoutDateChangeDialogComponent {
   newDate: Date;
-  newTime: string = '';
+  startTime: string = '';
+  endTime: string = '';
 
   constructor(
     public dialogRef: MatDialogRef<WorkoutDateChangeDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { workoutId: number, oldDate: string }
+    @Inject(MAT_DIALOG_DATA) public data: { workoutId: number, oldDate: string, duration: number }
   ) {
     this.newDate = new Date(data.oldDate);
-    this.newTime = format(new Date(data.oldDate), 'HH:mm');
+    this.startTime = format(new Date(data.oldDate), 'HH:mm');
+
+    const startDate = new Date(data.oldDate);
+    const endDate = new Date(startDate.getTime() + data.duration * 60000);
+
+    this.endTime = format(endDate, 'HH:mm');
   }
 
   onSave(): void {
-    if (this.newDate && this.newTime) {
-      const [hours, minutes] = this.newTime.split(':').map(Number);
-      const updatedDate = new Date(this.newDate);
-      updatedDate.setHours(hours);
-      updatedDate.setMinutes(minutes);
+    if (this.newDate && this.startTime && this.endTime) {
+      const [startHours, startMinutes] = this.startTime.split(':').map(Number);
+      const updatedStartDate = new Date(this.newDate);
+      updatedStartDate.setHours(startHours);
+      updatedStartDate.setMinutes(startMinutes);
 
-      const formattedNewDate = format(updatedDate, "yyyy-MM-dd'T'HH:mm:ss");
-      console.log(formattedNewDate);
+      const [endHours, endMinutes] = this.endTime.split(':').map(Number);
+      const updatedEndDate = new Date(this.newDate);
+      updatedEndDate.setHours(endHours);
+      updatedEndDate.setMinutes(endMinutes);
 
-      this.dialogRef.close({ workoutId: this.data.workoutId, oldDate: this.data.oldDate, newDate: formattedNewDate });
+      if (updatedEndDate <= updatedStartDate) {
+        updatedEndDate.setDate(updatedEndDate.getDate() + 1);
+      }
+
+      const duration = (updatedEndDate.getTime() - updatedStartDate.getTime()) / (1000 * 60);
+
+      if (duration > 0) {
+        const formattedNewDate = format(updatedStartDate, "yyyy-MM-dd'T'HH:mm:ss");
+
+        this.dialogRef.close({
+          workoutId: this.data.workoutId,
+          oldDate: this.data.oldDate,
+          newDate: formattedNewDate,
+          duration: duration
+        });
+      } else {
+        alert('Godzina zakończenia musi być późniejsza niż godzina rozpoczęcia!');
+      }
     }
   }
 
