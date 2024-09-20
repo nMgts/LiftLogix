@@ -9,10 +9,12 @@ import org.mapstruct.Mapping;
 public interface SchedulerItemDTOMapper {
 
     @Mapping(source = "workout.id", target = "workoutId")
+    @Mapping(source = "workout.name", target = "workoutName")
     @Mapping(source = "client", target = "client")
     SchedulerItemDTO mapEntityToDTO(SchedulerItem schedulerItem);
 
     @Mapping(source = "workoutId", target = "workout.id")
+    @Mapping(source = "workoutName", target = "workout.name")
     @Mapping(source = "client", target = "client")
     SchedulerItem mapDTOToEntity(SchedulerItemDTO schedulerItemDTO);
 }

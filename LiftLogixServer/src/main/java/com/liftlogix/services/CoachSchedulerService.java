@@ -5,6 +5,7 @@ import com.liftlogix.dto.CoachSchedulerDTO;
 import com.liftlogix.models.*;
 import com.liftlogix.repositories.CoachScheduleRepository;
 import com.liftlogix.repositories.PersonalPlanRepository;
+import com.liftlogix.repositories.SchedulerItemRepository;
 import com.liftlogix.repositories.WorkoutRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CoachSchedulerService {
     private final CoachScheduleRepository coachScheduleRepository;
+    private final SchedulerItemRepository schedulerItemRepository;
     private final WorkoutRepository workoutRepository;
     private final PersonalPlanRepository personalPlanRepository;
     private final CoachSchedulerDTOMapper coachSchedulerDTOMapper;
@@ -53,10 +55,12 @@ public class CoachSchedulerService {
         newItem.setStartDate(date.getDate());
         newItem.setEndDate(date.getDate().plusMinutes(date.getDuration()));
         newItem.setClient(client);
+        newItem.setCoachScheduler(scheduler);
 
         schedulerItems.add(newItem);
 
         scheduler.setSchedulerItems(schedulerItems);
+
         coachScheduleRepository.save(scheduler);
     }
 
@@ -73,6 +77,7 @@ public class CoachSchedulerService {
                 .orElseThrow(() -> new EntityNotFoundException("SchedulerItem not found"));
 
         schedulerItems.remove(itemToRemove);
+        schedulerItemRepository.delete(itemToRemove);
 
         scheduler.setSchedulerItems(schedulerItems);
         coachScheduleRepository.save(scheduler);

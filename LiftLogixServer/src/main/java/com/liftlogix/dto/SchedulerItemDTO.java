@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class SchedulerItemDTO {
     private long id;
     private long workoutId;
+    private String workoutName;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private ClientDTO client;
