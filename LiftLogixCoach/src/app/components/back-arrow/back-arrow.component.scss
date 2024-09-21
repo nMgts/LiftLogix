@@ -1,0 +1,18 @@
+.back-arrow {
+  position: absolute;
+  top: 20px;
+  left: 10px;
+  background: none;
+  border: none;
+  color: aliceblue !important;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.back-arrow span {
+  font-size: 36px;
+}
+
+.back-arrow:hover {
+  color: darkviolet !important;
+}

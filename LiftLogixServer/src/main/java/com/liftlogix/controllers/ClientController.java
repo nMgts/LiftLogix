@@ -20,6 +20,15 @@ import java.util.List;
 public class ClientController {
     private final ClientService clientService;
 
+    @GetMapping("/{client_id}")
+    public ResponseEntity<?> findClientById(@PathVariable long client_id) {
+        try {
+            return ResponseEntity.ok(clientService.findClientById(client_id));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<ClientDTO>> findAllClients() {
         return ResponseEntity.ok(clientService.findAllClients());

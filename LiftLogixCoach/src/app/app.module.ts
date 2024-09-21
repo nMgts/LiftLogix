@@ -37,7 +37,6 @@ import { MatSelectModule} from "@angular/material/select";
 import { MatInputModule} from "@angular/material/input";
 import { YoutubeEmbedPipe } from './pipes/youtube-embed.pipe';
 import { ClientDietComponent } from './components/client-diet/client-diet.component';
-import { ClientHoursComponent } from './components/client-hours/client-hours.component';
 import { ClientPlanComponent } from './components/client-plan/client-plan.component';
 import { ClientResultsComponent } from './components/client-results/client-results.component';
 import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
@@ -46,6 +45,29 @@ import { ScheduleComponent } from './components/schedule/schedule.component';
 import { WeeklyScheduleComponent } from './components/weekly-schedule/weekly-schedule.component';
 import { WorkoutCreatorComponent } from './components/workout-creator/workout-creator.component';
 import { AddExerciseToWorkoutDialogComponent } from './components/add-exercise-to-workout-dialog/add-exercise-to-workout-dialog.component';
+import { MatCardModule } from '@angular/material/card';
+import { ExerciseOptionsDialogComponent } from './components/exercise-options-dialog/exercise-options-dialog.component';
+import { MatTableModule } from '@angular/material/table';
+import { EditResultDialogComponent } from './components/edit-result-dialog/edit-result-dialog.component';
+import { WorkoutMenuComponent } from './components/workout-menu/workout-menu.component';
+import { WorkoutLibraryPrivateComponent } from './components/workout-library-private/workout-library-private.component';
+import { WorkoutLibraryPublicComponent } from './components/workout-library-public/workout-library-public.component';
+import { SavePlanDialogComponent } from './components/save-plan-dialog/save-plan-dialog.component'
+import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatLine } from "@angular/material/core";
+import { NgxPaginationModule } from 'ngx-pagination';
+import { MatGridList, MatGridTile } from "@angular/material/grid-list";
+import { BackArrowComponent } from './components/back-arrow/back-arrow.component';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
+import { WorkoutViewComponent } from './components/workout-view/workout-view.component';
+import { WorkoutExerciseDetailsDialogComponent } from './components/workout-exercise-details-dialog/workout-exercise-details-dialog.component';
+import { AdjustPersonalPlanDialogComponent } from './components/adjust-personal-plan-dialog/adjust-personal-plan-dialog.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MY_DATE_FORMATS } from "./providers/MY_DATE_FORMATS";
+import { ClientScheduleComponent } from './components/client-schedule/client-schedule.component';
+import { WorkoutDayDetailsComponent } from './components/workout-day-details/workout-day-details.component';
+import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { WorkoutDateChangeDialogComponent } from './components/workout-date-change-dialog/workout-date-change-dialog.component';
 
 @NgModule({
   declarations: [
@@ -70,13 +92,25 @@ import { AddExerciseToWorkoutDialogComponent } from './components/add-exercise-t
     AddExerciseDialogComponent,
     YoutubeEmbedPipe,
     ClientDietComponent,
-    ClientHoursComponent,
     ClientPlanComponent,
     ClientResultsComponent,
     ScheduleComponent,
     WeeklyScheduleComponent,
     WorkoutCreatorComponent,
-    AddExerciseToWorkoutDialogComponent
+    AddExerciseToWorkoutDialogComponent,
+    ExerciseOptionsDialogComponent,
+    EditResultDialogComponent,
+    WorkoutMenuComponent,
+    WorkoutLibraryPrivateComponent,
+    WorkoutLibraryPublicComponent,
+    SavePlanDialogComponent,
+    BackArrowComponent,
+    WorkoutViewComponent,
+    WorkoutExerciseDetailsDialogComponent,
+    AdjustPersonalPlanDialogComponent,
+    ClientScheduleComponent,
+    WorkoutDayDetailsComponent,
+    WorkoutDateChangeDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -95,7 +129,19 @@ import { AddExerciseToWorkoutDialogComponent } from './components/add-exercise-t
     MatSelectModule,
     MatInputModule,
     BaseChartDirective,
-    MatCheckbox
+    MatCheckbox,
+    MatCardModule,
+    MatTableModule,
+    MatLine,
+    NgxPaginationModule,
+    MatGridList,
+    MatGridTile,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatSlideToggle
   ],
   providers: [
     provideAnimationsAsync(),
@@ -105,7 +151,9 @@ import { AddExerciseToWorkoutDialogComponent } from './components/add-exercise-t
       multi: true
     },
     YoutubeEmbedPipe,
-    provideCharts(withDefaultRegisterables())
+    provideCharts(withDefaultRegisterables()),
+    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: 'pl-PL' }
   ],
   bootstrap: [AppComponent]
 })

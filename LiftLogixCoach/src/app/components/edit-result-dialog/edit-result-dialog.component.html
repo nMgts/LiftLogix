@@ -1,0 +1,28 @@
+<h1 mat-dialog-title>Edit Result</h1>
+<div mat-dialog-content>
+  <form [formGroup]="editForm">
+    <mat-form-field>
+      <mat-label>Wyciskanie leżąc</mat-label>
+      <input matInput formControlName="benchpress" type="number">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Przysiad</mat-label>
+      <input matInput formControlName="squat" type="number">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Martwy ciąg</mat-label>
+      <input matInput formControlName="deadlift" type="number">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Data</mat-label>
+      <input matInput formControlName="date" type="date">
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onSave()" [disabled]="!editForm.valid">Save</button>
+</div>

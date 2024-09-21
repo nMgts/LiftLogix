@@ -1,7 +1,8 @@
-import {Exercise} from "./Exercise";
-
 export interface WorkoutExercise {
-  exercise: Exercise;
+  exerciseId: number;
+  exerciseName: string;
+  exerciseType: string;
+  difficultyFactor: number;
   series: number | null;
   repetitionsFrom: number | null;
   repetitionsTo: number | null;
@@ -9,7 +10,7 @@ export interface WorkoutExercise {
   percentage: number | null;
   tempo: string;
   rpe: number | null;
-  break: {
+  breakTime: {
     value: number | null;
     unit: string;
   };

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import {Component, ElementRef, Inject, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Exercise } from "../../interfaces/Exercise";
 import { FormControl } from "@angular/forms";
@@ -15,18 +15,31 @@ import {AddExerciseDialogComponent} from "../add-exercise-dialog/add-exercise-di
 })
 export class AddExerciseToWorkoutDialogComponent implements OnInit {
   exerciseName: string = '';
-  newExerciseName: string = '';
   searchControl = new FormControl();
   filteredExercises$: Observable<Exercise[]> = of([]);
   isDropdownOpen = false;
   exercise: Exercise | null = null;
+  difficultyFactor: number = 1;
+
+  scrollTimeout: any;
+  @ViewChild('elem', { static: true }) elem!: ElementRef;
+
+  title = 'Dodaj ćwiczenie';
 
   constructor(
     public dialogRef: MatDialogRef<AddExerciseToWorkoutDialogComponent>,
     private snackBar: MatSnackBar,
     private exerciseService: ExerciseService,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog,
+    private renderer: Renderer2,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    if (this.data) {
+      this.title = 'Zmień ćwiczenie';
+      this.getExercise();
+      this.difficultyFactor = data.difficultyFactor;
+    }
+  }
 
   ngOnInit(): void {
     const token = localStorage.getItem('token') || '';
@@ -35,6 +48,20 @@ export class AddExerciseToWorkoutDialogComponent implements OnInit {
       switchMap(value => this.exerciseService.getFilteredExercisesByAlias(token, value).pipe(
         catchError(() => of([]))
       ))
+    );
+  }
+
+  getExercise() {
+    const token = localStorage.getItem('token') || '';
+    this.exerciseService.getExerciseDetails(this.data.exerciseId, token).subscribe(
+      (exercise: Exercise) => {
+        this.exercise = exercise;
+        this.exerciseName = exercise.name;
+        this.searchControl.setValue(exercise.name);
+      },
+      (error) => {
+        this.openSnackBar('Nie udało się załadować szczegółów ćwiczenia');
+      }
     );
   }
 
@@ -58,6 +85,10 @@ export class AddExerciseToWorkoutDialogComponent implements OnInit {
     this.exercise = exercise;
     this.searchControl.setValue(exercise.name);
     this.isDropdownOpen = false;
+
+    if (exercise.exercise_type !== 'OTHER') {
+      this.difficultyFactor = exercise.difficulty_factor;
+    }
   }
 
   onCancel(): void {
@@ -66,7 +97,12 @@ export class AddExerciseToWorkoutDialogComponent implements OnInit {
 
   onConfirm(): void {
     if (this.exercise) {
-      this.dialogRef.close(this.exercise);
+      this.dialogRef.close({
+        exerciseId: this.exercise.id,
+        exerciseName: this.exercise.name,
+        exerciseType: this.exercise.exercise_type,
+        difficultyFactor: this.difficultyFactor
+      });
     } else {
       this.openSnackBar('Musisz wybrać ćwiczenie');
     }
@@ -88,6 +124,20 @@ export class AddExerciseToWorkoutDialogComponent implements OnInit {
         this.onConfirm();
       }
     });
+  }
+
+  onScroll(event: Event): void {
+    const target = event.target as HTMLElement;
+
+    if (target && target.classList.contains('dropdown')) {
+      this.renderer.addClass(document.body, 'show-scrollbar');
+
+      clearTimeout(this.scrollTimeout);
+
+      this.scrollTimeout = setTimeout(() => {
+        this.renderer.removeClass(document.body, 'show-scrollbar');
+      }, 3000);
+    }
   }
 
   private openSnackBar(message: string): void {

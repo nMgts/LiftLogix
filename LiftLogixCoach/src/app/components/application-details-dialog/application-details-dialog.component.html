@@ -1,5 +1,12 @@
-<h2 mat-dialog-title>{{ data.client.first_name }} {{ data.client.last_name }}</h2>
-<div mat-dialog-content>
+<button mat-raised-button (click)="close()" class="close-button">&times;</button>
+
+<h2 mat-dialog-title>
+  <div class="client-photo">
+    <img [src]="getSafeImageUrl(data.client)" alt="clientImage" />
+  </div>
+  <span>{{ data.client.first_name }} {{ data.client.last_name }}</span>
+</h2>
+<div mat-dialog-content #dialog>
   <p>{{ data.description }}</p>
   <p>Zgłoszono: {{ data.submitted_date | date:'short' }}</p>
 </div>
@@ -9,7 +16,6 @@
     Wyślij wiadomość
   </button>
   <span class="spacer"></span>
-  <button mat-button color="primary" *ngIf="data.status == 'PENDING'" (click)="accept(data.id)">Accept</button>
-  <button mat-button color="warn" *ngIf="data.status == 'PENDING'" (click)="reject(data.id)">Reject</button>
+  <button mat-button color="warn" *ngIf="data.status == 'PENDING'" (click)="reject(data.id)">Odrzuć</button>
+  <button mat-button color="primary" *ngIf="data.status == 'PENDING'" (click)="accept(data.id)">Akceptuj</button>
 </div>
-

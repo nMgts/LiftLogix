@@ -1,35 +1,47 @@
+<app-back-arrow (goBack)="onGoBack()"></app-back-arrow>
+
 <div class="component-container">
-  <button class="back-arrow" (click)="goBack()">
-    <span class="material-icons">arrow_back</span>
-  </button>
   <div *ngIf="currentResult; else loading">
-    <p>Wyciskanie leżąc: {{ currentResult.benchpress }}</p>
-    <p>Martwy ciąg: {{ currentResult.deadlift }}</p>
-    <p>Przysiad: {{ currentResult.squat }}</p>
-    <p>Razem: {{ total }}</p>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Bieżący rekord</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Wyciskanie leżąc: {{ currentResult.benchpress }}</p>
+        <p>Martwy ciąg: {{ currentResult.deadlift }}</p>
+        <p>Przysiad: {{ currentResult.squat }}</p>
+        <p class="total">Razem: {{ total }}</p>
+      </mat-card-content>
+    </mat-card>
   </div>
   <ng-template #loading>
     <p>Ładowanie wyników...</p>
   </ng-template>
 
   <form (ngSubmit)="addResult()">
-    <div>
-      <label for="benchpress">Wyciskanie leżąc:</label>
-      <input id="benchpress" type="number" [(ngModel)]="benchpress" name="benchpress">
-    </div>
+    <mat-form-field appearance="fill">
+      <mat-label>Wyciskanie leżąc</mat-label>
+      <input matInput id="benchpress" type="number" [(ngModel)]="benchpress" name="benchpress">
+    </mat-form-field>
 
-    <div>
-      <label for="deadlift">Martwy ciąg:</label>
-      <input id="deadlift" type="number" [(ngModel)]="deadlift" name="deadlift">
-    </div>
+    <mat-form-field appearance="fill">
+      <mat-label>Martwy ciąg</mat-label>
+      <input matInput id="deadlift" type="number" [(ngModel)]="deadlift" name="deadlift">
+    </mat-form-field>
 
-    <div>
-      <label for="squat">Przysiad:</label>
-      <input id="squat" type="number" [(ngModel)]="squat" name="squat">
-    </div>
+    <mat-form-field appearance="fill">
+      <mat-label>Przysiad</mat-label>
+      <input matInput id="squat" type="number" [(ngModel)]="squat" name="squat">
+    </mat-form-field>
 
-    <button type="submit">Dodaj wynik</button>
+    <mat-form-field appearance="fill">
+      <mat-label>Data</mat-label>
+      <input matInput id="date" [(ngModel)]="date"  type="date" name="date">
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit">Dodaj wynik</button>
   </form>
+
 
   <div class="filter">
     <button mat-raised-button (click)="toggleFilter()">
@@ -51,4 +63,48 @@
     <mat-checkbox [(ngModel)]="showDeadlift" (change)="updateChartData()">Martwy ciąg</mat-checkbox>
     <mat-checkbox [(ngModel)]="showSquat" (change)="updateChartData()">Przysiad</mat-checkbox>
   </div>
+
+  <mat-checkbox [(ngModel)]="showAllResults">Pokaż listę wszystkich wyników</mat-checkbox>
+
+  <table *ngIf="showAllResults" mat-table [dataSource]="tableResults">
+    <ng-container matColumnDef="benchpress">
+      <th mat-header-cell *matHeaderCellDef> Wyciskanie leżąc </th>
+      <td mat-cell *matCellDef="let result"> {{ result.benchpress }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="squat">
+      <th mat-header-cell *matHeaderCellDef> Przysiad </th>
+      <td mat-cell *matCellDef="let result"> {{ result.squat }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="deadlift">
+      <th mat-header-cell *matHeaderCellDef> Martwy ciąg </th>
+      <td mat-cell *matCellDef="let result"> {{ result.deadlift }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef (click)="toggleSortOrder()">
+        Data
+        <span class="material-icons">
+          {{ sortOrder === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+        </span>
+      </th>
+      <td mat-cell *matCellDef="let result"> {{ result.date | date:'dd-MM-yy' }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let result">
+        <button mat-icon-button (click)="editResult(result)">
+          <span class="material-icons">edit</span>
+        </button>
+        <button mat-icon-button (click)="deleteResult(result)">
+          <span class="material-icons">delete</span>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
 </div>

@@ -16,13 +16,17 @@ public interface ExerciseDTOMapper {
     @Mappings({
             @Mapping(target = "body_parts", source = "body_parts"),
             @Mapping(target = "image", source = "image"),
-            @Mapping(target = "aliases", source = "aliases")
+            @Mapping(target = "aliases", source = "aliases"),
+            @Mapping(target = "exercise_type", source = "exercise_type")
     })
     ExerciseDTO mapExerciseToDTO(Exercise exercise);
 
-    @Mapping(target = "body_parts", source = "body_parts")
-    @Mapping(target = "image", ignore = true)
-    @Mapping(target = "aliases", source = "aliases")
+    @Mappings({
+            @Mapping(target = "body_parts", source = "body_parts"),
+            @Mapping(target = "image", ignore = true),
+            @Mapping(target = "aliases", source = "aliases"),
+            @Mapping(target = "exercise_type", source = "exercise_type")
+    })
     Exercise mapDTOToExercise(ExerciseDTO dto);
 
     default String map(byte[] image) {
@@ -38,19 +42,5 @@ public interface ExerciseDTOMapper {
             return Base64.getDecoder().decode(base64Image);
         }
         return null;
-    }
-
-    @Mapping(target = "aliases", source = "aliases")
-    default Set<ExerciseAliasDTO> mapAliases(Set<ExerciseAlias> aliases, @Context ExerciseAliasDTOMapper mapper) {
-        return aliases.stream()
-                .map(mapper::mapEntityToDTO)
-                .collect(Collectors.toSet());
-    }
-
-    @Mapping(target = "aliases", source = "aliases")
-    default Set<ExerciseAlias> mapAliasesDTO(Set<ExerciseAliasDTO> dtos, @Context ExerciseAliasDTOMapper mapper) {
-        return dtos.stream()
-                .map(mapper::mapDTOToEntity)
-                .collect(Collectors.toSet());
     }
 }

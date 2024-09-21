@@ -49,7 +49,8 @@ public class SecurityConfig {
                         // Coach endpoints
                         .requestMatchers("/api/application/accept/{application_id}", "/api/application/reject/{application_id}",
                                 "/api/coach/profile",
-                                "/api/client/my", "/api/client/quantity")
+                                "/api/client/my", "/api/client/quantity",
+                                "/api/scheduler")
                         .hasAuthority("COACH")
 
                         // Client endpoints
@@ -59,7 +60,15 @@ public class SecurityConfig {
                         // Admin and coach endpoints
                         .requestMatchers(
                                 "/api/exercise/add",
-                                "/api/result/add/{client_id}")
+                                "/api/result/add/{client_id}",
+                                "/api/client/{client_id}",
+                                "/api/plans/public", "/api/plans/my", "/api/plans/save", "/api/plans/details/{id}", "/api/plans/delete/{id}",
+                                "/api/plans/add-to-my-plans/{id}", "/api/plans/edit", "/api/plans/rename/{id}", "/api/plans/visibility/{id}",
+                                "/api/plans/export/{id}", "/api/plans/copy/{id}",
+                                "/api/personal-plan/is-active/{client_id}", "/api/personal-plan/deactivate/{plan_id}", "/api/personal-plan/create",
+                                "/api/personal-plan/all/{client_id}", "/api/personal-plan/delete/{id}", "/api/personal-plan/details/{id}",
+                                "/api/personal-plan/edit",
+                                "/api/workout/toggle-individual/{id}", "/api/workout/set-date")
                         .hasAnyAuthority("ADMIN", "COACH")
 
                         // Admin and client endpoints
@@ -74,9 +83,11 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/user/details", "/api/user/change-password", "/api/user/verify", "/api/user/check", "/api/user/image/{user_id}", "/api/user/image/update",
                                 "/api/client/unsubscribe/{client_id}",
-                                "/api/exercise/{id}", "/api/exercise/all", "/api/exercise/image/{id}", "/api/exercise/searchByAlias",
+                                "/api/exercise/{id}", "/api/exercise/all", "/api/exercise/image/{id}", "/api/exercise/searchByAlias", "/api/exercise/images/batch",
                                 "/api/email/send-verification-code", "/api/email/update-email",
-                                "/api/result/{client_id}", "/api/result/current/{client_id}")
+                                "/api/result/{client_id}", "/api/result/current/{client_id}", "/api/result/update", "/api/result/delete",
+                                "/api/personal-plan/workout/{workout_id}",
+                                "/api/workout/get/{id}")
                         .authenticated()
 
                         // Other endpoints

@@ -7,6 +7,7 @@ import { Client } from "../interfaces/Client";
   providedIn: 'root'
 })
 export class ClientService {
+  private baseUrl = 'http://localhost:8080/api/client';
   private getUrl = 'http://localhost:8080/api/client/my';
   private getNumberUrl = 'http://localhost:8080/api/client/quantity';
   private selectedClientIdSubject = new BehaviorSubject<number | null>(null);
@@ -16,6 +17,11 @@ export class ClientService {
 
   setSelectedClientId(clientId: number | null) {
     this.selectedClientIdSubject.next(clientId);
+  }
+
+  getClient(id: number, token: string): Observable<Client> {
+    const headers = this.createHeaders(token);
+    return this.http.get<Client>(`${this.baseUrl}/${id}`, { headers: headers })
   }
 
   getMyClients(token: string): Observable<Client[]> {

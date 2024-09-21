@@ -1,10 +1,28 @@
-<div class="main-container">
+<div class="main-container" #dialog>
   <h1>{{ data.name }}</h1>
   <div class="content">
     <div class="body-parts">
       <span *ngFor="let part of data.body_parts" class="body-part">{{ part }}</span>
     </div>
-    <div [innerHTML]="safeDescription"></div>
+
+    <div class="exercise-info">
+      <span *ngIf="data.certificated" class="icon-certificated">
+        <img src="/images/logo.svg" alt="Certyfikat LLC">
+      </span>
+
+      <span *ngIf="data.exercise_type !== 'OTHER'" class="icon-exercise-type">
+        <img *ngIf="data.exercise_type === 'SQUAT'" src="/icons/squat.jpg" alt="Squat">
+        <img *ngIf="data.exercise_type === 'BENCHPRESS'" src="/icons/benchpress.webp" alt="Benchpress">
+        <img *ngIf="data.exercise_type === 'DEADLIFT'" src="/icons/deadlift.png" alt="Deadlift">
+        x{{ data.difficulty_factor | number: '1.1-1' }}
+      </span>
+    </div>
+
+    <mat-card>
+      <mat-card-content>
+        <div [innerHTML]="safeDescription"></div>
+      </mat-card-content>
+    </mat-card>
     <div class="video-container" [innerHTML]="safeUrl"></div>
   </div>
   <button (click)="closeDialog()">Zamknij</button>

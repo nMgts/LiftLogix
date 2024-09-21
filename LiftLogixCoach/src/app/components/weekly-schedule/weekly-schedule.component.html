@@ -1,4 +1,11 @@
 <div class="scheduler-container">
+
+  <div class="navigation-panel" *ngIf="isBoxExpanded">
+    <button (click)="prevWeek()">←</button>
+    <span>{{ displayWeekRange }}</span>
+    <button (click)="nextWeek()">→</button>
+  </div>
+
   <div class="scheduler">
     <table>
       <thead>
@@ -10,7 +17,23 @@
       <tbody>
       <tr *ngFor="let hour of hours">
         <td class="hour-header">{{ hour }}</td>
-        <td *ngFor="let day of daysOfWeek" class="time-slot"></td>
+        <td *ngFor="let dayDate of weekDays" class="time-slot">
+          <div *ngFor="let item of schedulerItems">
+            <div class="schedule-bar"
+              *ngIf="isItemInSlot(item, dayDate, hour) && isFirstPossibleSlot(item, dayDate, hour)"
+               [ngStyle]="{
+                   height: getTotalSlotHeight(item, dayDate),
+                   top: getItemSlotTop(item, dayDate, hour),
+                   zIndex: 10
+                 }">
+                <div class="schedule-title"
+                     *ngIf="parseFloat(getTotalSlotHeight(item, dayDate)) >= 26">
+                  {{ item.workoutName }}
+                </div>
+            </div>
+          </div>
+        </td>
+
       </tr>
       </tbody>
     </table>

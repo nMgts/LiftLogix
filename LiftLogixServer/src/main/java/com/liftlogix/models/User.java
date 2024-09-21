@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -43,6 +44,9 @@ public abstract class User implements UserDetails {
     @Column(nullable = false)
     private boolean email_confirmed = false;
     private String confirmationToken;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Plan> plans;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

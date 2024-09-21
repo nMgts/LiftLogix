@@ -1,4 +1,4 @@
-import {Microcycle} from "./Microcycle";
+import { Microcycle } from "./Microcycle";
 
 export interface Mesocycle {
   microcycles: Microcycle[];

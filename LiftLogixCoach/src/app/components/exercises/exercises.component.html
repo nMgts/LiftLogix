@@ -11,17 +11,38 @@
     <h1 class="library-title">Biblioteka ćwiczeń</h1>
     <div class="header-actions">
       <div class="filter-exercises">
-        <div (click)="toggleDropdown($event)">
+        <div (click)="toggleDropdown($event)" class="filter-exercises-icon">
           <img ngSrc="/icons/filter.png" alt="Filter Icon" class="filter-icon" height="24" width="24"/>
           <span>Filtruj</span>
         </div>
 
-        <div class="dropdown-menu" *ngIf="isDropdownOpen">
+        <div class="dropdown-menu" *ngIf="isDropdownOpen" #elem (scroll)="onScroll($event)">
           <button (click)="clearFilters($event)">Wyczyść filtry</button>
-          <label *ngFor="let part of body_parts" (click)="onCheckboxChange($event)">
-            <input type="checkbox" [value]="part" [checked]="selectedBodyParts.includes(part)"/>
-            {{ part }}
-          </label>
+
+          <div class="dropdown-section">
+            <h3 class="dropdown-section-title">Certyfikat</h3>
+            <label (click)="onCertificatedCheckboxChange($event)">
+              <input type="checkbox" [value]="filterCertificated" [checked]="filterCertificated">
+              Certyfikat LLC
+            </label>
+          </div>
+
+          <div class="dropdown-section">
+            <h3 class="dropdown-section-title">Typ Ćwiczenia</h3>
+            <label *ngFor="let type of exercise_types" (click)="onTypesCheckboxChange($event)">
+              <input type="checkbox" [value]="type" [checked]="selectedExerciseTypes.includes(type)">
+              {{ type }}
+            </label>
+          </div>
+
+          <div class="dropdown-section">
+            <h3 class="dropdown-section-title">Partie Ciała</h3>
+            <label *ngFor="let part of body_parts" (click)="onCheckboxChange($event)">
+              <input type="checkbox" [value]="part" [checked]="selectedBodyParts.includes(part)"/>
+              {{ part }}
+            </label>
+          </div>
+
         </div>
       </div>
 
@@ -38,6 +59,23 @@
 
   <div class="exercise-grid">
     <div class="exercise-card" *ngFor="let exercise of displayedExercises" (click)="openDetails(exercise)">
+
+      <div class="icon-container">
+        <div class="certified-icon" *ngIf="exercise.certificated">
+          <img src="/images/logo.svg" alt="Certificated" />
+        </div>
+
+        <div class="exercise-type-icon" *ngIf="exercise.exercise_type === 'SQUAT'">
+          <img src="/icons/squat.jpg" alt="Squat Icon" />
+        </div>
+        <div class="exercise-type-icon" *ngIf="exercise.exercise_type === 'DEADLIFT'">
+          <img src="/icons/deadlift.png" alt="Deadlift Icon" />
+        </div>
+        <div class="exercise-type-icon" *ngIf="exercise.exercise_type === 'BENCHPRESS'">
+          <img src="/icons/benchpress.webp" alt="Benchpress Icon" />
+        </div>
+      </div>
+
       <img [src]="exercise.imageSafeUrl" alt="{{exercise.name}} Image" class="exercise-card-image"/>
       <div class="exercise-card-name">{{exercise.name}}</div>
       <div class="exercise-card-body-parts">{{exercise.body_parts.join(', ')}}</div>

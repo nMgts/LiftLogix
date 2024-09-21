@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnChanges, Output } from '@angular/core';
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { Client } from "../../interfaces/Client";
 import { ClientService } from "../../services/client.service";
@@ -12,6 +12,9 @@ import { ApplicationService } from "../../services/application.service";
 export class ClientsComponent implements OnChanges {
   @Input() isBoxExpanded = false;
   @Output() closeBox = new EventEmitter<void>();
+
+  isFullScreen = false;
+
   clientsQuantity: number = 0;
   protected readonly window = window;
   selectedComponent: string | null = null;
@@ -64,6 +67,11 @@ export class ClientsComponent implements OnChanges {
     )
   }
 
+  toggleFullScreen(event: Event): void {
+    event.stopPropagation();
+    this.isFullScreen = !this.isFullScreen;
+  }
+
   toggleDropdown(client: Client) {
     if (this.dropdownOpenClientId === client.id) {
       this.dropdownOpenClientId = null;
@@ -106,8 +114,8 @@ export class ClientsComponent implements OnChanges {
         return 'Wyniki';
       case 'plan':
         return 'Plan';
-      case 'hours':
-        return 'Godziny';
+      case 'schedule':
+        return 'Harmonogram';
       case 'diet':
         return 'Dieta';
       default:
@@ -115,8 +123,14 @@ export class ClientsComponent implements OnChanges {
     }
   }
 
+  goBack() {
+    this.clearSelectedComponent();
+    this.selectedClientId = 0;
+  }
+
   close(event: Event) {
     event.stopPropagation();
+    this.clearSelectedComponent();
     this.closeBox.emit();
   }
 }

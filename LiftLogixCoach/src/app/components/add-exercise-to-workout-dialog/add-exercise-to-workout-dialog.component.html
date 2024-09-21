@@ -1,6 +1,6 @@
 <div class="custom-dialog-container" (click)="hideDropdown()">
-  <h1 mat-dialog-title>Dodaj ćwiczenie</h1>
-  <div mat-dialog-content>
+  <h1 mat-dialog-title> {{ title }} </h1>
+  <div class="content">
     <mat-form-field>
       <input matInput [formControl]="searchControl" placeholder="Wyszukaj"
              (click)="showDropdown($event)" (input)="showDropdown($event)"/>
@@ -8,9 +8,15 @@
         <mat-icon>{{ isDropdownOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
       </button>
     </mat-form-field>
-    <div class="dropdown" *ngIf="filteredExercises$ | async as exercises">
+    <div class="dropdown" *ngIf="filteredExercises$ | async as exercises" #elem (scroll)="onScroll($event)">
       <div *ngIf="exercises.length > 0 && searchControl.value != '' && isDropdownOpen">
-        <div *ngFor="let exercise of exercises" (click)="onExerciseSelect(exercise)" class="dropdown-item">
+        <div *ngFor="let exercise of exercises"
+             (click)="onExerciseSelect(exercise)"
+             class="dropdown-item"
+             [ngClass]="{
+                'certified': exercise.certificated,
+                'non-other-type': exercise.exercise_type !== 'OTHER'
+             }">
           <img [src]="exercise.image ? exercise.image : '/icons/dumbbell.jpg'" alt="{{exercise.name}}" class="dropdown-image" />
           <span>{{exercise.name}}</span>
           <button mat-icon-button (click)="openExerciseDetails(exercise, $event)">
@@ -19,6 +25,12 @@
         </div>
       </div>
     </div>
+
+    <mat-form-field *ngIf="exercise && exercise.exercise_type !== 'OTHER'">
+      <mat-label>Współczynnik trudności</mat-label>
+      <input matInput type="number" step="0.01" [(ngModel)]="difficultyFactor" placeholder="Wprowadź współczynnik trudności" />
+    </mat-form-field>
+
     <button mat-button (click)="openAddExerciseDialog()">Dodaj nowe ćwiczenie</button>
   </div>
   <div mat-dialog-actions>

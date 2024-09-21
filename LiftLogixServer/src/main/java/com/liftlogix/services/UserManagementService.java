@@ -4,19 +4,15 @@ import com.liftlogix.convert.UserDTOMapper;
 import com.liftlogix.dto.ReqRes;
 import com.liftlogix.dto.UserDTO;
 import com.liftlogix.exceptions.EmailIsTakenException;
-import com.liftlogix.exceptions.InvalidTokenException;
 import com.liftlogix.exceptions.UserIsNotConfirmedException;
 import com.liftlogix.models.*;
-import com.liftlogix.repositories.TokenRepository;
 import com.liftlogix.repositories.UserRepository;
 import com.liftlogix.types.Role;
 import com.liftlogix.util.JWTUtils;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,7 +28,7 @@ public class UserManagementService {
     private final PasswordEncoder passwordEncoder;
     private final UserDTOMapper userDTOMapper;
     private final EmailService emailService;
-    private final TokenRepository tokenRepository;
+    private final CoachSchedulerService coachSchedulerService;
 
     public ReqRes register(ReqRes registrationRequest, Role role) {
         ReqRes resp = new ReqRes();
@@ -63,6 +59,10 @@ public class UserManagementService {
             User userResult = userRepository.save(user);
             UserDTO userDTO = userDTOMapper.mapUserToDTO(userResult);
             if (userResult.getId() > 0) {
+
+                if (role.equals(Role.COACH)) {
+                    coachSchedulerService.setCoachScheduler((Coach) userResult);
+                }
 
                 String confirmationToken = UUID.randomUUID().toString();
                 user.setConfirmationToken(confirmationToken);

@@ -1,0 +1,27 @@
+<h1 mat-dialog-title>Zmiana daty treningu</h1>
+
+<mat-dialog-content>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Nowa data i godzina</mat-label>
+    <input matInput [matDatepicker]="picker" [(ngModel)]="newDate" placeholder="Wybierz datę">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Godzina rozpoczęcia</mat-label>
+    <input matInput [(ngModel)]="startTime" placeholder="Wybierz godzinę rozpoczęcia" type="time">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Godzina zakończenia</mat-label>
+    <input matInput [(ngModel)]="endTime" placeholder="Wybierz godzinę zakończenia" type="time">
+  </mat-form-field>
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Anuluj</button>
+  <button mat-button color="primary" (click)="onSave()">Zapisz</button>
+</mat-dialog-actions>

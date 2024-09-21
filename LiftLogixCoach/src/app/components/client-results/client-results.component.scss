@@ -1,33 +1,24 @@
 .component-container {
-  padding: 0 20px 20px 20px;
+  padding: 20px;
 }
 
-.back-arrow {
-  position: absolute;
-  background: none;
-  border: none;
-  top: 10px;
-  left: 10px;
-  cursor: pointer;
-  color: aliceblue;
-}
+mat-card {
+  margin: 10px 0 20px 0;
 
-.back-arrow span {
-  font-size: 36px;
-}
+  mat-card-title {
+    font-weight: bold;
+  }
 
-.back-arrow:hover {
-  color: darkviolet;
-}
-
-p {
-  font-size: 16px;
+  .total {
+    color: darkviolet;
+    font-weight: bold;
+  }
 }
 
 form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  margin-bottom: 20px;
 }
 
 label {
@@ -39,8 +30,77 @@ input {
   font-size: 1rem;
 }
 
-button {
+button.filter {
   padding: 10px;
   font-size: 1rem;
   cursor: pointer;
+}
+
+.filter {
+  margin-bottom: 5px;
+}
+
+canvas {
+  min-height: 300px;
+}
+
+table {
+  width: 100%;
+  margin-top: 16px;
+  table-layout: fixed;
+
+  .mat-header-cell {
+    font-weight: bold;
+  }
+
+  .mdc-data-table__cell {
+    padding: 0;
+  }
+
+  td, th {
+    text-align: center;
+    vertical-align: middle;
+    padding: 0;
+
+    @media (max-width: 650px) {
+      font-size: 12px;
+    }
+
+    @media (max-width: 470px) {
+      font-size: 10px;
+    }
+  }
+
+  td button {
+    @media (max-width: 470px) {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  td button .material-icons {
+    @media (max-width: 470px) {
+      font-size: 14px;
+    }
+  }
+
+  td:nth-child(1), th:nth-child(1) {
+    width: 19%;
+  }
+
+  td:nth-child(2), th:nth-child(2) {
+    width: 19%;
+  }
+
+  td:nth-child(3), th:nth-child(3) {
+    width: 19%;
+  }
+
+  td:nth-child(4), th:nth-child(4) {
+    width: 22%;
+  }
+
+  td:nth-child(5), th:nth-child(5) {
+    width: 21%;
+  }
 }

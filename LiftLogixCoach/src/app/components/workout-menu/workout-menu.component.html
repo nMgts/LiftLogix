@@ -1,0 +1,49 @@
+<div class="not-expanded-box" *ngIf="!isBoxExpanded">
+  <h1 class="header" *ngIf="window.innerWidth > 650">Plany</h1>
+  <div class="content">
+    <img ngSrc="/icons/workout.png" alt="Workout creator Icon" class="workout-creator-image" width="136" height="136"/>
+  </div>
+</div>
+
+<button *ngIf="isBoxExpanded" (click)="close($event)" class="close-button">&times;</button>
+
+<div class="expanded-box" *ngIf="isBoxExpanded">
+  <div class="training-plans-container" *ngIf="!selectedComponent">
+    <div class="training-plan-card" (click)="selectComponent('workout-creator')">
+      <div class="image-container">
+        <img src="/images/workout-creator.jpg" alt="Creator Planów Treningowych" />
+      </div>
+      <div class="content-container">
+        <h2>Kreator Planów Treningowych</h2>
+        <p>Stwórz spersonalizowany plan treningowy dostosowany do potrzeb Twoich klientów.</p>
+      </div>
+    </div>
+
+    <div class="training-plan-card" (click)="selectComponent('workout-library-private')">
+      <div class="image-container">
+        <img src="/images/private-workout-libary.jpg" alt="Moje Plany" />
+      </div>
+      <div class="content-container">
+        <h2>Moje Plany</h2>
+        <p>Twoja prywatna biblioteka planów treningowych.</p>
+      </div>
+    </div>
+
+    <div class="training-plan-card" (click)="selectComponent('workout-library-public')">
+      <div class="image-container">
+        <img src="/images/public-workout-libary.webp" alt="Biblioteka Planów" />
+      </div>
+      <div class="content-container">
+        <h2>Biblioteka Planów</h2>
+        <p>Odkryj plany treningowe udostępnione do ogólnego użytku.</p>
+      </div>
+    </div>
+  </div>
+
+    <ng-container [ngSwitch]="selectedComponent">
+      <app-workout-creator *ngSwitchCase="'workout-creator'" (goBack)="goBack()"></app-workout-creator>
+      <app-workout-library-private *ngSwitchCase="'workout-library-private'" (goBack)="goBack()"></app-workout-library-private>
+      <app-workout-library-public *ngSwitchCase="'workout-library-public'" (goBack)="goBack()"></app-workout-library-public>
+    </ng-container>
+
+</div>

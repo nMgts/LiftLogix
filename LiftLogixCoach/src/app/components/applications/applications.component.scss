@@ -32,13 +32,16 @@ h1 {
 h1.expanded {
   font-size: 36px;
   margin-bottom: 15px;
+
+  @media (max-width: 600px) {
+    font-size: 24px;
+  }
 }
 
 .application-container {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
   padding: 2px 0 0 10px;
   margin-top: 4px;
   position: relative;
@@ -50,10 +53,35 @@ h1.expanded {
     cursor: pointer;
   }
 
+  .client-photo {
+    margin-right: 10px;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+
   .application-info {
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
+    min-width: 70px;
+    margin-right: 10px;
+
+    @media (max-width: 400px) {
+      min-width: unset;
+      max-width: 110px;
+    }
   }
 
   .date {
@@ -68,9 +96,10 @@ h1.expanded {
 
 .description {
   text-align: justify;
-  padding-left: 20px;
+  padding-left: 90px;
   margin-right: 75px;
   margin-top: 10px;
+  width: 100%;
 }
 
 .button-container {
@@ -109,5 +138,31 @@ mat-paginator {
 @media(max-width: 460px) {
   .description {
     display: none;
+  }
+}
+
+.not-expanded {
+  .application-info {
+    @media (max-width: 1149px) {
+      min-width: unset;
+      max-width: 75px;
+      overflow: hidden;
+    }
+
+    @media (max-width: 1024px) {
+      max-width: unset;
+    }
+
+    @media (max-width: 700px) {
+      max-width: 90px;
+    }
+
+    @media (max-width: 650px) {
+      max-width: unset;
+    }
+
+    @media (max-width: 340px) {
+      max-width: 95px;
+    }
   }
 }

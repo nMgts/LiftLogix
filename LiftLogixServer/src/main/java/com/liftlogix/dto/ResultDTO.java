@@ -3,7 +3,7 @@ package com.liftlogix.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -13,5 +13,5 @@ public class ResultDTO {
     private Double benchpress;
     private Double deadlift;
     private Double squat;
-    private LocalDateTime date;
+    private LocalDate date;
 }

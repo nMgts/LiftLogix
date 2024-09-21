@@ -1,0 +1,92 @@
+<app-back-arrow *ngIf="!selectedPlan && !viewPlan" (goBack)="onGoBack()"></app-back-arrow>
+
+<div class="plan-list-container" *ngIf="!selectedPlan && !viewPlan" (click)="cancelEdit()">
+  <h1 class="title">Moje Plany</h1>
+
+  <mat-form-field appearance="fill" class="search-field">
+    <mat-label>Wyszukaj plan</mat-label>
+    <input matInput [(ngModel)]="searchTerm" (input)="onSearchChange()" placeholder="Wpisz nazwę planu" />
+  </mat-form-field>
+
+  <div class="plan-list">
+    <ng-container *ngFor="let plan of displayedPlans">
+      <mat-card class="plan-card">
+
+        <mat-card-title class="plan-name">
+          <ng-container *ngIf="plan.id !== editingPlan">
+            <div class="name" [attr.title]="plan.name">
+              {{ truncateText(plan.name) }}
+            </div>
+            <button mat-icon-button (click)="startEdit(plan, $event)" *ngIf="!personalPlan">
+              <mat-icon class="name-icon">edit</mat-icon>
+            </button>
+            <button mat-icon-button [matMenuTriggerFor]="visibilityMenu" *ngIf="!personalPlan">
+              <mat-icon [ngClass]="{'public-icon': plan.public, 'private-icon': !plan.public}">{{ plan.public ? 'public' : 'lock' }}</mat-icon>
+            </button>
+            <mat-menu #visibilityMenu="matMenu">
+              <button mat-menu-item (click)="changeVisibility(plan, !plan.public)">
+                <mat-icon>{{ plan.public ? 'lock' : 'public' }}</mat-icon>
+                {{ plan.public ? 'Ustaw jako prywatny' : 'Ustaw jako publiczny' }}
+              </button>
+            </mat-menu>
+          </ng-container>
+          <ng-container *ngIf="plan.id === editingPlan">
+            <mat-form-field appearance="fill" class="edit-field" (click)="$event.stopPropagation()">
+              <mat-label>Edytuj nazwę</mat-label>
+              <input matInput [(ngModel)]="newName" autofocus/>
+            </mat-form-field>
+            <button mat-raised-button class="save-button" (click)="saveEdit(plan, $event)">Zapisz</button>
+          </ng-container>
+        </mat-card-title>
+
+        <mat-card-subtitle class="plan-duration">{{ getPlanDuration(plan.length) }}</mat-card-subtitle>
+
+        <div class="plan-actions" *ngIf="!personalPlan">
+          <button mat-raised-button (click)="previewPlan(plan.id)" class="action-button">
+            <mat-icon *ngIf="window.innerWidth > 399" class="preview-icon">visibility</mat-icon>
+            Podgląd
+          </button>
+          <button mat-raised-button (click)="editPlan(plan.id)" class="action-button">
+            <mat-icon *ngIf="window.innerWidth > 399" class="edit-icon">edit</mat-icon>
+            Edytuj
+          </button>
+          <button mat-raised-button (click)="duplicatePlan(plan.id)" class="action-button">
+            <mat-icon *ngIf="window.innerWidth > 399" class="copy-icon">content_copy</mat-icon>
+            Duplikuj
+          </button>
+          <button mat-raised-button (click)="downloadPlan(plan.id)" class="action-button">
+            <img *ngIf="window.innerWidth > 399" src="/icons/excel.svg" alt="Excel Icon" class="excel-icon">
+            Pobierz
+          </button>
+          <button mat-raised-button (click)="deletePlan(plan.id)" class="action-button">
+            <mat-icon *ngIf="window.innerWidth > 399" class="delete-icon">delete</mat-icon>
+            Usuń
+          </button>
+        </div>
+
+        <div class="plan-actions" *ngIf="personalPlan">
+          <button mat-raised-button (click)="previewPlan(plan.id)" class="action-button">
+            <mat-icon *ngIf="window.innerWidth > 399" class="preview-icon">visibility</mat-icon>
+            Podgląd
+          </button>
+          <button mat-raised-button (click)="editPlan(plan.id)" class="action-button">
+            <mat-icon *ngIf="window.innerWidth > 399" class="edit-icon">edit</mat-icon>
+            Dostosuj
+          </button>
+        </div>
+
+      </mat-card>
+    </ng-container>
+  </div>
+
+  <mat-paginator [length]="filteredPlans.length" [pageSize]="pageSize" (page)="onPageChange($event)"></mat-paginator>
+</div>
+
+
+<div *ngIf="selectedPlan">
+  <app-workout-creator [planId]="selectedPlan" [isPersonalPlan]="personalPlan" [clientId]="clientId" [isFullScreen]="isFullScreen" (goBack)="onCancel()"
+                       (success)="onSuccess()"></app-workout-creator>
+</div>
+<div *ngIf="viewPlan">
+  <app-workout-view [planId]="viewPlan" [isPersonalPlan]="personalPlan" [isFullScreen]="isFullScreen" (goBack)="onCancel()"></app-workout-view>
+</div>

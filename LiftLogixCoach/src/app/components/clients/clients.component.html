@@ -7,14 +7,14 @@
 </div>
 
 <div class="expanded-box" *ngIf="isBoxExpanded">
-  <div class="left-side" *ngIf="!selectedComponent || window.innerWidth >= 1024">
+  <div class="left-side" *ngIf="(!selectedComponent || window.innerWidth >= 1024) && (!isFullScreen || !selectedComponent) ">
     <button *ngIf="window.innerWidth < 1024" (click)="close($event)" class="close-button">&times;</button>
     <div class="search-container">
       <input type="text" class="search-input" placeholder="Szukaj klientów" />
     </div>
 
     <div class="clients-list">
-      <div class="client-row" *ngFor="let client of clients">
+      <div class="client-row" *ngFor="let client of clients" [ngClass]="{'selected-client': client.id === selectedClientId}">
         <img [src]="client.imageSafeUrl" alt="{{client.email}}" class="profile-image"/>
         <div class="client-info">
           <div class="client-name">{{client.first_name}} {{getDisplayLastName(client)}}</div>
@@ -25,7 +25,7 @@
         <div class="client-actions">
           <button (click)="showComponent('plan', client.id, $event)">Plan</button>
           <button (click)="showComponent('results', client.id, $event)">Wyniki</button>
-          <button (click)="showComponent('hours', client.id, $event)">Godziny</button>
+          <button (click)="showComponent('schedule', client.id, $event)">Harmonogram</button>
           <button (click)="showComponent('diet', client.id, $event)">Dieta</button>
         </div>
         <div class="client-icons">
@@ -37,7 +37,7 @@
         <div class="dropdown" *ngIf="dropdownOpenClientId && dropdownOpenClientId === client.id && window.innerWidth < 1200">
           <button (click)="showComponent('plan', client.id, $event)">Plan</button>
           <button (click)="showComponent('results', client.id, $event)">Wyniki</button>
-          <button (click)="showComponent('hours', client.id, $event)">Godziny</button>
+          <button (click)="showComponent('schedule', client.id, $event)">Harmonogram</button>
           <button (click)="showComponent('diet', client.id, $event)">Diety</button>
           <button class="optional">Napisz</button>
           <button class="optional">Usuń</button>
@@ -53,25 +53,17 @@
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
   </div>
 
-  <div class="right-side" *ngIf="selectedComponent && window.innerWidth >= 1024">
+  <div class="right-side" *ngIf="selectedComponent">
+    <button *ngIf="window.innerWidth >= 1024" (click)="toggleFullScreen($event)" class="full-screen-button">
+      <mat-icon>{{ isFullScreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+    </button>
     <button (click)="close($event)" class="close-button">&times;</button>
     <h1 class="component-header">{{ switchHeader(selectedComponent) }}</h1>
     <ng-container [ngSwitch]="selectedComponent">
-      <app-client-plan *ngSwitchCase="'plan'"></app-client-plan>
-      <app-client-results *ngSwitchCase="'results'" [clientId]="selectedClientId"></app-client-results>
-      <app-client-hours *ngSwitchCase="'hours'"></app-client-hours>
-      <app-client-diet *ngSwitchCase="'diet'"></app-client-diet>
-    </ng-container>
-  </div>
-
-  <div class="left-side" *ngIf="selectedComponent && window.innerWidth < 1024">
-    <button (click)="close($event)" class="close-button">&times;</button>
-    <h1 class="component-header">{{ switchHeader(selectedComponent) }}</h1>
-    <ng-container [ngSwitch]="selectedComponent">
-      <app-client-plan *ngSwitchCase="'plan'"></app-client-plan>
-      <app-client-results *ngSwitchCase="'results'" [clientId]="selectedClientId"></app-client-results>
-      <app-client-hours *ngSwitchCase="'hours'"></app-client-hours>
-      <app-client-diet *ngSwitchCase="'diet'"></app-client-diet>
+      <app-client-plan *ngSwitchCase="'plan'" (goBack)="goBack()" [isFullScreen]="isFullScreen"></app-client-plan>
+      <app-client-results *ngSwitchCase="'results'" [clientId]="selectedClientId" (goBack)="goBack()"></app-client-results>
+      <app-client-schedule *ngSwitchCase="'schedule'" (goBack)="goBack()" [isFullScreen]="isFullScreen"></app-client-schedule>
+      <app-client-diet *ngSwitchCase="'diet'" (goBack)="goBack()"></app-client-diet>
     </ng-container>
   </div>
 </div>

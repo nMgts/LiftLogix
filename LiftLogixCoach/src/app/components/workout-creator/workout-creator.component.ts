@@ -1,34 +1,61 @@
-import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, Output, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AddExerciseToWorkoutDialogComponent } from "../add-exercise-to-workout-dialog/add-exercise-to-workout-dialog.component";
-import { Exercise } from "../../interfaces/Exercise";
-import { ExerciseDetailsDialogComponent } from "../exercise-details-dialog/exercise-details-dialog.component";
 import { WorkoutExercise } from "../../interfaces/WorkoutExercise";
 import { Workout } from "../../interfaces/Workout";
 import { Microcycle } from "../../interfaces/Microcycle";
 import { Mesocycle } from "../../interfaces/Mesocycle";
 import { Macrocycle } from "../../interfaces/Macrocycle";
+import { ExerciseOptionsDialogComponent } from "../exercise-options-dialog/exercise-options-dialog.component";
+import { SavePlanDialogComponent } from "../save-plan-dialog/save-plan-dialog.component";
+import { Plan } from "../../interfaces/Plan";
+import { PlanService } from "../../services/plan.service";
+import { ExerciseDetailsDialogComponent } from "../exercise-details-dialog/exercise-details-dialog.component";
+import { Exercise } from "../../interfaces/Exercise";
+import { ExerciseService } from "../../services/exercise.service";
+import { AdjustPersonalPlanDialogComponent } from "../adjust-personal-plan-dialog/adjust-personal-plan-dialog.component";
+import { PersonalPlan } from "../../interfaces/PersonalPlan";
+import { PersonalPlanService } from "../../services/personal-plan.service";
 
 @Component({
   selector: 'app-workout-creator',
   templateUrl: './workout-creator.component.html',
   styleUrl: './workout-creator.component.scss'
 })
-export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
-  @Input() isBoxExpanded = false;
-  @Output() closeBox = new EventEmitter<void>();
+export class WorkoutCreatorComponent implements OnInit, OnDestroy {
+  @Output() goBack = new EventEmitter<void>();
+  @Output() success = new EventEmitter<void>();
+  @Input() planId!: number;
+  @Input() personalPlan!: PersonalPlan;
+  @Input() isPersonalPlan = false;
+  @Input() clientId: number | null = null;
+  @Input() isFullScreen: boolean = false;
+  plan!: Plan;
+
   protected readonly window = window;
+  dropdownOpen: boolean = false;
 
   showAdvancedOptions = false;
   exampleWorkout: Workout = {
+    id: 0,
     name: 'Trening A',
     workoutExercises: [],
-    days: []
+    days: [],
+    dates: []
   }
 
   selectedWorkout = this.exampleWorkout;
-  addedWorkouts = 1;
 
   editingExercise: any = null;
   editingField: string = '';
@@ -48,12 +75,19 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
   activeCell: any = null;
 
   selectedMicrocycle = this.exampleMicrocycle;
-  exampleMesocycle: Mesocycle = { microcycles: [this.exampleMicrocycle] };
+  exampleMesocycle: Mesocycle = {
+    microcycles: [
+      this.exampleMicrocycle
+    ]
+  };
   microcycleCount: number = 1;
   showMesocycle = true;
 
   showMacrocycle = true;
-  macrocycle: Macrocycle = { mesocycles: [this.exampleMesocycle] };
+  macrocycle: Macrocycle = {
+    mesocycles:
+      [this.exampleMesocycle]
+  };
   selectedMesocycle = this.exampleMesocycle;
   mesocycleCount: number = 1;
 
@@ -64,16 +98,25 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
   constructor(
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private planService: PlanService,
+    private personalPlanService: PersonalPlanService,
+    private exerciseService: ExerciseService
   ) {}
 
-  ngOnChanges() {
-    if (this.isBoxExpanded) {
-      this.generateMicrocycleTable();
-      this.detectTouchDevice();
-      this.addTouchListener();
-      this.addClickListener();
+  ngOnInit() {
+    if (this.planId) {
+      this.loadPlan(this.planId);
     }
+
+    if (this.personalPlan) {
+      this.loadPersonalPlan();
+    }
+
+    this.generateMicrocycleTable();
+    this.detectTouchDevice();
+    this.addTouchListener();
+    this.addClickListener();
   }
 
   ngOnDestroy() {
@@ -85,34 +128,127 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     }
   }
 
+  /** Personal Plan Methods **/
+
+  loadPersonalPlan() {
+    console.log(this.personalPlan);
+    this.macrocycle = { mesocycles: this.personalPlan.mesocycles };
+    this.selectMesocycle(0);
+    this.generateMicrocycleTable();
+  }
+
+  updatePersonalPlan() {
+    const token = localStorage.getItem('token') || '';
+    this.personalPlanService.editPersonalPlan(this.personalPlan, token).subscribe(
+      () => {
+        this.openSnackBar('Plan został zaktualizowany');
+        this.onPersonalPlanSaveSuccess();
+      },
+      () => {
+        this.openSnackBar('Nie udało się zaktualizować planu');
+      }
+    )
+  }
+
+  adjustPersonalPlan() {
+    const dialogRef = this.dialog.open(AdjustPersonalPlanDialogComponent, {
+      data: { clientId: this.clientId, macrocycle: this.macrocycle }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.updatedMacrocycle) {
+        this.macrocycle = result.updatedMacrocycle;
+        this.selectMesocycle(0);
+      }
+    });
+  }
+
+  savePersonalPlan() {
+    const dialogRef = this.dialog.open(SavePlanDialogComponent, {
+      data: {
+        macrocycle: this.macrocycle,
+        planName: this.plan?.name ?? '',
+        clientId: this.clientId
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.onPersonalPlanSaveSuccess();
+      }
+    });
+  }
+
+  /** Plan Edit Methods **/
+
+  loadPlan(id: number) {
+    const token = localStorage.getItem('token') || '';
+    this.planService.getPlanDetails(id, token).subscribe({
+      next: (plan: Plan) => {
+        this.plan = plan;
+        this.macrocycle = { mesocycles: this.plan.mesocycles };
+        this.selectMesocycle(0);
+        this.generateMicrocycleTable();
+      },
+      error: () => {
+        this.openSnackBar('Nie udało się załadować planu');
+      }
+    });
+  }
+
+  editPlan() {
+    const token = localStorage.getItem('token') || '';
+    const newPlan: Plan = {
+      id: this.plan.id,
+      name: this.plan.name,
+      author: { id: 0, first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com', role: 'COACH' },
+      public: this.plan.public,
+      mesocycles: this.macrocycle.mesocycles
+    };
+    this.planService.editPlan(newPlan, token).subscribe({
+      next: () => {
+        this.openSnackBar('Plan został zaktualizowany');
+        this.onGoBack();
+      },
+      error: () => {
+        this.openSnackBar('Nie udało się zaktualizować planu');
+      }
+    })
+  }
+
   /** Workout Unit Methods **/
 
   selectWorkout(workout: Workout) {
-    console.log(workout);
     this.selectedWorkout = workout;
-    console.log(this.selectedWorkout);
   }
 
   createNewWorkout() {
     const newWorkout: Workout = {
+      id: 0,
       name: this.generateWorkoutName(),
       workoutExercises: [],
-      days: []
+      days: [],
+      dates: []
     };
     this.selectedMicrocycle.workouts.push(newWorkout);
     this.selectedWorkout = newWorkout;
-    this.addedWorkouts++;
   }
 
   generateWorkoutName(): string {
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    const uniqueBaseNames = new Set(
+      this.selectedMicrocycle.workouts.map(workout => workout.name.replace(/\d*$/, ''))
+    );
+
+    const workoutCount = uniqueBaseNames.size;
     let name;
 
-    if (this.addedWorkouts < 26) {
-      name = `Trening ${alphabet[this.addedWorkouts]}`;
+    if (workoutCount < 26) {
+      name = `Trening ${alphabet[workoutCount]}`;
     } else {
       let letters = '';
-      let count = this.addedWorkouts;
+      let count = workoutCount;
 
       while (count >= 0) {
         const remainder = count % 26;
@@ -122,15 +258,20 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
 
       name = `Trening ${letters}`;
     }
+
     return name;
   }
 
   removeWorkout(workout: Workout, event: Event) {
     event.stopPropagation();
+
     if (this.selectedMicrocycle.workouts.length > 1) {
       const index = this.selectedMicrocycle.workouts.indexOf(workout);
       if (index !== -1) {
         this.selectedMicrocycle.workouts.splice(index, 1);
+
+        this.updateWorkoutNames();
+
         if (this.selectedWorkout === workout) {
           this.selectedWorkout = this.selectedMicrocycle.workouts[0];
         }
@@ -140,13 +281,43 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     }
   }
 
+  updateWorkoutNames() {
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const uniqueWorkouts: { [key: string]: Workout[] } = {};
+
+    this.selectedMicrocycle.workouts.forEach(workout => {
+      const baseName = workout.name.replace(/\d*$/, '');
+      if (!uniqueWorkouts[baseName]) {
+        uniqueWorkouts[baseName] = [];
+      }
+      uniqueWorkouts[baseName].push(workout);
+    });
+
+    let currentLetterIndex = 0;
+    for (let letter in uniqueWorkouts) {
+      const workoutsGroup = uniqueWorkouts[letter];
+      const newBaseName = `Trening ${alphabet[currentLetterIndex++]}`;
+
+      workoutsGroup.forEach((workout, i) => {
+        if (workoutsGroup.length > 1) {
+          workout.name = `${newBaseName}${i + 1}`;
+        } else {
+          workout.name = newBaseName;
+        }
+      });
+    }
+  }
+
   openAddExerciseDialog() {
     const dialogRef = this.dialog.open(AddExerciseToWorkoutDialogComponent);
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.selectedWorkout.workoutExercises.push({
-          exercise: result,
+          exerciseId: result.exerciseId,
+          exerciseName: result.exerciseName,
+          exerciseType: result.exerciseType,
+          difficultyFactor: result.difficultyFactor,
           series: null,
           repetitionsFrom: null,
           repetitionsTo: null,
@@ -154,35 +325,64 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
           percentage: null,
           tempo: '1-0-1-0',
           rpe: null,
-          break: {value: null, unit: 's'}
+          breakTime: {value: null, unit: 's'}
         });
       }
     });
   }
 
-  openEditExerciseNameDialog(exercise: any): void {
-    const dialogRef = this.dialog.open(AddExerciseToWorkoutDialogComponent);
+  openEditExerciseNameDialog(exerciseId: number): void {
+    const exercise = this.selectedWorkout.workoutExercises.find(e => e.exerciseId === exerciseId);
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        const index = this.selectedWorkout.workoutExercises.findIndex(e => e.exercise.id === exercise.exercise.id);
-        if (index !== -1) {
-          const updatedWorkoutExercises = [...this.selectedWorkout.workoutExercises];
-          updatedWorkoutExercises[index] = { ...this.selectedWorkout.workoutExercises[index], exercise: result };
-          this.selectedWorkout.workoutExercises = updatedWorkoutExercises;
+    if (exercise) {
+      const dialogRef = this.dialog.open(AddExerciseToWorkoutDialogComponent, {
+        data: {
+          exerciseId: exercise.exerciseId,
+          difficultyFactor: exercise.difficultyFactor
         }
-      }
-    });
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          const index = this.selectedWorkout.workoutExercises.findIndex(e => e.exerciseId === exerciseId);
+          if (index !== -1) {
+            const updatedWorkoutExercises = [...this.selectedWorkout.workoutExercises];
+            updatedWorkoutExercises[index] = {
+              ...this.selectedWorkout.workoutExercises[index],
+              exerciseId: result.exerciseId,
+              exerciseName: result.exerciseName,
+              exerciseType: result.exerciseType,
+              difficultyFactor: result.difficultyFactor
+            };
+            this.selectedWorkout.workoutExercises = updatedWorkoutExercises;
+          }
+        }
+      });
+    }
   }
+
 
   removeExercise(exercise: any): void {
     this.selectedWorkout.workoutExercises = this.selectedWorkout.workoutExercises.filter(e => e !== exercise);
   }
 
-  openExerciseDetails(exercise: Exercise, event: Event): void {
+  removeAllExercises(): void {
+    this.selectedWorkout.workoutExercises = [];
+  }
+
+  openExerciseDetails(exerciseId: number, event: Event): void {
     event.stopPropagation();
-    this.dialog.open(ExerciseDetailsDialogComponent, {
-      data: exercise
+
+    const token = localStorage.getItem('token') || '';
+    this.exerciseService.getExerciseDetails(exerciseId, token).subscribe({
+      next: (exercise: Exercise) => {
+        this.dialog.open(ExerciseDetailsDialogComponent, {
+          data: exercise
+        });
+      },
+      error: (err) => {
+        console.error('Error fetching exercise details:', err);
+      }
     });
   }
 
@@ -206,9 +406,13 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     }
 
     const newWorkout: Workout = {
+      id: 0,
       name: `${this.selectedWorkout.name.replace(/\d+$/, '')}${maxNumber + 1}`,
       workoutExercises: this.selectedWorkout.workoutExercises.map(exercise => ({
-        exercise: { ...exercise.exercise },
+        exerciseId: exercise.exerciseId,
+        exerciseName: exercise.exerciseName,
+        exerciseType: exercise.exerciseType,
+        difficultyFactor: exercise.difficultyFactor,
         series: exercise.series,
         repetitionsFrom: exercise.repetitionsFrom,
         repetitionsTo: exercise.repetitionsTo,
@@ -216,12 +420,32 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
         percentage: exercise.percentage,
         tempo: exercise.tempo,
         rpe: exercise.rpe,
-        break: { ...exercise.break }
+        breakTime: { ...exercise.breakTime }
       })),
-      days: []
+      days: [],
+      dates: []
     };
 
     this.selectedMicrocycle.workouts.push(newWorkout);
+  }
+
+  openExerciseOptionsDialog(exercise: WorkoutExercise): void {
+    const dialogRef = this.dialog.open(ExerciseOptionsDialogComponent, {
+      data: {
+        exercise: { ...exercise },
+        showAdvancedOptions: this.showAdvancedOptions
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const { exercise: updatedExercise } = result;
+        const index = this.selectedWorkout.workoutExercises.findIndex(e => e.exerciseId === updatedExercise.exerciseId);
+        if (index !== -1) {
+          this.selectedWorkout.workoutExercises[index] = { ...this.selectedWorkout.workoutExercises[index], ...updatedExercise };
+        }
+      }
+    });
   }
 
   /** Microcycle Methods **/
@@ -263,18 +487,20 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     }
   }
 
-  toggleMicrocycleCellDropdown(event: Event, cell: any): void {
+  toggleMicrocycleCellDropdown(event: Event, cell: any) {
     event.stopPropagation();
     this.microcycleCellDropdownVisible = !this.microcycleCellDropdownVisible;
     this.activeCell = cell;
   }
 
-  closeMicrocycleCellDropdown(): void {
+  closeMicrocycleCellDropdown() {
     this.microcycleCellDropdownVisible = false;
   }
 
-  addWorkoutToMicrocycle(workout: Workout, day: number): void {
-    workout.days.push(day);
+  addWorkoutToMicrocycle(workout: Workout, day: number) {
+    if (!workout.days.includes(day)) {
+      workout.days.push(day);
+    }
   }
 
   getWorkoutsForDay(day: number): Workout[] {
@@ -312,8 +538,9 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
             ...workout,
             workoutExercises: workout.workoutExercises.map(exercise => ({
               ...exercise,
-              exercise: { ...exercise.exercise },
-              break: { ...exercise.break }
+              exerciseId: exercise.exerciseId,
+              exerciseName: exercise.exerciseName,
+              break: { ...exercise.breakTime }
             })),
             days: [...workout.days]
           }))
@@ -325,14 +552,30 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     }
   }
 
-  selectMicrocycle(index: number): void {
+  selectMicrocycle(index: number) {
     this.selectedMicrocycle = this.selectedMesocycle.microcycles[index];
     this.selectedWorkout = this.selectedMicrocycle.workouts[0];
     this.microcycleLength = this.selectedMicrocycle.length;
     this.generateMicrocycleTable();
   }
 
-  deleteMicrocycle(index: number, event: Event): void {
+  clearMicrocycle(index: number, event: Event) {
+    event.stopPropagation();
+
+    let change: boolean = false;
+    if (this.selectedMesocycle.microcycles[index] === this.selectedMicrocycle) {
+      change = true;
+    }
+
+    this.selectedMesocycle.microcycles[index] = {
+      length: 7,
+      workouts: [this.exampleWorkout]
+    };
+
+    if (change) this.selectMicrocycle(index);
+  }
+
+  deleteMicrocycle(index: number, event: Event) {
     event.stopPropagation();
     if (this.selectedMesocycle.microcycles.length > 1) {
       const selectedIndex = this.selectedMesocycle.microcycles.indexOf(this.selectedMicrocycle);
@@ -370,8 +613,9 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
               ...workout,
               workoutExercises: workout.workoutExercises.map(exercise => ({
                 ...exercise,
-                exercise: { ...exercise.exercise },
-                break: { ...exercise.break }
+                exerciseId: exercise.exerciseId,
+                exerciseName: exercise.exerciseName,
+                break: { ...exercise.breakTime }
               })),
               days: [...workout.days]
             }))
@@ -384,7 +628,7 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     }
   }
 
-  selectMesocycle(index: number): void {
+  selectMesocycle(index: number) {
     this.selectedMesocycle = this.macrocycle.mesocycles[index];
     this.selectedMicrocycle = this.selectedMesocycle.microcycles[0];
     this.selectedWorkout = this.selectedMicrocycle.workouts[0];
@@ -392,7 +636,22 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     this.microcycleCount = this.selectedMesocycle.microcycles.length;
   }
 
-  deleteMesocycle(index: number, event: Event): void {
+  clearMesocycle(index: number, event: Event) {
+    event.stopPropagation();
+
+    let change: boolean = false;
+    if (this.macrocycle.mesocycles[index] === this.selectedMesocycle) {
+      change = true;
+    }
+
+    this.macrocycle.mesocycles[index] = {
+      microcycles: [this.exampleMicrocycle]
+    };
+
+    if (change) this.selectMesocycle(index);
+  }
+
+  deleteMesocycle(index: number, event: Event) {
     event.stopPropagation();
     if (this.macrocycle.mesocycles.length > 1) {
       const selectedIndex = this.macrocycle.mesocycles.indexOf(this.selectedMesocycle);
@@ -406,6 +665,22 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     } else {
       this.openSnackBar("Nie można usunąć wszystkich mezocykli");
     }
+  }
+
+  /** Plan Methods **/
+
+  savePlan() {
+     const dialogRef = this.dialog.open(SavePlanDialogComponent, {
+      data: {
+        macrocycle: this.macrocycle
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.onGoBack();
+      }
+    });
   }
 
   /** Validate / TextFormat Methods **/
@@ -440,6 +715,7 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
 
   validateSeries(exercise: WorkoutExercise) {
     if (exercise.series !== null) {
+      exercise.series = Math.floor(exercise.series);
       if (exercise.series < 1) exercise.series = null;
     }
     this.endEdit();
@@ -447,9 +723,11 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
 
   validateRepetitions(exercise: WorkoutExercise) {
     if (exercise.repetitionsFrom !== null) {
+      exercise.repetitionsFrom = Math.floor(exercise.repetitionsFrom);
       if (exercise.repetitionsFrom < 1) exercise.repetitionsFrom = null;
     }
     if (exercise.repetitionsTo !== null) {
+      exercise.repetitionsTo = Math.floor(exercise.repetitionsTo);
       if (exercise.repetitionsTo < 1) exercise.repetitionsTo = null;
     }
     if (exercise.repetitionsTo !== null && exercise.repetitionsFrom !== null) {
@@ -536,8 +814,9 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
   }
 
   validateBreak(exercise: WorkoutExercise) {
-    if (exercise.break.value != null) {
-      if (exercise.break.value < 1) exercise.break = { value: null, unit: 's' };
+    if (exercise.breakTime.value != null) {
+      exercise.breakTime.value = Math.floor(exercise.breakTime.value);
+      if (exercise.breakTime.value < 1) exercise.breakTime = { value: null, unit: 's' };
     }
   }
 
@@ -549,6 +828,15 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
   }
 
   /** Other Methods **/
+
+  toggleDropdown(event: Event) {
+    event.stopPropagation();
+    this.dropdownOpen = !this.dropdownOpen;
+  }
+
+  closeDropdown() {
+    this.dropdownOpen = false;
+  }
 
   detectTouchDevice() {
     this.isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -592,21 +880,31 @@ export class WorkoutCreatorComponent implements OnChanges, OnDestroy {
     return result;
   }
 
-  private openSnackBar(message: string): void {
+  private openSnackBar(message: string) {
     this.snackBar.open(message, 'Zamknij', {
       duration: 3000,
       verticalPosition: 'top'
     });
   }
 
-  close(event: Event) {
-    event.stopPropagation();
+  onGoBack() {
     if (this.clickListener) {
       document.removeEventListener('click', this.clickListener);
     }
     if (this.touchListener) {
       document.removeEventListener('touchstart', this.touchListener);
     }
-    this.closeBox.emit();
+    this.goBack.emit();
+  }
+
+  onPersonalPlanSaveSuccess() {
+    if (this.clickListener) {
+      document.removeEventListener('click', this.clickListener);
+    }
+    if (this.touchListener) {
+      document.removeEventListener('touchstart', this.touchListener);
+    }
+    this.success.emit();
+    this.goBack.emit();
   }
 }

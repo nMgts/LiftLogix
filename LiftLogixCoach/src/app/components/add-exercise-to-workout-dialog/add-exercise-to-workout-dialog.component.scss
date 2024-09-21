@@ -2,14 +2,27 @@
   display: flex;
   flex-direction: column;
 
+  .custom-dialog-container {
+    width: 415px;
+    max-width: 100%;
+  }
+
   .mat-dialog-title {
     text-align: center;
     font-size: 1.5rem;
   }
 
+  mat-dialog-content {
+    height: fit-content;
+    overflow-y: hidden;
+  }
+
+  .content {
+    padding: 10px 25px 0 25px;
+  }
+
   mat-form-field {
     width: 100%;
-    margin-bottom: 1rem;
     position: relative;
 
     .toggle-dropdown {
@@ -38,20 +51,30 @@
     background-color: rgb(15, 0, 22);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     z-index: 1000;
-    width: 86%;
+    width: 88.2%;
     top: 130px;
-    max-height: 140px;
+    max-height: 130px;
     overflow-y: auto;
   }
+
   .dropdown-item {
     display: flex;
     align-items: center;
     padding: 8px;
     cursor: pointer;
     border-bottom: 1px solid #ddd;
+
     &:hover {
       background-color: rgba(255, 255, 255, 0.1);
     }
+  }
+
+  .dropdown-item.certified .dropdown-image {
+    box-shadow: 0 0 10px 2px rgba(255, 215, 0, 0.8);
+  }
+
+  .dropdown-item.non-other-type span {
+    color: gold;
   }
 
   .dropdown-image {

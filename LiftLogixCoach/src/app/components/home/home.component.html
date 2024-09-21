@@ -1,12 +1,25 @@
-<div class="hero">
+<div class="hero" (click)="closeMenu()">
   <nav class="navbar">
     <img ngSrc="/images/logo-light.svg" alt="LiftLogixCoach Logo" class="logo" height="128" width="128">
+
+    <div class="icon-container">
+      <mat-icon class="icon" (click)="toggleMenu($event)">menu</mat-icon>
+      <a href="/login" class="icon"><mat-icon>login</mat-icon></a>
+    </div>
+
     <ul class="nav-links">
       <li><a href="#">O nas</a></li>
       <li><a href="#">Funkcjonalności</a></li>
       <li><a href="#">Kontakt</a></li>
       <li><a href="/login">Zaloguj</a></li>
     </ul>
+    <div class="dropdown-menu" *ngIf="isMenuOpen">
+      <ul>
+        <li><a href="#">O nas</a></li>
+        <li><a href="#">Funkcjonalności</a></li>
+        <li><a href="#">Kontakt</a></li>
+      </ul>
+    </div>
   </nav>
 
   <div class="hero-content">

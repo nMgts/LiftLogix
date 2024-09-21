@@ -15,5 +15,8 @@ public class ExerciseDTO {
     private String url;
     private String image;
     private List<String> body_parts;
+    private String exercise_type;
+    private double difficulty_factor;
+    private boolean isCertificated;
     private Set<ExerciseAliasDTO> aliases;
 }

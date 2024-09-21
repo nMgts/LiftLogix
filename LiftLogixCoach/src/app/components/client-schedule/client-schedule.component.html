@@ -1,0 +1,82 @@
+<app-back-arrow *ngIf="selectedWorkoutId == 0 && !selectedPlan" (goBack)="onGoBack()"></app-back-arrow>
+
+<div class="component-container" *ngIf="selectedWorkoutId == 0 && !selectedPlan">
+
+  <div id="schedule-container" [ngClass]="{'half-screen': !isFullScreen && window.innerWidth > 1023}">
+
+    <div id="header">
+      <div id="monthDisplay">{{ displayedMonth }}</div>
+
+      <div>
+        <button id="backButton" (click)="onPreviousMonth()">Poprzedni</button>
+        <button id="nextButton" (click)="onNextMonth()">Następny</button>
+      </div>
+    </div>
+
+    <div id="weekdays" [ngClass]="{'half-screen': !isFullScreen && window.innerWidth > 1023}">
+      <div class="weekday-full">Poniedziałek</div>
+      <div class="weekday-full">Wtorek</div>
+      <div class="weekday-full">Środa</div>
+      <div class="weekday-full">Czwartek</div>
+      <div class="weekday-full">Piątek</div>
+      <div class="weekday-full">Sobota</div>
+      <div class="weekday-full">Niedziela</div>
+
+      <div class="weekday-short">Pn</div>
+      <div class="weekday-short">Wt</div>
+      <div class="weekday-short">Śr</div>
+      <div class="weekday-short">Cz</div>
+      <div class="weekday-short">Pt</div>
+      <div class="weekday-short">So</div>
+      <div class="weekday-short">Nd</div>
+    </div>
+
+    <div id="calendar" [ngClass]="{'half-screen': !isFullScreen && window.innerWidth > 1023}">
+      <div *ngFor="let i of [].constructor(paddingDays)" class="day padding" [ngClass]="{'half-screen': !isFullScreen && window.innerWidth > 1023}"></div>
+
+      <div *ngFor="let day of days" class="day"
+           [ngClass]="{
+           'half-screen': !isFullScreen && window.innerWidth > 1023,
+           'clickable': day.events.length > 0
+           }"
+           (click)="openDayDetails(day)">
+        <div class="day-number">{{ day.day }}</div>
+
+        <div class="events">
+          <div class="event" *ngFor="let event of day.events" [ngClass]="getEventClass(event, day)">
+            {{ getWorkoutInitials(event.name) }}
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="legend">
+      <div class="legend-item">
+        <div class="legend-color individual-workout"></div>
+        <div class="legend-text">Trening indywidualny</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color non-individual-workout"></div>
+        <div class="legend-text">Trening z trenerem</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<app-workout-day-details *ngIf="clickedDay && clickedDay.events.length > 0 && selectedWorkoutId == 0 && !selectedPlan"
+                         [day]="clickedDay"
+                         (update)="onUpdate()"
+                         (close)="closeDayDetails()"
+                         (viewWorkoutEvent)="viewWorkout($event)"
+                         id="workout-day-details">
+</app-workout-day-details>
+
+<app-workout-view *ngIf="selectedWorkoutId !== 0 && selectedPlan"
+                  [personalPlan]="selectedPlan"
+                  [workoutId]="selectedWorkoutId"
+                  [isPersonalPlan] = true
+                  (goBack)="closeWorkoutView()">
+</app-workout-view>

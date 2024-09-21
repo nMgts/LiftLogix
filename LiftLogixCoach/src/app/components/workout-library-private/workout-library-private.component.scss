@@ -1,0 +1,194 @@
+.plan-list-container {
+  max-width: 100%;
+  margin: 20px auto;
+  padding: 0 15px;
+
+  .title {
+    color: aliceblue;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .search-field {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 20px;
+    display: block;
+  }
+
+  .plan-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .plan-card {
+      width: 100%;
+      max-width: 600px;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      margin-bottom: 20px;
+      display: flex;
+      background-color: rgba(52, 52, 52, 0.3);
+      flex-direction: column;
+      position: relative;
+
+      .plan-name {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+        font-weight: 600;
+        color: aliceblue;
+        position: relative;
+
+        .mat-icon-button {
+          margin-left: 8px;
+          color: white;
+
+          &.public-icon {
+            color: green;
+          }
+
+          &.private-icon {
+            color: grey;
+          }
+        }
+
+        .edit-field {
+          width: 100%;
+        }
+
+        .save-button {
+          margin: 0 0 15px 10px;
+        }
+      }
+
+      .plan-duration {
+        font-size: 14px;
+        color: #666;
+        margin-top: 5px;
+      }
+
+      .plan-actions {
+        margin-top: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+
+        .action-button {
+          font-size: 14px;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          color: aliceblue;
+
+          .preview-icon, .edit-icon, .delete-icon, .copy-icon {
+            margin-right: 5px;
+            font-size: 16px;
+          }
+
+          .delete-icon {
+            color: red;
+          }
+
+          .edit-icon, .preview-icon, .copy-icon {
+            color: darkviolet;
+          }
+
+          .excel-icon {
+            margin-right: 5px;
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
+
+  mat-paginator {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .plan-actions {
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 10px;
+  }
+
+  .action-button {
+    flex: 1 1 45%;
+    max-width: 45%;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .plan-card {
+    max-width: 100%;
+  }
+
+  .name {
+    font-size: 18px;
+  }
+
+  .plan-duration {
+    font-size: 12px;
+  }
+
+  .plan-actions .action-button {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-field {
+    max-width: 100%;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .plan-card {
+    padding: 10px;
+  }
+
+  .name {
+    font-size: 16px;
+  }
+
+  .plan-duration {
+    font-size: 12px;
+  }
+
+  .plan-actions .action-button {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 410px) {
+  .plan-actions {
+    gap: 5px;
+    scale: 0.9;
+  }
+
+  .name {
+    font-size: 14px;
+  }
+
+  .name-icon, .public-icon, .private-icon {
+    margin-left: 0;
+    scale: 0.9;
+  }
+
+  .public-icon, .private-icon {
+    left: -5px;
+  }
+}

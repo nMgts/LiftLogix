@@ -1,9 +1,3 @@
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
 .hero {
   background-image: url('/images/home-background.jpg');
   background-size: cover;
@@ -14,21 +8,48 @@ html, body {
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 50px;
 }
 
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  padding: 20px;
+  padding: 20px 10px;
   background-color: transparent;
-  position: fixed; /* lub sticky */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000; /* ustawić odpowiednią wartość z-index, aby nawigacja była na wierzchu */
+  z-index: 1000;
+}
+
+.navbar .logo {
+  display: block;
+}
+
+.icon-container {
+  display: flex;
+  gap: 35px;
+}
+
+.menu-toggle {
+  display: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 1100;
+}
+
+.menu-toggle .bar {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background-color: white;
+  margin: 5px auto;
+  transition: 0.3s;
+}
+
+.icon {
+  display: none;
 }
 
 .nav-links {
@@ -38,23 +59,42 @@ html, body {
 }
 
 .nav-links li {
-  margin: 0 10px;
+  margin: 0 15px;
 }
 
 .nav-links li a {
   text-decoration: none;
   color: white;
-  font-size: 20px;
-  margin-right: 25px;
+  font-size: 18px;
+}
+
+.show {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  position: absolute;
+  top: 60px;
+  left: 0;
+  z-index: 1000;
+}
+
+.show .nav-links li {
+  margin: 10px 0;
+}
+
+li:hover {
+  scale: 1.2;
 }
 
 .hero-content {
-  background-color: transparent;
+  background-color: rgba(0, 0, 0, 0.5);
   padding: 20px;
   border-radius: 10px;
-  margin-top: 20px;
   color: white;
-  font-size: 20px;
+  font-size: 18px;
+  max-width: 80%;
 }
 
 .btn {
@@ -69,5 +109,83 @@ html, body {
 }
 
 .btn:hover {
-  background-color: #0056b3;
+  background-color: darkmagenta;
+}
+
+.dropdown-menu {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: block;
+    margin-left: auto;
+  }
+
+  .icon {
+    display: block;
+    color: white;
+    font-size: 32px;
+    scale: 1.4;
+  }
+
+  .dropdown-menu {
+    display: block;
+    position: absolute;
+    top: 65px;
+    right: 65px;
+    width: 200px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .dropdown-menu ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .dropdown-menu ul li {
+    margin: 10px 0 10px 17px;
+    width: 80%;
+  }
+
+  .dropdown-menu ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    display: block;
+    padding: 10px;
+    width: fit-content;
+  }
+
+  .dropdown-menu ul li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .show {
+    display: flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-content {
+    font-size: 14px;
+  }
+
+  .btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
 }
