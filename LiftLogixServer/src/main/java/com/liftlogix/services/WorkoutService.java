@@ -69,7 +69,9 @@ public class WorkoutService {
                 workoutDate.setDuration(Objects.requireNonNullElse(duration, 60));
                 workoutDate.setDate(newDate);
 
-                coachSchedulerService.onChangeWorkoutDate(id, oldDate, newDate, duration);
+                if (!workoutDate.isIndividual()) {
+                    coachSchedulerService.onChangeWorkoutDate(id, oldDate, newDate, duration);
+                }
 
                 dateChanged = true;
                 break;

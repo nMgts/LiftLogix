@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { addDays, format, startOfWeek } from "date-fns";
 import { SchedulerItem } from "../../interfaces/SchedulerItem";
 import { CoachSchedulerService } from "../../services/coach-scheduler.service";
+import {SchedulerService} from "../../services/scheduler.service";
 
 @Component({
   selector: 'app-weekly-schedule',
@@ -25,14 +26,18 @@ export class WeeklyScheduleComponent implements OnInit {
   }
 
   constructor(
-    private coachSchedulerService: CoachSchedulerService
+    private coachSchedulerService: CoachSchedulerService,
+    private schedulerService: SchedulerService
   ) {}
 
   ngOnInit(): void {
     this.generateHours();
     this.updateWeekRange();
     this.updateWeekDays();
-    this.loadSchedulerData();
+    this.schedulerService.loadScheduler$.subscribe(() => {
+      this.loadSchedulerData();
+    });
+    this.schedulerService.triggerLoadScheduler();
   }
 
   loadSchedulerData() {

@@ -2,6 +2,7 @@ package com.liftlogix.services;
 
 import com.liftlogix.convert.CoachSchedulerDTOMapper;
 import com.liftlogix.dto.CoachSchedulerDTO;
+import com.liftlogix.exceptions.TimeConflictException;
 import com.liftlogix.models.*;
 import com.liftlogix.repositories.CoachScheduleRepository;
 import com.liftlogix.repositories.PersonalPlanRepository;
@@ -50,10 +51,14 @@ public class CoachSchedulerService {
 
         List<SchedulerItem> schedulerItems = scheduler.getSchedulerItems();
 
+        LocalDateTime startDate = date.getDate();
+        LocalDateTime endDate = startDate.plusMinutes(date.getDuration());
+        checkForTimeConflicts(startDate, endDate, scheduler);
+
         SchedulerItem newItem = new SchedulerItem();
         newItem.setWorkout(workout);
-        newItem.setStartDate(date.getDate());
-        newItem.setEndDate(date.getDate().plusMinutes(date.getDuration()));
+        newItem.setStartDate(startDate);
+        newItem.setEndDate(endDate);
         newItem.setClient(client);
         newItem.setCoachScheduler(scheduler);
 
@@ -86,6 +91,8 @@ public class CoachSchedulerService {
     public void onChangeWorkoutDate(Long workoutId, LocalDateTime oldDate, LocalDateTime newDate, Integer newDuration) {
         CoachScheduler scheduler = getCoachSchedulerByWorkoutId(workoutId);
 
+        checkForTimeConflicts(newDate, newDate.plusMinutes(newDuration), scheduler);
+
         List<SchedulerItem> schedulerItems = scheduler.getSchedulerItems();
         SchedulerItem itemToChange = schedulerItems.stream()
                 .filter(item -> item.getWorkout().getId().equals(workoutId)
@@ -94,7 +101,7 @@ public class CoachSchedulerService {
                 .orElseThrow(() -> new EntityNotFoundException("SchedulerItem not found"));
 
         itemToChange.setStartDate(newDate);
-        itemToChange.setEndDate(newDate.plusMinutes(newDuration != null ? newDuration : 60));
+        itemToChange.setEndDate(newDate.plusMinutes(newDuration));
 
         coachScheduleRepository.save(scheduler);
     }
@@ -109,5 +116,28 @@ public class CoachSchedulerService {
         return coachScheduleRepository.findByCoach(coach).orElseThrow(
                 () -> new EntityNotFoundException("Scheduler not found")
         );
+    }
+
+    private void checkForTimeConflicts(LocalDateTime startDate, LocalDateTime endDate, CoachScheduler scheduler) {
+        for (SchedulerItem item : scheduler.getSchedulerItems()) {
+            LocalDateTime itemStart = item.getStartDate();
+            LocalDateTime itemEnd = item.getEndDate();
+
+            System.out.println("item start " + itemStart);
+            System.out.println("item end " + itemEnd);
+
+            System.out.println("start date " + startDate);
+            System.out.println("end date " + endDate);
+
+            boolean overlaps = (startDate.isBefore(itemEnd) && endDate.isAfter(itemStart));
+
+            System.out.println("isBefore? " + startDate.isBefore(itemEnd));
+            System.out.println("isAfter? " + endDate.isAfter(itemStart));
+            System.out.println("overlaps " + overlaps);
+
+            if (overlaps) {
+                throw new TimeConflictException("The time slot conflicts with an existing workout.");
+            }
+        }
     }
 }

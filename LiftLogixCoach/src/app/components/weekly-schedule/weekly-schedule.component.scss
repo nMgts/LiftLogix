@@ -115,8 +115,9 @@ th:last-child {
   left: 0;
   right: 0;
   background-color: #7b68ee;
-  transition: height 0.2s ease;
-  border-radius: 5px;
+  box-sizing: border-box;
+  border: 1px black solid;
+  border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;

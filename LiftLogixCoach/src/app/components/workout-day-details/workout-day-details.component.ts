@@ -5,6 +5,7 @@ import { WorkoutService } from "../../services/workout.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatDialog } from "@angular/material/dialog";
 import { WorkoutDateChangeDialogComponent } from "../workout-date-change-dialog/workout-date-change-dialog.component";
+import { SchedulerService } from "../../services/scheduler.service";
 
 @Component({
   selector: 'app-workout-day-details',
@@ -19,16 +20,13 @@ export class WorkoutDayDetailsComponent {
 
   constructor(
     private workoutService: WorkoutService,
+    private schedulerService: SchedulerService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog
   ) {}
 
   getWorkoutIndividualStatus(workout: Workout): boolean {
-    const workoutDate = workout.dates.find(d =>
-      new Date(d.date).getDate() === this.day.day &&
-      new Date(d.date).getMonth() === this.day.month &&
-      new Date(d.date).getFullYear() === this.day.year
-    );
+    const workoutDate = this.getDate(workout);
     return workoutDate ? workoutDate.individual : false;
   }
 
@@ -38,28 +36,28 @@ export class WorkoutDayDetailsComponent {
 
   toggleWorkoutType(workout: Workout) {
     const token = localStorage.getItem('token') || '';
-    const date = workout.dates.find(d =>
-      new Date(d.date).getDate() === this.day.day &&
-      new Date(d.date).getMonth() === this.day.month &&
-      new Date(d.date).getFullYear() === this.day.year
-    );
+    const workoutDate = this.getDate(workout);
 
-    if (date) {
-      this.workoutService.toggleIndividual(workout.id, date.date, token).subscribe(
+    if (workoutDate) {
+      this.workoutService.toggleIndividual(workout.id, workoutDate.date, token).subscribe(
         () => {
           this.day.events = this.day.events.map(w =>
             w.id === workout.id ? {
               ...w,
               dates: w.dates.map(d =>
-                d.date === date.date ? { ...d, individual: !d.individual } : d
+                d.date === workoutDate.date ? { ...d, individual: !d.individual } : d
               )
             } : w
           );
-
+          this.reloadScheduler();
           this.openSnackBar('Status treningu został zmieniony');
         },
-        () => {
-          this.openSnackBar('Błąd przy zmianie statusu treningu');
+        (error) => {
+          if (error.status === 409) {
+            this.openSnackBar('Konflikt: W podanym przedziale czasowym posiadasz już trening personalny.');
+          } else {
+            this.openSnackBar('Błąd przy zmianie statusu treningu');
+          }
         }
       );
     } else {
@@ -68,11 +66,7 @@ export class WorkoutDayDetailsComponent {
   }
 
   changeWorkoutDate(workout: Workout) {
-    const workoutDate = workout.dates.find(d =>
-      new Date(d.date).getDate() === this.day.day &&
-      new Date(d.date).getMonth() === this.day.month &&
-      new Date(d.date).getFullYear() === this.day.year
-    );
+    const workoutDate = this.getDate(workout);
 
     if (workoutDate) {
       const dialogRef = this.dialog.open(WorkoutDateChangeDialogComponent, {
@@ -89,10 +83,15 @@ export class WorkoutDayDetailsComponent {
           this.workoutService.changeDate(result.workoutId, result.oldDate, result.newDate, result.duration, token).subscribe(
             () => {
               this.onUpdate();
+              this.reloadScheduler();
               this.openSnackBar('Data treningu została zmieniona');
             },
-            () => {
-              this.openSnackBar('Błąd przy zmianie daty treningu');
+            (error) => {
+              if (error.status === 409) {
+                this.openSnackBar('Konflikt: W podanym przedziale czasowym posiadasz już trening personalny.');
+              } else {
+                this.openSnackBar('Błąd przy zmianie daty treningu');
+              }
             }
           );
         }
@@ -103,11 +102,7 @@ export class WorkoutDayDetailsComponent {
   }
 
   getWorkoutTime(workout: Workout): string {
-    const workoutDate = workout.dates.find(d =>
-      new Date(d.date).getDate() === this.day.day &&
-      new Date(d.date).getMonth() === this.day.month &&
-      new Date(d.date).getFullYear() === this.day.year
-    );
+    const workoutDate = this.getDate(workout);
 
     if (workoutDate) {
       const startTime = new Date(workoutDate.date);
@@ -118,6 +113,18 @@ export class WorkoutDayDetailsComponent {
     }
 
     return '';
+  }
+
+  private getDate(workout: Workout) {
+    return workout.dates.find(d =>
+      new Date(d.date).getDate() === this.day.day &&
+      new Date(d.date).getMonth() === this.day.month &&
+      new Date(d.date).getFullYear() === this.day.year
+    );
+  }
+
+  private reloadScheduler() {
+    this.schedulerService.triggerLoadScheduler();
   }
 
   private openSnackBar(message: string): void {

@@ -1,6 +1,7 @@
 package com.liftlogix.controllers;
 
 import com.liftlogix.dto.ChangeDateRequest;
+import com.liftlogix.exceptions.TimeConflictException;
 import com.liftlogix.services.WorkoutService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -37,10 +38,11 @@ public class WorkoutController {
         try {
             workoutService.toggleIndividual(id, date);
             return ResponseEntity.ok().body("{\"message\": \"Workout individual status toggled\"}");
+        } catch (TimeConflictException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
@@ -50,10 +52,11 @@ public class WorkoutController {
     public ResponseEntity<?> changeDate(@RequestBody ChangeDateRequest request) {
         try {
             return ResponseEntity.ok(workoutService.changeDate(request.getId(), request.getOldDate(), request.getNewDate(), request.getDuration()));
+        } catch (TimeConflictException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
