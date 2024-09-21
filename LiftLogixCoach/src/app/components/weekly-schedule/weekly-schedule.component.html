@@ -1,4 +1,4 @@
-<div class="scheduler-container">
+<div class="scheduler-container" (click)="hideOptionsTooltip()">
 
   <div class="navigation-panel" *ngIf="isBoxExpanded">
     <button (click)="prevWeek()">←</button>
@@ -20,20 +20,25 @@
         <td *ngFor="let dayDate of weekDays" class="time-slot">
           <div *ngFor="let item of schedulerItems">
             <div class="schedule-bar"
-              *ngIf="isItemInSlot(item, dayDate, hour) && isFirstPossibleSlot(item, dayDate, hour)"
+               *ngIf="isItemInSlot(item, dayDate, hour) && isFirstPossibleSlot(item, dayDate, hour)"
+               (click)="showOptionsTooltip(item, $event)"
                [ngStyle]="{
                    height: getTotalSlotHeight(item, dayDate),
                    top: getItemSlotTop(item, dayDate, hour),
-                   zIndex: 10
                  }">
-                <div class="schedule-title"
-                     *ngIf="parseFloat(getTotalSlotHeight(item, dayDate)) >= 26">
-                  {{ item.workoutName }}
+              <div class="schedule-title"
+                   *ngIf="parseFloat(getTotalSlotHeight(item, dayDate)) >= 26">
+                <div class="client-name"
+                     *ngIf="(window.innerWidth > 799 && !isBoxExpanded) || (window.innerWidth > 599 && isBoxExpanded)">
+                  {{ item.client.first_name }} {{ item.client.last_name }}
                 </div>
+                <div class="schedule-time">
+                  {{ item.startDate | date: 'HH:mm' }} - {{ item.endDate | date: 'HH:mm' }}
+                </div>
+              </div>
             </div>
           </div>
         </td>
-
       </tr>
       </tbody>
     </table>

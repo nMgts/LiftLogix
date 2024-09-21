@@ -20,6 +20,11 @@
   align-items: center;
   margin-bottom: 20px;
   width: 280px;
+
+  @media (max-width: 400px) {
+    font-size: 12px;
+    width: 240px;
+  }
 }
 
 .navigation-panel button {
@@ -100,6 +105,7 @@ tr:last-child td:first-child {
   height: 50px;
   box-shadow: none;
   position: relative;
+  pointer-events: none;
 }
 
 th:first-child {
@@ -119,16 +125,57 @@ th:last-child {
   border: 1px black solid;
   border-radius: 10px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
+  cursor: pointer;
+  pointer-events: auto;
 }
 
 .schedule-title {
+  color: aliceblue;
+  max-width: 100%;
+}
+
+.client-name {
+  font-size: 12px;
   font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.schedule-time {
+  font-size: 10px;
   color: white;
 }
 
-.schedule-bar.no-border {
-  border: none;
+.options-tooltip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: aliceblue;
+  border-radius: 5px;
+  padding: 5px;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    padding: 5px 10px;
+    cursor: pointer;
+    text-align: center;
+
+    &:hover {
+      background-color: rgba(128, 0, 128, 0.7);
+    }
+  }
 }

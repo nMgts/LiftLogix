@@ -1,8 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, Input, OnInit, ViewContainerRef} from '@angular/core';
 import { addDays, format, startOfWeek } from "date-fns";
+import { SchedulerService } from "../../services/scheduler.service";
 import { SchedulerItem } from "../../interfaces/SchedulerItem";
 import { CoachSchedulerService } from "../../services/coach-scheduler.service";
-import {SchedulerService} from "../../services/scheduler.service";
+import {Overlay, OverlayRef} from "@angular/cdk/overlay";
+import {ComponentPortal} from "@angular/cdk/portal";
+import {OptionsTooltipComponent} from "../options-tooltip/options-tooltip.component";
 
 @Component({
   selector: 'app-weekly-schedule',
@@ -19,15 +22,21 @@ export class WeeklyScheduleComponent implements OnInit {
 
   schedulerItems: SchedulerItem[] = [];
 
+  protected readonly window = window;
+  private overlayRef: OverlayRef | null = null;
+
   get daysOfWeek() {
     return this.isBoxExpanded
-      ? ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela']
+      ? window.innerWidth > 800 ?
+      ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'] : ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd']
       : ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'];
   }
 
   constructor(
     private coachSchedulerService: CoachSchedulerService,
-    private schedulerService: SchedulerService
+    private schedulerService: SchedulerService,
+    private overlay: Overlay,
+    private viewContainerRef: ViewContainerRef
   ) {}
 
   ngOnInit(): void {
@@ -51,6 +60,33 @@ export class WeeklyScheduleComponent implements OnInit {
         console.error('Scheduler not found', error);
       }
     );
+  }
+
+  showOptionsTooltip(item: SchedulerItem, event: MouseEvent) {
+    event.stopPropagation();
+    const positionStrategy = this.overlay.position()
+      .flexibleConnectedTo(event.target as HTMLElement)
+      .withPositions([{ originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top' }]);
+
+    this.overlayRef = this.overlay.create({
+      positionStrategy,
+      hasBackdrop: true,
+      backdropClass: 'cdk-overlay-transparent-backdrop'
+    });
+
+    const tooltipPortal = new ComponentPortal(OptionsTooltipComponent, this.viewContainerRef);
+    const tooltipRef = this.overlayRef.attach(tooltipPortal);
+
+    tooltipRef.instance.item = item;
+
+    this.overlayRef.backdropClick().subscribe(() => this.hideOptionsTooltip());
+  }
+
+  hideOptionsTooltip() {
+    if (this.overlayRef) {
+      this.overlayRef.dispose();
+      this.overlayRef = null;
+    }
   }
 
   prevWeek() {
@@ -217,4 +253,5 @@ export class WeeklyScheduleComponent implements OnInit {
   }
 
   protected readonly parseFloat = parseFloat;
+  protected readonly console = console;
 }

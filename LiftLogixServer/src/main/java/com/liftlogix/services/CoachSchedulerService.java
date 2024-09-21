@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -53,7 +54,6 @@ public class CoachSchedulerService {
 
         LocalDateTime startDate = date.getDate();
         LocalDateTime endDate = startDate.plusMinutes(date.getDuration());
-        checkForTimeConflicts(startDate, endDate, scheduler);
 
         SchedulerItem newItem = new SchedulerItem();
         newItem.setWorkout(workout);
@@ -61,6 +61,8 @@ public class CoachSchedulerService {
         newItem.setEndDate(endDate);
         newItem.setClient(client);
         newItem.setCoachScheduler(scheduler);
+
+        checkForTimeConflicts(startDate, endDate, scheduler, newItem);
 
         schedulerItems.add(newItem);
 
@@ -91,14 +93,14 @@ public class CoachSchedulerService {
     public void onChangeWorkoutDate(Long workoutId, LocalDateTime oldDate, LocalDateTime newDate, Integer newDuration) {
         CoachScheduler scheduler = getCoachSchedulerByWorkoutId(workoutId);
 
-        checkForTimeConflicts(newDate, newDate.plusMinutes(newDuration), scheduler);
-
         List<SchedulerItem> schedulerItems = scheduler.getSchedulerItems();
         SchedulerItem itemToChange = schedulerItems.stream()
                 .filter(item -> item.getWorkout().getId().equals(workoutId)
                         && item.getStartDate().equals(oldDate))
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("SchedulerItem not found"));
+
+        checkForTimeConflicts(newDate, newDate.plusMinutes(newDuration), scheduler, itemToChange);
 
         itemToChange.setStartDate(newDate);
         itemToChange.setEndDate(newDate.plusMinutes(newDuration));
@@ -118,25 +120,18 @@ public class CoachSchedulerService {
         );
     }
 
-    private void checkForTimeConflicts(LocalDateTime startDate, LocalDateTime endDate, CoachScheduler scheduler) {
-        for (SchedulerItem item : scheduler.getSchedulerItems()) {
-            LocalDateTime itemStart = item.getStartDate();
-            LocalDateTime itemEnd = item.getEndDate();
+    private void checkForTimeConflicts
+            (LocalDateTime startDate, LocalDateTime endDate, CoachScheduler scheduler, SchedulerItem item) {
+        for (SchedulerItem i : scheduler.getSchedulerItems()) {
+            if (!Objects.equals(item.getId(), i.getId())) {
+                LocalDateTime itemStart = i.getStartDate();
+                LocalDateTime itemEnd = i.getEndDate();
 
-            System.out.println("item start " + itemStart);
-            System.out.println("item end " + itemEnd);
+                boolean overlaps = (startDate.isBefore(itemEnd) && endDate.isAfter(itemStart));
 
-            System.out.println("start date " + startDate);
-            System.out.println("end date " + endDate);
-
-            boolean overlaps = (startDate.isBefore(itemEnd) && endDate.isAfter(itemStart));
-
-            System.out.println("isBefore? " + startDate.isBefore(itemEnd));
-            System.out.println("isAfter? " + endDate.isAfter(itemStart));
-            System.out.println("overlaps " + overlaps);
-
-            if (overlaps) {
-                throw new TimeConflictException("The time slot conflicts with an existing workout.");
+                if (overlaps) {
+                    throw new TimeConflictException("The time slot conflicts with an existing workout.");
+                }
             }
         }
     }

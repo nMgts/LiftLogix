@@ -68,6 +68,7 @@ import { ClientScheduleComponent } from './components/client-schedule/client-sch
 import { WorkoutDayDetailsComponent } from './components/workout-day-details/workout-day-details.component';
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { WorkoutDateChangeDialogComponent } from './components/workout-date-change-dialog/workout-date-change-dialog.component';
+import { OptionsTooltipComponent } from './components/options-tooltip/options-tooltip.component';
 
 @NgModule({
   declarations: [
@@ -110,7 +111,8 @@ import { WorkoutDateChangeDialogComponent } from './components/workout-date-chan
     AdjustPersonalPlanDialogComponent,
     ClientScheduleComponent,
     WorkoutDayDetailsComponent,
-    WorkoutDateChangeDialogComponent
+    WorkoutDateChangeDialogComponent,
+    OptionsTooltipComponent
   ],
   imports: [
     BrowserModule,
