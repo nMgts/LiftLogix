@@ -2,7 +2,6 @@ package com.liftlogix.services;
 
 import com.liftlogix.convert.BasicPlanDTOMapper;
 import com.liftlogix.convert.PlanDTOMapper;
-import com.liftlogix.convert.WorkoutDTOMapper;
 import com.liftlogix.dto.*;
 import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.models.*;
@@ -214,7 +213,6 @@ public class PlanService {
         newWorkout.setName(oldWorkout.getName());
 
         newWorkout.setDays(new ArrayList<>(oldWorkout.getDays()));
-        newWorkout.setDates(new ArrayList<>(oldWorkout.getDates()));
 
         List<WorkoutExercise> newExercises = oldWorkout.getWorkoutExercises().stream()
                 .map(oldExercise -> copyWorkoutExercise(oldExercise, newWorkout))

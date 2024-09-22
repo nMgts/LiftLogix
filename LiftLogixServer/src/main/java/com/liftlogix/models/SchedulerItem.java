@@ -17,8 +17,8 @@ public class SchedulerItem {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "workout_id", nullable = false)
-    private Workout workout;
+    @JoinColumn(name = "workout_unit_id", nullable = false)
+    private WorkoutUnit workoutUnit;
 
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)

@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 @Setter
 public class SchedulerItemDTO {
     private long id;
-    private long workoutId;
-    private String workoutName;
+    private long workoutUnitId;
+    private String workoutUnitName;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private ClientDTO client;

@@ -31,7 +31,6 @@ public class PlanController {
         try {
             return ResponseEntity.ok().body(planService.savePlan(planDTO, currentUser));
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }

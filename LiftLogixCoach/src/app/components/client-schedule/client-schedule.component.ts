@@ -6,6 +6,7 @@ import { Day } from "../../interfaces/Day";
 import { Subscription } from "rxjs";
 import { PersonalPlan } from "../../interfaces/PersonalPlan";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { WorkoutUnit } from "../../interfaces/WorkoutUnit";
 
 @Component({
   selector: 'app-client-schedule',
@@ -43,7 +44,7 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
     'December': 'Grudzień'
   };
 
-  workouts: Workout[] = [];
+  workouts: WorkoutUnit[] = [];
 
   selectedPlan: PersonalPlan | null = null;
   selectedWorkoutId: number = 0;
@@ -113,7 +114,7 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
       (plan) => {
         this.workouts = plan.mesocycles.flatMap(mesocycle =>
           mesocycle.microcycles.flatMap(microcycle =>
-            microcycle.workouts));
+            microcycle.workoutUnits));
         this.updateDaysWithWorkouts();
       },
       () => {
@@ -126,24 +127,15 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
   updateDaysWithWorkouts() {
     this.days.forEach(day => {
       day.events = this.workouts
-        .filter(workout =>
-          workout.dates.some(workoutDate => new Date(workoutDate.date).getDate() === day.day &&
-            new Date(workoutDate.date).getMonth() === day.month &&
-            new Date(workoutDate.date).getFullYear() === day.year)
-        )
+        .filter(workout => {
+          const workoutDate = new Date(workout.date);
+          return workoutDate.getDate() === day.day &&
+            workoutDate.getMonth() === day.month &&
+            workoutDate.getFullYear() === day.year;
+        })
         .sort((a, b) => {
-          const timeA = new Date(a.dates.find(d =>
-            new Date(d.date).getDate() === day.day &&
-            new Date(d.date).getMonth() === day.month &&
-            new Date(d.date).getFullYear() === day.year
-          )?.date || '').getTime();
-
-          const timeB = new Date(b.dates.find(d =>
-            new Date(d.date).getDate() === day.day &&
-            new Date(d.date).getMonth() === day.month &&
-            new Date(d.date).getFullYear() === day.year
-          )?.date || '').getTime();
-
+          const timeA = new Date(a.date).getTime();
+          const timeB = new Date(b.date).getTime();
           return timeA - timeB;
         });
     });
@@ -163,15 +155,8 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
     return name.replace('Trening ', '');
   }
 
-  getEventClass(event: Workout, day: Day): string {
-    const targetDate = new Date(day.year, day.month, day.day).toDateString();
-
-    const workoutDate = event.dates.find(d => {
-      const dateStr = new Date(d.date).toDateString();
-      return dateStr === targetDate;
-    });
-
-    return workoutDate && workoutDate.individual ? 'individual-workout' : 'non-individual-workout';
+  getEventClass(event: WorkoutUnit): string {
+    return event.individual ? 'individual-workout' : 'non-individual-workout';
   }
 
   openDayDetails(day: Day) {

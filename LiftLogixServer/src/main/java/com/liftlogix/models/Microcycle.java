@@ -22,4 +22,8 @@ public class Microcycle {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "microcycle_id")
     private List<Workout> workouts;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "microcycle_id")
+    private List<WorkoutUnit> workoutUnits;
 }

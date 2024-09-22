@@ -11,4 +11,5 @@ public class MicrocycleDTO {
     private long id;
     private Integer length;
     private List<WorkoutDTO> workouts;
+    private List<WorkoutUnitDTO> workoutUnits;
 }

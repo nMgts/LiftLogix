@@ -1,10 +1,14 @@
 package com.liftlogix.services;
 
-import com.liftlogix.convert.WorkoutDTOMapper;
-import com.liftlogix.dto.WorkoutDTO;
-import com.liftlogix.models.Workout;
-import com.liftlogix.models.WorkoutDate;
-import com.liftlogix.repositories.WorkoutRepository;
+import com.liftlogix.convert.WorkoutUnitDTOMapper;
+import com.liftlogix.dto.WorkoutUnitDTO;
+import com.liftlogix.exceptions.AuthorizationException;
+import com.liftlogix.models.Client;
+import com.liftlogix.models.User;
+import com.liftlogix.models.WorkoutUnit;
+import com.liftlogix.repositories.PersonalPlanRepository;
+import com.liftlogix.repositories.WorkoutUnitRepository;
+import com.liftlogix.types.Role;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,8 +19,9 @@ import java.util.Objects;
 @Service
 @AllArgsConstructor
 public class WorkoutService {
-    private final WorkoutRepository workoutRepository;
-    private final WorkoutDTOMapper workoutDTOMapper;
+    private final WorkoutUnitRepository workoutUnitRepository;
+    private final PersonalPlanRepository personalPlanRepository;
+    private final WorkoutUnitDTOMapper workoutUnitDTOMapper;
     private final CoachSchedulerService coachSchedulerService;
 
     /*
@@ -29,61 +34,51 @@ public class WorkoutService {
     }
     */
 
-    public void toggleIndividual(Long id, LocalDateTime date) {
-        Workout workout = workoutRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Workout not found")
+    public void toggleIndividual(Long id, User user) {
+        WorkoutUnit workout = workoutUnitRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Workout unit not found")
         );
 
-        boolean updated = false;
-        for (WorkoutDate workoutDate : workout.getDates()) {
-            if (workoutDate.getDate().isEqual(date)) {
-                workoutDate.setIndividual(!workoutDate.isIndividual());
-
-                if (!workoutDate.isIndividual()) {
-                    coachSchedulerService.addWorkout(id, workoutDate);
-                } else {
-                    coachSchedulerService.removeWorkout(id, workoutDate);
-                }
-
-                updated = true;
-                break;
-            }
-        }
-
-        if (!updated) {
-            throw new EntityNotFoundException("Date not found in workout");
-        }
-
-        workoutRepository.save(workout);
-    }
-
-    public WorkoutDTO changeDate(Long id, LocalDateTime oldDate, LocalDateTime newDate, Integer duration) {
-        Workout workout = workoutRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Workout not found")
+        Client client = personalPlanRepository.findClientByWorkoutUnitId(id).orElseThrow(
+                () -> new EntityNotFoundException("Client not found")
         );
 
-        boolean dateChanged = false;
-
-        for (WorkoutDate workoutDate : workout.getDates()) {
-            if (workoutDate.getDate().equals(oldDate)) {
-                workoutDate.setDuration(Objects.requireNonNullElse(duration, 60));
-                workoutDate.setDate(newDate);
-
-                if (!workoutDate.isIndividual()) {
-                    coachSchedulerService.onChangeWorkoutDate(id, oldDate, newDate, duration);
-                }
-
-                dateChanged = true;
-                break;
-            }
+        if (!Objects.equals(client.getCoach().getEmail(), user.getEmail()) && !user.getRole().equals(Role.ADMIN)) {
+            throw new AuthorizationException("You are not authorized");
         }
 
-        if (!dateChanged) {
-            throw new IllegalArgumentException("Workout with date: " + oldDate + " not found");
+        workout.setIndividual(!workout.isIndividual());
+
+        if (!workout.isIndividual()) {
+            coachSchedulerService.addWorkout(id);
+        } else {
+            coachSchedulerService.removeWorkout(id);
         }
 
-        workoutRepository.save(workout);
-        return workoutDTOMapper.mapEntityToDTO(workout);
+        workoutUnitRepository.save(workout);
     }
 
+    public WorkoutUnitDTO changeDate(Long id, LocalDateTime newDate, Integer duration, User user) {
+        WorkoutUnit workout = workoutUnitRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Workout unit not found")
+        );
+
+        Client client = personalPlanRepository.findClientByWorkoutUnitId(id).orElseThrow(
+                () -> new EntityNotFoundException("Client not found")
+        );
+
+        if (!Objects.equals(client.getCoach().getEmail(), user.getEmail()) && !user.getRole().equals(Role.ADMIN)) {
+            throw new AuthorizationException("You are not authorized");
+        }
+
+        workout.setDuration(duration);
+        workout.setDate(newDate);
+
+        if (!workout.isIndividual()) {
+            coachSchedulerService.onChangeWorkoutDate(id, newDate, duration);
+        }
+
+        workoutUnitRepository.save(workout);
+        return workoutUnitDTOMapper.mapEntityToDTO(workout);
+    }
 }

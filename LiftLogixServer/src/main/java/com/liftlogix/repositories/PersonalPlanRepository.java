@@ -14,8 +14,8 @@ import java.util.Optional;
 public interface PersonalPlanRepository extends JpaRepository<PersonalPlan, Long> {
     Optional<PersonalPlan> findByClientIdAndIsActiveTrue(Long clientId);
     List<PersonalPlan> findByClientId(Long clientId);
-    @Query("SELECT p FROM PersonalPlan p JOIN p.mesocycles m JOIN m.microcycles mic JOIN mic.workouts w WHERE w.id = :workoutId")
-    Optional<PersonalPlan> findByWorkoutId(@Param("workoutId") Long workoutId);
-    @Query("SELECT p.client FROM PersonalPlan p JOIN p.mesocycles m JOIN m.microcycles mic JOIN mic.workouts w WHERE w.id = :workoutId")
-    Optional<Client> findClientByWorkout(@Param("workoutId") Long workoutId);
+    @Query("SELECT p FROM PersonalPlan p JOIN p.mesocycles m JOIN m.microcycles mic JOIN mic.workoutUnits w WHERE w.id = :workoutUnitId")
+    Optional<PersonalPlan> findByWorkoutUnitId(@Param("workoutUnitId") Long workoutUnitId);
+    @Query("SELECT p.client FROM PersonalPlan p JOIN p.mesocycles m JOIN m.microcycles mic JOIN mic.workoutUnits w WHERE w.id = :workoutUnitId")
+    Optional<Client> findClientByWorkoutUnitId(@Param("workoutUnitId") Long workoutUnitId);
 }

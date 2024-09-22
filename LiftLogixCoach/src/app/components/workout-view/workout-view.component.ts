@@ -13,6 +13,7 @@ import { ExerciseService} from "../../services/exercise.service";
 import { Exercise } from "../../interfaces/Exercise";
 import { PersonalPlan } from "../../interfaces/PersonalPlan";
 import { PersonalPlanService } from "../../services/personal-plan.service";
+import {WorkoutUnit} from "../../interfaces/WorkoutUnit";
 
 @Component({
   selector: 'app-workout-view',
@@ -79,7 +80,9 @@ export class WorkoutViewComponent implements OnInit {
 
   loadPersonalPlan() {
     this.mesocycles = this.personalPlan.mesocycles;
+    this.convertWorkoutUnitToWorkout();
     this.selectMesocycle(0);
+    this.selectWorkoutA();
   }
 
   loadOldPlan() {
@@ -87,9 +90,11 @@ export class WorkoutViewComponent implements OnInit {
     this.personalPlanService.getPlanDetails(this.oldPlanId, token).subscribe(
       plan => {
       this.mesocycles = plan.mesocycles;
+      this.convertWorkoutUnitToWorkout();
       this.selectMesocycle(0);
+      this.selectWorkoutA();
       },
-      error => {
+      () => {
         this.openSnackBar('Nie udało się załadować planu');
       }
     )
@@ -98,16 +103,19 @@ export class WorkoutViewComponent implements OnInit {
   findCyclesByWorkoutId(workoutId: number) {
     for (let mesocycle of this.mesocycles) {
       for (let microcycle of mesocycle.microcycles) {
-        const workout = microcycle.workouts.find(w => w.id === workoutId);
-        if (workout) {
-          this.selectedMesocycle = mesocycle;
-          this.microcycles = mesocycle.microcycles;
-          this.selectedMicrocycle = microcycle;
-          this.workouts = microcycle.workouts;
-          this.selectedWorkout = workout;
-          this.workoutExercises = this.selectedWorkout.workoutExercises;
-          this.generateMicrocycleTable();
-          return;
+        const workoutUnit = microcycle.workoutUnits.find(w => w.id === workoutId);
+        if (workoutUnit) {
+          const workout = microcycle.workouts.find(w => w.name === workoutUnit.name);
+          if (workout) {
+            this.selectedMesocycle = mesocycle;
+            this.microcycles = mesocycle.microcycles;
+            this.selectedMicrocycle = microcycle;
+            this.workouts = microcycle.workouts;
+            this.selectedWorkout = workout;
+            this.workoutExercises = this.selectedWorkout.workoutExercises;
+            this.generateMicrocycleTable();
+            return;
+          }
         }
       }
     }
@@ -157,6 +165,40 @@ export class WorkoutViewComponent implements OnInit {
         week[i] = i + 1 + days;
       }
       this.microcycleTable.push(week);
+    }
+  }
+
+  private convertWorkoutUnitToWorkout() {
+    this.mesocycles.forEach(mesocycle => {
+      mesocycle.microcycles.forEach(microcycle => {
+        microcycle.workouts = [];
+
+        microcycle.workoutUnits.forEach(workoutUnit => {
+          const workout: Workout = {
+            id: 0,
+            name: workoutUnit.name,
+            workoutExercises: workoutUnit.workoutExercises,
+            days: [workoutUnit.microcycleDay]
+          };
+
+          const existingWorkout = microcycle.workouts.find(w => w.name === workout.name);
+          if (existingWorkout) {
+            existingWorkout.days.push(workoutUnit.microcycleDay);
+          } else {
+            microcycle.workouts.push(workout);
+          }
+        })
+      })
+    })
+  }
+
+  private selectWorkoutA() {
+    if (this.selectedMicrocycle) {
+      const workoutA = this.selectedMicrocycle.workouts.find(w => w.name === 'Trening A');
+      if (workoutA) {
+        this.selectedWorkout = workoutA;
+        this.workoutExercises = workoutA.workoutExercises;
+      }
     }
   }
 

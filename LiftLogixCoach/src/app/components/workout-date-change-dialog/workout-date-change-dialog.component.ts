@@ -48,7 +48,6 @@ export class WorkoutDateChangeDialogComponent {
 
         this.dialogRef.close({
           workoutId: this.data.workoutId,
-          oldDate: this.data.oldDate,
           newDate: formattedNewDate,
           duration: duration
         });

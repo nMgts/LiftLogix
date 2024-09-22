@@ -54,7 +54,6 @@ export class WeeklyScheduleComponent implements OnInit {
     this.coachSchedulerService.getScheduler(token).subscribe(
       (scheduler) => {
         this.schedulerItems = scheduler.schedulerItems;
-        console.log(this.schedulerItems)
       },
       (error) => {
         console.error('Scheduler not found', error);

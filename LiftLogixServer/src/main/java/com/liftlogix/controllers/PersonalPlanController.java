@@ -1,8 +1,8 @@
 package com.liftlogix.controllers;
 
-import com.liftlogix.dto.BasicPersonalPlanDTO;
 import com.liftlogix.dto.PersonalPlanDTO;
 import com.liftlogix.exceptions.AuthorizationException;
+import com.liftlogix.exceptions.NoActivePlanException;
 import com.liftlogix.models.User;
 import com.liftlogix.services.PersonalPlanService;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -22,14 +21,22 @@ public class PersonalPlanController {
     private final PersonalPlanService personalPlanService;
 
     @GetMapping("/all/{clientId}")
-    public List<BasicPersonalPlanDTO> getAllClientPlans(@PathVariable Long clientId) {
-        return personalPlanService.getAllClientPlans(clientId);
+    public ResponseEntity<?> getAllClientPlans(@PathVariable Long clientId, @AuthenticationPrincipal User currentUser) {
+        try {
+            return ResponseEntity.ok().body(personalPlanService.getAllClientPlans(clientId, currentUser));
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
     }
 
     @GetMapping("/details/{id}")
-    public ResponseEntity<?> getPlanDetails(@PathVariable Long id) {
+    public ResponseEntity<?> getPlanDetails(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
         try {
-            return ResponseEntity.ok().body(personalPlanService.getPlanDetails(id));
+            return ResponseEntity.ok().body(personalPlanService.getPlanDetails(id, currentUser));
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
@@ -38,38 +45,53 @@ public class PersonalPlanController {
     }
 
     @GetMapping("/is-active/{clientId}")
-    public ResponseEntity<PersonalPlanDTO> getActivePlanByClientId(@PathVariable Long clientId) {
-        Optional<PersonalPlanDTO> planDTO = personalPlanService.getActivePlanByClientId(clientId);
-        return planDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getActivePlanByClientId(@PathVariable Long clientId, @AuthenticationPrincipal User currentUser) {
+        try {
+            return ResponseEntity.ok().body(personalPlanService.getActivePlanByClientId(clientId, currentUser));
+        } catch (NoActivePlanException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
     }
 
     @PatchMapping("/deactivate/{planId}")
-    public ResponseEntity<String> deactivatePlan(@PathVariable Long planId) {
+    public ResponseEntity<String> deactivatePlan(@PathVariable Long planId, @AuthenticationPrincipal User currentUser) {
         try {
-            personalPlanService.deactivatePlan(planId);
+            personalPlanService.deactivatePlan(planId, currentUser);
             return ResponseEntity.ok().body("{\"message\": \"Plan deactivated\"}");
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createPersonalPlan(
-            @RequestBody PersonalPlanDTO plan) {
+    public ResponseEntity<?> createPersonalPlan(@RequestBody PersonalPlanDTO plan, @AuthenticationPrincipal User currentUser) {
         try {
-            PersonalPlanDTO createdPlan = personalPlanService.createPersonalPlan(plan);
+            PersonalPlanDTO createdPlan = personalPlanService.createPersonalPlan(plan, currentUser);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdPlan);
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deletePersonalPlan(@PathVariable Long id) {
+    public ResponseEntity<?> deletePersonalPlan(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
         try {
-            personalPlanService.deletePlan(id);
+            personalPlanService.deletePlan(id, currentUser);
             return ResponseEntity.ok().body("{\"message\": \"Personal plan deleted successfully\"}");
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
@@ -78,10 +100,12 @@ public class PersonalPlanController {
     }
 
     @GetMapping("/workout/{workout_id}")
-    public ResponseEntity<?> getPersonalPlanByWorkoutId(@PathVariable Long workout_id) {
+    public ResponseEntity<?> getPersonalPlanByWorkoutId(@PathVariable Long workout_id, @AuthenticationPrincipal User currentUser) {
         try {
-            PersonalPlanDTO personalPlanDTO = personalPlanService.getPersonalPlanByWorkoutId(workout_id);
+            PersonalPlanDTO personalPlanDTO = personalPlanService.getPersonalPlanByWorkoutId(workout_id, currentUser);
             return ResponseEntity.ok().body(personalPlanDTO);
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
@@ -98,6 +122,7 @@ public class PersonalPlanController {
         } catch (AuthorizationException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }

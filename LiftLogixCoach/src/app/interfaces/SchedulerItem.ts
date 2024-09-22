@@ -2,8 +2,8 @@ import { Client } from "./Client";
 
 export interface SchedulerItem {
   id: number;
-  workoutId: number;
-  workoutName: string;
+  workoutUnitId: number;
+  workoutUnitName: string;
   startDate: string;
   endDate: string;
   client: Client;

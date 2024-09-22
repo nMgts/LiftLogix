@@ -9,6 +9,7 @@ import { formatDate } from "@angular/common";
 import { ClientService } from "../../services/client.service";
 import { Client } from "../../interfaces/Client";
 import { PersonalPlan } from "../../interfaces/PersonalPlan";
+import {WorkoutUnit} from "../../interfaces/WorkoutUnit";
 
 @Component({
   selector: 'app-save-plan-dialog',
@@ -74,6 +75,26 @@ export class SavePlanDialogComponent {
             length: 0,
             active: true
           }
+
+          personalPlan.mesocycles.forEach(mesocycle => {
+            mesocycle.microcycles.forEach(microcycle => {
+              microcycle.workouts.forEach(workout => {
+                workout.days.forEach(day => {
+                  const workoutUnit: WorkoutUnit = {
+                    id: 0,
+                    name: workout.name,
+                    workoutExercises: workout.workoutExercises,
+                    date: "1970-01-01T00:00:00",
+                    individual: true,
+                    duration: 60,
+                    microcycleDay: day
+                  };
+                  microcycle.workoutUnits.push(workoutUnit);
+                })
+              })
+              microcycle.workouts = [];
+            })
+          })
 
           this.personalPlanService.createPlan(personalPlan, token).subscribe(plan => {
             this.dialogRef.close(true);

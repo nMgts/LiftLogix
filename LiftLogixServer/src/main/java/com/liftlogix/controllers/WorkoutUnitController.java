@@ -1,21 +1,21 @@
 package com.liftlogix.controllers;
 
 import com.liftlogix.dto.ChangeDateRequest;
+import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.exceptions.TimeConflictException;
+import com.liftlogix.models.User;
 import com.liftlogix.services.WorkoutService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/workout")
 @AllArgsConstructor
-public class WorkoutController {
+public class WorkoutUnitController {
     private final WorkoutService workoutService;
 
     /*
@@ -32,12 +32,12 @@ public class WorkoutController {
     */
 
     @PatchMapping("/toggle-individual/{id}")
-    public ResponseEntity<String> toggleIndividual(
-            @PathVariable Long id,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date) {
+    public ResponseEntity<String> toggleIndividual(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
         try {
-            workoutService.toggleIndividual(id, date);
+            workoutService.toggleIndividual(id, currentUser);
             return ResponseEntity.ok().body("{\"message\": \"Workout individual status toggled\"}");
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (TimeConflictException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (EntityNotFoundException e) {
@@ -49,9 +49,12 @@ public class WorkoutController {
 
 
     @PutMapping("/set-date")
-    public ResponseEntity<?> changeDate(@RequestBody ChangeDateRequest request) {
+    public ResponseEntity<?> changeDate(@RequestBody ChangeDateRequest request, @AuthenticationPrincipal User currentUser) {
         try {
-            return ResponseEntity.ok(workoutService.changeDate(request.getId(), request.getOldDate(), request.getNewDate(), request.getDuration()));
+            return ResponseEntity.ok(workoutService.changeDate(
+                    request.getId(), request.getNewDate(), request.getDuration(), currentUser));
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (TimeConflictException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (EntityNotFoundException e) {

@@ -10,6 +10,5 @@ import java.time.LocalDateTime;
 public class ChangeDateRequest {
     private Long id;
     private Integer duration;
-    private LocalDateTime oldDate;
     private LocalDateTime newDate;
 }

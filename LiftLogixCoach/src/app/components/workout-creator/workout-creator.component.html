@@ -109,7 +109,7 @@
     </thead>
     <tbody>
     <tr *ngFor="let exercise of selectedWorkout.workoutExercises">
-      <td (click)="openEditExerciseNameDialog(exercise.exerciseId)">
+      <td class="exercise-name-cell" (click)="openEditExerciseNameDialog(exercise.exerciseId)">
         {{ exercise.exerciseName }}
         <mat-icon class="info-icon" (click)="openExerciseDetails(exercise.exerciseId, $event)">info</mat-icon>
       </td>
@@ -231,7 +231,7 @@
           *ngIf="(window.innerWidth < 1000 && showAdvancedOptions)
           || window.innerWidth < 500
           || (isPersonalPlan && window.innerWidth > 1023 && showAdvancedOptions && !isFullScreen)">
-        <mat-icon (click)="openExerciseOptionsDialog(exercise)">more_vert</mat-icon>
+        <mat-icon class="options-icon" (click)="openExerciseOptionsDialog(exercise)">more_vert</mat-icon>
       </td>
       <td class="delete-column">
         <mat-icon class="delete-icon" (click)="removeExercise(exercise)">delete</mat-icon>
@@ -474,7 +474,10 @@
   </button>
 
   <p class="warning-message" *ngIf="personalPlan">
-    Uwaga, aktualizacja planu spowoduje zresetowanie jego harmonogramu.
+    Uwaga, aktualizacja aktywnego planu spowoduje zresetowanie jego harmonogramu,
+    ustawienie wszystkich treningów na indywidualne oraz usunięcie wszystkich raportów!
+    Jeśli nie musisz ingerować w strukturę planu zalecanym rozwiązaniem jest edycja lub
+    zmiana daty poszczególnych treningów w zakładce harmonogramu klienta.
   </p>
 
   <button *ngIf="personalPlan" (click)="updatePersonalPlan()" mat-raised-button class="save-plan-button" color="primary">

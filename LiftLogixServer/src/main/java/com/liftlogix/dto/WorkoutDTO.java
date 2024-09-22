@@ -12,5 +12,4 @@ public class WorkoutDTO {
     private String name;
     private List<WorkoutExerciseDTO> workoutExercises;
     private List<Integer> days;
-    private List<WorkoutDateDTO> dates;
 }

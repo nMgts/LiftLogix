@@ -27,6 +27,7 @@ import { ExerciseService } from "../../services/exercise.service";
 import { AdjustPersonalPlanDialogComponent } from "../adjust-personal-plan-dialog/adjust-personal-plan-dialog.component";
 import { PersonalPlan } from "../../interfaces/PersonalPlan";
 import { PersonalPlanService } from "../../services/personal-plan.service";
+import {WorkoutUnit} from "../../interfaces/WorkoutUnit";
 
 @Component({
   selector: 'app-workout-creator',
@@ -51,8 +52,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     id: 0,
     name: 'Trening A',
     workoutExercises: [],
-    days: [],
-    dates: []
+    days: []
   }
 
   selectedWorkout = this.exampleWorkout;
@@ -66,7 +66,8 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     length: 7,
     workouts: [
       this.exampleWorkout
-    ]
+    ],
+    workoutUnits: []
   };
   daysInWeek: string[] = ['PON', 'WT', 'ŚR', 'CZW', 'PT', 'SOB', 'NDZ'];
   microcycleTable: number[][] = [];
@@ -131,15 +132,65 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   /** Personal Plan Methods **/
 
   loadPersonalPlan() {
-    console.log(this.personalPlan);
     this.macrocycle = { mesocycles: this.personalPlan.mesocycles };
+    this.macrocycle.mesocycles.forEach(mesocycle => {
+        mesocycle.microcycles.forEach(microcycle => {
+            microcycle.workoutUnits.forEach(workoutUnit => {
+                const workout: Workout = {
+                  id: 0,
+                  name: workoutUnit.name,
+                  workoutExercises: workoutUnit.workoutExercises,
+                  days: [workoutUnit.microcycleDay]
+                };
+
+                const existingWorkout = microcycle.workouts.find(w => w.name === workout.name);
+                if (existingWorkout) {
+                  existingWorkout.days.push(workoutUnit.microcycleDay);
+                } else {
+                  microcycle.workouts.push(workout);
+                }
+              })
+            microcycle.workoutUnits = [];
+          })
+      })
     this.selectMesocycle(0);
     this.generateMicrocycleTable();
   }
 
   updatePersonalPlan() {
     const token = localStorage.getItem('token') || '';
-    this.personalPlanService.editPersonalPlan(this.personalPlan, token).subscribe(
+
+    const personalPlan: PersonalPlan = {
+      id: this.personalPlan.id,
+      name: this.personalPlan.name,
+      mesocycles: this.macrocycle.mesocycles,
+      client: this.personalPlan.client,
+      startDate: this.personalPlan.startDate,
+      length: 0,
+      active: true
+    };
+
+    personalPlan.mesocycles.forEach(mesocycle => {
+        mesocycle.microcycles.forEach(microcycle => {
+            microcycle.workouts.forEach(workout => {
+                workout.days.forEach(day => {
+                    const workoutUnit: WorkoutUnit = {
+                      id: 0,
+                      name: workout.name,
+                      workoutExercises: workout.workoutExercises,
+                      date: "1970-01-01T00:00:00",
+                      individual: true,
+                      duration: 60,
+                      microcycleDay: day
+                    };
+                    microcycle.workoutUnits.push(workoutUnit);
+                  })
+              })
+            microcycle.workouts = [];
+          })
+      })
+
+    this.personalPlanService.editPersonalPlan(personalPlan, token).subscribe(
       () => {
         this.openSnackBar('Plan został zaktualizowany');
         this.onPersonalPlanSaveSuccess();
@@ -227,8 +278,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
       id: 0,
       name: this.generateWorkoutName(),
       workoutExercises: [],
-      days: [],
-      dates: []
+      days: []
     };
     this.selectedMicrocycle.workouts.push(newWorkout);
     this.selectedWorkout = newWorkout;
@@ -422,8 +472,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
         rpe: exercise.rpe,
         breakTime: { ...exercise.breakTime }
       })),
-      days: [],
-      dates: []
+      days: []
     };
 
     this.selectedMicrocycle.workouts.push(newWorkout);
@@ -543,7 +592,8 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
               break: { ...exercise.breakTime }
             })),
             days: [...workout.days]
-          }))
+          })),
+          workoutUnits: []
         };
         this.selectedMesocycle.microcycles.push(newMicrocycle);
       }
@@ -569,7 +619,8 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
 
     this.selectedMesocycle.microcycles[index] = {
       length: 7,
-      workouts: [this.exampleWorkout]
+      workouts: [this.exampleWorkout],
+      workoutUnits: []
     };
 
     if (change) this.selectMicrocycle(index);
@@ -618,7 +669,8 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
                 break: { ...exercise.breakTime }
               })),
               days: [...workout.days]
-            }))
+            })),
+            workoutUnits: []
           }))
         };
         this.macrocycle.mesocycles.push(newMesocycle);

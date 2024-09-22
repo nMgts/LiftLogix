@@ -323,6 +323,7 @@ tr.add-exercise-row td button {
 }
 
 .exercise-table td {
+  cursor: pointer;
   background-color: rgba(128, 0, 128, 0.1);
   overflow: hidden;
 }
@@ -398,13 +399,17 @@ td.break-cell {
   }
 }
 
-.delete-icon {
+.delete-icon, .options-icon {
   cursor: pointer;
   vertical-align: middle;
 }
 
 .delete-icon:hover {
   color: red !important;
+}
+
+.options-icon:hover {
+  color: blue !important;
 }
 
 .info-icon {

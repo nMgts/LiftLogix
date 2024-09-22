@@ -5,16 +5,16 @@ import com.liftlogix.models.SchedulerItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = {WorkoutDTOMapper.class, ClientDTOMapper.class})
+@Mapper(componentModel = "spring", uses = {WorkoutUnitDTOMapper.class, ClientDTOMapper.class})
 public interface SchedulerItemDTOMapper {
 
-    @Mapping(source = "workout.id", target = "workoutId")
-    @Mapping(source = "workout.name", target = "workoutName")
+    @Mapping(source = "workoutUnit.id", target = "workoutUnitId")
+    @Mapping(source = "workoutUnit.name", target = "workoutUnitName")
     @Mapping(source = "client", target = "client")
     SchedulerItemDTO mapEntityToDTO(SchedulerItem schedulerItem);
 
-    @Mapping(source = "workoutId", target = "workout.id")
-    @Mapping(source = "workoutName", target = "workout.name")
+    @Mapping(source = "workoutUnitId", target = "workoutUnit.id")
+    @Mapping(source = "workoutUnitName", target = "workoutUnit.name")
     @Mapping(source = "client", target = "client")
     SchedulerItem mapDTOToEntity(SchedulerItemDTO schedulerItemDTO);
 }

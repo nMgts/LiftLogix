@@ -22,6 +22,10 @@ public class WorkoutExercise {
     @JoinColumn(name = "workout_id")
     private Workout workout;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workout_unit_id")
+    private WorkoutUnit workoutUnit;
+
     @Column(nullable = false)
     private double difficultyFactor;
 

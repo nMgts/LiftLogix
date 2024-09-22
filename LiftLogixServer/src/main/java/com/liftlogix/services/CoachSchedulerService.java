@@ -4,10 +4,7 @@ import com.liftlogix.convert.CoachSchedulerDTOMapper;
 import com.liftlogix.dto.CoachSchedulerDTO;
 import com.liftlogix.exceptions.TimeConflictException;
 import com.liftlogix.models.*;
-import com.liftlogix.repositories.CoachScheduleRepository;
-import com.liftlogix.repositories.PersonalPlanRepository;
-import com.liftlogix.repositories.SchedulerItemRepository;
-import com.liftlogix.repositories.WorkoutRepository;
+import com.liftlogix.repositories.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +18,7 @@ import java.util.Objects;
 public class CoachSchedulerService {
     private final CoachScheduleRepository coachScheduleRepository;
     private final SchedulerItemRepository schedulerItemRepository;
-    private final WorkoutRepository workoutRepository;
+    private final WorkoutUnitRepository workoutUnitRepository;
     private final PersonalPlanRepository personalPlanRepository;
     private final CoachSchedulerDTOMapper coachSchedulerDTOMapper;
 
@@ -39,12 +36,12 @@ public class CoachSchedulerService {
         return coachSchedulerDTOMapper.mapEntityToDTO(scheduler);
     }
 
-    public void addWorkout(Long workoutId, WorkoutDate date) {
-        Workout workout = workoutRepository.findById(workoutId).orElseThrow(
-                () -> new EntityNotFoundException("Workout not found")
+    public void addWorkout(Long workoutId) {
+        WorkoutUnit workout = workoutUnitRepository.findById(workoutId).orElseThrow(
+                () -> new EntityNotFoundException("Workout unit not found")
         );
 
-        Client client = personalPlanRepository.findClientByWorkout(workoutId).orElseThrow(
+        Client client = personalPlanRepository.findClientByWorkoutUnitId(workoutId).orElseThrow(
                 () -> new EntityNotFoundException("Client not found")
         );
 
@@ -52,11 +49,11 @@ public class CoachSchedulerService {
 
         List<SchedulerItem> schedulerItems = scheduler.getSchedulerItems();
 
-        LocalDateTime startDate = date.getDate();
-        LocalDateTime endDate = startDate.plusMinutes(date.getDuration());
+        LocalDateTime startDate = workout.getDate();
+        LocalDateTime endDate = startDate.plusMinutes(workout.getDuration());
 
         SchedulerItem newItem = new SchedulerItem();
-        newItem.setWorkout(workout);
+        newItem.setWorkoutUnit(workout);
         newItem.setStartDate(startDate);
         newItem.setEndDate(endDate);
         newItem.setClient(client);
@@ -71,15 +68,13 @@ public class CoachSchedulerService {
         coachScheduleRepository.save(scheduler);
     }
 
-    public void removeWorkout(Long workoutId, WorkoutDate date) {
+    public void removeWorkout(Long workoutId) {
         CoachScheduler scheduler = getCoachSchedulerByWorkoutId(workoutId);
 
         List<SchedulerItem> schedulerItems = scheduler.getSchedulerItems();
 
         SchedulerItem itemToRemove = schedulerItems.stream()
-                .filter(item -> item.getWorkout().getId().equals(workoutId)
-                        && item.getStartDate().equals(date.getDate())
-                        && item.getEndDate().equals(date.getDate().plusMinutes(date.getDuration())))
+                .filter(item -> item.getWorkoutUnit().getId().equals(workoutId))
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("SchedulerItem not found"));
 
@@ -90,13 +85,12 @@ public class CoachSchedulerService {
         coachScheduleRepository.save(scheduler);
     }
 
-    public void onChangeWorkoutDate(Long workoutId, LocalDateTime oldDate, LocalDateTime newDate, Integer newDuration) {
+    public void onChangeWorkoutDate(Long workoutId, LocalDateTime newDate, Integer newDuration) {
         CoachScheduler scheduler = getCoachSchedulerByWorkoutId(workoutId);
 
         List<SchedulerItem> schedulerItems = scheduler.getSchedulerItems();
         SchedulerItem itemToChange = schedulerItems.stream()
-                .filter(item -> item.getWorkout().getId().equals(workoutId)
-                        && item.getStartDate().equals(oldDate))
+                .filter(item -> item.getWorkoutUnit().getId().equals(workoutId))
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("SchedulerItem not found"));
 
@@ -109,7 +103,7 @@ public class CoachSchedulerService {
     }
 
     private CoachScheduler getCoachSchedulerByWorkoutId(Long workoutId) {
-        Client client = personalPlanRepository.findClientByWorkout(workoutId).orElseThrow(
+        Client client = personalPlanRepository.findClientByWorkoutUnitId(workoutId).orElseThrow(
                 () -> new EntityNotFoundException("Client not found")
         );
 

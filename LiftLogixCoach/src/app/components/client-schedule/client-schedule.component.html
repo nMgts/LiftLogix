@@ -43,7 +43,7 @@
         <div class="day-number">{{ day.day }}</div>
 
         <div class="events">
-          <div class="event" *ngFor="let event of day.events" [ngClass]="getEventClass(event, day)">
+          <div class="event" *ngFor="let event of day.events" [ngClass]="getEventClass(event)">
             {{ getWorkoutInitials(event.name) }}
           </div>
         </div>

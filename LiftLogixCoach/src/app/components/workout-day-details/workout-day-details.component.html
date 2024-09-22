@@ -12,7 +12,8 @@
 
         <div class="workout-controls">
           <mat-slide-toggle
-            [checked]="!getWorkoutIndividualStatus(workout)"
+            [checked]="!workout.individual"
+            [disabled]="isToggleBlocked"
             (change)="toggleWorkoutType(workout)">
             Z trenerem
           </mat-slide-toggle>

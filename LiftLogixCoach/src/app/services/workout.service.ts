@@ -12,15 +12,14 @@ export class WorkoutService {
 
   constructor(private http: HttpClient) {}
 
-  toggleIndividual(id: number, date: string, token: string): Observable<any> {
+  toggleIndividual(id: number, token: string): Observable<any> {
     const headers = this.createHeaders(token);
-    const url = `${this.toggleIndividualUrl}/${id}?date=${encodeURIComponent(date)}`;
-    return this.http.patch(url, {}, { headers });
+    return this.http.patch(`${this.toggleIndividualUrl}/${id}`, {}, { headers });
   }
 
-  changeDate(id: number, oldDate: string, newDate: string, duration: number, token: string): Observable<any> {
+  changeDate(id: number, newDate: string, duration: number, token: string): Observable<any> {
     const headers = this.createHeaders(token);
-    const body = { id, oldDate, newDate, duration };
+    const body = { id, newDate, duration };
     return this.http.put(this.setDateUrl, body, { headers });
   }
 

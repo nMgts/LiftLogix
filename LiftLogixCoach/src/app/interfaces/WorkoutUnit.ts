@@ -1,8 +1,11 @@
 import { WorkoutExercise } from "./WorkoutExercise";
 
-export interface Workout {
+export interface WorkoutUnit {
   id: number;
   name: string;
   workoutExercises: WorkoutExercise[];
-  days: number[];
+  date: string;
+  individual: boolean;
+  duration: number;
+  microcycleDay: number;
 }
