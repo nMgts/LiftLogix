@@ -27,13 +27,9 @@
 
     .toggle-dropdown {
       position: absolute;
-      right: 0;
-      top: 0;
+      right: -15px;
+      top: 2px;
       height: 100%;
-      border-radius: 0;
-      padding: 0;
-      margin: 0;
-      background: none;
     }
   }
 
@@ -51,7 +47,7 @@
     background-color: rgb(15, 0, 22);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     z-index: 1000;
-    width: 88.2%;
+    width: calc(100% - 50px);
     top: 130px;
     max-height: 130px;
     overflow-y: auto;

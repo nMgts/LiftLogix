@@ -4,21 +4,26 @@ import com.liftlogix.dto.PersonalPlanDTO;
 import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.exceptions.NoActivePlanException;
 import com.liftlogix.models.User;
+import com.liftlogix.services.ExcelService;
 import com.liftlogix.services.PersonalPlanService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/personal-plan")
 @AllArgsConstructor
 public class PersonalPlanController {
     private final PersonalPlanService personalPlanService;
+    private final ExcelService excelService;
 
     @GetMapping("/all/{clientId}")
     public ResponseEntity<?> getAllClientPlans(@PathVariable Long clientId, @AuthenticationPrincipal User currentUser) {
@@ -81,6 +86,7 @@ public class PersonalPlanController {
         } catch (AuthorizationException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
@@ -122,7 +128,28 @@ public class PersonalPlanController {
         } catch (AuthorizationException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @GetMapping("/export/{id}")
+    public ResponseEntity<?> exportPlanToExcel(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
+        try {
+            ByteArrayResource excelFile = excelService.exportPersonalPlanToExcel(id, currentUser);
+
+            String filename = personalPlanService.getPlanName(id) + ".xls";
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                    .body(excelFile);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }

@@ -13,11 +13,25 @@ export class ExerciseDetailsDialogComponent implements AfterViewInit {
   scrollTimeout: any;
   @ViewChild('dialog', { static: true }) dialog!: ElementRef;
 
+  bodyPartsTranslations: { [key: string]: string } = {
+    'CHEST': 'KLATKA',
+    'BACK': 'PLECY',
+    'BICEPS': 'BICEPS',
+    'TRICEPS': 'TRICEPS',
+    'SHOULDERS': 'BARKI',
+    'FOREARMS': 'PRZEDRAMIONA',
+    'ABS': 'BRZUCH',
+    'CALVES': 'ŁYDKI',
+    'QUAD': 'CZWOROGŁOWE',
+    'HAMSTRING': 'DWUGŁOWE',
+    'GLUTE': 'POŚLADKI'
+  };
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private sanitizer: DomSanitizer,
     public dialogRef: MatDialogRef<ExerciseDetailsDialogComponent>,
-    private renderer: Renderer2
+    private renderer: Renderer2,
   ) {
     const description = data.description.replace(/\r\n/g, '<br>');
     this.safeDescription = this.sanitizer.bypassSecurityTrustHtml(description);

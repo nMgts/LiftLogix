@@ -47,7 +47,7 @@ export class LoginComponent {
         }
       }
     } catch (error) {
-      this.showError('Nie udało się zalogować'); // If server is not responding
+      this.showError('Nie udało się zalogować');
     }
   }
 

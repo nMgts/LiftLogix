@@ -73,6 +73,9 @@ public class UserManagementService {
                 resp.setMessage("User saved successfully");
                 resp.setStatusCode(200);
             }
+        } catch (EmailIsTakenException e) {
+            resp.setStatusCode(409);
+            resp.setError(e.getMessage());
         } catch (Exception e) {
             resp.setStatusCode(500);
             resp.setError(e.getMessage());

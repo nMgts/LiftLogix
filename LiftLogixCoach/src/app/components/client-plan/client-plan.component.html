@@ -13,14 +13,21 @@
       </mat-card-content>
     </mat-card>
 
-    <div class="actions" *ngIf="!notFound">
-      <button mat-raised-button color="primary" (click)="viewPersonalPlan()">
+    <div class="actions" *ngIf="!notFound" [ngClass]="{'full-screen': isFullScreen}">
+      <button mat-raised-button color="primary" (click)="viewPersonalPlan()" class="action-button">
+        <mat-icon *ngIf="window.innerWidth > 399">visibility</mat-icon>
         <span>Pogląd</span>
       </button>
-      <button mat-raised-button color="accent" (click)="editPersonalPlan()">
+      <button mat-raised-button color="primary" (click)="editPersonalPlan()" class="action-button">
+        <mat-icon *ngIf="window.innerWidth > 399">edit</mat-icon>
         <span>Edytuj</span>
       </button>
-      <button mat-raised-button color="accent" (click)="deactivatePersonalPlan()">
+      <button mat-raised-button color="accent" (click)="downloadPersonalPlan(plan.id)" class="action-button">
+        <img *ngIf="window.innerWidth > 399" src="/icons/excel.svg"  alt="Excel Icon" class="excel-icon">
+        <span>Pobierz</span>
+      </button>
+      <button mat-raised-button color="accent" (click)="deactivatePersonalPlan()" class="action-button">
+        <mat-icon *ngIf="window.innerWidth > 399">close</mat-icon>
         <span>Zakończ</span>
       </button>
     </div>
@@ -66,7 +73,7 @@
             </button>
           </mat-card-title>
 
-          <mat-card-content>
+          <mat-card-content class="plan-list-content">
             <p>Data rozpoczęcia: {{ plan.startDate | date:'dd.MM.yyyy' }}</p>
             <p>Data zakończenia: {{ plan.endDate | date:'dd.MM.yyyy' }}</p>
           </mat-card-content>

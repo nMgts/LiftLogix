@@ -17,9 +17,9 @@ export class AuthService {
   async register(userData: any): Promise<any> {
     const response = await firstValueFrom(this.http.post<any>(this.registerUrl, userData));
     if (response.statusCode === 200) {
-      return { success: true }
+      return { success: true, statusCode: response.statusCode }
     } else {
-      return { success: false }
+      return { success: false, statusCode: response.statusCode }
     }
   }
 

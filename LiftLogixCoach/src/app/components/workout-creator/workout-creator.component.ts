@@ -27,7 +27,8 @@ import { ExerciseService } from "../../services/exercise.service";
 import { AdjustPersonalPlanDialogComponent } from "../adjust-personal-plan-dialog/adjust-personal-plan-dialog.component";
 import { PersonalPlan } from "../../interfaces/PersonalPlan";
 import { PersonalPlanService } from "../../services/personal-plan.service";
-import {WorkoutUnit} from "../../interfaces/WorkoutUnit";
+import { WorkoutUnit } from "../../interfaces/WorkoutUnit";
+import _ from 'lodash';
 
 @Component({
   selector: 'app-workout-creator',
@@ -160,35 +161,31 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   updatePersonalPlan() {
     const token = localStorage.getItem('token') || '';
 
-    const personalPlan: PersonalPlan = {
-      id: this.personalPlan.id,
-      name: this.personalPlan.name,
-      mesocycles: this.macrocycle.mesocycles,
-      client: this.personalPlan.client,
-      startDate: this.personalPlan.startDate,
-      length: 0,
-      active: true
-    };
+    const personalPlan: PersonalPlan = _.cloneDeep(this.personalPlan);
+
+    personalPlan.mesocycles = _.cloneDeep(this.macrocycle.mesocycles);
+    personalPlan.length = 0;
+    personalPlan.active = true;
 
     personalPlan.mesocycles.forEach(mesocycle => {
-        mesocycle.microcycles.forEach(microcycle => {
-            microcycle.workouts.forEach(workout => {
-                workout.days.forEach(day => {
-                    const workoutUnit: WorkoutUnit = {
-                      id: 0,
-                      name: workout.name,
-                      workoutExercises: workout.workoutExercises,
-                      date: "1970-01-01T00:00:00",
-                      individual: true,
-                      duration: 60,
-                      microcycleDay: day
-                    };
-                    microcycle.workoutUnits.push(workoutUnit);
-                  })
-              })
-            microcycle.workouts = [];
-          })
-      })
+      mesocycle.microcycles.forEach(microcycle => {
+        microcycle.workouts.forEach(workout => {
+          workout.days.forEach(day => {
+            const workoutUnit: WorkoutUnit = {
+              id: 0,
+              name: workout.name,
+              workoutExercises: workout.workoutExercises,
+              date: "1970-01-01T00:00:00",
+              individual: true,
+              duration: 60,
+              microcycleDay: day
+            };
+            microcycle.workoutUnits.push(workoutUnit);
+          });
+        });
+        microcycle.workouts = [];
+      });
+    });
 
     this.personalPlanService.editPersonalPlan(personalPlan, token).subscribe(
       () => {
@@ -198,7 +195,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
       () => {
         this.openSnackBar('Nie udało się zaktualizować planu');
       }
-    )
+    );
   }
 
   adjustPersonalPlan() {
@@ -215,6 +212,11 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   }
 
   savePersonalPlan() {
+    const validationResult = this.validateWorkouts();
+    if (!validationResult) {
+      return;
+    }
+
     const dialogRef = this.dialog.open(SavePlanDialogComponent, {
       data: {
         macrocycle: this.macrocycle,
@@ -248,6 +250,11 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   }
 
   editPlan() {
+    const validationResult = this.validateWorkouts();
+    if (!validationResult) {
+      return;
+    }
+
     const token = localStorage.getItem('token') || '';
     const newPlan: Plan = {
       id: this.plan.id,
@@ -497,6 +504,48 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     });
   }
 
+  validateWorkouts() {
+    let result = true;
+    if (!this.validateWorkoutDays()) {
+      result = false;
+      this.openSnackBar('Błąd - żaden trening nie posiada przypisanego dnia');
+    }
+
+    if (!this.validateEmptyWorkouts()) {
+      result = false;
+      this.openSnackBar('Błąd - znaleziono puste treningi')
+    }
+
+    return result;
+  }
+
+  validateWorkoutDays() {
+    let found = false;
+    for (let mesocycle of this.macrocycle.mesocycles) {
+      for (let microcycle of mesocycle.microcycles) {
+        for (let workout of microcycle.workouts) {
+          if (workout.days.length > 0) {
+            found = true;
+          }
+        }
+      }
+    }
+    return found;
+  }
+
+  validateEmptyWorkouts() {
+    for (let mesocycle of this.macrocycle.mesocycles) {
+      for (let microcycle of mesocycle.microcycles) {
+        for (let workout of microcycle.workouts) {
+          if (workout.workoutExercises.length == 0) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
   /** Microcycle Methods **/
 
   setMicrocycleLength(value: number) {
@@ -722,6 +771,11 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   /** Plan Methods **/
 
   savePlan() {
+    const validationResult = this.validateWorkouts();
+    if (!validationResult) {
+      return;
+    }
+
      const dialogRef = this.dialog.open(SavePlanDialogComponent, {
       data: {
         macrocycle: this.macrocycle

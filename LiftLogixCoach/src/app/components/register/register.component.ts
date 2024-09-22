@@ -31,7 +31,7 @@ export class RegisterComponent {
     const { confirm_password, ...userData } = this.formData;
 
     try {
-      const { success } = await this.authService.register(userData);
+      const { success, statusCode } = await this.authService.register(userData);
         if (success) {
           this.formData.clear;
           this.showSuccess('Rejestracja zakończona sukcesem! Proszę potwierdzić adres e-mail.')
@@ -39,10 +39,14 @@ export class RegisterComponent {
             this.router.navigate(['/login']);
           }, 3000);
         } else {
-          this.showError('Email jest zajęty');
+          if (statusCode === 409) {
+            this.showError('Email jest zajęty');
+          } else {
+            this.showError('Nie udało się zarejestrować');
+          }
         }
     } catch (error) {
-      this.showError('Nie udało się zarejestrować') // If server is not responding
+      this.showError('Nie udało się zarejestrować');
     }
   }
 

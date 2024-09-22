@@ -1,6 +1,7 @@
 package com.liftlogix.services;
 
 import com.liftlogix.models.*;
+import com.liftlogix.repositories.PersonalPlanRepository;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +25,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class ExcelService {
     private final PlanRepository planRepository;
+    private final PersonalPlanRepository personalPlanRepository;
 
     public ByteArrayResource exportPlanToExcel(Long planId, User user) throws IOException {
 
@@ -30,7 +33,8 @@ public class ExcelService {
                 () -> new EntityNotFoundException("Plan not found")
         );
 
-        if (!Objects.equals(plan.getAuthor().getEmail(), user.getEmail()) && !user.getRole().equals(Role.ADMIN)) {
+        if (!Objects.equals(plan.getAuthor().getEmail(), user.getEmail())
+                && !user.getRole().equals(Role.ADMIN)) {
             throw new AuthorizationException("You are not authorized");
         }
 
@@ -83,7 +87,17 @@ public class ExcelService {
                     int rowIndex = 2;
                     List<Workout> sortedWorkouts = microcycle.getWorkouts().stream()
                             .filter(workout -> workout.getDays() != null && !workout.getDays().isEmpty())
-                            .sorted(Comparator.comparingInt(workout -> workout.getDays().getFirst()))
+                            .flatMap(workout -> workout.getDays().stream()
+                                    .map(day -> {
+                                        Workout newWorkout = new Workout();
+                                        newWorkout.setId(workout.getId());
+                                        newWorkout.setName(workout.getName());
+                                        newWorkout.setWorkoutExercises(workout.getWorkoutExercises());
+                                        newWorkout.setDays(List.of(day));
+                                        return newWorkout;
+                                    }))
+                            .sorted(Comparator.comparingInt((Workout workout) -> workout.getDays().getFirst())
+                                    .thenComparing(Workout::getName))
                             .toList();
 
                     for (Workout workout : sortedWorkouts) {
@@ -156,7 +170,142 @@ public class ExcelService {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IOException("Cannot export file");
+        }
+    }
+
+    public ByteArrayResource exportPersonalPlanToExcel(Long personalPlanId, User user) throws IOException {
+
+        PersonalPlan plan = personalPlanRepository.findById(personalPlanId).orElseThrow(
+                () -> new EntityNotFoundException("Plan not found")
+        );
+
+        Client client = plan.getClient();
+        if (!Objects.equals(client.getCoach().getEmail(), user.getEmail())
+                && !user.getRole().equals(Role.ADMIN)
+                && !Objects.equals(user.getEmail(), client.getEmail())
+        ) {
+            throw new AuthorizationException("You are not authorized");
+        }
+
+        try (HSSFWorkbook workbook = new HSSFWorkbook()) {
+            int mesocycleCounter = 1;
+            for (Mesocycle mesocycle : plan.getMesocycles()) {
+                String sheetName = "Mezocykl " + mesocycleCounter++;
+                HSSFSheet sheet = workbook.createSheet(sheetName);
+
+                int columnOffset = 0;
+                int microcycleCounter = 1;
+
+                for (Microcycle microcycle : mesocycle.getMicrocycles()) {
+                    Row headerRow = sheet.getRow(0);
+                    if (headerRow == null) {
+                        headerRow = sheet.createRow(0);
+                    }
+                    Cell headerCell = headerRow.createCell(columnOffset);
+                    headerCell.setCellValue("Mikrocykl " + microcycleCounter++);
+
+                    CellStyle microcycleHeaderStyle = workbook.createCellStyle();
+                    microcycleHeaderStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+                    microcycleHeaderStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                    Font headerFont = workbook.createFont();
+                    headerFont.setBold(true);
+                    microcycleHeaderStyle.setFont(headerFont);
+                    headerCell.setCellStyle(microcycleHeaderStyle);
+
+                    Row columnHeaderRow = sheet.getRow(1);
+                    if (columnHeaderRow == null) {
+                        columnHeaderRow = sheet.createRow(1);
+                    }
+                    String[] headers = {"Nazwa ćwiczenia", "Serie", "Powtórzenia", "Waga (kg)", "%1RM", "Tempo", "RPE", "Przerwa"};
+
+                    for (int i = 0; i < headers.length; i++) {
+                        Cell cell = columnHeaderRow.createCell(columnOffset + i);
+                        cell.setCellValue(headers[i]);
+
+                        CellStyle columnHeaderStyle = workbook.createCellStyle();
+                        columnHeaderStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+                        columnHeaderStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                        columnHeaderStyle.setBorderBottom(BorderStyle.THIN);
+                        columnHeaderStyle.setBorderLeft(BorderStyle.THIN);
+                        columnHeaderStyle.setBorderRight(BorderStyle.THIN);
+                        columnHeaderStyle.setBorderTop(BorderStyle.THIN);
+                        columnHeaderStyle.setFont(headerFont);
+                        cell.setCellStyle(columnHeaderStyle);
+                    }
+
+                    int rowIndex = 2;
+                    List<WorkoutUnit> sortedWorkoutUnits = microcycle.getWorkoutUnits().stream()
+                            .sorted(Comparator.comparing(WorkoutUnit::getDate))
+                            .toList();
+
+                    for (WorkoutUnit workout : sortedWorkoutUnits) {
+                        Row workoutRow = sheet.getRow(rowIndex++);
+                        if (workoutRow == null) {
+                            workoutRow = sheet.createRow(rowIndex - 1);
+                        }
+                        Cell workoutCell = workoutRow.createCell(columnOffset);
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM HH:mm");
+                        workoutCell.setCellValue(workout.getName() + " - " + workout.getDate().format(formatter));
+
+                        CellStyle workoutCellStyle = workbook.createCellStyle();
+                        workoutCellStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+                        workoutCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                        workoutCell.setCellStyle(workoutCellStyle);
+
+                        for (WorkoutExercise workoutExercise : workout.getWorkoutExercises()) {
+                            Row exerciseRow = sheet.getRow(rowIndex++);
+                            if (exerciseRow == null) {
+                                exerciseRow = sheet.createRow(rowIndex - 1);
+                            }
+                            exerciseRow.createCell(columnOffset).setCellValue(workoutExercise.getExercise().getName());
+                            if (workoutExercise.getSeries() != null) {
+                                exerciseRow.createCell(columnOffset + 1).setCellValue(workoutExercise.getSeries());
+                            } else {
+                                exerciseRow.createCell(columnOffset + 1).setCellValue("");
+                            }
+                            exerciseRow.createCell(columnOffset + 2).setCellValue(formatRepetitions(workoutExercise));
+                            if (workoutExercise.getWeight() != null) {
+                                exerciseRow.createCell(columnOffset + 3).setCellValue(workoutExercise.getWeight());
+                            } else {
+                                exerciseRow.createCell(columnOffset + 3).setCellValue("");
+                            }
+                            if (workoutExercise.getPercentage() != null) {
+                                exerciseRow.createCell(columnOffset + 4).setCellValue(workoutExercise.getPercentage());
+                            } else {
+                                exerciseRow.createCell(columnOffset + 4).setCellValue("");
+                            }
+                            if (workoutExercise.getTempo() != null) {
+                                exerciseRow.createCell(columnOffset + 5).setCellValue(workoutExercise.getTempo());
+                            } else {
+                                exerciseRow.createCell(columnOffset + 5).setCellValue("");
+                            }
+                            if (workoutExercise.getRpe() != null) {
+                                exerciseRow.createCell(columnOffset + 6).setCellValue(workoutExercise.getRpe());
+                            } else {
+                                exerciseRow.createCell(columnOffset + 6).setCellValue("");
+                            }
+                            if (workoutExercise.getBreakTime().getValue() != null) {
+                                exerciseRow.createCell(columnOffset + 7).setCellValue(workoutExercise.getBreakTime().getValue() + workoutExercise.getBreakTime().getUnit().name());
+                            } else {
+                                exerciseRow.createCell(columnOffset + 7).setCellValue("");
+                            }
+                        }
+                        rowIndex++;
+                    }
+                    for (int i = 0; i < headers.length; i++) {
+                        sheet.autoSizeColumn(columnOffset + i, true);
+                    }
+
+                    columnOffset += headers.length + 1;
+                }
+            }
+            try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                workbook.write(out);
+                return new ByteArrayResource(out.toByteArray());
+            }
+
+        } catch (IOException e) {
             throw new IOException("Cannot export file");
         }
     }

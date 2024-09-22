@@ -94,7 +94,6 @@ export class PlanService {
   }
 
   private extractFilename(contentDisposition: string | null): string {
-    console.log(contentDisposition)
     if (!contentDisposition) {
       return 'plan.xls';
     }

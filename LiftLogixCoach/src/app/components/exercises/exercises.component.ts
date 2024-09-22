@@ -42,6 +42,25 @@ export class ExercisesComponent implements OnChanges {
 
   filterCertificated = false;
 
+  bodyPartsTranslations: { [key: string]: string } = {
+    'CHEST': 'KLATKA',
+    'BACK': 'PLECY',
+    'BICEPS': 'BICEPS',
+    'TRICEPS': 'TRICEPS',
+    'SHOULDERS': 'BARKI',
+    'FOREARMS': 'PRZEDRAMIONA',
+    'ABS': 'BRZUCH',
+    'CALVES': 'ŁYDKI',
+    'QUAD': 'CZWOROGŁOWE',
+    'HAMSTRING': 'DWUGŁOWE',
+    'GLUTE': 'POŚLADKI'
+  };
+  exerciseTypesTranslations: { [key: string]: string } = {
+    'SQUAT': 'PRZYSIAD',
+    'BENCHPRESS': 'WYCISKANIE',
+    'DEADLIFT': 'MARTWY CIĄG'
+  }
+
   private readonly defaultImageUrl: string = '/icons/dumbbell.jpg';
   protected readonly window = window;
 
@@ -260,6 +279,14 @@ export class ExercisesComponent implements OnChanges {
         this.loadExercises();
       }
     });
+  }
+
+  translateBodyParts(bodyParts: string[]): string[] {
+    return bodyParts.map(part => this.bodyPartsTranslations[part] || part);
+  }
+
+  getTranslatedBodyParts(exercise: BasicExercise): string {
+    return this.translateBodyParts(exercise.body_parts).join(', ');
   }
 
   onScroll(event: Event): void {

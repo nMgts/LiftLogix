@@ -19,7 +19,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Typ ćwiczenia</mat-label>
           <mat-select formControlName="exercise_type" (selectionChange)="onExerciseTypeChange($event)">
-            <mat-option *ngFor="let type of exercise_types" [value]="type">{{ type }}</mat-option>
+            <mat-option *ngFor="let type of exercise_types" [value]="type">{{ exerciseTypesTranslation[type] || type }}</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -51,7 +51,7 @@
       <mat-form-field appearance="fill">
         <mat-label>Partie:</mat-label>
         <mat-select formControlName="body_parts" multiple>
-          <mat-option *ngFor="let part of body_parts" [value]="part">{{ part }}</mat-option>
+          <mat-option *ngFor="let part of body_parts" [value]="part">{{ bodyPartsTranslations[part] || part }}</mat-option>
         </mat-select>
       </mat-form-field>
 

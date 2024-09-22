@@ -114,7 +114,10 @@ public class PersonalPlanService {
         setWorkoutDatesForPlan(planDTO);
         PersonalPlan plan = personalPlanDTOMapper.mapDTOToEntity(planDTO);
 
-        Client client = plan.getClient();
+        Client client = clientRepository.findById(plan.getClient().getId()).orElseThrow(
+                ( ) -> new EntityNotFoundException("Client not found")
+        );
+
         if (!Objects.equals(client.getCoach().getEmail(), user.getEmail()) && !user.getRole().equals(Role.ADMIN)) {
             throw new AuthorizationException("You are not authorized");
         }
@@ -194,6 +197,15 @@ public class PersonalPlanService {
 
         personalPlanRepository.save(newPersonalPlan);
         return personalPlanDTOMapper.mapEntityToDTO(newPersonalPlan);
+    }
+
+    public String getPlanName(Long id) {
+
+        PersonalPlan plan = personalPlanRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Plan not found")
+        );
+
+        return plan.getName();
     }
 
     private void setWorkoutDatesForPlan(PersonalPlanDTO personalPlanDTO) {

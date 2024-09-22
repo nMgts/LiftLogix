@@ -1,23 +1,23 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
-import { Observable } from "rxjs";
+import {HttpClient, HttpHeaders, HttpResponse} from "@angular/common/http";
+import {Observable, tap} from "rxjs";
 import { PersonalPlan } from "../interfaces/PersonalPlan";
-import { Plan } from "../interfaces/Plan";
-import {formatDate} from "@angular/common";
-import {BasicPersonalPlan} from "../interfaces/BasicPersonalPlan";
+import { BasicPersonalPlan } from "../interfaces/BasicPersonalPlan";
+import {saveAs} from "file-saver";
 
 @Injectable({
   providedIn: 'root'
 })
 export class PersonalPlanService {
   private getActiveUrl = 'http://localhost:8080/api/personal-plan/is-active';
-  private getAllByClientUrl = 'http://localhost:8080/api/personal-plan/all'
-  private getDetailsUrl = 'http://localhost:8080/api/personal-plan/details'
+  private getAllByClientUrl = 'http://localhost:8080/api/personal-plan/all';
+  private getDetailsUrl = 'http://localhost:8080/api/personal-plan/details';
   private deactivateUrl = 'http://localhost:8080/api/personal-plan/deactivate';
   private createUrl = 'http://localhost:8080/api/personal-plan/create';
-  private deleteUrl = 'http://localhost:8080/api/personal-plan/delete'
+  private deleteUrl = 'http://localhost:8080/api/personal-plan/delete';
   private getByWorkoutUrl = 'http://localhost:8080/api/personal-plan/workout';
-  private editUrl = 'http://localhost:8080/api/personal-plan/edit'
+  private editUrl = 'http://localhost:8080/api/personal-plan/edit';
+  private exportUrl = 'http://localhost:8080/api/personal-plan/export';
 
   constructor(private http: HttpClient) {}
 
@@ -59,6 +59,39 @@ export class PersonalPlanService {
   editPersonalPlan(personalPlan: PersonalPlan, token: string): Observable<PersonalPlan> {
     const headers = this.createHeaders(token);
     return this.http.put<PersonalPlan>(this.editUrl, personalPlan, { headers: headers });
+  }
+
+  exportPersonalPlanToExcel(planId: number, token: string): Observable<any> {
+    const headers = this.createHeaders(token);
+    return this.http.get(`${this.exportUrl}/${planId}`, {
+      headers: headers,
+      responseType: 'blob',
+      observe: 'response'
+    }).pipe(
+      tap((response: HttpResponse<Blob>) => {
+        const contentDisposition = response.headers.get('Content-Disposition');
+        const filename = this.extractFilename(contentDisposition);
+
+        if (response.body) {
+          saveAs(response.body, filename);
+        } else {
+          console.error('Error: response.body is null');
+        }
+      })
+    );
+  }
+
+  private extractFilename(contentDisposition: string | null): string {
+    if (!contentDisposition) {
+      return 'plan.xls';
+    }
+    const matches = /filename\*=UTF-8''(.+)|filename="([^"]+)"|filename=(\S+)/.exec(contentDisposition);
+
+    if (matches) {
+      return decodeURIComponent(matches[1] || matches[2] || matches[3]);
+    }
+
+    return 'plan.xls';
   }
 
   private createHeaders(token: string) {

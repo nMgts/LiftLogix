@@ -101,6 +101,17 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
     this.choice = 'update';
   }
 
+  downloadPersonalPlan(id: number) {
+    const token = localStorage.getItem('token') || '';
+    this.personalPlanService.exportPersonalPlanToExcel(id, token).subscribe({
+      next: () => console.log('File exported successfully'),
+      error: (err) => {
+        console.error('File export failed', err);
+        this.openSnackBar('Wystąpił błąd');
+      }
+    });
+  }
+
   viewOldPlan(planId: number) {
     this.choice = 'viewOld'
     this.selectedOldPlanId = planId;
@@ -165,4 +176,6 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
       verticalPosition: 'top'
     });
   }
+
+    protected readonly window = window;
 }

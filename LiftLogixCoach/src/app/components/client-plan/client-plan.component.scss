@@ -2,11 +2,55 @@
   padding: 20px;
 }
 
+
+.plan-actions {
+  flex-direction: row;
+  justify-content: space-around;
+  gap: 10px;
+}
+
+.action-button {
+  flex: 1 1 45%;
+  max-width: 45%;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
 .actions {
   display: flex;
-  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
   gap: 10px;
+  align-items: center;
   margin-top: 20px;
+
+  .action-button {
+    flex: 1 1 45%;
+    max-width: 45%;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .excel-icon {
+    margin-right: 8px;
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    position: relative;
+    left: -4px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .actions.full-screen {
+    .action-button {
+      flex: 1 1 45%;
+      max-width: 20%;
+    }
+  }
+
 }
 
 .plan-header {
@@ -53,6 +97,7 @@ span {
 
 .plan-list-container {
   margin-top: 30px;
+  max-width: 100%;
 
   .title {
     font-size: 24px;
@@ -68,12 +113,14 @@ span {
   gap: 20px;
 
   @media (max-width: 500px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   }
 
   .plan-card {
     padding: 20px;
     position: relative;
+    flex: 1 1 45%;
+    max-width: 100%;
 
     .plan-name {
       display: flex;
@@ -87,6 +134,10 @@ span {
         text-overflow: ellipsis;
         white-space: nowrap;
         max-width: 80%;
+
+        @media (max-width: 380px) {
+          font-size: 15px;
+        }
       }
 
       .delete-button:hover {
@@ -99,6 +150,16 @@ span {
         color: aliceblue;
         cursor: pointer;
         transition: color 0.2s ease-in-out;
+      }
+    }
+
+    .plan-list-content {
+      @media (max-width: 500px) {
+        font-size: 12px;
+      }
+
+      @media (max-width: 380px) {
+        font-size: 10px;
       }
     }
 

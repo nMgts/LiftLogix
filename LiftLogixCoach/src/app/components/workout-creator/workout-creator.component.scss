@@ -440,10 +440,10 @@ td.break-cell {
   border-radius: 6px;
   padding: 5px 10px;
   position: absolute;
-  z-index: 1000;
   top: 125%;
   left: 50%;
   margin-left: -100px;
+  z-index: 1000;
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -517,6 +517,12 @@ td.break-cell {
   @media (max-width: 600px) {
     font-size: 18px;
   }
+}
+
+.microcycle-info {
+  padding: 5px;
+  color: darkviolet;
+  font-weight: bold;
 }
 
 .microcycle-table-container table {

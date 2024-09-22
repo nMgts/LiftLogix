@@ -27,6 +27,26 @@ export class AddExerciseDialogComponent implements AfterViewInit {
     'SQUAT', 'BENCHPRESS', 'DEADLIFT', 'OTHER'
   ];
 
+  bodyPartsTranslations: { [key: string]: string } = {
+    'CHEST': 'KLATKA',
+    'BACK': 'PLECY',
+    'BICEPS': 'BICEPS',
+    'TRICEPS': 'TRICEPS',
+    'SHOULDERS': 'BARKI',
+    'FOREARMS': 'PRZEDRAMIONA',
+    'ABS': 'BRZUCH',
+    'CALVES': 'ŁYDKI',
+    'QUAD': 'CZWOROGŁOWE',
+    'HAMSTRING': 'DWUGŁOWE',
+    'GLUTE': 'POŚLADKI'
+  };
+  exerciseTypesTranslation: { [key: string]: string } = {
+    'SQUAT': 'PRZYSIAD',
+    'BENCHPRESS': 'WYCISKANIE',
+    'DEADLIFT': 'MARTWY CIĄG',
+    'OTHER': 'INNE'
+  }
+
   scrollTimeout: any;
   @ViewChild('dialog', { static: true }) dialog!: ElementRef;
 

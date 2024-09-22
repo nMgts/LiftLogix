@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from "./components/home/home.component";
@@ -69,6 +68,7 @@ import { WorkoutDayDetailsComponent } from './components/workout-day-details/wor
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { WorkoutDateChangeDialogComponent } from './components/workout-date-change-dialog/workout-date-change-dialog.component';
 import { OptionsTooltipComponent } from './components/options-tooltip/options-tooltip.component';
+import { MatTooltip } from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [
@@ -114,37 +114,38 @@ import { OptionsTooltipComponent } from './components/options-tooltip/options-to
     WorkoutDateChangeDialogComponent,
     OptionsTooltipComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    NgOptimizedImage,
-    FormsModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatIconModule,
-    MatPaginatorModule,
-    CdkDropList,
-    MatListModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
-    BaseChartDirective,
-    MatCheckbox,
-    MatCardModule,
-    MatTableModule,
-    MatLine,
-    NgxPaginationModule,
-    MatGridList,
-    MatGridTile,
-    MatMenuTrigger,
-    MatMenu,
-    MatMenuItem,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatSlideToggle
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        NgOptimizedImage,
+        FormsModule,
+        HttpClientModule,
+        ReactiveFormsModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatIconModule,
+        MatPaginatorModule,
+        CdkDropList,
+        MatListModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatInputModule,
+        BaseChartDirective,
+        MatCheckbox,
+        MatCardModule,
+        MatTableModule,
+        MatLine,
+        NgxPaginationModule,
+        MatGridList,
+        MatGridTile,
+        MatMenuTrigger,
+        MatMenu,
+        MatMenuItem,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatSlideToggle,
+        MatTooltip
+    ],
   providers: [
     provideAnimationsAsync(),
     {
@@ -159,4 +160,4 @@ import { OptionsTooltipComponent } from './components/options-tooltip/options-to
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

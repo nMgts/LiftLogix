@@ -115,7 +115,10 @@ export class WorkoutLibraryPrivateComponent implements OnInit {
     const token = localStorage.getItem('token') || '';
     this.planService.exportPlanToExcel(id, token).subscribe({
       next: () => console.log('File exported successfully'),
-      error: (err) => console.error('File export failed', err)
+      error: (err) => {
+        console.error('File export failed', err);
+        this.openSnackBar('Wystąpił błąd');
+      }
     });
   }
 

@@ -2,23 +2,32 @@
   <h1>{{ data.name }}</h1>
   <div class="content">
     <div class="body-parts">
-      <span *ngFor="let part of data.body_parts" class="body-part">{{ part }}</span>
+      <span *ngFor="let part of data.body_parts" class="body-part">{{ bodyPartsTranslations[part] || part }}</span>
     </div>
 
     <div class="exercise-info">
       <span *ngIf="data.certificated" class="icon-certificated">
-        <img src="/images/logo.svg" alt="Certyfikat LLC">
+        <img src="/images/logo.svg" alt="Certyfikat LLC"
+             matTooltip="Certyfikat LLC - ćwiczenie dodane przez administrację">
       </span>
 
       <span *ngIf="data.exercise_type !== 'OTHER'" class="icon-exercise-type">
-        <img *ngIf="data.exercise_type === 'SQUAT'" src="/icons/squat.jpg" alt="Squat">
-        <img *ngIf="data.exercise_type === 'BENCHPRESS'" src="/icons/benchpress.webp" alt="Benchpress">
-        <img *ngIf="data.exercise_type === 'DEADLIFT'" src="/icons/deadlift.png" alt="Deadlift">
-        x{{ data.difficulty_factor | number: '1.1-1' }}
+        <img *ngIf="data.exercise_type === 'SQUAT'" src="/icons/squat.jpg" alt="Squat"
+             matTooltip="Ćwiczenie jest wariantem przysiadu - system może w nim
+             obliczyć ciężar maksymalny porównując z wynikiem klienta.">
+        <img *ngIf="data.exercise_type === 'BENCHPRESS'" src="/icons/benchpress.webp" alt="Benchpress"
+             matTooltip="Ćwiczenie jest wariantem wyciskania - system może w nim
+             obliczyć ciężar maksymalny porównując z wynikiem klienta.">
+        <img *ngIf="data.exercise_type === 'DEADLIFT'" src="/icons/deadlift.png" alt="Deadlift"
+             matTooltip="Ćwiczenie jest wariantem martwego ciągu - system może w nim
+             obliczyć ciężar maksymalny porównując z wynikiem klienta.">
+        <span matTooltip="Współczynnik trudności">
+          x{{ data.difficulty_factor | number: '1.1-1' }}
+        </span>
       </span>
     </div>
 
-    <mat-card>
+    <mat-card *ngIf="data.description">
       <mat-card-content>
         <div [innerHTML]="safeDescription"></div>
       </mat-card-content>

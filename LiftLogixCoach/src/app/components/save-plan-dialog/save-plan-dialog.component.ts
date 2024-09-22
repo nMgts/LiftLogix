@@ -9,7 +9,8 @@ import { formatDate } from "@angular/common";
 import { ClientService } from "../../services/client.service";
 import { Client } from "../../interfaces/Client";
 import { PersonalPlan } from "../../interfaces/PersonalPlan";
-import {WorkoutUnit} from "../../interfaces/WorkoutUnit";
+import { WorkoutUnit } from "../../interfaces/WorkoutUnit";
+import _ from "lodash";
 
 @Component({
   selector: 'app-save-plan-dialog',
@@ -76,7 +77,9 @@ export class SavePlanDialogComponent {
             active: true
           }
 
-          personalPlan.mesocycles.forEach(mesocycle => {
+          const newPersonalPlan: PersonalPlan = _.cloneDeep(personalPlan);
+
+          newPersonalPlan.mesocycles.forEach(mesocycle => {
             mesocycle.microcycles.forEach(microcycle => {
               microcycle.workouts.forEach(workout => {
                 workout.days.forEach(day => {
@@ -96,7 +99,7 @@ export class SavePlanDialogComponent {
             })
           })
 
-          this.personalPlanService.createPlan(personalPlan, token).subscribe(plan => {
+          this.personalPlanService.createPlan(newPersonalPlan, token).subscribe(plan => {
             this.dialogRef.close(true);
             this.openSnackBar('Plan ' + formValues.planName + ' został przypisany do klienta');
           }, error => {
