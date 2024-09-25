@@ -318,7 +318,7 @@
                 <span class="plus-icon" (click)="toggleMicrocycleCellDropdown($event, cell)">+</span>
               </div>
 
-              <div class="microcycle-cell-dropdown-menu" *ngIf="microcycleCellDropdownVisible && activeCell === cell">
+              <div class="microcycle-cell-dropdown-menu" #dropdown *ngIf="microcycleCellDropdownVisible && activeCell === cell">
                 <ul>
                   <li *ngFor="let workout of selectedMicrocycle.workouts" (click)="addWorkoutToMicrocycle(workout, cell)">{{ workout.name }}</li>
                 </ul>

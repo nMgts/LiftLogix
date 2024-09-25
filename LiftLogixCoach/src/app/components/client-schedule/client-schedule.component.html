@@ -7,7 +7,7 @@
     <div id="header">
       <div id="monthDisplay">{{ displayedMonth }}</div>
 
-      <div>
+      <div id="button-container">
         <button id="backButton" (click)="onPreviousMonth()">Poprzedni</button>
         <button id="nextButton" (click)="onNextMonth()">Następny</button>
       </div>
@@ -34,20 +34,31 @@
     <div id="calendar" [ngClass]="{'half-screen': !isFullScreen && window.innerWidth > 1023}">
       <div *ngFor="let i of [].constructor(paddingDays)" class="day padding" [ngClass]="{'half-screen': !isFullScreen && window.innerWidth > 1023}"></div>
 
-      <div *ngFor="let day of days" class="day"
+      <div *ngFor="let day of days; let i = index" class="day"
            [ngClass]="{
            'half-screen': !isFullScreen && window.innerWidth > 1023,
-           'clickable': day.events.length > 0
+           'clickable': day.events.length > 0,
+           'current-day': checkIsCurrentDay(day)
            }"
-           (click)="openDayDetails(day)">
+           (click)="openDayDetails(day)"
+           cdkDropList [cdkDropListData]="days"
+           (cdkDropListDropped)="onEventDrop($event, i)">
+
+        <div class="more-events-icon" *ngIf="showMoreEventsIcon(day)">
+          <i class="fas fa-plus"></i>
+        </div>
+
         <div class="day-number">{{ day.day }}</div>
 
         <div class="events">
-          <div class="event" *ngFor="let event of day.events" [ngClass]="getEventClass(event)">
+          <div class="event" *ngFor="let event of getVisibleEvents(day)"
+               [ngClass]="getEventClass(event)"
+               cdkDrag [cdkDragData]="event"
+               (cdkDragStarted)="onDragStart($event)"
+               (cdkDragEnded)="onDragEnd($event)">
             {{ getWorkoutInitials(event.name) }}
           </div>
         </div>
-
       </div>
     </div>
 

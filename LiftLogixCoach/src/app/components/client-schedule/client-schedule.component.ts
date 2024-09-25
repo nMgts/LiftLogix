@@ -7,6 +7,8 @@ import { Subscription } from "rxjs";
 import { PersonalPlan } from "../../interfaces/PersonalPlan";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { WorkoutUnit } from "../../interfaces/WorkoutUnit";
+import {WorkoutService} from "../../services/workout.service";
+import {CdkDragDrop, CdkDragEnd, CdkDragStart} from "@angular/cdk/drag-drop";
 
 @Component({
   selector: 'app-client-schedule',
@@ -52,6 +54,7 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
   constructor(
     private clientService: ClientService,
     private personalPlanService: PersonalPlanService,
+    private workoutService: WorkoutService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -157,6 +160,81 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
 
   getEventClass(event: WorkoutUnit): string {
     return event.individual ? 'individual-workout' : 'non-individual-workout';
+  }
+
+  getMaxVisible() {
+    if (window.innerWidth > 1023 && this.isFullScreen) {
+      return  6;
+    } else if (window.innerWidth > 1023 && !this.isFullScreen) {
+      return 4;
+    } else if (window.innerWidth > 855) {
+      return 6;
+    } else if (window.innerWidth > 599) {
+      return 2;
+    } else if (window.innerWidth > 509) {
+      return 4;
+    } else if (window.innerWidth > 438) {
+      return 2;
+    } else if (window.innerWidth > 415) {
+      return 4;
+    } else if (window.innerWidth > 340) {
+      return 2;
+    } else {
+      return 1;
+    }
+  }
+
+  getVisibleEvents(day: Day): WorkoutUnit[] {
+    return day.events.slice(0, this.getMaxVisible());
+  }
+
+  showMoreEventsIcon(day: Day): boolean {
+    return day.events.length > this.getMaxVisible();
+  }
+
+  onDragStart(event: CdkDragStart) {
+    const eventElement = event.source.getRootElement();
+    eventElement.classList.add('dragging');
+  }
+
+  onDragEnd(event: CdkDragEnd) {
+    const eventElement = event.source.getRootElement();
+    eventElement.classList.remove('dragging');
+  }
+
+  onEventDrop(event: CdkDragDrop<any>, targetIndex: number) {
+    const token = localStorage.getItem('token') || '';
+    const draggedEvent: WorkoutUnit = event.item.data;
+
+    console.log('Current Index:', event.currentIndex);
+    console.log('Container Data:', event.container.data);
+
+    const targetDay = this.days[event.currentIndex];
+    console.log('Target Day:', targetDay);
+
+    const newDate = new Date(targetDay.year, targetDay.month, targetDay.day + 1);
+    const formattedDate = newDate.toISOString();
+    
+    this.workoutService.changeDate(draggedEvent.id, formattedDate, draggedEvent.duration, token).subscribe(
+      () => {
+        this.openSnackBar('Data treningu została zmieniona');
+        this.loadWorkouts(this.clientId!);
+      },
+      (error) => {
+        if (error.status === 409) {
+          this.openSnackBar('Konflikt: W podanym przedziale czasowym posiadasz już trening personalny.');
+        } else {
+          this.openSnackBar('Błąd przy zmianie statusu treningu');
+        }
+      }
+    );
+  }
+
+
+
+  checkIsCurrentDay(day: Day) {
+    const d = new Date().getDate();
+    return day.day === d && this.nav === 0;
   }
 
   openDayDetails(day: Day) {

@@ -25,7 +25,7 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { ConfirmEmailComponent } from './components/confirm-email/confirm-email.component';
 import { TokenInterceptorService } from "./services/token-interceptor.service";
 import { SecurityOptionsDialogComponent } from './components/security-options-dialog/security-options-dialog.component';
-import { CdkDropList } from "@angular/cdk/drag-drop";
+import { CdkDropList, DragDropModule } from "@angular/cdk/drag-drop";
 import { MatListModule } from "@angular/material/list";
 import { ClientsComponent } from './components/clients/clients.component';
 import { ExercisesComponent } from './components/exercises/exercises.component';
@@ -144,7 +144,8 @@ import { MatTooltip } from "@angular/material/tooltip";
         MatDatepickerModule,
         MatNativeDateModule,
         MatSlideToggle,
-        MatTooltip
+        MatTooltip,
+        DragDropModule
     ],
   providers: [
     provideAnimationsAsync(),

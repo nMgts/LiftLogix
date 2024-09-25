@@ -2,11 +2,11 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
+  EventEmitter, HostListener,
   Input,
   OnDestroy,
   OnInit,
-  Output,
+  Output, Renderer2,
   ViewChild
 } from '@angular/core';
 import { MatDialog } from "@angular/material/dialog";
@@ -97,10 +97,14 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   private clickListener!: () => void;
   private touchListener!: () => void;
 
+  scrollTimeout: any;
+  @ViewChild('dropdown', { static: true }) dropdown!: ElementRef;
+
   constructor(
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef,
+    private renderer: Renderer2,
     private planService: PlanService,
     private personalPlanService: PersonalPlanService,
     private exerciseService: ExerciseService
@@ -984,6 +988,16 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     }
 
     return result;
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    this.renderer.addClass(document.body, 'show-scrollbar');
+
+    clearTimeout(this.scrollTimeout);
+    this.scrollTimeout = setTimeout(() => {
+      this.renderer.removeClass(document.body, 'show-scrollbar');
+    }, 3000);
   }
 
   private openSnackBar(message: string) {
