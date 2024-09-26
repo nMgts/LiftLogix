@@ -10,136 +10,61 @@ import SockJS from 'sockjs-client';
 })
 export class ChatService {
   private stompClient: any;
-  private messageSubject = new Subject<any>();
+  private messageSubject = new Subject<ChatMessage>();
 
-  private baseUrl = 'http://localhost:8080/api';
+  private baseUrl = 'http://localhost:8080/api/chat';
 
   constructor(private http: HttpClient) {}
-/*
-  connectToChat(senderId: string) {
-    const socket = new SockJS(`${this.baseUrl}/ws`);
-    this.stompClient = Stomp.over(socket);
-    const token = localStorage.getItem('token') || '';
-
-    this.stompClient.connect({ Authorization: `Bearer ${token}` }, () => {
-      console.log('Connected with WebSocket');
-
-      this.stompClient.subscribe(`/user/${senderId}/queue/messages`, (message: any) => {
-        this.messageSubject.next(JSON.parse(message.body));
-      });
-    });
-  }
-*/
-
 
   connectToChat(senderId: string) {
     const socket = new SockJS('http://localhost:8080/ws');
-    console.log('socket ' + socket)
     this.stompClient = Stomp.over(socket);
-    const token = localStorage.getItem('token') || '';
 
-    this.stompClient.connect(
-      { Authorization: `Bearer ${token}` },
-      () => {
-        console.log('Connected with WebSocket');
-
-        this.stompClient.subscribe(`/user/${senderId}/queue/messages`, (message: any) => {
-          console.log('Received message:', message);
-          this.messageSubject.next(JSON.parse(message.body));
-        });
-      },
-      (error: any) => {
-        console.error('WebSocket connection error:', error);
-      }
-    );
-
-    socket.onopen = () => {
-      console.log('WebSocket connection opened');
-    };
-
-    socket.onclose = () => {
-      console.log('WebSocket connection closed');
-    };
-
-    socket.onerror = (event) => {
-      console.error('WebSocket error:', event);
-    };
+    this.stompClient.connect({}, () => {
+      console.log('Connected to WebSocket');
+      this.onConnected(senderId);
+    }, (error: any) => {
+      console.error('WebSocket error:', error);
+    });
   }
 
-  onMessageReceived(): Observable<any> {
+  onConnected(senderId: string) {
+    this.stompClient.subscribe(`/user/${senderId}/queue/messages`, (message: any) => {
+      this.onMessageReceived(JSON.parse(message.body));
+    });
+  }
+
+  onMessageReceived(message: ChatMessage) {
+    this.messageSubject.next(message);
+  }
+
+  getMessageObservable(): Observable<ChatMessage> {
     return this.messageSubject.asObservable();
   }
 
-  sendMessage(chatMessage: any): void {
-    this.stompClient.send(
-      '/app/chat',
-      {},
-      JSON.stringify(chatMessage)
-    );
+  fetchUserChat(senderId: string, recipientId: string): Observable<ChatMessage[]> {
+    const headers = this.createHeaders();
+    return this.http.get<ChatMessage[]>(`${this.baseUrl}/messages/${senderId}/${recipientId}`, {  headers: headers });
   }
 
-  getChatMessages(senderId: string, recipientId: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/messages/${senderId}/${recipientId}`);
+  sendMessage(message: ChatMessage): Observable<void> {
+    return new Observable<void>(observer => {
+      if (this.stompClient && this.stompClient.connected) {
+        this.stompClient.send('/app/chat', {}, JSON.stringify(message));
+        console.log('Message sent:', message);
+        observer.next(); // Wywołaj next() po wysłaniu wiadomości
+        observer.complete(); // Zakończ Observable
+      } else {
+        console.error('WebSocket connection is not established yet.');
+        observer.error('WebSocket not connected');
+      }
+    });
   }
 
-  // Oznaczanie wiadomości jako przeczytane
-  markMessagesAsRead(chatId: string): Observable<void> {
-    return this.http.put<void>(`${this.baseUrl}/messages/${chatId}/read`, {});
-  }
-
-  /*
-  connect(recipientId: string, event: Event, token: string) {
-    event.preventDefault();
-    if (this.senderId !== '') {
-      const socket = new SockJS('/ws');
-      const headers = this.createHeaders(token);
-      this.socketClient = Stomp.over(socket);
-      this.recipientId = recipientId;
-
-      this.socketClient.connect({ headers }, () => {
-        console.log('connecting to ws...')
-      });
-    }
-  }
-
-  onConnected() {
-    this.socketClient.subscribe(`/user/${this.recipientId}/queue/messages`, this.onMessageReceived())
-
-    this.socketClient.send('app/user.addUser',
-      {},
-      JSON.stringify({ email: this.senderId })
-    );
-    //this.findAndDisplayConnectedUsers().then();
-
-  }
-
-  async findAndDisplayConnectedUsers() {
-    const connectedUserResponse = await fetch('/users');
-    let connectedUsers = await connectedUserResponse.json();
-    connectedUsers = connectedUsers.filter(user => user.email !== this.senderId);
-
-  }
-  onMessageReceived() {
-
-  }
-
-  getChatMessages(senderId: string, recipientId: string): Observable<ChatMessage[]> {
-    return this.http.get<ChatMessage[]>(`${this.baseUrl}/messages/${senderId}/${recipientId}`);
-  }
-
-  sendMessage(chatMessage: ChatMessage): void {
-    // Implementacja wysyłania wiadomości przez WebSocket
-    const socket = new WebSocket('ws://localhost:8080/ws'); // Upewnij się, że adres URL jest poprawny
-    socket.onopen = () => {
-      socket.send(JSON.stringify(chatMessage));
-    };
-  }
-
-  private createHeaders(token: string) {
+  private createHeaders() {
+    const token = localStorage.getItem('token') || '';
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
   }
-  */
-
 }

@@ -18,7 +18,7 @@ import java.util.List;
 
 @Controller
 @AllArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/chat")
 public class ChatController {
     private ChatMessageService chatMessageService;
     private final SimpMessagingTemplate messagingTemplate;

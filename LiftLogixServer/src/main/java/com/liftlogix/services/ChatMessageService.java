@@ -24,6 +24,7 @@ public class ChatMessageService {
         );
         chatMessage.setChatId(chatId);
         chatMessage.setRead(false);
+        System.out.println(chatMessage.getContent());
         chatMessageRepository.save(chatMessage);
         return chatMessage;
     }

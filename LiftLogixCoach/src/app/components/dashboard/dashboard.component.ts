@@ -10,7 +10,7 @@ export class DashboardComponent  {
   private scrollTimeout: any;
   showChat = true;
   currentUserId = localStorage.getItem('email') || '';
-  currentRecipientId = 'norbert.klessen@gmail.com';
+  currentRecipientId = localStorage.getItem('email') === 'norbert.klessen@gmail.com' ? 'coach@example.com' : 'norbert.klessen@gmail.com';
 
   constructor(private renderer: Renderer2) {}
 

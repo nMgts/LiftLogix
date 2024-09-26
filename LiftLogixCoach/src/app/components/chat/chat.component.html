@@ -5,7 +5,7 @@
     <h3>Czat z {{ recipientId }}</h3>
   </div>
 
-  <div class="chat-messages">
+  <div class="chat-messages" #messagesContainer>
     <div *ngFor="let message of messages">
       <strong>{{ message.senderId }}:</strong> {{ message.content }}
     </div>

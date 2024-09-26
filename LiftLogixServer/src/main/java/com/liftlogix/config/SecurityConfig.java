@@ -38,8 +38,7 @@ public class SecurityConfig {
                                 "/api/auth/login", "/api/auth/register/client", "/api/auth/register/coach", "/api/auth/refresh", "/api/auth/logout",
                                 "/api/email/confirm", "/api/email/resend-confirmation",
                                 "/api/user/forgot-password", "/api/user/reset-password",
-                                "/app/ws/**", "/app/ws", "/ws", "/ws/**",
-                                "/api/messages/{chat_id}/read", "/api/messages/{sender_id}/{recipient_id}", "/api/chat")
+                                "/ws/**")
                         .permitAll()
 
                         // Admin endpoints
@@ -90,7 +89,8 @@ public class SecurityConfig {
                                 "/api/email/send-verification-code", "/api/email/update-email",
                                 "/api/result/{client_id}", "/api/result/current/{client_id}", "/api/result/update", "/api/result/delete",
                                 "/api/personal-plan/workout/{workout_id}", "/api/personal-plan/export/{id}",
-                                "/api/workout/get/{id}")
+                                "/api/workout/get/{id}",
+                                "/api/chat/messages/{senderId}/{recipientId}", "/api/chat/messages/{chatId}/read")
                         .authenticated()
 
                         // Other endpoints
