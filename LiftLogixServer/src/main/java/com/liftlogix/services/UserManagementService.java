@@ -5,7 +5,10 @@ import com.liftlogix.dto.ReqRes;
 import com.liftlogix.dto.UserDTO;
 import com.liftlogix.exceptions.EmailIsTakenException;
 import com.liftlogix.exceptions.UserIsNotConfirmedException;
-import com.liftlogix.models.*;
+import com.liftlogix.models.users.Admin;
+import com.liftlogix.models.users.Client;
+import com.liftlogix.models.users.Coach;
+import com.liftlogix.models.users.User;
 import com.liftlogix.repositories.UserRepository;
 import com.liftlogix.types.Role;
 import com.liftlogix.util.JWTUtils;
@@ -104,6 +107,7 @@ public class UserManagementService {
             resp.setExpirationTime("24Hrs");
             resp.setMessage("Successfully logged in");
             resp.setUser_id(user.getId());
+            resp.setEmail(user.getEmail());
             resp.setRememberMeChecked(loginRequest.isRememberMeChecked());
         } catch (Exception e) {
             resp.setStatusCode(500);

@@ -1,10 +1,10 @@
 package com.liftlogix.convert;
 
 import com.liftlogix.dto.BasicPlanDTO;
-import com.liftlogix.models.Mesocycle;
-import com.liftlogix.models.Microcycle;
-import com.liftlogix.models.Plan;
-import com.liftlogix.models.User;
+import com.liftlogix.models.plans.Mesocycle;
+import com.liftlogix.models.plans.Microcycle;
+import com.liftlogix.models.plans.Plan;
+import com.liftlogix.models.users.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;

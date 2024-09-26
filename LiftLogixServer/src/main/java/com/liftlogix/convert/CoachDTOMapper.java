@@ -1,7 +1,7 @@
 package com.liftlogix.convert;
 
 import com.liftlogix.dto.CoachDTO;
-import com.liftlogix.models.Coach;
+import com.liftlogix.models.users.Coach;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

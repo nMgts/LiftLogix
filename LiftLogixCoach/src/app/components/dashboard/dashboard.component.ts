@@ -8,6 +8,9 @@ import { Component, Renderer2 } from '@angular/core';
 export class DashboardComponent  {
   expandedBox: string | null = null;
   private scrollTimeout: any;
+  showChat = true;
+  currentUserId = localStorage.getItem('email') || '';
+  currentRecipientId = 'norbert.klessen@gmail.com';
 
   constructor(private renderer: Renderer2) {}
 
@@ -21,6 +24,14 @@ export class DashboardComponent  {
     if (this.expandedBox === box) {
       this.expandedBox = null;
     }
+  }
+
+  openChat() {
+    this.showChat = true;
+  }
+
+  closeChat() {
+    this.showChat = false;
   }
 
   onScroll(): void {

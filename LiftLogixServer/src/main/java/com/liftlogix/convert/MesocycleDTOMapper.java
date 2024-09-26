@@ -1,8 +1,7 @@
 package com.liftlogix.convert;
 
 import com.liftlogix.dto.MesocycleDTO;
-import com.liftlogix.models.Mesocycle;
-import com.liftlogix.models.Plan;
+import com.liftlogix.models.plans.Mesocycle;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

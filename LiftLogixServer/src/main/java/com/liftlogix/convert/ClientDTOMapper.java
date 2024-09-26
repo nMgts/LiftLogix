@@ -1,7 +1,7 @@
 package com.liftlogix.convert;
 
 import com.liftlogix.dto.ClientDTO;
-import com.liftlogix.models.Client;
+import com.liftlogix.models.users.Client;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 

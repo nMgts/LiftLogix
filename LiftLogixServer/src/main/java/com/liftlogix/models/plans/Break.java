@@ -1,4 +1,4 @@
-package com.liftlogix.models;
+package com.liftlogix.models.plans;
 
 import com.liftlogix.types.TimeUnit;
 import jakarta.persistence.Embeddable;

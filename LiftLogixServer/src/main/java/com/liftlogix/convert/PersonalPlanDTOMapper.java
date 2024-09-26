@@ -1,9 +1,9 @@
 package com.liftlogix.convert;
 
 import com.liftlogix.dto.PersonalPlanDTO;
-import com.liftlogix.models.Mesocycle;
-import com.liftlogix.models.Microcycle;
-import com.liftlogix.models.PersonalPlan;
+import com.liftlogix.models.plans.Mesocycle;
+import com.liftlogix.models.plans.Microcycle;
+import com.liftlogix.models.plans.PersonalPlan;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

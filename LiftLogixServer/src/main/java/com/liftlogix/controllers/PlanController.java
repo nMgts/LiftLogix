@@ -3,7 +3,7 @@ package com.liftlogix.controllers;
 import com.liftlogix.dto.BasicPlanDTO;
 import com.liftlogix.dto.PlanDTO;
 import com.liftlogix.exceptions.AuthorizationException;
-import com.liftlogix.models.User;
+import com.liftlogix.models.users.User;
 import com.liftlogix.services.ExcelService;
 import com.liftlogix.services.PlanService;
 import jakarta.persistence.EntityNotFoundException;

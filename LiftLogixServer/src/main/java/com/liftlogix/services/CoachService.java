@@ -2,7 +2,7 @@ package com.liftlogix.services;
 
 import com.liftlogix.convert.CoachDTOMapper;
 import com.liftlogix.dto.CoachDTO;
-import com.liftlogix.models.Coach;
+import com.liftlogix.models.users.Coach;
 import com.liftlogix.repositories.CoachRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;

@@ -87,5 +87,7 @@
     </div>
   </div>
 
+  <app-chat *ngIf="showChat" [senderId]="currentUserId" [recipientId]="currentRecipientId"></app-chat>
+
   <app-footer></app-footer>
 </div>

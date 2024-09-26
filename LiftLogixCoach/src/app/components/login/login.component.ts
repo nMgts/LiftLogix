@@ -26,13 +26,15 @@ export class LoginComponent {
     }
     try {
 
-      const { success, token, role, id, error } = await this.authService.login(this.email, this.password, this.rememberMe);
+      const { success, token, role, id, email, error } = await this.authService.login(this.email, this.password, this.rememberMe);
 
       if (success) {
         localStorage.setItem('token', token);
         localStorage.setItem('role', role);
         localStorage.setItem('rememberMe', String(this.rememberMe));
         localStorage.setItem('id', id);
+        localStorage.setItem('email', email);
+
         if (role === "COACH") {
           await this.router.navigate(['/dashboard']);
         } else if (role === "ADMIN") {

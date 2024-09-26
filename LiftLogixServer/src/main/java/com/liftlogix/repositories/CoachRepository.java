@@ -1,6 +1,6 @@
 package com.liftlogix.repositories;
 
-import com.liftlogix.models.Coach;
+import com.liftlogix.models.users.Coach;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

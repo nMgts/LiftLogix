@@ -1,5 +1,7 @@
-package com.liftlogix.models;
+package com.liftlogix.models.scheduler;
 
+import com.liftlogix.models.plans.WorkoutUnit;
+import com.liftlogix.models.users.Client;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

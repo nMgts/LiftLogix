@@ -1,6 +1,6 @@
 package com.liftlogix.controllers;
 
-import com.liftlogix.models.User;
+import com.liftlogix.models.users.User;
 import com.liftlogix.services.CoachSchedulerService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;

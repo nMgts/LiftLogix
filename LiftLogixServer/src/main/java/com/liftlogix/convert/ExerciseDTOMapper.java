@@ -1,14 +1,10 @@
 package com.liftlogix.convert;
 
-import com.liftlogix.dto.ExerciseAliasDTO;
 import com.liftlogix.dto.ExerciseDTO;
-import com.liftlogix.models.Exercise;
-import com.liftlogix.models.ExerciseAlias;
+import com.liftlogix.models.exercises.Exercise;
 import org.mapstruct.*;
 
 import java.util.Base64;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = {ExerciseAliasDTOMapper.class})
 public interface ExerciseDTOMapper {

@@ -1,10 +1,9 @@
 package com.liftlogix.services;
 
 import com.liftlogix.exceptions.EmailAlreadyConfirmedException;
-import com.liftlogix.models.User;
+import com.liftlogix.models.users.User;
 import com.liftlogix.repositories.UserRepository;
 import com.liftlogix.types.Role;
-import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.apache.tomcat.websocket.AuthenticationException;
@@ -15,7 +14,6 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CookieValue;
 
 import java.security.SecureRandom;
 import java.util.Map;

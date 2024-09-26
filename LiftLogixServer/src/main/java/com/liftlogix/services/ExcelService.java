@@ -1,6 +1,8 @@
 package com.liftlogix.services;
 
-import com.liftlogix.models.*;
+import com.liftlogix.models.plans.*;
+import com.liftlogix.models.users.Client;
+import com.liftlogix.models.users.User;
 import com.liftlogix.repositories.PersonalPlanRepository;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;

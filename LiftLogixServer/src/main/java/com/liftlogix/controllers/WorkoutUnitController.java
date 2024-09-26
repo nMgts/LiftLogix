@@ -3,7 +3,7 @@ package com.liftlogix.controllers;
 import com.liftlogix.dto.ChangeDateRequest;
 import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.exceptions.TimeConflictException;
-import com.liftlogix.models.User;
+import com.liftlogix.models.users.User;
 import com.liftlogix.services.WorkoutService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;

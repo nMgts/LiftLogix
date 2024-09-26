@@ -1,10 +1,10 @@
 package com.liftlogix.convert;
 
 import com.liftlogix.dto.UserDTO;
-import com.liftlogix.models.Admin;
-import com.liftlogix.models.Client;
-import com.liftlogix.models.Coach;
-import com.liftlogix.models.User;
+import com.liftlogix.models.users.Admin;
+import com.liftlogix.models.users.Client;
+import com.liftlogix.models.users.Coach;
+import com.liftlogix.models.users.User;
 import com.liftlogix.types.Role;
 import org.mapstruct.*;
 

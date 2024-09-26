@@ -1,4 +1,4 @@
-package com.liftlogix.models;
+package com.liftlogix.models.plans;
 
 import jakarta.persistence.*;
 import lombok.Getter;

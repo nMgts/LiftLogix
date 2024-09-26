@@ -18,10 +18,10 @@ public class CorsConfig {
                         .allowedOriginPatterns("http://localhost:4200")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                         .allowedHeaders("*")
-                        .exposedHeaders("Content-Disposition");
+                        .exposedHeaders("Content-Disposition")
+                        .allowCredentials(true);
                         //.exposedHeaders(HttpHeaders.SET_COOKIE)
                         //.allowedHeaders("Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization", "refreshToken");
-                        //.allowCredentials(true);
             }
         };
     }

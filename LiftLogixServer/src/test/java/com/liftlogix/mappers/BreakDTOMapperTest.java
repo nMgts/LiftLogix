@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import com.liftlogix.convert.BreakDTOMapper;
 import com.liftlogix.dto.BreakDTO;
-import com.liftlogix.models.Break;
+import com.liftlogix.models.plans.Break;
 import com.liftlogix.types.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -1,7 +1,7 @@
 package com.liftlogix.migrations;
 
-import com.liftlogix.models.Coach;
-import com.liftlogix.models.CoachScheduler;
+import com.liftlogix.models.users.Coach;
+import com.liftlogix.models.scheduler.CoachScheduler;
 import com.liftlogix.models.MigrationInfo;
 import com.liftlogix.repositories.CoachRepository;
 import com.liftlogix.repositories.CoachScheduleRepository;

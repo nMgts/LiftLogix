@@ -1,6 +1,6 @@
 package com.liftlogix.repositories;
 
-import com.liftlogix.models.Exercise;
+import com.liftlogix.models.exercises.Exercise;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;

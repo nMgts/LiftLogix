@@ -1,9 +1,7 @@
 package com.liftlogix.convert;
 
 import com.liftlogix.dto.WorkoutDTO;
-import com.liftlogix.dto.WorkoutUnitDTO;
-import com.liftlogix.models.Workout;
-import com.liftlogix.models.WorkoutUnit;
+import com.liftlogix.models.plans.Workout;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

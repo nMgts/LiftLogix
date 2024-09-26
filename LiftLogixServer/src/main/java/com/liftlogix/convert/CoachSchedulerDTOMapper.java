@@ -1,7 +1,7 @@
 package com.liftlogix.convert;
 
 import com.liftlogix.dto.CoachSchedulerDTO;
-import com.liftlogix.models.CoachScheduler;
+import com.liftlogix.models.scheduler.CoachScheduler;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

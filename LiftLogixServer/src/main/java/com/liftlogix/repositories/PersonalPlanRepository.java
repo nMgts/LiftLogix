@@ -1,7 +1,7 @@
 package com.liftlogix.repositories;
 
-import com.liftlogix.models.Client;
-import com.liftlogix.models.PersonalPlan;
+import com.liftlogix.models.users.Client;
+import com.liftlogix.models.plans.PersonalPlan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

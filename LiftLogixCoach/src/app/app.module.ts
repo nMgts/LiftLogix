@@ -69,6 +69,7 @@ import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { WorkoutDateChangeDialogComponent } from './components/workout-date-change-dialog/workout-date-change-dialog.component';
 import { OptionsTooltipComponent } from './components/options-tooltip/options-tooltip.component';
 import { MatTooltip } from "@angular/material/tooltip";
+import { ChatComponent } from './components/chat/chat.component';
 
 @NgModule({
   declarations: [
@@ -112,7 +113,8 @@ import { MatTooltip } from "@angular/material/tooltip";
     ClientScheduleComponent,
     WorkoutDayDetailsComponent,
     WorkoutDateChangeDialogComponent,
-    OptionsTooltipComponent
+    OptionsTooltipComponent,
+    ChatComponent
   ],
     imports: [
         BrowserModule,

@@ -1,4 +1,4 @@
-package com.liftlogix.models;
+package com.liftlogix.models.plans;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -6,13 +6,12 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Entity
-@Table(name = "workouts")
+@Table(name = "workout_unit")
 @Getter
 @Setter
-public class Workout {
+public class WorkoutUnit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,11 +21,11 @@ public class Workout {
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "workout_id")
+    @JoinColumn(name = "workout_unit_id")
     private List<WorkoutExercise> workoutExercises;
 
-    @ElementCollection
-    @CollectionTable(name = "workout_days", joinColumns = @JoinColumn(name = "workout_id"))
-    @Column(name = "day")
-    private List<Integer> days;
+    private LocalDateTime date;
+    private boolean isIndividual;
+    private int duration;
+    private int microcycleDay;
 }

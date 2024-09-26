@@ -1,5 +1,6 @@
-package com.liftlogix.models;
+package com.liftlogix.models.exercises;
 
+import com.liftlogix.models.plans.WorkoutExercise;
 import com.liftlogix.types.BodyPart;
 import com.liftlogix.types.ExerciseType;
 import jakarta.persistence.*;

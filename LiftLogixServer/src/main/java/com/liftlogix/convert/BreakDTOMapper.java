@@ -1,7 +1,7 @@
 package com.liftlogix.convert;
 
 import com.liftlogix.dto.BreakDTO;
-import com.liftlogix.models.Break;
+import com.liftlogix.models.plans.Break;
 import com.liftlogix.types.TimeUnit;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,7 +1,7 @@
 package com.liftlogix.repositories;
 
-import com.liftlogix.models.PasswordResetToken;
-import com.liftlogix.models.User;
+import com.liftlogix.models.users.PasswordResetToken;
+import com.liftlogix.models.users.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

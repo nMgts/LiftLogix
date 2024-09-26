@@ -1,5 +1,7 @@
 package com.liftlogix.models;
 
+import com.liftlogix.models.users.Client;
+import com.liftlogix.models.users.Coach;
 import com.liftlogix.types.ApplicationStatus;
 import jakarta.persistence.*;
 import lombok.Getter;

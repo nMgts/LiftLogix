@@ -1,7 +1,7 @@
 package com.liftlogix.convert;
 
 import com.liftlogix.dto.MicrocycleDTO;
-import com.liftlogix.models.Microcycle;
+import com.liftlogix.models.plans.Microcycle;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

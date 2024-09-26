@@ -1,5 +1,6 @@
 package com.liftlogix.models;
 
+import com.liftlogix.models.users.Client;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

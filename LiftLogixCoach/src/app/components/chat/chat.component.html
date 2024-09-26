@@ -1,0 +1,18 @@
+<div class="chat-window">
+  <button mat-raised-button (click)="close()" class="close-button">&times;</button>
+
+  <div class="chat-header">
+    <h3>Czat z {{ recipientId }}</h3>
+  </div>
+
+  <div class="chat-messages">
+    <div *ngFor="let message of messages">
+      <strong>{{ message.senderId }}:</strong> {{ message.content }}
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <input [(ngModel)]="newMessageContent" placeholder="Wpisz wiadomość" />
+    <button mat-button (click)="sendMessage()">Wyślij</button>
+  </div>
+</div>

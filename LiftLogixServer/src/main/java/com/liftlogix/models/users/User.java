@@ -1,5 +1,6 @@
-package com.liftlogix.models;
+package com.liftlogix.models.users;
 
+import com.liftlogix.models.plans.Plan;
 import com.liftlogix.types.Role;
 import jakarta.persistence.*;
 import lombok.Getter;

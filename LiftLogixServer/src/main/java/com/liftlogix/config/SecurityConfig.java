@@ -27,6 +27,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
@@ -36,7 +37,9 @@ public class SecurityConfig {
                                 "/api/",
                                 "/api/auth/login", "/api/auth/register/client", "/api/auth/register/coach", "/api/auth/refresh", "/api/auth/logout",
                                 "/api/email/confirm", "/api/email/resend-confirmation",
-                                "/api/user/forgot-password", "/api/user/reset-password")
+                                "/api/user/forgot-password", "/api/user/reset-password",
+                                "/app/ws/**", "/app/ws", "/ws", "/ws/**",
+                                "/api/messages/{chat_id}/read", "/api/messages/{sender_id}/{recipient_id}", "/api/chat")
                         .permitAll()
 
                         // Admin endpoints

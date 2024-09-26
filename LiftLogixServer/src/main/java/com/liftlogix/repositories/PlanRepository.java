@@ -1,12 +1,8 @@
 package com.liftlogix.repositories;
 
-import com.liftlogix.models.Plan;
-import com.liftlogix.models.User;
-import jakarta.transaction.Transactional;
+import com.liftlogix.models.plans.Plan;
+import com.liftlogix.models.users.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
