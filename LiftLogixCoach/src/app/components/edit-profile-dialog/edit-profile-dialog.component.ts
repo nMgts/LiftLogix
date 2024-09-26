@@ -65,7 +65,7 @@ export class EditProfileDialogComponent implements OnInit {
         const objectURL = URL.createObjectURL(blob);
         this.image = this.sanitizer.bypassSecurityTrustUrl(objectURL);
       },
-      (error) => {
+      () => {
         this.image = '/icons/user.jpg';
       }
     );

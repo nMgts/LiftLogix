@@ -8,7 +8,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -40,5 +42,21 @@ public class ChatMessageService {
         var chatId = chatRoomService.getChatRoomId(
                 senderId, recipientId, false);
         return chatId.map(chatMessageRepository::findByChatId).orElse(new ArrayList<>());
+    }
+
+    public List<ChatMessage> findRecentMessages(String senderId) {
+        List<ChatMessage> allMessages = chatMessageRepository.findBySenderIdOrRecipientId(senderId);
+        Map<String, ChatMessage> lastMessagesMap = new HashMap<>();
+
+        for (ChatMessage message : allMessages) {
+            String otherUserId = message.getSenderId().equals(senderId) ? message.getRecipientId() : message.getSenderId();
+
+            if (!lastMessagesMap.containsKey(otherUserId) ||
+                    lastMessagesMap.get(otherUserId).getTimestamp().compareTo(message.getTimestamp()) < 0) {
+                lastMessagesMap.put(otherUserId, message);
+            }
+        }
+
+        return new ArrayList<>(lastMessagesMap.values());
     }
 }

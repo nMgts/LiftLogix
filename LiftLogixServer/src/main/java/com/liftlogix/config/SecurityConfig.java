@@ -90,7 +90,7 @@ public class SecurityConfig {
                                 "/api/result/{client_id}", "/api/result/current/{client_id}", "/api/result/update", "/api/result/delete",
                                 "/api/personal-plan/workout/{workout_id}", "/api/personal-plan/export/{id}",
                                 "/api/workout/get/{id}",
-                                "/api/chat/messages/{senderId}/{recipientId}", "/api/chat/messages/{chatId}/read")
+                                "/api/chat/messages/{senderId}/{recipientId}", "/api/chat/messages/{chatId}/read", "/messages/recent/{senderId}")
                         .authenticated()
 
                         // Other endpoints

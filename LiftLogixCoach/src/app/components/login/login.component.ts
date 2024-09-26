@@ -26,7 +26,7 @@ export class LoginComponent {
     }
     try {
 
-      const { success, token, role, id, email, error } = await this.authService.login(this.email, this.password, this.rememberMe);
+      const { success, token, role, id, email, firstName, lastName, error } = await this.authService.login(this.email, this.password, this.rememberMe);
 
       if (success) {
         localStorage.setItem('token', token);

@@ -1,24 +1,32 @@
 .chat-window {
   position: fixed;
-  bottom: 20px;
+  bottom: 0;
   right: 20px;
   width: 300px;
   max-height: 400px;
-  border: 1px solid #ccc;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background-color: white;
+  background-color: #2c2c2c;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .chat-header {
-  background-color: #007bff;
-  color: white;
-  padding: 10px;
+  background-color: darkviolet;
+  color: aliceblue;
+  padding: 0 10px;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.header-user-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
 }
 
 .chat-messages {
@@ -28,23 +36,81 @@
   border-bottom: 1px solid #ccc;
 }
 
+.sender, .recipient {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.recipient {
+  justify-content: flex-end;
+}
+
+.sender-bubble {
+  background-color: #5c5cbe;
+  color: white;
+  border-radius: 10px;
+  padding: 8px;
+  margin-left: 10px;
+  max-width: 70%;
+  font-size: 0.9em;
+}
+
+.recipient-bubble {
+  background-color: #4a4a4a;
+  color: white;
+  border-radius: 10px;
+  padding: 8px;
+  margin-right: 10px;
+  max-width: 70%;
+  font-size: 0.8em;
+}
+
+.user-image {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.message-time {
+  display: block;
+  font-size: 0.6em;
+  color: #ccc;
+}
+
 .chat-input {
   display: flex;
   padding: 10px;
-  background-color: #f1f1f1;
+  background-color: darkviolet;
 }
 
 .chat-input input {
   flex: 1;
   margin-right: 10px;
+  border: none;
+  padding: 5px;
+  border-radius: 4px;
 }
 
-.close-button {
+.close-icon {
   position: absolute;
-  top: 5px;
+  top: -5px;
   right: 5px;
-  background: transparent;
-  border: none;
-  font-size: 20px;
+  font-size: 40px;
   cursor: pointer;
+  color: aliceblue;
+}
+
+.close-icon:hover {
+  color: red;
+}
+
+.send-icon {
+  cursor: pointer;
+  color: #5c5cbe;
+}
+
+.send-icon:hover {
+  color: blue;
 }

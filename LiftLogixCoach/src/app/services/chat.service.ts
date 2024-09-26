@@ -52,13 +52,18 @@ export class ChatService {
       if (this.stompClient && this.stompClient.connected) {
         this.stompClient.send('/app/chat', {}, JSON.stringify(message));
         console.log('Message sent:', message);
-        observer.next(); // Wywołaj next() po wysłaniu wiadomości
-        observer.complete(); // Zakończ Observable
+        observer.next();
+        observer.complete();
       } else {
         console.error('WebSocket connection is not established yet.');
         observer.error('WebSocket not connected');
       }
     });
+  }
+
+  fetchRecentChatMessages(senderId: string): Observable<ChatMessage[]> {
+    const headers = this.createHeaders();
+    return this.http.get<ChatMessage[]>(`${this.baseUrl}/messages/recent/${senderId}`, { headers: headers });
   }
 
   private createHeaders() {

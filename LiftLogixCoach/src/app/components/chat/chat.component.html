@@ -1,18 +1,29 @@
 <div class="chat-window">
-  <button mat-raised-button (click)="close()" class="close-button">&times;</button>
+  <span class="close-icon" (click)="close()">&times;</span>
 
   <div class="chat-header">
-    <h3>Czat z {{ recipientId }}</h3>
+    <img [src]="recipientImage" class="header-user-image" />
+    <h3>{{ recipientId }}</h3>
   </div>
 
   <div class="chat-messages" #messagesContainer>
-    <div *ngFor="let message of messages">
-      <strong>{{ message.senderId }}:</strong> {{ message.content }}
+    <div *ngFor="let message of messages" [ngClass]="{'sender': message.senderId === senderId, 'recipient': message.senderId === recipientId}">
+      <img *ngIf="message.senderId === senderId" [src]="senderImage" class="user-image" />
+      <div *ngIf="message.senderId === senderId" class="message-bubble sender-bubble">
+        {{ message.content }}
+        <span class="message-time">{{ message.timestamp | date:'HH:mm' }}</span>
+      </div>
+
+      <div *ngIf="message.senderId === recipientId" class="message-bubble recipient-bubble">
+        {{ message.content }}
+        <span class="message-time">{{ message.timestamp | date:'HH:mm' }}</span>
+      </div>
+      <img *ngIf="message.senderId === recipientId" [src]="recipientImage" class="user-image" />
     </div>
   </div>
 
   <div class="chat-input">
-    <input [(ngModel)]="newMessageContent" placeholder="Wpisz wiadomość" />
-    <button mat-button (click)="sendMessage()">Wyślij</button>
+    <input [(ngModel)]="newMessageContent" (keydown.enter)="sendMessage()" placeholder="Wpisz wiadomość" />
+    <span class="send-icon" (click)="sendMessage()">&#10148;</span>
   </div>
 </div>

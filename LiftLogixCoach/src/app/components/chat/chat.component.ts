@@ -1,6 +1,8 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ChatMessage } from "../../interfaces/ChatMessage";
 import { ChatService } from "../../services/chat.service";
+import { UserService } from "../../services/user.service";
+import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 
 @Component({
   selector: 'app-chat',
@@ -10,15 +12,22 @@ import { ChatService } from "../../services/chat.service";
 export class ChatComponent implements OnInit {
   @Input() senderId!: string;
   @Input() recipientId!: string;
+  @Input() secondUserId!: string;
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
   chatId: string = '';
 
   messages: ChatMessage[] = [];
   newMessageContent: string = '';
+  senderImage: SafeUrl = '';
+  recipientImage: SafeUrl = '';
 
-  constructor(private chatService: ChatService) {}
+  constructor(
+    private chatService: ChatService,
+    private userService: UserService,
+    private sanitizer: DomSanitizer
+  ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.chatId = `${this.senderId}_${this.recipientId}`;
     this.chatService.connectToChat(this.senderId);
 
@@ -28,14 +37,40 @@ export class ChatComponent implements OnInit {
       this.scrollToBottom();
     });
 
+    this.loadUsersImages();
     this.loadMessages();
   }
 
-  loadMessages(): void {
+  loadMessages() {
     this.chatService.fetchUserChat(this.senderId, this.recipientId).subscribe(messages => {
       this.messages = messages;
       this.scrollToBottom();
     });
+  }
+
+  loadUsersImages() {
+    const token = localStorage.getItem('token') || '';
+    const myId = localStorage.getItem('id') || '';
+    this.userService.getUserImage(myId, token).subscribe(
+      (blob) => {
+        const objectURL = URL.createObjectURL(blob);
+        this.senderImage = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      },
+      () => {
+        this.senderImage = '/icons/user.jpg';
+      }
+    );
+
+    this.userService.getUserImage(this.secondUserId, token).subscribe(
+      (blob) => {
+        const objectUrl = URL.createObjectURL(blob);
+        this.recipientImage = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+      },
+      () => {
+        this.recipientImage = '/icons/user.jpg';
+      }
+    )
+
   }
 
   sendMessage(): void {
@@ -60,7 +95,7 @@ export class ChatComponent implements OnInit {
     });
   }
 
-  markAllAsRead(): void {
+  markAllAsRead() {
     // Implementuj tę funkcjonalność, jeśli jest potrzebna
   }
 

@@ -47,6 +47,11 @@ public class ChatController {
         return ResponseEntity.ok(chatMessageService.findChatMessages(senderId, recipientId));
     }
 
+    @GetMapping("/messages/recent/{senderId}")
+    public ResponseEntity<List<ChatMessage>> findRecentChatMessages(@PathVariable("senderId") String senderId) {
+        return ResponseEntity.ok(chatMessageService.findRecentMessages(senderId));
+    }
+
     @PutMapping("/messages/{chatId}/read")
     public ResponseEntity<Void> markMessagesAsRead(@PathVariable String chatId) {
         chatMessageService.markMessagesAsRead(chatId);
