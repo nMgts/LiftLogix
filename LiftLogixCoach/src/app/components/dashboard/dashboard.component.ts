@@ -1,4 +1,5 @@
 import { Component, Renderer2 } from '@angular/core';
+import { User } from "../../interfaces/User";
 
 @Component({
   selector: 'app-dashboard',
@@ -10,7 +11,8 @@ export class DashboardComponent  {
   private scrollTimeout: any;
   showChat = true;
   currentUserId = localStorage.getItem('email') || '';
-  currentRecipientId = localStorage.getItem('email') === 'norbert.klessen@gmail.com' ? 'coach@example.com' : 'norbert.klessen@gmail.com';
+
+  chatUsers: User[] = [];
 
   constructor(private renderer: Renderer2) {}
 
@@ -26,12 +28,12 @@ export class DashboardComponent  {
     }
   }
 
-  openChat() {
-    this.showChat = true;
+  openChat(user: User) {
+    this.chatUsers.push(user);
   }
 
-  closeChat() {
-    this.showChat = false;
+  closeChat(email: string) {
+    this.chatUsers = this.chatUsers.filter(chatUser => chatUser.email !== email);
   }
 
   onScroll(): void {

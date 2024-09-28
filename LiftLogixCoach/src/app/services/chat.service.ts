@@ -66,6 +66,11 @@ export class ChatService {
     return this.http.get<ChatMessage[]>(`${this.baseUrl}/messages/recent/${senderId}`, { headers: headers });
   }
 
+  markMessagesAsRead(chatId: string): Observable<any> {
+    const headers = this.createHeaders();
+    return this.http.put(`${this.baseUrl}/messages/${chatId}/read`, {}, { headers: headers });
+  }
+
   private createHeaders() {
     const token = localStorage.getItem('token') || '';
     return new HttpHeaders({

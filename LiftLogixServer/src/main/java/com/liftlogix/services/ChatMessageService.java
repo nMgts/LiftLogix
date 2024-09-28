@@ -2,6 +2,7 @@ package com.liftlogix.services;
 
 import com.liftlogix.exceptions.ChatRoomNotFoundExeption;
 import com.liftlogix.models.chat.ChatMessage;
+import com.liftlogix.models.users.User;
 import com.liftlogix.repositories.ChatMessageRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -26,16 +27,23 @@ public class ChatMessageService {
         );
         chatMessage.setChatId(chatId);
         chatMessage.setRead(false);
-        System.out.println(chatMessage.getContent());
         chatMessageRepository.save(chatMessage);
         return chatMessage;
     }
 
-    public void markMessagesAsRead(String chatId) {
-        List<ChatMessage> messages = chatMessageRepository.findByChatId(chatId);
+    public void markMessagesAsRead(String chatId, User user) {
+        String[] emailParts = chatId.split("_");
+        String email1 = emailParts[0];
+        String email2 = emailParts[1];
 
-        messages.forEach(message -> message.setRead(true));
-        chatMessageRepository.saveAll(messages);
+        List<ChatMessage> messages1 = chatMessageRepository.findByChatId(chatId);
+        List<ChatMessage> messages2 = chatMessageRepository.findByChatId(email2 + "_" + email1);
+
+        markMessages(messages1, user);
+        markMessages(messages2, user);
+
+        chatMessageRepository.saveAll(messages1);
+        chatMessageRepository.saveAll(messages2);
     }
 
     public List<ChatMessage> findChatMessages(String senderId, String recipientId) {
@@ -45,7 +53,7 @@ public class ChatMessageService {
     }
 
     public List<ChatMessage> findRecentMessages(String senderId) {
-        List<ChatMessage> allMessages = chatMessageRepository.findBySenderIdOrRecipientId(senderId);
+        List<ChatMessage> allMessages = chatMessageRepository.findBySenderIdOrRecipientId(senderId, senderId);
         Map<String, ChatMessage> lastMessagesMap = new HashMap<>();
 
         for (ChatMessage message : allMessages) {
@@ -58,5 +66,13 @@ public class ChatMessageService {
         }
 
         return new ArrayList<>(lastMessagesMap.values());
+    }
+
+    private void markMessages(List<ChatMessage> messages, User user) {
+        messages.forEach(message -> {
+            if (!message.getSenderId().equals(user.getEmail())) {
+                message.setRead(true);
+            }
+        });
     }
 }

@@ -7,6 +7,7 @@ import { ApplicationDetailsDialogComponent } from '../application-details-dialog
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { Client } from "../../interfaces/Client";
+import {User} from "../../interfaces/User";
 
 @Component({
   selector: 'app-applications',
@@ -16,6 +17,7 @@ import { Client } from "../../interfaces/Client";
 export class ApplicationsComponent implements OnChanges {
   @Input() isBoxExpanded = false;
   @Output() closeBox = new EventEmitter<void>();
+  @Output() openChat = new EventEmitter<User>();
 
   applications: Application[] = [];
   displayedApplications: Application[] = [];
@@ -81,6 +83,8 @@ export class ApplicationsComponent implements OnChanges {
       data: application,
       width: '600px'
     });
+
+    dialogRef.componentInstance.openChat = this.openChat;
 
     dialogRef.afterClosed().subscribe(() => {
       this.loadApplications();

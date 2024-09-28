@@ -7,7 +7,7 @@
 </div>
 
 <div class="expanded-box" *ngIf="isBoxExpanded">
-  <div class="left-side" *ngIf="(!selectedComponent || window.innerWidth >= 1024) && (!isFullScreen || !selectedComponent) ">
+  <div class="left-side" #elem (scroll)="onScroll($event)" *ngIf="(!selectedComponent || window.innerWidth >= 1024) && (!isFullScreen || !selectedComponent)">
     <button *ngIf="window.innerWidth < 1024" (click)="close($event)" class="close-button">&times;</button>
     <div class="search-container">
       <input type="text" class="search-input" placeholder="Szukaj klientów" />
@@ -53,7 +53,8 @@
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
   </div>
 
-  <div class="right-side" *ngIf="selectedComponent">
+  <div class="right-side" *ngIf="selectedComponent"
+       #elem (scroll)="onScroll($event)">
     <button *ngIf="window.innerWidth >= 1024" (click)="toggleFullScreen($event)" class="full-screen-button">
       <mat-icon>{{ isFullScreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
     </button>

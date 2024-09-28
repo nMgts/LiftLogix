@@ -1,4 +1,14 @@
-import { Component, EventEmitter, HostListener, Input, OnChanges, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnChanges,
+  Output,
+  Renderer2,
+  ViewChild
+} from '@angular/core';
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { Client } from "../../interfaces/Client";
 import { ClientService } from "../../services/client.service";
@@ -12,6 +22,8 @@ import { ApplicationService } from "../../services/application.service";
 export class ClientsComponent implements OnChanges {
   @Input() isBoxExpanded = false;
   @Output() closeBox = new EventEmitter<void>();
+  @ViewChild('elem', { static: true }) elem!: ElementRef;
+  scrollTimeout: any;
 
   isFullScreen = false;
 
@@ -29,7 +41,8 @@ export class ClientsComponent implements OnChanges {
   constructor(
     private clientService: ClientService,
     private sanitizer: DomSanitizer,
-    private applicationService: ApplicationService
+    private applicationService: ApplicationService,
+    private renderer: Renderer2
   ) {}
 
   ngOnChanges(): void {
@@ -120,6 +133,20 @@ export class ClientsComponent implements OnChanges {
         return 'Dieta';
       default:
         return '';
+    }
+  }
+
+  onScroll(event: Event): void {
+    const target = event.target as HTMLElement;
+
+    if (target) {
+      this.renderer.addClass(document.body, 'show-scrollbar');
+
+      clearTimeout(this.scrollTimeout);
+
+      this.scrollTimeout = setTimeout(() => {
+        this.renderer.removeClass(document.body, 'show-scrollbar');
+      }, 3000);
     }
   }
 

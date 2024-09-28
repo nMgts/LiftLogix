@@ -11,7 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document(collection = "chatMessages")
+@Document
 public class ChatMessage {
     @Id
     private String id;

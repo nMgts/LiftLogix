@@ -1,6 +1,8 @@
 package com.liftlogix.services;
 
+import com.liftlogix.convert.UserDTOMapper;
 import com.liftlogix.dto.ReqRes;
+import com.liftlogix.dto.UserDTO;
 import com.liftlogix.exceptions.InvalidTokenException;
 import com.liftlogix.models.users.PasswordResetToken;
 import com.liftlogix.models.users.User;
@@ -25,6 +27,7 @@ public class UserService {
     private final TokenRepository tokenRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final UserDTOMapper userDTOMapper;
 
     public ReqRes generatePasswordResetToken(String email) {
         ReqRes resp = new ReqRes();
@@ -110,5 +113,13 @@ public class UserService {
         } catch (IOException e) {
             throw new IOException("Error during image update");
         }
+    }
+
+    public UserDTO findUserByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new EntityNotFoundException("User not found")
+        );
+
+        return userDTOMapper.mapUserToDTO(user);
     }
 }

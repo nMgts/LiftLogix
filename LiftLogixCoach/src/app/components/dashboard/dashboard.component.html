@@ -1,5 +1,5 @@
 <div class="main-container" (scroll)="onScroll()">
-  <app-navbar></app-navbar>
+  <app-navbar (openChat)="openChat($event)"></app-navbar>
 
   <div class="dashboard-container">
     <div class="wrapper" [ngClass]="{'expanded': expandedBox !== null}">
@@ -73,7 +73,11 @@
              }"
              (click)="expandBox('row-top')"
              (scroll)="onScroll()">
-          <app-applications [isBoxExpanded]="expandedBox==='row-top'" (closeBox)="closeBox('row-top')"></app-applications>
+          <app-applications
+            [isBoxExpanded]="expandedBox==='row-top'"
+            (openChat)="openChat($event)"
+            (closeBox)="closeBox('row-top')">
+          </app-applications>
         </div>
         <div class="row-bottom box"
              [ngClass]="{
@@ -87,7 +91,14 @@
     </div>
   </div>
 
-  <app-chat *ngIf="showChat" [senderId]="currentUserId" [recipientId]="currentRecipientId"></app-chat>
+  <div *ngFor="let user of chatUsers">
+    <app-chat
+      *ngIf="showChat"
+      [senderId]="currentUserId"
+      [recipientId]="user.email"
+      (closeChat)="closeChat($event)">
+    </app-chat>
+  </div>
 
   <app-footer></app-footer>
 </div>

@@ -11,7 +11,7 @@
   <p>Zgłoszono: {{ data.submitted_date | date:'short' }}</p>
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="sendMessage()">
+  <button mat-button (click)="onChatOpen()">
     <mat-icon>email</mat-icon>
     Wyślij wiadomość
   </button>

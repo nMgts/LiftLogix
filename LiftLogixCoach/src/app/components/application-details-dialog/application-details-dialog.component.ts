@@ -1,10 +1,20 @@
-import {AfterViewInit, Component, ElementRef, HostListener, Inject, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef, EventEmitter,
+  HostListener,
+  Inject,
+  Output,
+  Renderer2,
+  ViewChild
+} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Application } from "../../interfaces/Application";
 import { ApplicationService } from "../../services/application.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import {Client} from "../../interfaces/Client";
+import { Client } from "../../interfaces/Client";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import { User } from "../../interfaces/User";
 
 @Component({
   selector: 'app-application-details-dialog',
@@ -12,10 +22,11 @@ import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
   styleUrl: './application-details-dialog.component.scss'
 })
 export class ApplicationDetailsDialogComponent implements AfterViewInit {
-  private readonly defaultImageUrl: string = '/icons/user.jpg';
-
+  @Output() openChat = new EventEmitter<User>();
   @ViewChild('dialog', { static: true }) dialog!: ElementRef;
   scrollTimeout: any;
+
+  private readonly defaultImageUrl: string = '/icons/user.jpg';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: Application,
@@ -23,7 +34,8 @@ export class ApplicationDetailsDialogComponent implements AfterViewInit {
     private applicationService: ApplicationService,
     private snackBar: MatSnackBar,
     private renderer: Renderer2,
-    private sanitizer: DomSanitizer) {}
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngAfterViewInit(): void {
     this.renderer.listen(this.dialog.nativeElement, 'scroll', () => {
@@ -31,7 +43,17 @@ export class ApplicationDetailsDialogComponent implements AfterViewInit {
     });
   }
 
-  sendMessage(): void {}
+  onChatOpen(): void {
+    const user: User = {
+      id: this.data.client.id,
+      first_name: this.data.client.first_name,
+      last_name: this.data.client.last_name,
+      email: this.data.client.email,
+      role: 'CLIENT'
+    }
+    this.openChat.emit(user);
+    this.close();
+  }
 
   accept(applicationId: number): void {
     const token = localStorage.getItem('token') || '';

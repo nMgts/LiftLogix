@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Router } from "@angular/router";
 import {firstValueFrom, Observable, Subject} from 'rxjs';
+import {User} from "../interfaces/User";
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+  private baseUrl = 'http://localhost:8080/api/user';
   private forgotPasswordUrl = 'http://localhost:8080/api/user/forgot-password';
   private resetPasswordUrl = 'http://localhost:8080/api/user/reset-password';
   private verifyUrl = 'http://localhost:8080/api/user/verify';
@@ -69,7 +71,12 @@ export class UserService {
     const headers = this.createHeaders(token);
     const formData = new FormData();
     formData.append('image', image);
-    return this.http.put<void>(this.updateImageUrl, formData, { headers });
+    return this.http.put<void>(this.updateImageUrl, formData, { headers: headers });
+  }
+
+  getUserByEmail(email: string, token: string): Observable<User> {
+    const headers = this.createHeaders(token);
+    return this.http.get<User>(`${this.baseUrl}/${email}`, { headers: headers });
   }
 
   private createHeaders(token: string) {

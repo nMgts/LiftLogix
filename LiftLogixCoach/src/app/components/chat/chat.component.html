@@ -3,11 +3,12 @@
 
   <div class="chat-header">
     <img [src]="recipientImage" class="header-user-image" />
-    <h3>{{ recipientId }}</h3>
+    <h3>{{ getSecondUserName() }}</h3>
   </div>
 
-  <div class="chat-messages" #messagesContainer>
-    <div *ngFor="let message of messages" [ngClass]="{'sender': message.senderId === senderId, 'recipient': message.senderId === recipientId}">
+  <div class="chat-messages" #messagesContainer (scroll)="onScroll($event)">
+    <div *ngFor="let message of messages"
+         [ngClass]="{'sender': message.senderId === senderId, 'recipient': message.senderId === recipientId}">
       <img *ngIf="message.senderId === senderId" [src]="senderImage" class="user-image" />
       <div *ngIf="message.senderId === senderId" class="message-bubble sender-bubble">
         {{ message.content }}

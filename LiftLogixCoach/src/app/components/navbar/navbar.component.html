@@ -4,8 +4,26 @@
     <span class="app-name">LiftLogixCoach</span>
   </div>
   <div class="navbar-right">
+
     <i class="icon notifications-icon">🔔</i>
-    <i class="icon messages-icon">✉️</i>
+
+    <div class="messages-menu">
+      <i class="icon messages-icon" (click)="toggleMessages()">✉️</i>
+      <div class="messages-dropdown" *ngIf="messagesOpen" #messagesDropdown (scroll)="onScroll($event)">
+        <div class="message-item"
+             *ngFor="let message of messages" [ngClass]="{'unread': getMessageClass(message) }"
+             (click)="markMessageAsRead(message); onChatOpen(message.senderId, message.recipientId)">
+          <div class="user-image">
+            <img [src]="getUserImage(message.senderId, message.recipientId)" alt="User" />
+          </div>
+          <div class="message-content">
+            <p class="user-name">{{ getUserName(message.senderId, message.recipientId) }}</p>
+            <p class="message-text">{{ message.content }}</p>
+            <span class="date">{{ message.timestamp | date:'short' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="settings-menu">
       <i class="icon settings-icon" (click)="toggleSettings()">⚙️</i>
