@@ -9,10 +9,9 @@ import { User } from "../../interfaces/User";
 export class DashboardComponent  {
   expandedBox: string | null = null;
   private scrollTimeout: any;
-  showChat = true;
   currentUserId = localStorage.getItem('email') || '';
 
-  chatUsers: User[] = [];
+  chatUser: User | null = null;
 
   constructor(private renderer: Renderer2) {}
 
@@ -29,11 +28,11 @@ export class DashboardComponent  {
   }
 
   openChat(user: User) {
-    this.chatUsers.push(user);
+    this.chatUser = user;
   }
 
   closeChat(email: string) {
-    this.chatUsers = this.chatUsers.filter(chatUser => chatUser.email !== email);
+    this.chatUser = null;
   }
 
   onScroll(): void {

@@ -31,13 +31,12 @@ public class ChatMessageService {
         return chatMessage;
     }
 
-    public void markMessagesAsRead(String chatId, User user) {
-        String[] emailParts = chatId.split("_");
-        String email1 = emailParts[0];
-        String email2 = emailParts[1];
+    public void markMessagesAsRead(String senderId, String recipientId, User user) {
+        String id1 = senderId + "_" + recipientId;
+        String id2 = recipientId + "_" + senderId;
 
-        List<ChatMessage> messages1 = chatMessageRepository.findByChatId(chatId);
-        List<ChatMessage> messages2 = chatMessageRepository.findByChatId(email2 + "_" + email1);
+        List<ChatMessage> messages1 = chatMessageRepository.findByChatId(id1);
+        List<ChatMessage> messages2 = chatMessageRepository.findByChatId(id2);
 
         markMessages(messages1, user);
         markMessages(messages2, user);

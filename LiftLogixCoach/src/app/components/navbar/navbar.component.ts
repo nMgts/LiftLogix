@@ -23,23 +23,11 @@ export class NavbarComponent implements OnInit {
   messagesOpen = false;
   settingsOpen = false;
   image: SafeUrl = '';
-/*
-  messages = [
-    { text: "Witaj w LiftLogixCoach!", date: new Date(), read: false, firstName: "Marek", lastName: "Markowski" },
-    { text: "Cześć tutaj marek co tam u ciebie chciałbym poćwiczyć jutro klateczkę itd" +
-        "bardzo lubię ćwiczyć klateczkę bo to jest suoper zabawa" +
-        "i w ogóle wiesz!", date: new Date(), read: true, firstName: "Andrzej", lastName: "Andrzejewski" },
-    { text: "Sprawdź nową funkcjonalność.", date: new Date(), read: false, firstName: "Kamil", lastName: "Kamilak" },
-    { text: "Sprawdź nową funkcjonalność.", date: new Date(), read: false, firstName: "Kamil", lastName: "Kamilak" },
-    { text: "Sprawdź nową funkcjonalność.", date: new Date(), read: false, firstName: "Kamil", lastName: "Kamilak" },
-    { text: "Sprawdź nową funkcjonalność.", date: new Date(), read: false, firstName: "Kamil", lastName: "Kamilak" },
-    { text: "Sprawdź nową funkcjonalność.", date: new Date(), read: false, firstName: "Kamil", lastName: "Kamilak" },
-  ];
-*/
 
+  userEmail = localStorage.getItem('email') || '';
   messages: ChatMessage[] = [];
   usersMap: Map<string, [User, SafeUrl]> = new Map();
-
+  openedChat: string = '';
 
   constructor(
     private authService: AuthService,
@@ -51,9 +39,21 @@ export class NavbarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.chatService.connectToChat(this.userEmail);
+
     this.loadImage();
     this.userService.imageUpdated$.subscribe(() => {
       this.loadImage();
+    });
+
+    this.loadMessages();
+
+    this.chatService.getOpenChats().subscribe(chat => {
+      this.openedChat = chat;
+    });
+
+    this.chatService.getMessageObservable().subscribe(message => {
+      this.handleNewMessage(message);
     });
   }
 
@@ -69,6 +69,25 @@ export class NavbarComponent implements OnInit {
         this.image = '/icons/user.jpg';
       }
     );
+  }
+
+  handleNewMessage(newMessage: ChatMessage) {
+    const recipientId = newMessage.recipientId;
+    const senderId = newMessage.senderId;
+
+    const existingMessageIndex = this.messages.findIndex(message =>
+        (message.recipientId === recipientId && message.senderId === senderId) ||
+        (message.recipientId === senderId && message.senderId === recipientId)
+    );
+
+
+    newMessage.read = this.openedChat === newMessage.senderId;
+
+    if (existingMessageIndex !== -1) {
+      this.messages[existingMessageIndex] = newMessage;
+    } else {
+      this.messages.push(newMessage);
+    }
   }
 
   toggleMenu() {
@@ -87,7 +106,6 @@ export class NavbarComponent implements OnInit {
     this.messagesOpen = !this.messagesOpen;
     this.settingsOpen = false;
     this.menuOpen = false;
-    this.loadMessages();
   }
 
   onChatOpen(senderId: string, recipientId: string) {

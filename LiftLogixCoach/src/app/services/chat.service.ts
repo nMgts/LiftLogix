@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { ChatMessage } from "../interfaces/ChatMessage";
-import {Observable, Subject} from "rxjs";
+import { BehaviorSubject, Observable, Subject } from "rxjs";
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 
@@ -9,14 +9,37 @@ import SockJS from 'sockjs-client';
   providedIn: 'root'
 })
 export class ChatService {
+  private baseUrl = 'http://localhost:8080/api/chat';
+
   private stompClient: any;
   private messageSubject = new Subject<ChatMessage>();
 
-  private baseUrl = 'http://localhost:8080/api/chat';
+  private openChat: string = '';
+  private openChatsSubject = new BehaviorSubject<string>('');
 
   constructor(private http: HttpClient) {}
 
+  addChat(recipientId: string): void {
+    if (this.openChat !== recipientId) {
+      this.openChat = recipientId;
+      this.openChatsSubject.next(this.openChat);
+    }
+  }
+
+  removeChat(): void {
+    this.openChat = '';
+    this.openChatsSubject.next(this.openChat);
+  }
+
+  getOpenChats() {
+    return this.openChatsSubject.asObservable();
+  }
+
   connectToChat(senderId: string) {
+    if (this.stompClient && this.stompClient.connected) {
+      return;
+    }
+
     const socket = new SockJS('http://localhost:8080/ws');
     this.stompClient = Stomp.over(socket);
 
@@ -39,7 +62,7 @@ export class ChatService {
   }
 
   getMessageObservable(): Observable<ChatMessage> {
-    return this.messageSubject.asObservable();
+    return this.messageSubject;
   }
 
   fetchUserChat(senderId: string, recipientId: string): Observable<ChatMessage[]> {
@@ -52,6 +75,7 @@ export class ChatService {
       if (this.stompClient && this.stompClient.connected) {
         this.stompClient.send('/app/chat', {}, JSON.stringify(message));
         console.log('Message sent:', message);
+        this.messageSubject.next(message);
         observer.next();
         observer.complete();
       } else {
@@ -66,9 +90,9 @@ export class ChatService {
     return this.http.get<ChatMessage[]>(`${this.baseUrl}/messages/recent/${senderId}`, { headers: headers });
   }
 
-  markMessagesAsRead(chatId: string): Observable<any> {
+  markMessagesAsRead(senderId: string, recipientId: string): Observable<any> {
     const headers = this.createHeaders();
-    return this.http.put(`${this.baseUrl}/messages/${chatId}/read`, {}, { headers: headers });
+    return this.http.put(`${this.baseUrl}/messages/${senderId}/${recipientId}/read`, {}, { headers: headers });
   }
 
   private createHeaders() {

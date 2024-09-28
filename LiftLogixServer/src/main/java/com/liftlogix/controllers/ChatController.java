@@ -37,6 +37,7 @@ public class ChatController {
                         .senderId(savesMsg.getSenderId())
                         .recipientId(savesMsg.getRecipientId())
                         .content(savesMsg.getContent())
+                        .timestamp(savesMsg.getTimestamp())
                         .build()
         );
     }
@@ -54,9 +55,10 @@ public class ChatController {
         return ResponseEntity.ok(chatMessageService.findRecentMessages(senderId));
     }
 
-    @PutMapping("/messages/{chatId}/read")
-    public ResponseEntity<Void> markMessagesAsRead(@PathVariable String chatId, @AuthenticationPrincipal User user) {
-        chatMessageService.markMessagesAsRead(chatId, user);
+    @PutMapping("/messages/{senderId}/{recipientId}/read")
+    public ResponseEntity<Void> markMessagesAsRead(
+            @PathVariable String senderId, @PathVariable String recipientId, @AuthenticationPrincipal User user) {
+        chatMessageService.markMessagesAsRead(senderId, recipientId, user);
         return ResponseEntity.ok().build();
     }
 }

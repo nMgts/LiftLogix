@@ -91,14 +91,7 @@
     </div>
   </div>
 
-  <div *ngFor="let user of chatUsers">
-    <app-chat
-      *ngIf="showChat"
-      [senderId]="currentUserId"
-      [recipientId]="user.email"
-      (closeChat)="closeChat($event)">
-    </app-chat>
-  </div>
+  <app-chat *ngIf="chatUser" [senderId]="currentUserId" [recipientId]="chatUser.email" (closeChat)="closeChat($event)"></app-chat>
 
   <app-footer></app-footer>
 </div>

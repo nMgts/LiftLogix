@@ -3,6 +3,8 @@ package com.liftlogix.models.chat;
 
 import lombok.*;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -13,4 +15,5 @@ public class ChatNotification {
     private String senderId;
     private String recipientId;
     private String content;
+    private Date timestamp;
 }

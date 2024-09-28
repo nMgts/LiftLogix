@@ -1,16 +1,26 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input, OnChanges,
+  OnDestroy,
+  Output,
+  Renderer2,
+  ViewChild
+} from '@angular/core';
 import { ChatMessage } from "../../interfaces/ChatMessage";
 import { ChatService } from "../../services/chat.service";
 import { UserService } from "../../services/user.service";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { User } from "../../interfaces/User";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss'
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnChanges, OnDestroy {
   @Input() senderId!: string;
   @Input() recipientId!: string;
   @Output() closeChat = new EventEmitter<string>();
@@ -20,6 +30,7 @@ export class ChatComponent implements OnInit {
   chatId: string = '';
   secondUser: User | null = null;
 
+  private messageSubscription!: Subscription;
   messages: ChatMessage[] = [];
   newMessageContent: string = '';
   senderImage: SafeUrl = '';
@@ -32,11 +43,15 @@ export class ChatComponent implements OnInit {
     private renderer: Renderer2
   ) {}
 
-  ngOnInit() {
-    this.chatId = `${this.senderId}_${this.recipientId}`;
-    this.chatService.connectToChat(this.senderId);
+  ngOnChanges() {
+    if (this.messageSubscription) {
+      this.messageSubscription.unsubscribe();
+    }
 
-    this.chatService.getMessageObservable().subscribe(message => {
+    this.chatId = `${this.senderId}_${this.recipientId}`;
+    this.chatService.addChat(this.recipientId);
+
+    this.messageSubscription = this.chatService.getMessageObservable().subscribe(message => {
       this.messages.push(message);
       this.scrollToBottom();
       this.markMessagesAsRead();
@@ -44,6 +59,11 @@ export class ChatComponent implements OnInit {
 
     this.getSecondUser();
     this.loadMessages();
+  }
+
+  ngOnDestroy() {
+    this.messageSubscription.unsubscribe();
+    this.chatService.removeChat();
   }
 
   getSecondUser() {
@@ -99,7 +119,7 @@ export class ChatComponent implements OnInit {
   }
 
   markMessagesAsRead() {
-    this.chatService.markMessagesAsRead(this.chatId).subscribe(
+    this.chatService.markMessagesAsRead(this.senderId, this.recipientId).subscribe(
       () => {
         console.log('Successfully marked messages as read');
       },
@@ -122,8 +142,6 @@ export class ChatComponent implements OnInit {
     this.chatService.sendMessage(message).subscribe({
       next: () => {
         this.newMessageContent = '';
-        this.messages.push(message);
-        this.scrollToBottom();
       },
       error: (err) => {
         console.error('Error sending message:', err);
@@ -131,11 +149,9 @@ export class ChatComponent implements OnInit {
     });
   }
 
-  markAllAsRead() {
-    // Implementuj tę funkcjonalność, jeśli jest potrzebna
-  }
-
   close() {
+    this.messageSubscription.unsubscribe();
+    this.chatService.removeChat();
     this.closeChat.emit(this.recipientId);
   }
 
