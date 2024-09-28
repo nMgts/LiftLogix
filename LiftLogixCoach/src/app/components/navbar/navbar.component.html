@@ -19,7 +19,7 @@
           <div class="message-content">
             <p class="user-name">{{ getUserName(message.senderId, message.recipientId) }}</p>
             <p class="message-text">{{ message.content }}</p>
-            <span class="date">{{ message.timestamp | date:'short' }}</span>
+            <span class="date">{{ message.timestamp | date:'dd-MM-yyyy HH:mm' }}</span>
           </div>
         </div>
       </div>

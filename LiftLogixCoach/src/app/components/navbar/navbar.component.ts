@@ -194,7 +194,6 @@ export class NavbarComponent implements OnInit {
   }
 
   toggleDarkMode() {
-
   }
 
   goToProfile() {

@@ -229,8 +229,16 @@
     cursor: pointer;
     background-color: white;
 
+    &:hover {
+      background-color: rgb(225, 225, 255);
+    }
+
     &.unread {
       background-color: rgb(210, 180, 255);
+    }
+
+    &.unread:hover {
+      background-color: rgb(180, 150, 225);
     }
 
     .user-image {

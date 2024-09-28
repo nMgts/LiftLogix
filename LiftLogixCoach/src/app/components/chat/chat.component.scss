@@ -33,7 +33,7 @@
   flex: 1;
   padding: 10px;
   overflow-y: auto;
-  border-bottom: 1px solid #ccc;
+  min-height: 275px;
 }
 
 .sender, .recipient {

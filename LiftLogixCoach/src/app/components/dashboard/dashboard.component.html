@@ -25,7 +25,9 @@
                  }"
                  (click)="expandBox('row1-col-right-row1')"
                  (scroll)="onScroll()">
-              <app-clients [isBoxExpanded]="expandedBox==='row1-col-right-row1'" (closeBox)="closeBox('row1-col-right-row1')"></app-clients>
+              <app-clients [isBoxExpanded]="expandedBox==='row1-col-right-row1'"
+                           (openChat)="openChat($event)"
+                           (closeBox)="closeBox('row1-col-right-row1')"></app-clients>
             </div>
             <div class="row1-col-right-row2 box"
                  [ngClass]="{

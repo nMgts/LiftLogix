@@ -29,7 +29,7 @@
           <button (click)="showComponent('diet', client.id, $event)">Dieta</button>
         </div>
         <div class="client-icons">
-          <mat-icon class="message">email</mat-icon>
+          <mat-icon class="message" (click)="onOpenChat(client)">email</mat-icon>
           <mat-icon class="delete">delete</mat-icon>
         </div>
 

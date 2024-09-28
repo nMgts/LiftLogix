@@ -13,6 +13,7 @@ import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { Client } from "../../interfaces/Client";
 import { ClientService } from "../../services/client.service";
 import { ApplicationService } from "../../services/application.service";
+import { User } from "../../interfaces/User";
 
 @Component({
   selector: 'app-clients',
@@ -21,6 +22,7 @@ import { ApplicationService } from "../../services/application.service";
 })
 export class ClientsComponent implements OnChanges {
   @Input() isBoxExpanded = false;
+  @Output() openChat = new EventEmitter<User>();
   @Output() closeBox = new EventEmitter<void>();
   @ViewChild('elem', { static: true }) elem!: ElementRef;
   scrollTimeout: any;
@@ -148,6 +150,17 @@ export class ClientsComponent implements OnChanges {
         this.renderer.removeClass(document.body, 'show-scrollbar');
       }, 3000);
     }
+  }
+
+  onOpenChat(client: Client) {
+    const user: User = {
+      id: client.id,
+      first_name: client.first_name,
+      last_name: client.last_name,
+      email: client.email,
+      role: 'CLIENT'
+    }
+    this.openChat.emit(user);
   }
 
   goBack() {
