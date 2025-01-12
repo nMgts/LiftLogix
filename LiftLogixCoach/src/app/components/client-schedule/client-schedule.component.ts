@@ -214,7 +214,7 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
 
     const newDate = new Date(targetDay.year, targetDay.month, targetDay.day + 1);
     const formattedDate = newDate.toISOString();
-    
+
     this.workoutService.changeDate(draggedEvent.id, formattedDate, draggedEvent.duration, token).subscribe(
       () => {
         this.openSnackBar('Data treningu została zmieniona');
@@ -222,7 +222,7 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
       },
       (error) => {
         if (error.status === 409) {
-          this.openSnackBar('Konflikt: W podanym przedziale czasowym posiadasz już trening personalny.');
+          this.openSnackBar('Konflikt: W podanym przedziale czasowym posiadasz już trening personalny lub klient ma zapisany inny trening');
         } else {
           this.openSnackBar('Błąd przy zmianie statusu treningu');
         }

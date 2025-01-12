@@ -49,7 +49,8 @@ public class SecurityConfig {
                         .hasAuthority("ADMIN")
 
                         // Coach endpoints
-                        .requestMatchers("/api/application/accept/{application_id}", "/api/application/reject/{application_id}",
+                        .requestMatchers(
+                                "/api/application/accept/{application_id}", "/api/application/reject/{application_id}",
                                 "/api/coach/profile",
                                 "/api/client/my", "/api/client/quantity",
                                 "/api/scheduler")
@@ -70,7 +71,8 @@ public class SecurityConfig {
                                 "/api/personal-plan/is-active/{client_id}", "/api/personal-plan/deactivate/{plan_id}", "/api/personal-plan/create",
                                 "/api/personal-plan/all/{client_id}", "/api/personal-plan/delete/{id}", "/api/personal-plan/details/{id}",
                                 "/api/personal-plan/edit",
-                                "/api/workout/toggle-individual/{id}", "/api/workout/set-date")
+                                "/api/workout/toggle-individual/{id}", "/api/workout/set-date",
+                                "/api/diet/{client_id}", "/api/diet/update")
                         .hasAnyAuthority("ADMIN", "COACH")
 
                         // Admin and client endpoints

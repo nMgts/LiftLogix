@@ -1,7 +1,7 @@
 <div class="not-expanded-box" *ngIf="!isBoxExpanded">
   <h1 class="header" *ngIf="window.innerWidth > 650">Klienci</h1>
   <div class="content">
-    <img ngSrc="/icons/client.png" alt="Client Icon" class="client-image" width="136" height="136"/>
+    <img ngSrc="/icons/client.png" alt="Client Icon" class="client- " width="136" height="136"/>
     <span class="caption" *ngIf="window.innerWidth > 650"> {{ clientsQuantity }} </span>
   </div>
 </div>
@@ -30,7 +30,7 @@
         </div>
         <div class="client-icons">
           <mat-icon class="message" (click)="onOpenChat(client)">email</mat-icon>
-          <mat-icon class="delete">delete</mat-icon>
+          <mat-icon class="delete" (click)="removeClient(client)">delete</mat-icon>
         </div>
 
         <mat-icon class="more-options" (click)="toggleDropdown(client)">more_vert</mat-icon>
@@ -64,7 +64,7 @@
       <app-client-plan *ngSwitchCase="'plan'" (goBack)="goBack()" [isFullScreen]="isFullScreen"></app-client-plan>
       <app-client-results *ngSwitchCase="'results'" [clientId]="selectedClientId" (goBack)="goBack()"></app-client-results>
       <app-client-schedule *ngSwitchCase="'schedule'" (goBack)="goBack()" [isFullScreen]="isFullScreen"></app-client-schedule>
-      <app-client-diet *ngSwitchCase="'diet'" (goBack)="goBack()"></app-client-diet>
+      <app-client-diet *ngSwitchCase="'diet'" [clientId]="selectedClientId" (goBack)="goBack()"></app-client-diet>
     </ng-container>
   </div>
 </div>

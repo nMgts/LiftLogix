@@ -165,6 +165,11 @@ export class NavbarComponent implements OnInit {
     return !message.read && message.senderId !== localStorage.getItem('email');
   }
 
+  countUnreadMessages(): number {
+    console.log(this.messages);
+    return this.messages.filter(message => !message.read && message.senderId !== this.userEmail).length;
+  }
+
   getUserEntry(senderId: string, recipientId: string) {
     const myEmail = localStorage.getItem('email') || '';
     const email = myEmail === senderId ? recipientId : senderId;

@@ -9,7 +9,4 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Admin extends User {
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "admin_id", referencedColumnName = "id")
-    private Admin admin;
 }

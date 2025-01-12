@@ -10,6 +10,7 @@ export class ClientService {
   private baseUrl = 'http://localhost:8080/api/client';
   private getUrl = 'http://localhost:8080/api/client/my';
   private getNumberUrl = 'http://localhost:8080/api/client/quantity';
+  private unsubscribeUrl = 'http://localhost:8080/api/client/unsubscribe';
   private selectedClientIdSubject = new BehaviorSubject<number | null>(null);
   selectedClientId$ = this.selectedClientIdSubject.asObservable();
 
@@ -32,6 +33,11 @@ export class ClientService {
   getMyClientsQuantity(token: string): Observable<any> {
     const headers = this.createHeaders(token);
     return this.http.get<number>(this.getNumberUrl, { headers: headers });
+  }
+
+  removeClient(clientId: number, token: string): Observable<any> {
+    const headers = this.createHeaders(token);
+    return this.http.post<any>(`${this.unsubscribeUrl}/${clientId}`, {}, { headers: headers });
   }
 
   private createHeaders(token: string) {

@@ -78,7 +78,7 @@ export class WorkoutDayDetailsComponent {
           },
           (error) => {
             if (error.status === 409) {
-              this.openSnackBar('Konflikt: W podanym przedziale czasowym posiadasz już trening personalny.');
+              this.openSnackBar('Konflikt: W podanym przedziale czasowym posiadasz już trening personalny lub klient ma zapisany inny trening');
             } else {
               this.openSnackBar('Błąd przy zmianie daty treningu');
             }

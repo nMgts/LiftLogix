@@ -1,1 +1,114 @@
 <app-back-arrow (goBack)="onGoBack()"></app-back-arrow>
+
+<div class="component-container">
+  <div *ngIf="isLoading" class="loading-spinner">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!isLoading && errorMessage && !diet">
+    <p>{{ errorMessage }}</p>
+    <button mat-raised-button color="primary" (click)="createDiet()">Utwórz dietę</button>
+  </div>
+
+  <mat-checkbox *ngIf="!isLoading && diet" [(ngModel)]="useCalculator" (change)="onToggleCalculator()">
+    Użyj kalkulatora
+  </mat-checkbox>
+
+  <form *ngIf="useCalculator" [formGroup]="calculatorForm" class="calculator-form">
+    <mat-form-field appearance="fill">
+      <mat-label for="gender">Płeć:</mat-label>
+      <mat-select formControlName="gender" id="gender">
+        <mat-option value="male">Mężczyzna</mat-option>
+        <mat-option value="female">Kobieta</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label for="age">Wiek:</mat-label>
+      <input matInput type="number" formControlName="age" id="age" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label for="weight">Waga (kg):</mat-label>
+      <input matInput type="number" formControlName="weight" id="weight" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label for="height">Wzrost (cm):</mat-label>
+      <input matInput type="number" formControlName="height" id="height" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label for="activityLevel">Poziom aktywności:</mat-label>
+      <mat-select formControlName="activityLevel" id="activityLevel">
+        <mat-option *ngFor="let level of activityLevels" [value]="level.value">
+          {{ level.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label for="goal">Cel:</mat-label>
+      <mat-select formControlName="goal" id="goal">
+        <mat-option *ngFor="let goal of goals" [value]="goal.value">
+          {{ goal.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label for="proteinPercent">Białko (%):</mat-label>
+      <input matInput type="number" formControlName="proteinPercent" id="proteinPercent" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label for="fatPercent">Tłuszcze (%):</mat-label>
+      <input matInput type="number" formControlName="fatPercent" id="fatPercent" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label for="carbPercent">Węglowodany (%):</mat-label>
+      <input matInput type="number" formControlName="carbPercent" id="carbPercent" />
+    </mat-form-field>
+
+    <div *ngIf="calculatorForm.hasError('sumNotEqual')" class="error-message">
+      Suma procentów białka, tłuszczu i węglowodanów musi wynosić 100%.
+    </div>
+
+    <button mat-raised-button color="primary" (click)="calculateCalories()">Oblicz</button>
+  </form>
+
+  <div *ngIf="!isLoading && diet">
+    <form>
+      <mat-form-field appearance="fill">
+        <mat-label>Kalorie</mat-label>
+        <input matInput type="number" [value]="diet.calories" readonly />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Białka</mat-label>
+        <input matInput type="number" [(ngModel)]="diet.proteins" (ngModelChange)="updateCalories()" name="proteins" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Węglowodany</mat-label>
+        <input matInput type="number" [(ngModel)]="diet.carbs" (ngModelChange)="updateCalories()" name="carbs" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Tłuszcze</mat-label>
+        <input matInput type="number" [(ngModel)]="diet.fats" (ngModelChange)="updateCalories()" name="fats" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Notatki</mat-label>
+        <textarea matInput [(ngModel)]="diet.notes" name="notes"></textarea>
+      </mat-form-field>
+
+      <div class="button-row">
+        <button mat-raised-button color="primary" (click)="cancel()">Wróć</button>
+        <button mat-raised-button color="accent" (click)="updateDiet()">Zapisz</button>
+      </div>
+    </form>
+  </div>
+</div>

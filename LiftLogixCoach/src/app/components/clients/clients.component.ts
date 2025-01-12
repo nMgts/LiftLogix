@@ -14,6 +14,7 @@ import { Client } from "../../interfaces/Client";
 import { ClientService } from "../../services/client.service";
 import { ApplicationService } from "../../services/application.service";
 import { User } from "../../interfaces/User";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-clients',
@@ -44,7 +45,8 @@ export class ClientsComponent implements OnChanges {
     private clientService: ClientService,
     private sanitizer: DomSanitizer,
     private applicationService: ApplicationService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnChanges(): void {
@@ -161,6 +163,25 @@ export class ClientsComponent implements OnChanges {
       role: 'CLIENT'
     }
     this.openChat.emit(user);
+  }
+
+  removeClient(client: Client) {
+    const token = localStorage.getItem('token') || '';
+    this.clientService.removeClient(client.id, token).subscribe(
+      () => {
+        this.openSnackBar('Klient usunięty');
+      },
+      () => {
+        this.openSnackBar('Błąd podczas usuwania klienta');
+      }
+    )
+  }
+
+  private openSnackBar(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      verticalPosition: 'top'
+    });
   }
 
   goBack() {

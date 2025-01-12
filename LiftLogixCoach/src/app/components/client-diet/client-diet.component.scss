@@ -1,1 +1,34 @@
+.component-container {
+  padding: 20px;
+}
 
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.calculator-form {
+  margin-bottom: 20px;
+}
+
+.error-message {
+  margin-bottom: 5px;
+  color: red;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}

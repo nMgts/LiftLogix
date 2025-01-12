@@ -5,10 +5,17 @@ import com.liftlogix.dto.ClientDTO;
 import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.exceptions.ClientAlreadyAssignedException;
 import com.liftlogix.exceptions.ClientIsNotAssignedException;
+import com.liftlogix.models.plans.Mesocycle;
+import com.liftlogix.models.plans.Microcycle;
+import com.liftlogix.models.plans.PersonalPlan;
+import com.liftlogix.models.plans.Workout;
 import com.liftlogix.models.users.Client;
 import com.liftlogix.models.users.Coach;
+import com.liftlogix.models.users.User;
 import com.liftlogix.repositories.ClientRepository;
 import com.liftlogix.repositories.CoachRepository;
+import com.liftlogix.repositories.PersonalPlanRepository;
+import com.liftlogix.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -26,6 +33,10 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final CoachRepository coachRepository;
     private final ClientDTOMapper clientDTOMapper;
+    private final PersonalPlanRepository personalPlanRepository;
+    private final UserRepository userRepository;
+    private final PersonalPlanService personalPlanService;
+    private final CoachSchedulerService coachSchedulerService;
 
     public ClientDTO findClientById(long id) {
         Client client = clientRepository.findById(id).orElseThrow(
@@ -112,6 +123,25 @@ public class ClientService {
                 client.setCoach(null);
                 client.setAssignedToCoach(false);
                 clientRepository.save(client);
+
+                Optional<PersonalPlan> optPlan = personalPlanRepository.findByClientIdAndIsActiveTrue(client_id);
+
+                if (optPlan.isPresent()) {
+                    PersonalPlan plan = optPlan.get();
+                    User user = userRepository.findByEmail(username).orElseThrow(
+                            () -> new EntityNotFoundException("User not found")
+                    );
+                    for (Mesocycle mesocycle : plan.getMesocycles()) {
+                        for (Microcycle microcycle : mesocycle.getMicrocycles()) {
+                            for (Workout workout : microcycle.getWorkouts()) {
+                                coachSchedulerService.removeWorkout(workout.getId());
+                            }
+                        }
+                    }
+
+                    personalPlanService.deactivatePlan(plan.getId(), user);
+                }
+
             } else {
                 throw new ClientIsNotAssignedException("Client is not assigned");
             }

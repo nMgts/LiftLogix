@@ -9,6 +9,7 @@
 
     <div class="messages-menu">
       <i class="icon messages-icon" (click)="toggleMessages()">✉️</i>
+      <span *ngIf="countUnreadMessages() > 0" class="unread-count">{{ countUnreadMessages() }}</span>
       <div class="messages-dropdown" *ngIf="messagesOpen" #messagesDropdown (scroll)="onScroll($event)">
         <div class="message-item"
              *ngFor="let message of messages" [ngClass]="{'unread': getMessageClass(message) }"

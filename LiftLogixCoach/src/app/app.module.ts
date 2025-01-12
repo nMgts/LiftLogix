@@ -70,6 +70,7 @@ import { WorkoutDateChangeDialogComponent } from './components/workout-date-chan
 import { OptionsTooltipComponent } from './components/options-tooltip/options-tooltip.component';
 import { MatTooltip } from "@angular/material/tooltip";
 import { ChatComponent } from './components/chat/chat.component';
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [
@@ -147,7 +148,8 @@ import { ChatComponent } from './components/chat/chat.component';
         MatNativeDateModule,
         MatSlideToggle,
         MatTooltip,
-        DragDropModule
+        DragDropModule,
+        MatProgressSpinner
     ],
   providers: [
     provideAnimationsAsync(),
