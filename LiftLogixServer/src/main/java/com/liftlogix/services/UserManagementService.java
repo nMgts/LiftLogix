@@ -59,6 +59,7 @@ public class UserManagementService {
             long currentTime = System.currentTimeMillis();
             user.setCreated_at(new Date(currentTime));
             user.setUpdated_at(new Date(currentTime));
+            user.setTwoFactorAuth(false);
             User userResult = userRepository.save(user);
             UserDTO userDTO = userDTOMapper.mapUserToDTO(userResult);
             if (userResult.getId() > 0) {

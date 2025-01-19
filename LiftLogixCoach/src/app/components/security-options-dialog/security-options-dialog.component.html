@@ -42,7 +42,9 @@
 
     <div class="two-factor-auth-box" *ngIf="!showVerifyPasswordInput">
       <label>
-        <input type="checkbox">Włącz weryfikację dwuetapową</label>
+        <input type="checkbox" [checked]="isTwoFactorEnabled" (change)="toggleTwoFactorAuthentication()">
+        Włącz weryfikację dwuetapową
+      </label>
     </div>
   </div>
 

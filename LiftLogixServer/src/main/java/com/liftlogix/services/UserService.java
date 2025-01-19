@@ -122,4 +122,19 @@ public class UserService {
 
         return userDTOMapper.mapUserToDTO(user);
     }
+
+    public boolean checkIsTwoFactorEnabled(Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        return user.isTwoFactorAuth();
+    }
+
+    public void switchTwoFactorAuthentication(Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        user.setTwoFactorAuth(!user.isTwoFactorAuth());
+        userRepository.save(user);
+    }
 }

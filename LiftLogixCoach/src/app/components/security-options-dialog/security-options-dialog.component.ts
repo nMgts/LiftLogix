@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { MatDialogRef } from "@angular/material/dialog";
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from "@angular/forms";
 import { UserService } from "../../services/user.service";
@@ -11,12 +11,13 @@ import {MatSnackBar} from "@angular/material/snack-bar";
   templateUrl: './security-options-dialog.component.html',
   styleUrl: './security-options-dialog.component.scss'
 })
-export class SecurityOptionsDialogComponent {
+export class SecurityOptionsDialogComponent implements OnInit {
   passwordForm: FormGroup;
   errorMessage: string = '';
   showVerifyPasswordInput: boolean = false;
   showNewPasswordInput: boolean = false;
   passwordFieldType: string = 'password';
+  isTwoFactorEnabled: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<SecurityOptionsDialogComponent>,
@@ -33,6 +34,37 @@ export class SecurityOptionsDialogComponent {
     }, {
       validators: this.passwordMatchValidator.bind(this)
     });
+  }
+
+  ngOnInit() {
+    this.checkTwoFactorStatus();
+  }
+
+  checkTwoFactorStatus(): void {
+    const token = localStorage.getItem('token') || '';
+    this.userService.checkIsTwoFactorAuthenticationEnabled(token).subscribe(
+      (isEnabled) => {
+        this.isTwoFactorEnabled = isEnabled;
+      },
+      (error) => {
+        console.error('Błąd podczas sprawdzania statusu weryfikacji dwuetapowej', error);
+        this.showError('Nie udało się sprawdzić statusu weryfikacji dwuetapowej');
+      }
+    );
+  }
+
+  toggleTwoFactorAuthentication(): void {
+    const token = localStorage.getItem('token') || '';
+    this.userService.switchTwoFactorAuthentication(token).subscribe(
+      () => {
+        this.isTwoFactorEnabled = !this.isTwoFactorEnabled;
+        this.openSnackBar('Weryfikacja dwuetapowa została ' + (this.isTwoFactorEnabled ? 'włączona' : 'wyłączona'));
+      },
+      (error) => {
+        console.error('Błąd podczas zmiany ustawienia weryfikacji dwuetapowej', error);
+        this.showError('Nie udało się zmienić ustawienia weryfikacji dwuetapowej');
+      }
+    );
   }
 
   changePassword() {

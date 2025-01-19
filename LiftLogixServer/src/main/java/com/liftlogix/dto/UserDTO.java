@@ -17,6 +17,7 @@ public class UserDTO {
     private String last_name;
     private String email;
     private String role;
+    private boolean twoFactorAuth;
     private Boolean assignedToCoach;
     private Long coach_id;
 }

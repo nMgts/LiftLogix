@@ -37,6 +37,8 @@ public abstract class User implements UserDetails {
     private Date created_at;
     @Column(nullable = false)
     private Date updated_at;
+    @Column(nullable = false)
+    private boolean twoFactorAuth;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

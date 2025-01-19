@@ -77,14 +77,13 @@ public class UserController {
         }
     }
 
-    // przenieść do maili
     @PostMapping("/verify")
     public ResponseEntity<Void> verifyCode(@RequestBody Map<String, String> request) {
         String code = request.get("code");
         String email = request.get("email");
 
         Cache cache = cacheManager.getCache("verificationCodes");
-        Cache.ValueWrapper valueWrapper = cache.get(email); //cacheKey
+        Cache.ValueWrapper valueWrapper = cache.get(email);
 
         if (valueWrapper != null && valueWrapper.get().equals(code)) {
             return ResponseEntity.ok().build();
@@ -141,7 +140,30 @@ public class UserController {
             return ResponseEntity.ok().body(userService.findUserByEmail(email));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }catch (Exception e) {
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred");
+        }
+    }
+
+    @GetMapping("/check/two-factor-authentication")
+    public ResponseEntity<?> checkIsTwoFactorEnabled(Authentication authentication) {
+        try {
+            return ResponseEntity.ok().body(userService.checkIsTwoFactorEnabled(authentication));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred");
+        }
+    }
+
+    @PutMapping("/switch/two-factor-authentication")
+    public ResponseEntity<?> switchTwoFactor(Authentication authentication) {
+        try {
+            userService.switchTwoFactorAuthentication(authentication);
+            return ResponseEntity.ok().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred");
         }
     }

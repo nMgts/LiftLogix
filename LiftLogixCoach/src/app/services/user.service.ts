@@ -16,6 +16,8 @@ export class UserService {
   private updatePasswordUrl = 'http://localhost:8080/api/user/change-password';
   private getImageUrl = 'http://localhost:8080/api/user/image';
   private updateImageUrl = 'http://localhost:8080/api/user/image/update';
+  private checkTwoFactorUrl = 'http://localhost:8080/api/user/check/two-factor-authentication';
+  private switchTwoFactorUrl = 'http://localhost:8080/api/user/switch/two-factor-authentication'
 
   private imageUpdatedSource = new Subject<void>();
   imageUpdated$ = this.imageUpdatedSource.asObservable();
@@ -77,6 +79,16 @@ export class UserService {
   getUserByEmail(email: string, token: string): Observable<User> {
     const headers = this.createHeaders(token);
     return this.http.get<User>(`${this.baseUrl}/${email}`, { headers: headers });
+  }
+
+  checkIsTwoFactorAuthenticationEnabled(token: string): Observable<boolean> {
+    const headers = this.createHeaders(token);
+    return this.http.get<boolean>(this.checkTwoFactorUrl, { headers: headers });
+  }
+
+  switchTwoFactorAuthentication(token: string): Observable<void> {
+    const headers = this.createHeaders(token);
+    return this.http.put<void>(this.switchTwoFactorUrl, {}, { headers: headers });
   }
 
   private createHeaders(token: string) {
