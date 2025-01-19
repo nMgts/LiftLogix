@@ -53,7 +53,8 @@ public class SecurityConfig {
                                 "/api/application/accept/{application_id}", "/api/application/reject/{application_id}",
                                 "/api/coach/profile",
                                 "/api/client/my", "/api/client/quantity",
-                                "/api/scheduler")
+                                "/api/scheduler",
+                                "/api/note/my", "/api/note/update", "/api/note/delete/{id}")
                         .hasAuthority("COACH")
 
                         // Client endpoints

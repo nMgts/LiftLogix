@@ -32,6 +32,12 @@ h1 {
   }
 }
 
+@media (max-width: 649px) {
+  .content {
+    margin-right: 10px;
+  }
+}
+
 .workout-creator-image {
   max-width: 70%;
   height: auto;

@@ -1,0 +1,12 @@
+<div class="not-expanded-box" *ngIf="!isBoxExpanded">
+  <h1 class="header" *ngIf="window.innerWidth > 650">Raporty</h1>
+  <div class="content">
+    <img ngSrc="/icons/report.png" alt="Workout creator Icon" class="workout-creator-image" width="136" height="136"/>
+  </div>
+</div>
+
+<button *ngIf="isBoxExpanded" (click)="close($event)" class="close-button">&times;</button>
+
+<div class="expanded-box" *ngIf="isBoxExpanded">
+
+</div>

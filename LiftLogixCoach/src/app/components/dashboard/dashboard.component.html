@@ -57,13 +57,16 @@
                }"
                (click)="expandBox('row2-col2')"
                (scroll)="onScroll()">
+            <app-reports [isBoxExpanded]="expandedBox==='row2-col2'" (closeBox)="closeBox('row2-col2')"></app-reports>
           </div>
           <div class="row2-col3 box"
                [ngClass]="{
                'expanded': expandedBox === 'row2-col3',
                'hidden': expandedBox && expandedBox !== 'row2-col3'}"
                (click)="expandBox('row2-col3')"
-               (scroll)="onScroll()"></div>
+               (scroll)="onScroll()">
+            <app-tutorial [isBoxExpanded]="expandedBox==='row2-col3'" (closeBox)="closeBox('row2-col3')"></app-tutorial>
+          </div>
         </div>
       </div>
 
@@ -86,8 +89,9 @@
              'expanded': expandedBox === 'row-bottom',
              'hidden': expandedBox && expandedBox !== 'row-bottom'
              }"
-             (click)="expandBox('row-bottom')"
-             (scroll)="onScroll()"></div>
+             (scroll)="onScroll()">
+          <app-notes></app-notes>
+        </div>
       </div>
 
     </div>

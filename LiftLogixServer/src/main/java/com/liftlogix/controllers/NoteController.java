@@ -1,8 +1,8 @@
 package com.liftlogix.controllers;
 
-import com.liftlogix.dto.DietDTO;
+import com.liftlogix.dto.NoteDTO;
 import com.liftlogix.exceptions.AuthorizationException;
-import com.liftlogix.services.DietService;
+import com.liftlogix.services.NoteService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,15 +11,26 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/diet")
+@RequestMapping("/api/note")
 @AllArgsConstructor
-public class DietController {
-    private final DietService dietService;
+public class NoteController {
+    private final NoteService noteService;
 
-    @GetMapping("/{client_id}")
-    public ResponseEntity<?> getClientDiet(@PathVariable long client_id, Authentication authentication) {
+    @GetMapping("/my")
+    public ResponseEntity<?> getMyNotes(Authentication authentication) {
         try {
-            return ResponseEntity.ok(dietService.getClientDiet(client_id, authentication));
+            return ResponseEntity.ok(noteService.getNotesByCoach(authentication));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateNote(@RequestBody NoteDTO note, Authentication authentication) {
+        try {
+            return ResponseEntity.ok(noteService.updateNote(note, authentication));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (AuthorizationException e) {
@@ -29,10 +40,11 @@ public class DietController {
         }
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<?> updateDiet(@RequestBody DietDTO diet, Authentication authentication) {
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<?> deleteNote(@PathVariable Long id, Authentication authentication) {
         try {
-            return ResponseEntity.ok(dietService.updateDiet(diet, authentication));
+            noteService.deleteNote(id, authentication);
+            return ResponseEntity.ok().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (AuthorizationException e) {

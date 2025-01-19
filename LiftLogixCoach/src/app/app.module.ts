@@ -71,6 +71,9 @@ import { OptionsTooltipComponent } from './components/options-tooltip/options-to
 import { MatTooltip } from "@angular/material/tooltip";
 import { ChatComponent } from './components/chat/chat.component';
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import { TutorialComponent } from './components/tutorial/tutorial.component';
+import { ReportsComponent } from './components/reports/reports.component';
+import { NotesComponent } from './components/notes/notes.component';
 
 @NgModule({
   declarations: [
@@ -115,7 +118,10 @@ import {MatProgressSpinner} from "@angular/material/progress-spinner";
     WorkoutDayDetailsComponent,
     WorkoutDateChangeDialogComponent,
     OptionsTooltipComponent,
-    ChatComponent
+    ChatComponent,
+    TutorialComponent,
+    ReportsComponent,
+    NotesComponent
   ],
     imports: [
         BrowserModule,

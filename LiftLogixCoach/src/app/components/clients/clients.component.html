@@ -1,7 +1,7 @@
 <div class="not-expanded-box" *ngIf="!isBoxExpanded">
   <h1 class="header" *ngIf="window.innerWidth > 650">Klienci</h1>
   <div class="content">
-    <img ngSrc="/icons/client.png" alt="Client Icon" class="client- " width="136" height="136"/>
+    <img ngSrc="/icons/client.png" alt="Client Icon" class="client-image" width="136" height="136"/>
     <span class="caption" *ngIf="window.innerWidth > 650"> {{ clientsQuantity }} </span>
   </div>
 </div>
@@ -50,7 +50,10 @@
 
   <div class="right-side" *ngIf="!selectedComponent && window.innerWidth >= 1024">
     <button (click)="close($event)" class="close-button">&times;</button>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    <div class="logo">
+      <img src="/images/logo-light.svg" alt="LiftLogixCoach Logo" class="logo" height="500" width="500">
+      <p> Zarządzaj swoimi klientami z aplikacją LiftLogix! </p>
+    </div>
   </div>
 
   <div class="right-side" *ngIf="selectedComponent"

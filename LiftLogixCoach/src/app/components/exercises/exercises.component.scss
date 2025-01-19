@@ -37,6 +37,13 @@ h1.header {
   }
 }
 
+@media (max-width: 649px) {
+  .content {
+    height: 100%;
+    margin-bottom: 10px;
+  }
+}
+
 .exercise-image {
   max-width: 70%;
   height: auto;
