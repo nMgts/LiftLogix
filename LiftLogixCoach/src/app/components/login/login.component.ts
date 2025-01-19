@@ -26,25 +26,50 @@ export class LoginComponent {
     }
     try {
 
-      const { success, token, role, id, email, firstName, lastName, error } = await this.authService.login(this.email, this.password, this.rememberMe);
+      let loginResult = await this.authService.login(this.email, this.password, this.rememberMe, '');
 
-      if (success) {
-        localStorage.setItem('token', token);
-        localStorage.setItem('role', role);
+      if (loginResult.success) {
+        localStorage.setItem('token', loginResult.token);
+        localStorage.setItem('role', loginResult.role);
         localStorage.setItem('rememberMe', String(this.rememberMe));
-        localStorage.setItem('id', id);
-        localStorage.setItem('email', email);
+        localStorage.setItem('id', loginResult.id);
+        localStorage.setItem('email', loginResult.email);
 
-        if (role === "COACH") {
+        if (loginResult.role === "COACH") {
           await this.router.navigate(['/dashboard']);
-        } else if (role === "ADMIN") {
+        } else if (loginResult.role === "ADMIN") {
           await this.router.navigate(['/dashboard-admin']);
         }
       } else {
-        if (error === 'User is not confirmed') {
+        if (loginResult.error === 'User is not confirmed') {
+
           this.showResendConfirmation = true;
           this.showError('Proszę potwierdzić adres e-mail.');
-        } else {
+
+        } else if (loginResult.error === 'Two factor authentication required') {
+
+          const authCode = prompt('Wprowadź kod autentykacyjny:');
+          if (authCode) {
+            loginResult = await this.authService.login(this.email, this.password, this.rememberMe, authCode);
+            if (loginResult.success) {
+              localStorage.setItem('token', loginResult.token);
+              localStorage.setItem('role', loginResult.role);
+              localStorage.setItem('rememberMe', String(this.rememberMe));
+              localStorage.setItem('id', loginResult.id);
+              localStorage.setItem('email', loginResult.email);
+
+              if (loginResult.role === "COACH") {
+                await this.router.navigate(['/dashboard']);
+              } else if (loginResult.role === "ADMIN") {
+                await this.router.navigate(['/dashboard-admin']);
+              }
+            } else {
+              this.showError('Błędny kod autentykacyjny.');
+            }
+          }
+
+        }
+        else {
           this.showError('Błędne dane');
         }
       }

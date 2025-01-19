@@ -148,9 +148,7 @@ public class UserController {
     @GetMapping("/check/two-factor-authentication")
     public ResponseEntity<?> checkIsTwoFactorEnabled(Authentication authentication) {
         try {
-            return ResponseEntity.ok().body(userService.checkIsTwoFactorEnabled(authentication));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.ok().body(userService.checkIsTwoFactorEnabled(authentication.getName()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred");
         }

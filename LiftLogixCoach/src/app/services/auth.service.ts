@@ -23,8 +23,8 @@ export class AuthService {
     }
   }
 
-  async login(email: string, password: string, rememberMeChecked: boolean): Promise<any> {
-    const response = await firstValueFrom(this.http.post<any>(this.loginUrl, { email, password, rememberMeChecked }, { withCredentials: true }));
+  async login(email: string, password: string, rememberMeChecked: boolean, authCode: string): Promise<any> {
+    const response = await firstValueFrom(this.http.post<any>(this.loginUrl, { email, password, rememberMeChecked, authCode }, { withCredentials: true }));
     if (response.statusCode === 200 && (response.role === "COACH" || response.role === "ADMIN")) {
       return { success: true, token: response.token, role: response.role, id: response.user_id, email: response.email };
     } else {

@@ -31,6 +31,7 @@ public class UserManagementService {
     private final PasswordEncoder passwordEncoder;
     private final UserDTOMapper userDTOMapper;
     private final EmailService emailService;
+    private final UserService userService;
     private final CoachSchedulerService coachSchedulerService;
 
     public ReqRes register(ReqRes registrationRequest, Role role) {
@@ -115,6 +116,24 @@ public class UserManagementService {
             resp.setError(e.getMessage());
         }
         return resp;
+    }
+
+    public ReqRes handle2FA(String email) {
+        ReqRes authRequiredResponse = new ReqRes();
+        authRequiredResponse.setStatusCode(404);
+        authRequiredResponse.setError("Two factor authentication required");
+
+        userService.generate2FACode(email);
+        emailService.send2FACode(email);
+
+        return authRequiredResponse;
+    }
+
+    public ReqRes handleWrong2FACode() {
+        ReqRes wrong2FACodeResponse = new ReqRes();
+        wrong2FACodeResponse.setStatusCode(404);
+        wrong2FACodeResponse.setError("Wrong 2FA code");
+        return wrong2FACodeResponse;
     }
 
     public void logout(HttpServletRequest request, String refreshToken) {

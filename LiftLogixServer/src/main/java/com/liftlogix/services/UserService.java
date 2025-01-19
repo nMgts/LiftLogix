@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -123,11 +124,9 @@ public class UserService {
         return userDTOMapper.mapUserToDTO(user);
     }
 
-    public boolean checkIsTwoFactorEnabled(Authentication authentication) {
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-        return user.isTwoFactorAuth();
+    public boolean checkIsTwoFactorEnabled(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.map(User::isTwoFactorAuth).orElse(false);
     }
 
     public void switchTwoFactorAuthentication(Authentication authentication) {
@@ -136,5 +135,28 @@ public class UserService {
 
         user.setTwoFactorAuth(!user.isTwoFactorAuth());
         userRepository.save(user);
+    }
+
+    public Integer get2FACode(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.map(User::getSecret).orElse(null);
+    }
+
+    public void generate2FACode(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            SecureRandom random = new SecureRandom();
+            int code = random.nextInt(900000) + 100000;
+            user.get().setSecret(code);
+            userRepository.save(user.get());
+        }
+    }
+
+    public void clear2FACode(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            user.get().setSecret(null);
+            userRepository.save(user.get());
+        }
     }
 }

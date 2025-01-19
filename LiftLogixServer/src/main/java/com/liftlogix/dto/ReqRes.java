@@ -26,4 +26,5 @@ public class ReqRes {
     private boolean isRememberMeChecked;
     private UserDTO user;
     private List<UserDTO> userList;
+    private String authCode;
 }

@@ -56,6 +56,18 @@ public class EmailService {
         return verificationCode;
     }
 
+    public void send2FACode(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            int code = user.get().getSecret();
+            SimpleMailMessage mailMessage = new SimpleMailMessage();
+            mailMessage.setTo(email);
+            mailMessage.setSubject("Weryfikacja dwuetapowa");
+            mailMessage.setText("Twój kod weryfikacjny to: " + code);
+            mailSender.send(mailMessage);
+        }
+    }
+
     @CachePut(value = "verificationCodes", key = "#email")
     public String saveVerificationCode(String email, String code) {
         return code;

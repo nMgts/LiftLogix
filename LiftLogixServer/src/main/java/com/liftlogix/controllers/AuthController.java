@@ -3,6 +3,7 @@ package com.liftlogix.controllers;
 import com.liftlogix.dto.ReqRes;
 import com.liftlogix.services.EmailService;
 import com.liftlogix.services.UserManagementService;
+import com.liftlogix.services.UserService;
 import com.liftlogix.types.Role;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class AuthController {
     private final UserManagementService userManagementService;
+    private final UserService userService;
 
     @PostMapping("/register/coach")
     public ResponseEntity<ReqRes> registerCoach(@RequestBody ReqRes req) {
@@ -35,15 +37,27 @@ public class AuthController {
     @PostMapping("/login")
     @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
     public ResponseEntity<ReqRes> login(@RequestBody ReqRes req, HttpServletResponse response) {
+
         ReqRes loginResponse = userManagementService.login(req);
 
         if (loginResponse.getStatusCode() == 200) {
+            if (req.getAuthCode().isEmpty() && userService.checkIsTwoFactorEnabled(req.getEmail())) {
+                return ResponseEntity.ok(userManagementService.handle2FA(loginResponse.getEmail()));
+            }
+            Integer code = userService.get2FACode(req.getEmail());
+            if (code != null) {
+                if (!req.getAuthCode().equals(code.toString())) {
+                    return ResponseEntity.ok(userManagementService.handleWrong2FACode());
+                }
+            }
+
             Cookie cookieRefreshToken = new Cookie("refreshToken", loginResponse.getRefreshToken());
             cookieRefreshToken.setHttpOnly(true);
             cookieRefreshToken.setPath("/");
             //cookieRefreshToken.setDomain("localhost");
             cookieRefreshToken.setMaxAge(req.isRememberMeChecked() ? 2592000 : 86400);
             response.addCookie(cookieRefreshToken);
+            userService.clear2FACode(req.getEmail());
         }
         return ResponseEntity.ok(loginResponse);
     }
