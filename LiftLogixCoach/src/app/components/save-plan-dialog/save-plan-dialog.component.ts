@@ -11,6 +11,7 @@ import { Client } from "../../interfaces/Client";
 import { PersonalPlan } from "../../interfaces/PersonalPlan";
 import { WorkoutUnit } from "../../interfaces/WorkoutUnit";
 import _ from "lodash";
+import { DateAdapter } from "@angular/material/core";
 
 @Component({
   selector: 'app-save-plan-dialog',
@@ -30,7 +31,9 @@ export class SavePlanDialogComponent {
     private planService: PlanService,
     private personalPlanService: PersonalPlanService,
     private snackBar: MatSnackBar,
+    private dateAdapter: DateAdapter<Date>,
   ) {
+    this.dateAdapter.setLocale('pl');
     this.savePlanForm = this.fb.group({
       planName: [this.data.planName || '', Validators.required],
       isPublic: [false],
@@ -128,12 +131,22 @@ export class SavePlanDialogComponent {
   }
 
   dateValidator(control: AbstractControl) {
-    const inputDate = new Date(control.value);
+    const inputValue = control.value;
+
+    if (!inputValue) return null;
+
+    const inputDate = inputValue instanceof Date ? inputValue : new Date(inputValue);
+    console.log('Parsed Date:', inputDate);
+
+    if (isNaN(inputDate.getTime())) {
+      return { invalidDate: true };
+    }
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     if (inputDate < today) {
-      return { 'invalidDate': true };
+      return { invalidDate: true };
     }
     return null;
   }

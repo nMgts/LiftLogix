@@ -1,11 +1,11 @@
-import {Component, Input, OnInit, ViewContainerRef} from '@angular/core';
+import {Component, HostListener, Input, OnInit, ViewContainerRef} from '@angular/core';
 import { addDays, format, startOfWeek } from "date-fns";
 import { SchedulerService } from "../../services/scheduler.service";
 import { SchedulerItem } from "../../interfaces/SchedulerItem";
 import { CoachSchedulerService } from "../../services/coach-scheduler.service";
-import {Overlay, OverlayRef} from "@angular/cdk/overlay";
-import {ComponentPortal} from "@angular/cdk/portal";
-import {OptionsTooltipComponent} from "../options-tooltip/options-tooltip.component";
+import { Overlay, OverlayRef } from "@angular/cdk/overlay";
+import { ComponentPortal } from "@angular/cdk/portal";
+import { OptionsTooltipComponent } from "../options-tooltip/options-tooltip.component";
 
 @Component({
   selector: 'app-weekly-schedule',
@@ -24,6 +24,9 @@ export class WeeklyScheduleComponent implements OnInit {
 
   protected readonly window = window;
   private overlayRef: OverlayRef | null = null;
+
+  protected readonly parseFloat = parseFloat;
+  protected readonly console = console;
 
   get daysOfWeek() {
     return this.isBoxExpanded
@@ -47,6 +50,11 @@ export class WeeklyScheduleComponent implements OnInit {
       this.loadSchedulerData();
     });
     this.schedulerService.triggerLoadScheduler();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event): void {
+    this.generateHours();
   }
 
   loadSchedulerData() {
@@ -137,7 +145,29 @@ export class WeeklyScheduleComponent implements OnInit {
       currentHour--;
     }
 
-    let endHour = currentHour + 12;
+    const height = window.innerHeight;
+    const width = window.innerWidth;
+    let hoursToShow = 12;
+    if (height > 780 && width > 1023) {
+      hoursToShow = 14;
+    }
+    if (height > 849 && width > 1023) {
+      hoursToShow = 16;
+    }
+    if (height > 919 && width > 1023) {
+      hoursToShow = 18;
+    }
+    if (height > 989 && width > 1023) {
+      hoursToShow = 20;
+    }
+    if (height > 1059 && width > 1023) {
+      hoursToShow = 22;
+    }
+    if (height > 1129 && width > 1023) {
+      hoursToShow = 24;
+    }
+
+    let endHour = currentHour + hoursToShow;
 
     if (endHour >= 24) {
       currentHour = currentHour - endHour % 24;
@@ -250,7 +280,4 @@ export class WeeklyScheduleComponent implements OnInit {
       itemDate.getMonth() === dayDate.getMonth() &&
       itemDate.getFullYear() === dayDate.getFullYear();
   }
-
-  protected readonly parseFloat = parseFloat;
-  protected readonly console = console;
 }

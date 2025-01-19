@@ -18,9 +18,6 @@ public class Note {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String text;
 
-    @Column(nullable = false)
-    private int position;
-
     @ManyToOne
     @JoinColumn(name = "coach_id", referencedColumnName = "id", nullable = false)
     private Coach coach;

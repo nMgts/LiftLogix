@@ -1,21 +1,29 @@
 <div class="box-container">
-  <div class="notes-container">
-    <div *ngFor="let note of notes" class="note-card">
+  <h1 class="header" *ngIf="window.innerWidth>650">Notatki</h1>
+
+  <div class="notes-container" #notesContainer #elem (scroll)="onScroll($event)">
+    <div *ngFor="let note of notes" class="note-card" (click)="startEditing(note, $event)">
 
       <div class="note-actions">
         <mat-icon class="delete-icon" (click)="deleteNote(note.id)">delete</mat-icon>
       </div>
 
-      <div *ngIf="editingNoteId !== note.id" (click)="startEditing(note)" class="note-text">
-        {{ note.text | slice: 0:160 }}{{ note.text.length > 160 ? '...' : '' }}
+      <div *ngIf="editingNoteId !== note.id" class="note-text" (scroll)="onScroll($event)" #elem>
+        {{ note.text }}
       </div>
       <div *ngIf="editingNoteId === note.id" class="edit-container">
-        <textarea [(ngModel)]="editedText" rows="3"></textarea>
+        <textarea [(ngModel)]="editedText" rows="3"
+                  (scroll)="onScroll($event)" #elem #textarea required
+                  (blur)="cancelEditing(note, $event)"></textarea>
         <div class="button-container">
-          <button (click)="saveNote(note)">Zapisz</button>
-          <button (click)="cancelEditing()">Anuluj</button>
+          <button (click)="saveNote(note, $event)">Zapisz</button>
+          <button (click)="cancelEditing(note, $event)">Anuluj</button>
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="button-card" (click)="addNote($event)">
+    Dodaj
   </div>
 </div>

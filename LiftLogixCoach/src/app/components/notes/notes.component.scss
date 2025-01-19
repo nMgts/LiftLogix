@@ -1,7 +1,14 @@
 .box-container {
   font-size: 12px;
+  height: 100%;
   position: relative;
-  max-width: 100%;
+}
+
+h1.header {
+  font-size: 16px;
+  margin-bottom: 10px;
+  text-align: center;
+  color: aliceblue;
 }
 
 .notes-container {
@@ -9,25 +16,41 @@
   flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
+  overflow-y: scroll;
+  max-height: 40vh;
+  margin-bottom: 10px;
+
+  @media (min-height: 860px) {
+    max-height: 50vh;
+  }
+
+  @media (max-width: 650px) {
+    margin-top: 10px;
+  }
 }
 
 .note-card {
-  height: 90px;
-  width: 100%;
-  padding: 10px 35px 10px 10px;
+  height: 85px;
+  width: 84%;
+  margin: 0 auto;
+  padding: 10px 30px 5px 10px;
   border: 1px solid #ddd;
   border-radius: 20px;
   background-color: #f9f9f9;
   overflow-wrap: break-word;
   box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
   text-align: justify;
   transition: transform 0.2s;
   position: relative;
+  cursor: pointer;
 }
 
 .note-card:hover {
-  transform: scale(1.02);
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.note-card:hover textarea {
+  background-color: unset;
 }
 
 .note-actions {
@@ -46,9 +69,16 @@
 }
 
 .note-text {
+  width: 98%;
   font-size: 14px;
   color: #333;
-  cursor: pointer;
+  overflow-y: auto;
+  max-height: 100%;
+  padding-right: 7px;
+
+  @media (max-width: 650px) {
+    font-size: 12px;
+  }
 }
 
 .edit-container {
@@ -59,17 +89,32 @@
 
 textarea {
   width: 100%;
+  height: 90%;
   font-size: 14px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border: none;
   resize: none;
+  margin: 0;
+  font-family: inherit;
+  background-color: #f9f9f9;
+  overflow-y: scroll;
+
+  @media (max-width: 650px) {
+    font-size: 12px;
+  }
+}
+
+textarea:focus {
+  border: none;
+  outline: none;
+  font-style: inherit;
+  font-family: inherit;
 }
 
 .button-container {
   display: flex;
   justify-content: flex-end;
   gap: 6px;
+  z-index: 100;
 }
 
 button {
@@ -93,4 +138,30 @@ button:last-child {
 
 button:last-child:hover {
   background-color: #d32f2f;
+}
+
+.button-card {
+  height: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 84%;
+  margin: 0 auto;
+  padding: 5px 30px 5px 10px;
+  position: relative;
+  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+  background-color: rgba(185, 0, 338, 0.3);
+  justify-content: center;
+  cursor: pointer;
+  color: aliceblue;
+  font-size: 14px;
+
+  @media (max-width: 650px) {
+    font-size: 12px;
+  }
+}
+
+.button-card:hover {
+  background-color: rgba(185, 0, 338, 0.4);
 }

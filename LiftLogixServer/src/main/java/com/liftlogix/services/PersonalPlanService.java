@@ -13,6 +13,7 @@ import com.liftlogix.repositories.ClientRepository;
 import com.liftlogix.repositories.PersonalPlanRepository;
 import com.liftlogix.types.Role;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -113,6 +114,7 @@ public class PersonalPlanService {
         personalPlanRepository.save(plan);
     }
 
+    @Transactional
     public PersonalPlanDTO createPersonalPlan(PersonalPlanDTO planDTO, User user) {
         setWorkoutDatesForPlan(planDTO);
         PersonalPlan plan = personalPlanDTOMapper.mapDTOToEntity(planDTO);

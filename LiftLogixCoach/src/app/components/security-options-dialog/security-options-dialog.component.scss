@@ -17,12 +17,20 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  position: relative;
 }
 
 h1 {
-  color: white;
+  color: aliceblue;
+  margin: 10px auto;
+}
+
+.options {
+  display: flex;
+  margin-top: 10px;
+  flex-direction: column;
+  gap: 20px;
+  padding: 10px;
 }
 
 .error-box {
@@ -59,13 +67,17 @@ input[type="password"]:focus {
 }
 
 input::placeholder {
-  color: white;
+  color: aliceblue;
+}
+
+label {
+  color: aliceblue;
 }
 
 button {
   border: 1px solid darkviolet;
   background-color: transparent;
-  color: white;
+  color: aliceblue;
   height: 30px;
   width: 100px;
   border-radius: 5px;
@@ -82,4 +94,9 @@ button:hover {
   justify-content: center;
   width: 100%;
   gap: 20px;
+}
+
+.down {
+  position: absolute;
+  bottom: 15px;
 }
