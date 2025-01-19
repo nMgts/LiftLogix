@@ -1,1 +1,66 @@
-<p>functionality works!</p>
+<div class="about-page" (click)="closeMenu()">
+  <a routerLink="/" class="back-link">
+    <i class="bx bxs-left-arrow-alt"></i>
+  </a>
+
+  <nav class="navbar">
+    <img ngSrc="/images/logo-light.svg" alt="LiftLogixCoach Logo" class="logo" height="128" width="128">
+
+    <div class="icon-container">
+      <mat-icon class="icon" (click)="toggleMenu($event)">menu</mat-icon>
+      <a href="/login" class="icon"><mat-icon>login</mat-icon></a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="/about">O nas</a></li>
+      <li><a href="/functionality" class="active">Funkcjonalności</a></li>
+      <li><a href="/contact">Kontakt</a></li>
+      <li><a href="/login">Zaloguj</a></li>
+    </ul>
+    <div class="dropdown-menu" *ngIf="isMenuOpen">
+      <ul>
+        <li><a href="/about">O nas</a></li>
+        <li><a href="/functionality">Funkcjonalności</a></li>
+        <li><a href="/contact">Kontakt</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="content" #elem (scroll)="onScroll($event)">
+    <h1>Funkcjonalności</h1>
+    <p>
+      Nasza aplikacja jest zaprojektowana z myślą o maksymalnej efektywności pracy trenerów i sportowców. Poniżej przedstawiamy najważniejsze funkcje systemu:
+    </p>
+
+    <ul class="features-list">
+      <li>
+        <strong>1. Zarządzanie klientami:</strong> Możliwość dodawania i edytowania profili klientów, w tym danych osobowych, historii treningowej oraz preferencji treningowych.
+      </li>
+      <li>
+        <strong>2. Planowanie treningów:</strong> Intuicyjny harmonogram, który pozwala na tworzenie planów treningowych dla pojedynczych klientów lub całych grup.
+      </li>
+      <li>
+        <strong>3. Monitorowanie postępów:</strong> Automatyczne śledzenie wyników, takich jak podnoszone ciężary, ilość powtórzeń czy czas trwania treningów.
+      </li>
+      <li>
+        <strong>4. Personalizacja ćwiczeń:</strong> Rozbudowana biblioteka ćwiczeń z możliwością filtrowania po typach, partiach ciała oraz trudności.
+      </li>
+      <li>
+        <strong>5. Współpraca z innymi trenerami:</strong> Udostępnianie planów treningowych i notatek współpracownikom w ramach zespołu.
+      </li>
+      <li>
+        <strong>6. Powiadomienia i przypomnienia:</strong> System powiadomień, który przypomina o zaplanowanych treningach, nowych wiadomościach czy aktualizacjach w harmonogramie.
+      </li>
+      <li>
+        <strong>7. Analiza danych:</strong> Szczegółowe raporty i statystyki pomagające ocenić efektywność treningów i postępy klientów.
+      </li>
+      <li>
+        <strong>8. Obsługa wielojęzyczna:</strong> Możliwość korzystania z aplikacji w różnych językach, dostosowana do potrzeb globalnych użytkowników.
+      </li>
+    </ul>
+
+    <p>
+      Każda z powyższych funkcji została zaprojektowana w celu zwiększenia efektywności i satysfakcji z korzystania z naszej aplikacji. Sprawdź, jak LiftLogixCoach może usprawnić Twoją codzienną pracę!
+    </p>
+  </div>
+</div>

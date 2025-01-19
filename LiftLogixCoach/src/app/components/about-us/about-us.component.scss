@@ -42,7 +42,7 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0);
 }
 
 .navbar .logo {
@@ -123,7 +123,6 @@ li:hover {
   background-color: rgba(0, 0, 0, 0.5);
   padding: 20px;
   border-radius: 10px;
-  z-index: 1020;
 }
 
 .content h1 {
@@ -213,16 +212,5 @@ li:hover {
 
   .show {
     display: flex;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-content {
-    font-size: 14px;
-  }
-
-  .btn {
-    padding: 6px 12px;
-    font-size: 12px;
   }
 }
