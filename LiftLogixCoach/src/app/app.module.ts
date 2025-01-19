@@ -74,6 +74,7 @@ import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import { TutorialComponent } from './components/tutorial/tutorial.component';
 import { ReportsComponent } from './components/reports/reports.component';
 import { NotesComponent } from './components/notes/notes.component';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   declarations: [
@@ -121,7 +122,8 @@ import { NotesComponent } from './components/notes/notes.component';
     ChatComponent,
     TutorialComponent,
     ReportsComponent,
-    NotesComponent
+    NotesComponent,
+    ConfirmDialogComponent
   ],
     imports: [
         BrowserModule,

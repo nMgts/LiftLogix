@@ -1,7 +1,9 @@
 package com.liftlogix.services;
 
 import com.liftlogix.convert.ClientDTOMapper;
+import com.liftlogix.dto.BasicPersonalPlanDTO;
 import com.liftlogix.dto.ClientDTO;
+import com.liftlogix.dto.PersonalPlanDTO;
 import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.exceptions.ClientAlreadyAssignedException;
 import com.liftlogix.exceptions.ClientIsNotAssignedException;
@@ -17,6 +19,7 @@ import com.liftlogix.repositories.CoachRepository;
 import com.liftlogix.repositories.PersonalPlanRepository;
 import com.liftlogix.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,6 +40,7 @@ public class ClientService {
     private final UserRepository userRepository;
     private final PersonalPlanService personalPlanService;
     private final CoachSchedulerService coachSchedulerService;
+    private final DietService dietService;
 
     public ClientDTO findClientById(long id) {
         Client client = clientRepository.findById(id).orElseThrow(
@@ -101,6 +105,7 @@ public class ClientService {
         }
     }
 
+    @Transactional
     public void unsubscribeClientFromCoach(long client_id, Authentication authentication) {
         Optional<Client> opt = clientRepository.findById(client_id);
         if (opt.isPresent()) {
@@ -120,17 +125,13 @@ public class ClientService {
                     throw new AuthorizationException("This is not your subscription");
                 }
 
-                client.setCoach(null);
-                client.setAssignedToCoach(false);
-                clientRepository.save(client);
-
                 Optional<PersonalPlan> optPlan = personalPlanRepository.findByClientIdAndIsActiveTrue(client_id);
+
+                User user = userRepository.findByEmail(username).orElseThrow(
+                        () -> new EntityNotFoundException("User not found"));
 
                 if (optPlan.isPresent()) {
                     PersonalPlan plan = optPlan.get();
-                    User user = userRepository.findByEmail(username).orElseThrow(
-                            () -> new EntityNotFoundException("User not found")
-                    );
                     for (Mesocycle mesocycle : plan.getMesocycles()) {
                         for (Microcycle microcycle : mesocycle.getMicrocycles()) {
                             for (Workout workout : microcycle.getWorkouts()) {
@@ -138,14 +139,24 @@ public class ClientService {
                             }
                         }
                     }
-
                     personalPlanService.deactivatePlan(plan.getId(), user);
                 }
 
+                List<BasicPersonalPlanDTO> plans = personalPlanService.getAllClientPlans(client_id, user);
+                for (BasicPersonalPlanDTO plan:plans) {
+                    personalPlanService.deletePlan(plan.getId(), user);
+                }
+
+                dietService.deleteDiet(client_id);
+
+                client.setCoach(null);
+                client.setAssignedToCoach(false);
+                clientRepository.save(client);
             } else {
                 throw new ClientIsNotAssignedException("Client is not assigned");
             }
+        } else {
+            throw new EntityNotFoundException("Client not found");
         }
-        throw new EntityNotFoundException("Client not found");
     }
 }

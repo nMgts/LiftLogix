@@ -15,6 +15,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class DietService {
@@ -49,6 +51,11 @@ public class DietService {
 
         dietRepository.save(diet);
         return dietDTO;
+    }
+
+    public void deleteDiet(long clientId) {
+        Optional<Diet> diet = dietRepository.findByClientId(clientId);
+        diet.ifPresent(dietRepository::delete);
     }
 
     private boolean checkAccess(Authentication authentication, long clientId) {

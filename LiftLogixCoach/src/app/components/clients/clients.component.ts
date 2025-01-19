@@ -14,7 +14,10 @@ import { Client } from "../../interfaces/Client";
 import { ClientService } from "../../services/client.service";
 import { ApplicationService } from "../../services/application.service";
 import { User } from "../../interfaces/User";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { SchedulerService } from "../../services/scheduler.service";
+import { MatDialog } from "@angular/material/dialog";
+import { ConfirmDialogComponent } from "../confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: 'app-clients',
@@ -45,8 +48,10 @@ export class ClientsComponent implements OnChanges {
     private clientService: ClientService,
     private sanitizer: DomSanitizer,
     private applicationService: ApplicationService,
+    private schedulerService: SchedulerService,
     private renderer: Renderer2,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   ngOnChanges(): void {
@@ -166,15 +171,33 @@ export class ClientsComponent implements OnChanges {
   }
 
   removeClient(client: Client) {
-    const token = localStorage.getItem('token') || '';
-    this.clientService.removeClient(client.id, token).subscribe(
-      () => {
-        this.openSnackBar('Klient usunięty');
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Potwierdzenie usunięcia',
+        message: `Czy na pewno chcesz usunąć klienta ${client.first_name}?
+      Wszystkie plany, dieta i raporty zostaną usunięte.`,
+        confirmText: 'Usuń',
+        cancelText: 'Anuluj',
       },
-      () => {
-        this.openSnackBar('Błąd podczas usuwania klienta');
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        const token = localStorage.getItem('token') || '';
+        this.clientService.removeClient(client.id, token).subscribe(
+          () => {
+            this.openSnackBar('Klient usunięty');
+            this.applicationService.notifyClientsQuantityUpdate();
+            this.schedulerService.triggerLoadScheduler();
+            this.loadClients();
+          },
+          () => {
+            this.openSnackBar('Błąd podczas usuwania klienta');
+          }
+        );
       }
-    )
+    });
   }
 
   private openSnackBar(message: string): void {
