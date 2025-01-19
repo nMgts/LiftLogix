@@ -9,6 +9,7 @@ import { AdminDashboardComponent } from "./components/admin-dashboard/admin-dash
 import { ForgotPasswordComponent } from "./components/forgot-password/forgot-password.component";
 import { ResetPasswordComponent } from "./components/reset-password/reset-password.component";
 import { ConfirmEmailComponent } from "./components/confirm-email/confirm-email.component";
+import {StatueComponent} from "./components/statue/statue.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'confirm-mail', component: ConfirmEmailComponent },
+  { path: 'statue', component: StatueComponent },
   { path: '**', redirectTo: '', pathMatch: 'full' },
 ];
 

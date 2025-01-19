@@ -76,6 +76,7 @@ import { ReportsComponent } from './components/reports/reports.component';
 import { NotesComponent } from './components/notes/notes.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { AuthCodeDialogComponent } from './components/auth-code-dialog/auth-code-dialog.component';
+import { StatueComponent } from './components/statue/statue.component';
 
 @NgModule({
   declarations: [
@@ -125,7 +126,8 @@ import { AuthCodeDialogComponent } from './components/auth-code-dialog/auth-code
     ReportsComponent,
     NotesComponent,
     ConfirmDialogComponent,
-    AuthCodeDialogComponent
+    AuthCodeDialogComponent,
+    StatueComponent
   ],
     imports: [
         BrowserModule,
