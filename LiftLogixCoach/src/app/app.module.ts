@@ -77,6 +77,9 @@ import { NotesComponent } from './components/notes/notes.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { AuthCodeDialogComponent } from './components/auth-code-dialog/auth-code-dialog.component';
 import { StatueComponent } from './components/statue/statue.component';
+import { AboutUsComponent } from './components/about-us/about-us.component';
+import { FunctionalityComponent } from './components/functionality/functionality.component';
+import { ContactComponent } from './components/contact/contact.component';
 
 @NgModule({
   declarations: [
@@ -127,7 +130,10 @@ import { StatueComponent } from './components/statue/statue.component';
     NotesComponent,
     ConfirmDialogComponent,
     AuthCodeDialogComponent,
-    StatueComponent
+    StatueComponent,
+    AboutUsComponent,
+    FunctionalityComponent,
+    ContactComponent
   ],
     imports: [
         BrowserModule,
