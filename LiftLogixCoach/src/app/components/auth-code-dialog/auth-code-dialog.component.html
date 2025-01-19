@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>Wprowadź kod autentykacyjny</h1>
+<div mat-dialog-content>
+  <mat-form-field appearance="fill">
+    <mat-label>Kod autentykacyjny</mat-label>
+    <input matInput [(ngModel)]="authCode" />
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Anuluj</button>
+  <button mat-button (click)="onSubmit()">Potwierdź</button>
+</div>

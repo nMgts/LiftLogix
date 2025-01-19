@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
 import { EmailService } from "../../services/email.service";
+import { MatDialog } from "@angular/material/dialog";
+import { AuthCodeDialogComponent } from "../auth-code-dialog/auth-code-dialog.component";
 
 @Component({
   selector: 'app-login',
@@ -17,7 +19,12 @@ export class LoginComponent {
   showResendConfirmation: boolean = false;
   passwordFieldType = 'password';
 
-  constructor(private authService: AuthService, private emailService: EmailService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private emailService: EmailService,
+    private router: Router,
+    private dialog: MatDialog
+  ) {}
 
   async handleSubmit() {
     if (!this.email || !this.password) {
@@ -48,28 +55,29 @@ export class LoginComponent {
 
         } else if (loginResult.error === 'Two factor authentication required') {
 
-          const authCode = prompt('Wprowadź kod autentykacyjny:');
-          if (authCode) {
-            loginResult = await this.authService.login(this.email, this.password, this.rememberMe, authCode);
-            if (loginResult.success) {
-              localStorage.setItem('token', loginResult.token);
-              localStorage.setItem('role', loginResult.role);
-              localStorage.setItem('rememberMe', String(this.rememberMe));
-              localStorage.setItem('id', loginResult.id);
-              localStorage.setItem('email', loginResult.email);
+          const dialogRef = this.dialog.open(AuthCodeDialogComponent);
+          dialogRef.afterClosed().subscribe(async (authCode: string) => {
+            if (authCode) {
+              loginResult = await this.authService.login(this.email, this.password, this.rememberMe, authCode);
 
-              if (loginResult.role === "COACH") {
-                await this.router.navigate(['/dashboard']);
-              } else if (loginResult.role === "ADMIN") {
-                await this.router.navigate(['/dashboard-admin']);
+              if (loginResult.success) {
+                localStorage.setItem('token', loginResult.token);
+                localStorage.setItem('role', loginResult.role);
+                localStorage.setItem('rememberMe', String(this.rememberMe));
+                localStorage.setItem('id', loginResult.id);
+                localStorage.setItem('email', loginResult.email);
+
+                if (loginResult.role === "COACH") {
+                  await this.router.navigate(['/dashboard']);
+                } else if (loginResult.role === "ADMIN") {
+                  await this.router.navigate(['/dashboard-admin']);
+                }
+              } else {
+                this.showError('Błędny kod autentykacyjny.');
               }
-            } else {
-              this.showError('Błędny kod autentykacyjny.');
             }
-          }
-
-        }
-        else {
+          });
+        } else {
           this.showError('Błędne dane');
         }
       }
