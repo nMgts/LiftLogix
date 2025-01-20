@@ -107,7 +107,7 @@
   margin: 10px 0;
 }
 
-li:hover {
+.nav-links li:hover {
   scale: 1.2;
 }
 
@@ -117,7 +117,7 @@ li:hover {
 }
 
 .content {
-  margin: 120px auto;
+  margin: 120px auto 30px auto;
   max-width: 80%;
   text-align: center;
   background-color: rgba(0, 0, 0, 0.5);

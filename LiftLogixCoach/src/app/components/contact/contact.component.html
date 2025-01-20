@@ -1,1 +1,70 @@
-<p>contact works!</p>
+<div class="about-page" (click)="closeMenu()">
+  <a routerLink="/" class="back-link">
+    <i class="bx bxs-left-arrow-alt"></i>
+  </a>
+
+  <nav class="navbar">
+    <img ngSrc="/images/logo-light.svg" alt="LiftLogixCoach Logo" class="logo" height="128" width="128">
+
+    <div class="icon-container">
+      <mat-icon class="icon" (click)="toggleMenu($event)">menu</mat-icon>
+      <a href="/login" class="icon"><mat-icon>login</mat-icon></a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="/about">O nas</a></li>
+      <li><a href="/functionality">Funkcjonalności</a></li>
+      <li><a href="/contact" class="active">Kontakt</a></li>
+      <li><a href="/login">Zaloguj</a></li>
+    </ul>
+    <div class="dropdown-menu" *ngIf="isMenuOpen">
+      <ul>
+        <li><a href="/about">O nas</a></li>
+        <li><a href="/functionality">Funkcjonalności</a></li>
+        <li><a href="/contact">Kontakt</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="content" #elem (scroll)="onScroll($event)">
+    <h1>Kontakt</h1>
+    <p>
+      Masz pytania? Skontaktuj się z nami, a nasz zespół z przyjemnością udzieli Ci pomocy.
+    </p>
+
+    <div class="contact-details">
+      <div class="contact-item">
+        <h3>Adres:</h3>
+        <p>LiftLogix Sp. z o.o.<br>Ul. Sportowa 12, 00-123 Warszawa</p>
+      </div>
+
+      <div class="contact-item">
+        <h3>Email:</h3>
+        <p><a href="mailto:support@liftlogixcoach.com">liftlogix24&#64;gmail.com</a></p>
+      </div>
+
+      <div class="contact-item">
+        <h3>Telefon:</h3>
+        <p><a href="tel:+48123456789">+48 123 456 789</a></p>
+      </div>
+    </div>
+
+    <div class="social-section">
+      <p>
+        Możesz także śledzić nas na naszych mediach społecznościowych:
+      </p>
+
+      <div class="social-links">
+        <a href="https://www.facebook.com/profile.php?id=61561644931965" target="_blank" class="social-link">
+          <i class="bx bxl-facebook"></i> Facebook
+        </a>
+        <a href="https://www.instagram.com/lift.logix?igsh=Nmw0MmRocG9ic3F0" target="_blank" class="social-link">
+          <i class="bx bxl-instagram"></i> Instagram
+        </a>
+        <a href="https://youtube.com/@liftlogix?si=PNDJG5HXGP4hNbhL" target="_blank" class="social-link">
+          <i class="bx bxl-youtube"></i> Youtube
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
