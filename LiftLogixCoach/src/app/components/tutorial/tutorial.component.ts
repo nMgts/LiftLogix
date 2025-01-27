@@ -33,6 +33,7 @@ export class TutorialComponent {
 
   close(event: Event) {
     event.stopPropagation();
+    this.selectedSection = null;
     this.closeBox.emit();
   }
 }
