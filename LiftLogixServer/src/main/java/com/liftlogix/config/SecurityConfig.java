@@ -73,7 +73,8 @@ public class SecurityConfig {
                                 "/api/personal-plan/all/{client_id}", "/api/personal-plan/delete/{id}", "/api/personal-plan/details/{id}",
                                 "/api/personal-plan/edit",
                                 "/api/workout/toggle-individual/{id}", "/api/workout/set-date",
-                                "/api/diet/{client_id}", "/api/diet/update")
+                                "/api/diet/{client_id}", "/api/diet/update",
+                                "/api/report/delete/{id}")
                         .hasAnyAuthority("ADMIN", "COACH")
 
                         // Admin and client endpoints
@@ -95,7 +96,8 @@ public class SecurityConfig {
                                 "/api/personal-plan/workout/{workout_id}", "/api/personal-plan/export/{id}",
                                 "/api/workout/get/{id}",
                                 "/api/user/{email}",
-                                "/api/chat/messages/{senderId}/{recipientId}", "\"/api/chat/messages/{senderId}/{recipientId}/read\"", "/messages/recent/{senderId}")
+                                "/api/chat/messages/{senderId}/{recipientId}", "\"/api/chat/messages/{senderId}/{recipientId}/read\"", "/messages/recent/{senderId}",
+                                "/api/report/all", "/api/report/{id}", "/api/report/update")
                         .authenticated()
 
                         // Other endpoints
