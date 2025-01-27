@@ -1,1 +1,69 @@
-<p>plans-tutorial works!</p>
+<h1 class="title">Zarządzanie Planami Treningowymi</h1>
+
+<div class="tutorial-container">
+  <p class="description">
+    Aplikacja umożliwia: tworzenie, edycję oraz przypisywanie planów treningowych klientom. Tworzenie planów odbywa się za pomocą kreatora, który umożliwia szybkie i intuicyjne dopasowanie planu do potrzeb klienta.
+  </p>
+
+  <h2 class="section-title">1. Kreator Planów Treningowych</h2>
+  <p class="description">
+    Kreator Planów Treningowych to narzędzie umożliwiające szybkie i precyzyjne tworzenie planów treningowych. Posiada dwie opcje, które zależnie od poziomu zaawansowania, pozwalają na dostosowanie planu do potrzeb klienta:
+  </p>
+
+  <h3 class="subsection-title">Opcje Podstawowe</h3>
+  <p class="description">
+    Opcje podstawowe pozwalają na szybkie tworzenie planów. W tej opcji:
+  </p>
+  <ul class="features-list">
+    <li>Dodajesz ćwiczenia za pomocą <strong>wyszukiwarki ćwiczeń</strong>, która wyświetla listę dostępnych ćwiczeń.</li>
+    <li>Każde ćwiczenie można spersonalizować, ustawiając parametry takie jak:
+      <ul>
+        <li>Ilość serii</li>
+        <li>Liczba powtórzeń</li>
+        <li>Ciężar</li>
+      </ul>
+    </li>
+    <li>Ćwiczenia przypisujesz do odpowiednich dni mikrocyklu (np. Dzień 1 - Trening A, Dzień 3 - Trening A i Trening B, Dzień 5 - Trening C).</li>
+    <li>Tworzysz jednostki treningowe, które są numerowane (np. Trening A, Trening B, Trening C). Możesz dodać nowe jednostki lub duplikować istniejące.</li>
+  </ul>
+
+  <h3 class="subsection-title">Opcje Zaawansowane</h3>
+  <p class="description">
+    Opcje zaawansowane umożliwiają bardziej precyzyjne dostosowanie planu treningowego, w tym:
+  </p>
+  <ul class="features-list">
+    <li>Wprowadzenie wartości <strong>%1RM</strong> (procent ciężaru maksymalnego), co pozwala na automatyczne dostosowanie ciężaru do rekordu klienta, zgodnie z obliczeniami:</li>
+    <pre class="code">Ciężar = (%1RM × Współczynnik trudności × Ciężar)</pre>
+    <li>Określenie <strong>tempa ruchu</strong> w formacie 1-1-1-1 (ekscentryczna - pauza - koncentryczna - pauza) lub zastosowanie znaku "x" dla jak najszybszego wykonania danej fazy.</li>
+    <li>Ustalenie <strong>RPE</strong> (skali subiektywnej trudności) pozwalającej na dopasowanie liczby powtórzeń w zależności od postrzeganej trudności.</li>
+  </ul>
+
+  <h2 class="section-title">2. Mikro- i Makrocykle</h2>
+  <p class="description">
+    Kreator pozwala na łatwe zarządzanie cyklicznością planu. Mikrocykl może zawierać od 1 do 28 dni, makrocykl od 1 do 10 mikrocykli, natomiast mezocykl od 1 do 10 makrocykli. Wszystkie nowe mikro- i makrocykle są kopiowane z poprzednich, co ułatwia szybkie tworzenie planu. Cykl można również wyczyścić i zacząć od nowa.
+  </p>
+
+  <h2 class="section-title">3. Jednostki Treningowe</h2>
+  <p class="description">
+    Jednostki treningowe są wybierane z dostępnej listy. W przypadku, gdy istnieje potrzeba stworzenia bardzo podobnej jednostki, można ją zduplikować, a następnie edytować. Jednostki są numerowane (np. Trening A, Trening B, Trening C) w przypadku duplikacji, jednostce nadawany jest dodatkowy numer (np. Trening A, Trening B1, Trening B2, Trening C).
+  </p>
+
+  <h2 class="section-title">4. Zapisywanie Planów</h2>
+  <p class="description">
+    Po stworzeniu planu należy:
+  </p>
+  <ul class="features-list">
+    <li>Wprowadzić nazwę planu.</li>
+    <li>Zdecydować, czy plan ma być dostępny publicznie, umożliwiając innym trenerom skorzystanie z niego.</li>
+  </ul>
+  <p class="description">Po zapisaniu plan można odnaleźć w bibliotece <strong>"Moje plany"</strong>, trenerzy mogą także dodawać plany innych trenerów do biblioteki prywatnej z biblioteki publicznej.</p>
+
+  <h2 class="section-title">5. Przypisywanie Planu do Klienta</h2>
+  <p class="description">
+    Po utworzeniu planu, można przypisać go klientowi. Podczas przypisywania planu:
+  </p>
+  <ul class="features-list">
+    <li>Można automatycznie dostosować plan do klienta, na podstawie jego wyników, poprzez ustawienie <strong>automatycznego dostosowania ciężaru</strong> (na podstawie %1RM) oraz liczby powtórzeń (na podstawie %1RM i RPE).</li>
+    <li>Należy wybrać datę startu, w celu automatycznego wstawienia treningów do harmonogramu klienta, zapewniając pełną synchronizację.</li>
+  </ul>
+</div>
