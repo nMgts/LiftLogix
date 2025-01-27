@@ -80,6 +80,12 @@ import { StatueComponent } from './components/statue/statue.component';
 import { AboutUsComponent } from './components/about-us/about-us.component';
 import { FunctionalityComponent } from './components/functionality/functionality.component';
 import { ContactComponent } from './components/contact/contact.component';
+import { ApplicationsTutorialComponent } from './components/applications-tutorial/applications-tutorial.component';
+import { ExercisesTutorialComponent } from './components/exercises-tutorial/exercises-tutorial.component';
+import { ClientsTutorialComponent } from './components/clients-tutorial/clients-tutorial.component';
+import { PlansTutorialComponent } from './components/plans-tutorial/plans-tutorial.component';
+import { ReportsTutorialComponent } from './components/reports-tutorial/reports-tutorial.component';
+import { ScheduleTutorialComponent } from './components/schedule-tutorial/schedule-tutorial.component';
 
 @NgModule({
   declarations: [
@@ -133,7 +139,13 @@ import { ContactComponent } from './components/contact/contact.component';
     StatueComponent,
     AboutUsComponent,
     FunctionalityComponent,
-    ContactComponent
+    ContactComponent,
+    ApplicationsTutorialComponent,
+    ExercisesTutorialComponent,
+    ClientsTutorialComponent,
+    PlansTutorialComponent,
+    ReportsTutorialComponent,
+    ScheduleTutorialComponent
   ],
     imports: [
         BrowserModule,

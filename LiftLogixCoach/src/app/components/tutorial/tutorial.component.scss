@@ -1,3 +1,7 @@
+* {
+  color: aliceblue;
+}
+
 .not-expanded-box {
   display: flex;
   flex-direction: column;
@@ -14,7 +18,6 @@ h1 {
   font-size: 16px;
   margin-bottom: 10px;
   text-align: center;
-  color: aliceblue;
 }
 
 .content {
@@ -56,11 +59,93 @@ h1 {
   background: none;
   border: none;
   font-size: 48px;
-  color: aliceblue;
   cursor: pointer;
   z-index: 1000;
 }
 
 .close-button:hover {
   color: red;
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 36px;
+}
+
+mat-list {
+  background-color: rgba(122, 122, 122, 0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 1px solid black;
+  border-radius: 30px;
+  margin: 0 20px;
+}
+
+mat-list-item {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease;
+}
+
+mat-list-item:first-child {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+mat-list-item:last-child {
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+mat-list-item:hover {
+  background: #393a50;
+  cursor: pointer;
+}
+
+.section-details {
+  padding: 10px;
+  background: #2a2b3d;
+  border-radius: 8px;
+}
+
+@media (max-width: 450px) {
+  h3 {
+    font-size: 12px;
+  }
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  padding: 10px;
+  border-top: 1px solid #393a50;
+  color: aliceblue;
+  text-align: center;
+}
+
+.footer-text {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.footer-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #1e90ff;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
+
+mat-icon {
+  font-size: 18px;
 }

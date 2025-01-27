@@ -9,4 +9,34 @@
 
 <div class="expanded-box" *ngIf="isBoxExpanded">
 
+  <div *ngIf="!selectedSection">
+    <h1 class="title">Poradnik</h1>
+
+    <mat-list>
+      <mat-list-item *ngFor="let section of sections" (click)="selectSection(section.id)">
+        <h3 matLine>{{ section.name }}</h3>
+      </mat-list-item>
+    </mat-list>
+  </div>
+
+  <div *ngIf="selectedSection">
+    <app-back-arrow (goBack)="goBack()"></app-back-arrow>
+    <ng-container [ngSwitch]="selectedSection">
+      <app-applications-tutorial *ngSwitchCase="'submissions'"></app-applications-tutorial>
+      <app-exercises-tutorial *ngSwitchCase="'exercises'"></app-exercises-tutorial>
+      <app-clients-tutorial *ngSwitchCase="'clients'"></app-clients-tutorial>
+      <app-plans-tutorial *ngSwitchCase="'plans'"></app-plans-tutorial>
+      <app-reports-tutorial *ngSwitchCase="'reports'"></app-reports-tutorial>
+      <app-schedule-tutorial *ngSwitchCase="'schedule'"></app-schedule-tutorial>
+      <p *ngSwitchDefault>Nie znaleziono sekcji.</p>
+    </ng-container>
+  </div>
+
+  <div class="footer" *ngIf="!selectedSection">
+    <p class="footer-text">Masz więcej pytań? - Napisz</p>
+    <a href="mailto:liftlogix24@gmail.com" class="footer-link">
+      <mat-icon>email</mat-icon>
+      liftlogix24&#64;gmail.com
+    </a>
+  </div>
 </div>

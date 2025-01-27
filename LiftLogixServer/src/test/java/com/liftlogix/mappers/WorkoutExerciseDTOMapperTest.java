@@ -51,7 +51,7 @@ public class WorkoutExerciseDTOMapperTest {
         entity.setWeight(6.0);
         entity.setPercentage(7.0);
         entity.setTempo("8");
-        entity.setRpe(9);
+        entity.setRpe(9d);
         Break breakTime = new Break();
         breakTime.setValue(10);
         breakTime.setUnit(TimeUnit.min);
@@ -62,7 +62,7 @@ public class WorkoutExerciseDTOMapperTest {
 
         // Then
         assertEquals(1L, dto.getId());
-        assertEquals(2L, dto.getExercise().getId());
+        assertEquals(2L, dto.getExerciseId());
         assertEquals(3, dto.getSeries());
         assertEquals(4, dto.getRepetitionsFrom());
         assertEquals(5, dto.getRepetitionsTo());
@@ -82,14 +82,14 @@ public class WorkoutExerciseDTOMapperTest {
         ExerciseDTO exerciseDTO = new ExerciseDTO();
         exerciseDTO.setId(2L);
         exerciseDTO.setName("abc");
-        dto.setExercise(exerciseDTO);
+        dto.setExerciseId(2L);
         dto.setSeries(3);
         dto.setRepetitionsFrom(4);
         dto.setRepetitionsTo(5);
         dto.setWeight(6.0);
         dto.setPercentage(7.0);
         dto.setTempo("8");
-        dto.setRpe(9);
+        dto.setRpe(9d);
         BreakDTO breakDTO = new BreakDTO();
         breakDTO.setValue(10);
         breakDTO.setUnit("min"); // testuje mapowanie stringa na enum
