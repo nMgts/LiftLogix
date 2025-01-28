@@ -45,10 +45,15 @@
 
   <div class="report-list">
     <mat-card *ngFor="let report of filteredReports" class="report-item">
+      <button class="delete-btn" (click)="openDeleteDialog(report)">
+        <mat-icon class="delete-icon">delete</mat-icon>
+      </button>
       <mat-card-content>
         <p><strong>Klient:</strong> {{ report.clientFirstName }} {{ report.clientLastName }}</p>
         <p><strong>Trening:</strong> {{ report.workoutUnitName }}</p>
         <p><strong>Data treningu:</strong> {{ report.workoutUnitDate | date: 'yyyy-MM-dd HH:mm' }}</p>
+        <mat-checkbox [(ngModel)]="report.clientReport" [disabled]="true">Raport klienta</mat-checkbox>
+        <mat-checkbox [(ngModel)]="report.coachReport" [disabled]="true">Raport trenera</mat-checkbox>
         <p [ngClass]="{'completed': report.isWorkoutDone, 'not-completed': report.isWorkoutDone === false}">
           <strong class='completed-label'>Wykonano trening:</strong>
           <ng-container *ngIf="report.isWorkoutDone !== null">

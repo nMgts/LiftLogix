@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>Usuń raport</h2>
+<mat-dialog-content>
+  <ng-container *ngIf="showConfirmationMessage; else checkboxSection">
+    <p>Czy na pewno chcesz usunąć raport?</p>
+  </ng-container>
+
+  <ng-template #checkboxSection>
+    <mat-checkbox *ngIf="data.clientReport" [(ngModel)]="deleteClientReport">Usuń raport klienta</mat-checkbox>
+    <mat-checkbox *ngIf="data.coachReport" [(ngModel)]="deleteCoachReport">Usuń raport trenera</mat-checkbox>
+  </ng-template>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Anuluj</button>
+  <button mat-raised-button color="primary" [disabled]="!deleteClientReport && !deleteCoachReport && !showConfirmationMessage" (click)="onConfirm()">Zatwierdź</button>
+</mat-dialog-actions>

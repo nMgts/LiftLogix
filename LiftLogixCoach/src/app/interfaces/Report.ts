@@ -1,9 +1,9 @@
 export interface Report {
   id: number,
-  clientReport: string,
-  clientReportDate: string,
-  coachReport: string,
-  coachReportDate: string,
+  clientReport: string | null,
+  clientReportDate: string | null,
+  coachReport: string | null,
+  coachReportDate: string | null,
   workoutUnitId: number,
   workoutUnitName: string,
   workoutUnitDate: string,

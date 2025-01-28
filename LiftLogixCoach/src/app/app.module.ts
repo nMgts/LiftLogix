@@ -86,6 +86,7 @@ import { ClientsTutorialComponent } from './components/clients-tutorial/clients-
 import { PlansTutorialComponent } from './components/plans-tutorial/plans-tutorial.component';
 import { ReportsTutorialComponent } from './components/reports-tutorial/reports-tutorial.component';
 import { ScheduleTutorialComponent } from './components/schedule-tutorial/schedule-tutorial.component';
+import { DeleteReportDialogComponent } from './components/delete-report-dialog/delete-report-dialog.component';
 
 @NgModule({
   declarations: [
@@ -145,7 +146,8 @@ import { ScheduleTutorialComponent } from './components/schedule-tutorial/schedu
     ClientsTutorialComponent,
     PlansTutorialComponent,
     ReportsTutorialComponent,
-    ScheduleTutorialComponent
+    ScheduleTutorialComponent,
+    DeleteReportDialogComponent
   ],
     imports: [
         BrowserModule,

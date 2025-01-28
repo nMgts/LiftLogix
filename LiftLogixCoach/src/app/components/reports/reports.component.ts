@@ -1,7 +1,9 @@
-import {Component, EventEmitter, HostListener, Input, OnChanges, Output} from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnChanges, Output } from '@angular/core';
 import { ReportService } from "../../services/report.service";
 import { Report } from "../../interfaces/Report";
 import { PageEvent } from '@angular/material/paginator';
+import { DeleteReportDialogComponent } from "../delete-report-dialog/delete-report-dialog.component";
+import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   selector: 'app-reports',
@@ -24,6 +26,7 @@ export class ReportsComponent implements OnChanges {
   length: number = 0;
 
   constructor(
+    private dialog: MatDialog,
     private reportService: ReportService
   ) {}
 
@@ -41,6 +44,59 @@ export class ReportsComponent implements OnChanges {
         this.applyFilters();
       },
       error: (err) => console.error(err)
+    });
+  }
+
+  openDeleteDialog(report: Report): void {
+    const dialogRef = this.dialog.open(DeleteReportDialogComponent, {
+      width: '300px',
+      data: {
+        clientReport: report.clientReport !== null,
+        coachReport: report.coachReport !== null,
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result.deleteClientReport && result.deleteCoachReport) {
+          this.deleteReport(report.id);
+        } else if (result.deleteClientReport) {
+          this.deleteClientReport(report);
+        } else if (result.deleteCoachReport) {
+          this.deleteCoachReport(report);
+        }
+      }
+    });
+  }
+
+  deleteReport(id: number): void {
+    const token = localStorage.getItem('token') || '';
+    this.reportService.deleteReport(id, token).subscribe(() => {
+      this.loadReports();
+    }, error => {
+      console.error('Błąd usuwania raportu', error);
+    });
+  }
+
+  deleteClientReport(report: Report) {
+    const token = localStorage.getItem('token') || '';
+    report.clientReport = null;
+    report.clientReportDate = null;
+    this.reportService.updateReport(report, token).subscribe(() => {
+      this.loadReports();
+    }, error => {
+      console.error('Błąd usuwania raportu', error);
+    });
+  }
+
+  deleteCoachReport(report: Report) {
+    const token = localStorage.getItem('token') || '';
+    report.coachReport = null;
+    report.coachReportDate = null;
+    this.reportService.updateReport(report, token).subscribe(() => {
+      this.loadReports();
+    }, error => {
+      console.error('Błąd usuwania raportu', error);
     });
   }
 
