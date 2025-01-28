@@ -45,7 +45,13 @@
       </div>
     </div>
 
-    <mat-paginator class="paginator"></mat-paginator>
+    <mat-paginator
+      [length]="filteredClients.length"
+      [pageSize]="clientsPerPage"
+      [pageSizeOptions]="[7, 10, 15]"
+      (page)="onPageChange($event)"
+      class="paginator">
+    </mat-paginator>
   </div>
 
   <div class="right-side" *ngIf="!selectedComponent && window.innerWidth >= 1024">

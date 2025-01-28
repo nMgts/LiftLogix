@@ -44,6 +44,9 @@ export class ClientsComponent implements OnChanges {
   searchTerm: string = '';
   dropdownOpenClientId: number | null = null;
 
+  clientsPerPage: number = 7;
+  currentPage: number = 0;
+
   private readonly defaultImageUrl: string = '/icons/user.jpg';
 
   constructor(
@@ -86,7 +89,8 @@ export class ClientsComponent implements OnChanges {
             client.image ? client.image : this.defaultImageUrl
           )
         }));
-        this.filteredClients = [...this.clients];
+        this.applySearchFilter();
+        this.updateFilteredClients();
         this.dropdownOpenClientId = null;
       }
     )
@@ -204,12 +208,30 @@ export class ClientsComponent implements OnChanges {
   }
 
   onSearchChange() {
+    this.currentPage = 0;
+    this.applySearchFilter();
+    this.updateFilteredClients();
+  }
+
+  applySearchFilter() {
     const searchTermLower = this.searchTerm.toLowerCase();
     this.filteredClients = this.clients.filter(client =>
       client.first_name.toLowerCase().includes(searchTermLower) ||
       client.last_name.toLowerCase().includes(searchTermLower) ||
       client.email.toLowerCase().includes(searchTermLower)
     );
+  }
+
+  onPageChange(event: any) {
+    this.currentPage = event.pageIndex;
+    this.clientsPerPage = event.pageSize;
+    this.updateFilteredClients();
+  }
+
+  updateFilteredClients() {
+    const startIndex = this.currentPage * this.clientsPerPage;
+    const endIndex = startIndex + this.clientsPerPage;
+    this.filteredClients = this.filteredClients.slice(startIndex, endIndex);
   }
 
   private openSnackBar(message: string): void {
