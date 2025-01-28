@@ -96,7 +96,7 @@ public class SecurityConfig {
                                 "/api/personal-plan/workout/{workout_id}", "/api/personal-plan/export/{id}",
                                 "/api/workout/get/{id}",
                                 "/api/user/{email}",
-                                "/api/chat/messages/{senderId}/{recipientId}", "\"/api/chat/messages/{senderId}/{recipientId}/read\"", "/messages/recent/{senderId}",
+                                "/api/chat/messages/{senderId}/{recipientId}", "/api/chat/messages/{senderId}/{recipientId}/read", "/messages/recent/{senderId}",
                                 "/api/report/all", "/api/report/{id}", "/api/report/update")
                         .authenticated()
 

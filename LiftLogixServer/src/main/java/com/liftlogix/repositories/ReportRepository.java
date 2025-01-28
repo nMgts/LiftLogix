@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
-    List<Report> findByPersonalPlanId(Long personalPlanId);
+    List<Report> findByWorkoutUnitId(Long workoutUnitId);
 }

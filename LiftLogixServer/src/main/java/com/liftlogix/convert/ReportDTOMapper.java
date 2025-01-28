@@ -8,12 +8,13 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(componentModel = "spring")
-@AllArgsConstructor
 public abstract class ReportDTOMapper {
 
-    private final PersonalPlanRepository personalPlanRepository;
+    @Autowired
+    PersonalPlanRepository personalPlanRepository;
 
     @Mapping(source = "workoutUnit.id", target = "workoutUnitId")
     public abstract ReportDTO mapEntityToDTO(Report report);

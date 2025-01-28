@@ -41,7 +41,7 @@ public class AuthController {
         ReqRes loginResponse = userManagementService.login(req);
 
         if (loginResponse.getStatusCode() == 200) {
-            if (req.getAuthCode().isEmpty() && userService.checkIsTwoFactorEnabled(req.getEmail())) {
+            if (req.getAuthCode() == null && userService.checkIsTwoFactorEnabled(req.getEmail())) {
                 return ResponseEntity.ok(userManagementService.handle2FA(loginResponse.getEmail()));
             }
             Integer code = userService.get2FACode(req.getEmail());

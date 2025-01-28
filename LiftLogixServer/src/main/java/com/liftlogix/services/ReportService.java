@@ -4,7 +4,10 @@ import com.liftlogix.convert.ReportDTOMapper;
 import com.liftlogix.dto.ReportDTO;
 import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.models.Report;
+import com.liftlogix.models.plans.Mesocycle;
+import com.liftlogix.models.plans.Microcycle;
 import com.liftlogix.models.plans.PersonalPlan;
+import com.liftlogix.models.plans.WorkoutUnit;
 import com.liftlogix.models.users.Client;
 import com.liftlogix.models.users.Coach;
 import com.liftlogix.models.users.User;
@@ -52,7 +55,13 @@ public class ReportService {
 
             List<Report> reports = new ArrayList<>();
             for (PersonalPlan plan : allPlans) {
-                reports.addAll(reportRepository.findByPersonalPlanId(plan.getId()));
+                for (Mesocycle mesocycle : plan.getMesocycles()) {
+                    for (Microcycle microcycle : mesocycle.getMicrocycles()) {
+                        for (WorkoutUnit workoutUnit : microcycle.getWorkoutUnits()) {
+                            reports.addAll(reportRepository.findByWorkoutUnitId(workoutUnit.getId()));
+                        }
+                    }
+                }
             }
 
             return reports.stream()
@@ -66,7 +75,13 @@ public class ReportService {
 
             List<Report> reports = new ArrayList<>();
             for (PersonalPlan plan : plans) {
-                reports.addAll(reportRepository.findByPersonalPlanId(plan.getId()));
+                for (Mesocycle mesocycle : plan.getMesocycles()) {
+                    for (Microcycle microcycle : mesocycle.getMicrocycles()) {
+                        for (WorkoutUnit workoutUnit : microcycle.getWorkoutUnits()) {
+                            reports.addAll(reportRepository.findByWorkoutUnitId(workoutUnit.getId()));
+                        }
+                    }
+                }
             }
 
             return reports.stream()
