@@ -18,7 +18,7 @@ import java.util.Objects;
 
 @Service
 @AllArgsConstructor
-public class WorkoutService {
+public class WorkoutUnitService {
     private final WorkoutUnitRepository workoutUnitRepository;
     private final PersonalPlanRepository personalPlanRepository;
     private final WorkoutUnitDTOMapper workoutUnitDTOMapper;

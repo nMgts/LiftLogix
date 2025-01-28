@@ -4,7 +4,7 @@ import com.liftlogix.dto.ChangeDateRequest;
 import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.exceptions.TimeConflictException;
 import com.liftlogix.models.users.User;
-import com.liftlogix.services.WorkoutService;
+import com.liftlogix.services.WorkoutUnitService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/workout")
 @AllArgsConstructor
 public class WorkoutUnitController {
-    private final WorkoutService workoutService;
+    private final WorkoutUnitService workoutUnitService;
 
     /*
     @GetMapping("/get/{id}")
@@ -34,7 +34,7 @@ public class WorkoutUnitController {
     @PatchMapping("/toggle-individual/{id}")
     public ResponseEntity<String> toggleIndividual(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
         try {
-            workoutService.toggleIndividual(id, currentUser);
+            workoutUnitService.toggleIndividual(id, currentUser);
             return ResponseEntity.ok().body("{\"message\": \"Workout individual status toggled\"}");
         } catch (AuthorizationException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
@@ -51,7 +51,7 @@ public class WorkoutUnitController {
     @PutMapping("/set-date")
     public ResponseEntity<?> changeDate(@RequestBody ChangeDateRequest request, @AuthenticationPrincipal User currentUser) {
         try {
-            return ResponseEntity.ok(workoutService.changeDate(
+            return ResponseEntity.ok(workoutUnitService.changeDate(
                     request.getId(), request.getNewDate(), request.getDuration(), currentUser));
         } catch (AuthorizationException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());

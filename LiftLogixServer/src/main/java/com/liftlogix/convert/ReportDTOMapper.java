@@ -3,7 +3,6 @@ package com.liftlogix.convert;
 import com.liftlogix.dto.ReportDTO;
 import com.liftlogix.models.Report;
 import com.liftlogix.repositories.PersonalPlanRepository;
-import lombok.AllArgsConstructor;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,6 +16,8 @@ public abstract class ReportDTOMapper {
     PersonalPlanRepository personalPlanRepository;
 
     @Mapping(source = "workoutUnit.id", target = "workoutUnitId")
+    @Mapping(source = "workoutUnit.name", target = "workoutUnitName")
+    @Mapping(source = "workoutUnit.date", target = "workoutUnitDate")
     public abstract ReportDTO mapEntityToDTO(Report report);
 
     @Mapping(source = "workoutUnitId", target = "workoutUnit.id")

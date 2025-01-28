@@ -8,5 +8,60 @@
 <button *ngIf="isBoxExpanded" (click)="close($event)" class="close-button">&times;</button>
 
 <div class="expanded-box" *ngIf="isBoxExpanded">
+  <h1 class="title" *ngIf="isBoxExpanded">Lista raportów</h1>
 
+  <div class="filters">
+    <mat-form-field appearance="outline" class="filter">
+      <mat-label>Filtruj po kliencie</mat-label>
+      <input matInput placeholder="Imię, nazwisko lub email" [(ngModel)]="searchValue" (input)="onSearchChange($event)" />
+    </mat-form-field>
+
+    <div class="date-range-filter">
+      <mat-form-field appearance="fill">
+        <mat-label>Data od</mat-label>
+        <input
+          matInput
+          [matDatepicker]="startPicker"
+          [(ngModel)]="startDate"
+          (dateChange)="onDateRangeChange()"
+        />
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Data do</mat-label>
+        <input
+          matInput
+          [matDatepicker]="endPicker"
+          [(ngModel)]="endDate"
+          (dateChange)="onDateRangeChange()"
+        />
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="report-list">
+    <mat-card *ngFor="let report of filteredReports" class="report-item">
+      <mat-card-content>
+        <p><strong>Klient:</strong> {{ report.clientFirstName }} {{ report.clientLastName }}</p>
+        <p><strong>Trening:</strong> {{ report.workoutUnitName }}</p>
+        <p><strong>Data treningu:</strong> {{ report.workoutUnitDate | date: 'yyyy-MM-dd HH:mm' }}</p>
+        <p [ngClass]="{'completed': report.isWorkoutDone, 'not-completed': report.isWorkoutDone === false}">
+          <strong class='completed-label'>Wykonano trening:</strong>
+          <ng-container *ngIf="report.isWorkoutDone !== null">
+            {{ report.isWorkoutDone ? 'Tak' : 'Nie' }}
+          </ng-container>
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-paginator [length]="length"
+                 [pageSize]="pageSize"
+                 [pageIndex]="currentPage"
+                 (page)="onPageChange($event)">
+  </mat-paginator>
 </div>
