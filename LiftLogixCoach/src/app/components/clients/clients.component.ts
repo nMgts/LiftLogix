@@ -40,6 +40,8 @@ export class ClientsComponent implements OnChanges {
   maxEmailLength: number = 50;
 
   clients: (Client & { imageSafeUrl: SafeUrl })[] = [];
+  filteredClients: (Client & { imageSafeUrl: SafeUrl })[] = [];
+  searchTerm: string = '';
   dropdownOpenClientId: number | null = null;
 
   private readonly defaultImageUrl: string = '/icons/user.jpg';
@@ -84,6 +86,7 @@ export class ClientsComponent implements OnChanges {
             client.image ? client.image : this.defaultImageUrl
           )
         }));
+        this.filteredClients = [...this.clients];
         this.dropdownOpenClientId = null;
       }
     )
@@ -198,6 +201,15 @@ export class ClientsComponent implements OnChanges {
         );
       }
     });
+  }
+
+  onSearchChange() {
+    const searchTermLower = this.searchTerm.toLowerCase();
+    this.filteredClients = this.clients.filter(client =>
+      client.first_name.toLowerCase().includes(searchTermLower) ||
+      client.last_name.toLowerCase().includes(searchTermLower) ||
+      client.email.toLowerCase().includes(searchTermLower)
+    );
   }
 
   private openSnackBar(message: string): void {
