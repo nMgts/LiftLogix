@@ -4,6 +4,7 @@ import { Report } from "../../interfaces/Report";
 import { PageEvent } from '@angular/material/paginator';
 import { DeleteReportDialogComponent } from "../delete-report-dialog/delete-report-dialog.component";
 import { MatDialog } from "@angular/material/dialog";
+import {ReportDetailsDialogComponent} from "../report-details-dialog/report-details-dialog.component";
 
 @Component({
   selector: 'app-reports',
@@ -47,7 +48,19 @@ export class ReportsComponent implements OnChanges {
     });
   }
 
-  openDeleteDialog(report: Report): void {
+  openReportDetailsDialog(report: Report) {
+    const dialogRef = this.dialog.open(ReportDetailsDialogComponent, {
+      width: '600px',
+      data: report
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.loadReports();
+    });
+  }
+
+  openDeleteDialog(report: Report, event: Event) {
+    event.stopPropagation();
     const dialogRef = this.dialog.open(DeleteReportDialogComponent, {
       width: '300px',
       data: {

@@ -16,6 +16,7 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
   @Input() isFullScreen: boolean = false;
   @Output() goBack = new EventEmitter<void>();
   private clientIdSubscription!: Subscription;
+  protected readonly window = window;
 
   plan: PersonalPlan | null = null;
   plans: BasicPersonalPlan[] = [];
@@ -176,6 +177,4 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
       verticalPosition: 'top'
     });
   }
-
-    protected readonly window = window;
 }

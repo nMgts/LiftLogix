@@ -230,8 +230,6 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
     );
   }
 
-
-
   checkIsCurrentDay(day: Day) {
     const d = new Date().getDate();
     return day.day === d && this.nav === 0;

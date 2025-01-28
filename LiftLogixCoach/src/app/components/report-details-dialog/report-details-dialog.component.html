@@ -1,0 +1,72 @@
+<ng-container *ngIf="selectedWorkoutId == 0">
+  <h2 mat-dialog-title>Szczegóły Raportu</h2>
+  <mat-dialog-content>
+    <mat-card>
+      <mat-card-title>Podstawowe Informacje</mat-card-title>
+      <mat-card-content>
+        <p><strong>Nazwa Treningu:</strong> {{ data.workoutUnitName }}</p>
+        <p><strong>Data Treningu:</strong> {{ data.workoutUnitDate | date: 'dd-MM-yyyy HH:mm' }}</p>
+        <ng-container *ngIf="!isEditing">
+          <p [ngStyle]="{ color: data.isWorkoutDone ? 'green' : 'red' }">
+            <strong>{{ data.isWorkoutDone ? 'Trening wykonany' : 'Trening niewykonany' }}</strong>
+          </p>
+          <button mat-raised-button color="primary" (click)="viewWorkout(data.workoutUnitId)">Zobacz trening</button>
+        </ng-container>
+        <ng-container *ngIf="isEditing">
+          <mat-checkbox [(ngModel)]="isWorkoutDone" (change)="onStatusChange(true)">
+            wykonano trening
+          </mat-checkbox>
+          <mat-checkbox [(ngModel)]="isWorkoutNotDone" (change)="onStatusChange(false)">
+            niewykonano treningu
+          </mat-checkbox>
+        </ng-container>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-title>Dane Klienta</mat-card-title>
+      <mat-card-content>
+        <p><strong>Imię i Nazwisko:</strong> {{ data.clientFirstName }} {{ data.clientLastName }}</p>
+        <p><strong>Email:</strong> {{ data.clientEmail }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card *ngIf="data.clientReport || data.clientReportDate">
+      <mat-card-title>Raport Klienta</mat-card-title>
+      <mat-card-content>
+        <p>{{ data.clientReport || 'Brak raportu' }}</p>
+        <p>
+          <span class="italic-date"> <strong>Zmodyfikowano:</strong>
+            {{ data.clientReportDate | date: 'dd-MM-yyyy HH:mm' || 'Nie podano daty' }}</span>
+        </p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card *ngIf="data.coachReport || data.coachReportDate || isEditing">
+      <mat-card-title>Raport Trenera</mat-card-title>
+      <mat-card-content>
+        <p *ngIf="!isEditing">{{ data.coachReport || 'Brak raportu' }}</p>
+        <p *ngIf="!isEditing">
+          <span class="italic-date"> <strong>Zmodyfikowano:</strong>
+            {{ data.coachReportDate | date: 'dd-MM-yyyy HH:mm' || 'Nie podano daty' }}</span>
+        </p>
+        <ng-container *ngIf="isEditing">
+          <textarea matInput placeholder="Edytuj raport trenera" [(ngModel)]="editedCoachReport"></textarea>
+        </ng-container>
+      </mat-card-content>
+    </mat-card>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-raised-button color="primary" *ngIf="!isEditing" (click)="toggleEdit()">Edytuj</button>
+    <button mat-raised-button color="accent" *ngIf="isEditing" (click)="saveChanges()">Zapisz</button>
+    <button mat-raised-button color="warn" (click)="onClose()" class="close-button">Zamknij</button>
+  </mat-dialog-actions>
+</ng-container>
+
+<app-workout-view *ngIf="selectedWorkoutId !== 0 && selectedPlan"
+                  [personalPlan]="selectedPlan"
+                  [workoutId]="selectedWorkoutId"
+                  [isPersonalPlan] = true
+                  (goBack)="closeWorkoutView()">
+</app-workout-view>

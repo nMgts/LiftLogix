@@ -13,7 +13,7 @@
   <div class="filters">
     <mat-form-field appearance="outline" class="filter">
       <mat-label>Filtruj po kliencie</mat-label>
-      <input matInput placeholder="Imię, nazwisko lub email" [(ngModel)]="searchValue" (input)="onSearchChange($event)" />
+      <input class="client-search" matInput placeholder="Imię, nazwisko lub email" [(ngModel)]="searchValue" (input)="onSearchChange($event)" />
     </mat-form-field>
 
     <div class="date-range-filter">
@@ -44,8 +44,8 @@
   </div>
 
   <div class="report-list">
-    <mat-card *ngFor="let report of filteredReports" class="report-item">
-      <button class="delete-btn" (click)="openDeleteDialog(report)">
+    <mat-card *ngFor="let report of filteredReports" class="report-item" (click)="openReportDetailsDialog(report)">
+      <button class="delete-btn" (click)="openDeleteDialog(report, $event)">
         <mat-icon class="delete-icon">delete</mat-icon>
       </button>
       <mat-card-content>
