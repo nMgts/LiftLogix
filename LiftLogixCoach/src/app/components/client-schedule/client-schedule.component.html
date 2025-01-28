@@ -40,9 +40,7 @@
            'clickable': day.events.length > 0,
            'current-day': checkIsCurrentDay(day)
            }"
-           (click)="openDayDetails(day)"
-           cdkDropList [cdkDropListData]="days"
-           (cdkDropListDropped)="onEventDrop($event, i)">
+           (click)="openDayDetails(day)">
 
         <div class="more-events-icon" *ngIf="showMoreEventsIcon(day)">
           <i class="fas fa-plus"></i>
@@ -52,10 +50,7 @@
 
         <div class="events">
           <div class="event" *ngFor="let event of getVisibleEvents(day)"
-               [ngClass]="getEventClass(event)"
-               cdkDrag [cdkDragData]="event"
-               (cdkDragStarted)="onDragStart($event)"
-               (cdkDragEnded)="onDragEnd($event)">
+               [ngClass]="getEventClass(event)">
             {{ getWorkoutInitials(event.name) }}
           </div>
         </div>

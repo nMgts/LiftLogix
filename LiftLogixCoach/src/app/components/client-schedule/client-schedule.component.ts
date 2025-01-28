@@ -1,14 +1,12 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ClientService } from "../../services/client.service";
 import { PersonalPlanService } from "../../services/personal-plan.service";
-import { Workout } from "../../interfaces/Workout";
 import { Day } from "../../interfaces/Day";
 import { Subscription } from "rxjs";
 import { PersonalPlan } from "../../interfaces/PersonalPlan";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { WorkoutUnit } from "../../interfaces/WorkoutUnit";
-import {WorkoutService} from "../../services/workout.service";
-import {CdkDragDrop, CdkDragEnd, CdkDragStart} from "@angular/cdk/drag-drop";
+import { WorkoutService } from "../../services/workout.service";
 
 @Component({
   selector: 'app-client-schedule',
@@ -190,44 +188,6 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
 
   showMoreEventsIcon(day: Day): boolean {
     return day.events.length > this.getMaxVisible();
-  }
-
-  onDragStart(event: CdkDragStart) {
-    const eventElement = event.source.getRootElement();
-    eventElement.classList.add('dragging');
-  }
-
-  onDragEnd(event: CdkDragEnd) {
-    const eventElement = event.source.getRootElement();
-    eventElement.classList.remove('dragging');
-  }
-
-  onEventDrop(event: CdkDragDrop<any>, targetIndex: number) {
-    const token = localStorage.getItem('token') || '';
-    const draggedEvent: WorkoutUnit = event.item.data;
-
-    console.log('Current Index:', event.currentIndex);
-    console.log('Container Data:', event.container.data);
-
-    const targetDay = this.days[event.currentIndex];
-    console.log('Target Day:', targetDay);
-
-    const newDate = new Date(targetDay.year, targetDay.month, targetDay.day + 1);
-    const formattedDate = newDate.toISOString();
-
-    this.workoutService.changeDate(draggedEvent.id, formattedDate, draggedEvent.duration, token).subscribe(
-      () => {
-        this.openSnackBar('Data treningu została zmieniona');
-        this.loadWorkouts(this.clientId!);
-      },
-      (error) => {
-        if (error.status === 409) {
-          this.openSnackBar('Konflikt: W podanym przedziale czasowym posiadasz już trening personalny lub klient ma zapisany inny trening');
-        } else {
-          this.openSnackBar('Błąd przy zmianie statusu treningu');
-        }
-      }
-    );
   }
 
   checkIsCurrentDay(day: Day) {
