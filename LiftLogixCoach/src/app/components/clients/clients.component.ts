@@ -197,6 +197,10 @@ export class ClientsComponent implements OnChanges {
             this.openSnackBar('Klient usunięty');
             this.applicationService.notifyClientsQuantityUpdate();
             this.schedulerService.triggerLoadScheduler();
+            if (this.selectedClientId == client.id) {
+              this.selectedComponent = null;
+              this.selectedClientId = 0;
+            }
             this.loadClients();
           },
           () => {
