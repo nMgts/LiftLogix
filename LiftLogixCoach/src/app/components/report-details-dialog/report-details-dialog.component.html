@@ -1,6 +1,6 @@
 <ng-container *ngIf="selectedWorkoutId == 0">
   <h2 mat-dialog-title>Szczegóły Raportu</h2>
-  <mat-dialog-content>
+  <mat-dialog-content #elem (scroll)="onScroll($event)">
     <mat-card>
       <mat-card-title>Podstawowe Informacje</mat-card-title>
       <mat-card-content>
@@ -48,7 +48,7 @@
             {{ data.coachReportDate | date: 'dd-MM-yyyy HH:mm' || 'Nie podano daty' }}</span>
         </p>
         <ng-container *ngIf="isEditing">
-          <textarea matInput placeholder="Edytuj raport trenera" [(ngModel)]="editedCoachReport"></textarea>
+          <textarea matInput placeholder="Edytuj raport trenera" [(ngModel)]="editedCoachReport" #elem (scroll)="onScroll($event)"></textarea>
         </ng-container>
       </mat-card-content>
     </mat-card>

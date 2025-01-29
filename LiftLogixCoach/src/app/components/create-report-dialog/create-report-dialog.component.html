@@ -1,9 +1,9 @@
 <h2 mat-dialog-title>Nowy Raport</h2>
 
-<mat-dialog-content>
+<mat-dialog-content #elem (scroll)="onScroll($event)">
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Opis raportu</mat-label>
-    <textarea matInput [(ngModel)]="reportDescription" placeholder="Wprowadź opis raportu"></textarea>
+    <textarea #elem matInput [(ngModel)]="reportDescription" placeholder="Wprowadź opis raportu" (scroll)="onScroll($event)"></textarea>
   </mat-form-field>
 
   <mat-card>

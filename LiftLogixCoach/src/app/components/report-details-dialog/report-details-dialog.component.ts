@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject, Renderer2, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Report } from "../../interfaces/Report";
 import { ReportService } from "../../services/report.service";
@@ -12,6 +12,9 @@ import { PersonalPlan } from "../../interfaces/PersonalPlan";
   styleUrl: './report-details-dialog.component.scss'
 })
 export class ReportDetailsDialogComponent {
+  @ViewChild('elem', { static: true }) elem!: ElementRef;
+  scrollTimeout: any;
+
   isEditing: boolean = false;
   editedCoachReport: string = '';
   isWorkoutDone: boolean = false;
@@ -25,7 +28,8 @@ export class ReportDetailsDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: Report,
     private reportService: ReportService,
     private personalPlanService: PersonalPlanService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private renderer: Renderer2
   ) {
     this.editedCoachReport = data.coachReport || '';
     this.isWorkoutDone = data.isWorkoutDone || false;
@@ -96,6 +100,20 @@ export class ReportDetailsDialogComponent {
   closeWorkoutView() {
     this.selectedWorkoutId = 0;
     this.selectedPlan = null;
+  }
+
+  onScroll(event: Event): void {
+    const target = event.target as HTMLElement;
+
+    if (target) {
+      this.renderer.addClass(document.body, 'show-scrollbar');
+
+      clearTimeout(this.scrollTimeout);
+
+      this.scrollTimeout = setTimeout(() => {
+        this.renderer.removeClass(document.body, 'show-scrollbar');
+      }, 3000);
+    }
   }
 
   private openSnackBar(message: string) {

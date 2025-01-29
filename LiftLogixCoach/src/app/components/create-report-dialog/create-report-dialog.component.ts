@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Subscription } from "rxjs";
 import { ClientService } from "../../services/client.service";
@@ -13,6 +13,9 @@ import { Report } from "../../interfaces/Report";
   styleUrl: './create-report-dialog.component.scss'
 })
 export class CreateReportDialogComponent implements OnInit, OnDestroy {
+  @ViewChild('elem', { static: true }) elem!: ElementRef;
+  scrollTimeout: any;
+
   private clientIdSubscription!: Subscription;
   client: Client | null = null;
 
@@ -26,6 +29,7 @@ export class CreateReportDialogComponent implements OnInit, OnDestroy {
     private reportService: ReportService,
     private clientService: ClientService,
     private snackBar: MatSnackBar,
+    private renderer: Renderer2
   ) {}
 
   ngOnInit() {
@@ -84,6 +88,20 @@ export class CreateReportDialogComponent implements OnInit, OnDestroy {
         this.openSnackBar('Błąd, raport niedodany');
       }
     )
+  }
+
+  onScroll(event: Event): void {
+    const target = event.target as HTMLElement;
+
+    if (target) {
+      this.renderer.addClass(document.body, 'show-scrollbar');
+
+      clearTimeout(this.scrollTimeout);
+
+      this.scrollTimeout = setTimeout(() => {
+        this.renderer.removeClass(document.body, 'show-scrollbar');
+      }, 3000);
+    }
   }
 
   private openSnackBar(message: string) {
