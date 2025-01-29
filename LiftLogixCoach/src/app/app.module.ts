@@ -17,7 +17,7 @@ import { ApplicationDetailsDialogComponent } from './components/application-deta
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
-import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatPaginatorIntl, MatPaginatorModule } from "@angular/material/paginator";
 import { ApplicationsComponent } from './components/applications/applications.component';
 import { EditProfileDialogComponent } from './components/edit-profile-dialog/edit-profile-dialog.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
@@ -70,7 +70,7 @@ import { WorkoutDateChangeDialogComponent } from './components/workout-date-chan
 import { OptionsTooltipComponent } from './components/options-tooltip/options-tooltip.component';
 import { MatTooltip } from "@angular/material/tooltip";
 import { ChatComponent } from './components/chat/chat.component';
-import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { TutorialComponent } from './components/tutorial/tutorial.component';
 import { ReportsComponent } from './components/reports/reports.component';
 import { NotesComponent } from './components/notes/notes.component';
@@ -89,6 +89,7 @@ import { ScheduleTutorialComponent } from './components/schedule-tutorial/schedu
 import { DeleteReportDialogComponent } from './components/delete-report-dialog/delete-report-dialog.component';
 import { ReportDetailsDialogComponent } from './components/report-details-dialog/report-details-dialog.component';
 import { CreateReportDialogComponent } from './components/create-report-dialog/create-report-dialog.component';
+import { CustomPaginatorIntl } from "./providers/paginator";
 
 @NgModule({
   declarations: [
@@ -197,7 +198,8 @@ import { CreateReportDialogComponent } from './components/create-report-dialog/c
     YoutubeEmbedPipe,
     provideCharts(withDefaultRegisterables()),
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
-    { provide: MAT_DATE_LOCALE, useValue: 'pl-PL' }
+    { provide: MAT_DATE_LOCALE, useValue: 'pl-PL' },
+    { provide: MatPaginatorIntl, useClass: CustomPaginatorIntl },
   ],
   bootstrap: [AppComponent]
 })
