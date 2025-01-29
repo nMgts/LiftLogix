@@ -194,6 +194,7 @@ public class PersonalPlanService {
         for (Mesocycle mesocycle : personalPlan.getMesocycles()) {
             for (Microcycle microcycle : mesocycle.getMicrocycles()) {
                 for (WorkoutUnit workoutUnit : microcycle.getWorkoutUnits()) {
+                    reportService.deleteReportForWU(workoutUnit.getId());
                     if (!workoutUnit.isIndividual()) {
                         coachSchedulerService.removeWorkout(workoutUnit.getId());
                     }
