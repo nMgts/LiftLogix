@@ -29,29 +29,40 @@ export class ReportDetailsDialogComponent {
   ) {
     this.editedCoachReport = data.coachReport || '';
     this.isWorkoutDone = data.isWorkoutDone || false;
-    this.isWorkoutNotDone = !data.isWorkoutDone || false;
+    this.isWorkoutNotDone = data.isWorkoutDone == false || false;
   }
 
   toggleEdit() {
     this.isEditing = !this.isEditing;
   }
 
-  onStatusChange(isDone: boolean) {
-    if (isDone) {
-      this.isWorkoutDone = true;
-      this.isWorkoutNotDone = false;
-    } else {
-      this.isWorkoutDone = false;
-      this.isWorkoutNotDone = true;
-    }
+  changeDone() {
+    this.isWorkoutDone = false;
+  }
+
+  changeNotDone() {
+    this.isWorkoutNotDone = false;
   }
 
   saveChanges() {
+    let done: boolean | null = this.isWorkoutDone;
+    if (!this.isWorkoutDone && !this.isWorkoutNotDone) {
+      done = null;
+    }
+
+    let date;
+    if (this.editedCoachReport != this.data.coachReport) {
+      date = new Date();
+      date.setHours(date.getHours() + 1);
+    } else {
+      date = this.data.coachReportDate;
+    }
+
     const updatedData = {
       ...this.data,
       coachReport: this.editedCoachReport,
-      isWorkoutDone: this.isWorkoutDone,
-      coachReportDate: new Date(),
+      isWorkoutDone: done,
+      coachReportDate: date,
     };
 
     this.updateWorkout(updatedData);

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Day } from "../../interfaces/Day";
 import { WorkoutService } from "../../services/workout.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -6,29 +6,69 @@ import { MatDialog } from "@angular/material/dialog";
 import { WorkoutDateChangeDialogComponent } from "../workout-date-change-dialog/workout-date-change-dialog.component";
 import { SchedulerService } from "../../services/scheduler.service";
 import { WorkoutUnit } from "../../interfaces/WorkoutUnit";
+import { ReportService } from "../../services/report.service";
+import { ReportDetailsDialogComponent } from "../report-details-dialog/report-details-dialog.component";
+import { CreateReportDialogComponent } from "../create-report-dialog/create-report-dialog.component";
 
 @Component({
   selector: 'app-workout-day-details',
   templateUrl: './workout-day-details.component.html',
   styleUrl: './workout-day-details.component.scss'
 })
-export class WorkoutDayDetailsComponent {
+export class WorkoutDayDetailsComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
   @Output() update = new EventEmitter<void>();
   @Output() viewWorkoutEvent = new EventEmitter<number>();
   @Input() day!: Day;
 
+  protected readonly window = window;
   isToggleBlocked: boolean = false;
 
   constructor(
     private workoutService: WorkoutService,
     private schedulerService: SchedulerService,
+    private reportService: ReportService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog
   ) {}
 
+  ngOnInit() {
+    this.checkReports();
+  }
+
   viewWorkout(workout: WorkoutUnit) {
     this.viewWorkoutEvent.emit(workout.id);
+  }
+
+  checkReports() {
+    const token = localStorage.getItem('token') || '';
+    this.day.events.forEach((workout) => {
+      this.reportService.findByWorkoutUnitId(workout.id, token).subscribe({
+        next: (response) => (workout.report = response),
+        error: () => (workout.report = null)
+      });
+    });
+  }
+
+  viewReport(workout: WorkoutUnit) {
+    this.dialog.open(ReportDetailsDialogComponent, {
+      width: '600px',
+      data: workout.report
+    });
+  }
+
+  createReport(workout: WorkoutUnit) {
+    const dialogRef = this.dialog.open(CreateReportDialogComponent, {
+      width: '600px',
+      data: { workoutUnitId: workout.id }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.openSnackBar('Raport dodany');
+        this.checkReports();
+      }
+    });
   }
 
   toggleWorkoutType(workout: WorkoutUnit) {

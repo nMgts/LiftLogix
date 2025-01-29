@@ -8,17 +8,14 @@
         <p><strong>Data Treningu:</strong> {{ data.workoutUnitDate | date: 'dd-MM-yyyy HH:mm' }}</p>
         <ng-container *ngIf="!isEditing">
           <p [ngStyle]="{ color: data.isWorkoutDone ? 'green' : 'red' }">
-            <strong>{{ data.isWorkoutDone ? 'Trening wykonany' : 'Trening niewykonany' }}</strong>
+            <strong *ngIf="isWorkoutDone">Trening wykonany</strong>
+            <strong *ngIf="isWorkoutNotDone">Trening niewykonany</strong>
           </p>
           <button mat-raised-button color="primary" (click)="viewWorkout(data.workoutUnitId)">Zobacz trening</button>
         </ng-container>
         <ng-container *ngIf="isEditing">
-          <mat-checkbox [(ngModel)]="isWorkoutDone" (change)="onStatusChange(true)">
-            wykonano trening
-          </mat-checkbox>
-          <mat-checkbox [(ngModel)]="isWorkoutNotDone" (change)="onStatusChange(false)">
-            niewykonano treningu
-          </mat-checkbox>
+          <mat-checkbox [(ngModel)]="isWorkoutDone" (change)="changeNotDone()">wykonano trening</mat-checkbox>
+          <mat-checkbox [(ngModel)]="isWorkoutNotDone" (change)="changeDone()">niewykonano treningu</mat-checkbox>
         </ng-container>
       </mat-card-content>
     </mat-card>

@@ -40,6 +40,19 @@ public class ReportController {
         }
     }
 
+    @GetMapping("/wu/{id}")
+    public ResponseEntity<?> findByWorkoutUnitId(@PathVariable long id, Authentication authentication) {
+        try {
+            return ResponseEntity.ok(reportService.findByWorkoutUnitId(id, authentication));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
     @PutMapping("/update")
     public ResponseEntity<?> updateReport(@RequestBody ReportDTO report, Authentication authentication) {
         try {

@@ -88,6 +88,7 @@ import { ReportsTutorialComponent } from './components/reports-tutorial/reports-
 import { ScheduleTutorialComponent } from './components/schedule-tutorial/schedule-tutorial.component';
 import { DeleteReportDialogComponent } from './components/delete-report-dialog/delete-report-dialog.component';
 import { ReportDetailsDialogComponent } from './components/report-details-dialog/report-details-dialog.component';
+import { CreateReportDialogComponent } from './components/create-report-dialog/create-report-dialog.component';
 
 @NgModule({
   declarations: [
@@ -149,7 +150,8 @@ import { ReportDetailsDialogComponent } from './components/report-details-dialog
     ReportsTutorialComponent,
     ScheduleTutorialComponent,
     DeleteReportDialogComponent,
-    ReportDetailsDialogComponent
+    ReportDetailsDialogComponent,
+    CreateReportDialogComponent
   ],
     imports: [
         BrowserModule,

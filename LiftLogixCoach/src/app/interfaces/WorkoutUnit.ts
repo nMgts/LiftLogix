@@ -1,4 +1,5 @@
 import { WorkoutExercise } from "./WorkoutExercise";
+import { Report } from "./Report";
 
 export interface WorkoutUnit {
   id: number;
@@ -8,4 +9,5 @@ export interface WorkoutUnit {
   individual: boolean;
   duration: number;
   microcycleDay: number;
+  report?: Report | null;
 }

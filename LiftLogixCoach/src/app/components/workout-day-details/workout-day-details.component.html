@@ -18,12 +18,19 @@
             Z trenerem
           </mat-slide-toggle>
 
+          <button mat-raised-button color="primary" *ngIf="workout.report" (click)="viewReport(workout)">
+            <mat-icon *ngIf="window.innerWidth <= 665">visibility</mat-icon> Zobacz raport
+          </button>
+          <button mat-raised-button color="warn" *ngIf="!workout.report" (click)="createReport(workout)">
+            <mat-icon *ngIf="window.innerWidth <= 665">add</mat-icon> Stwórz raport
+          </button>
+
           <button mat-raised-button color="accent" (click)="changeWorkoutDate(workout)">
-            <mat-icon>event</mat-icon> Zmień datę
+            <mat-icon *ngIf="window.innerWidth <= 665">event</mat-icon> Zmień datę
           </button>
 
           <button mat-raised-button color="primary" (click)="viewWorkout(workout)">
-            <mat-icon>visibility</mat-icon> Podgląd
+            <mat-icon *ngIf="window.innerWidth <= 665">visibility</mat-icon> Podgląd
           </button>
         </div>
 

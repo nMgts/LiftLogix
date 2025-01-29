@@ -130,8 +130,6 @@ export class ReportsComponent implements OnChanges {
     this.length = filteredReports.length;
 
     this.filteredReports = filteredReports.slice(this.currentPage * this.pageSize, (this.currentPage + 1) * this.pageSize);
-
-    console.log('Filtered reports:', this.filteredReports);
   }
 
   onSearchChange(event: Event): void {

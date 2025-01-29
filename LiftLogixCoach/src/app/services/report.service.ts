@@ -8,7 +8,8 @@ import { Report } from "../interfaces/Report";
 })
 export class ReportService {
   private baseUrl = 'http://localhost:8080/api/report';
-  private getAllUrl = 'http://localhost:8080/api/report/all'
+  private getAllUrl = 'http://localhost:8080/api/report/all';
+  private findByWorkoutUnitIdUrl = 'http://localhost:8080/api/report/wu';
   private updateUrl = 'http://localhost:8080/api/report/update';
   private deleteUrl = 'http://localhost:8080/api/report/delete';
 
@@ -22,6 +23,11 @@ export class ReportService {
   getReportById(reportId: number, token: string): Observable<Report> {
     const headers = this.createHeaders(token);
     return this.http.get<Report>(`${this.baseUrl}/${reportId}`, { headers });
+  }
+
+  findByWorkoutUnitId(wuId: number, token: string): Observable<Report> {
+    const headers = this.createHeaders(token);
+    return this.http.get<Report>(`${this.findByWorkoutUnitIdUrl}/${wuId}`, { headers });
   }
 
   updateReport(report: Report, token: string): Observable<Report> {

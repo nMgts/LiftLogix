@@ -6,7 +6,6 @@ import { Subscription } from "rxjs";
 import { PersonalPlan } from "../../interfaces/PersonalPlan";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { WorkoutUnit } from "../../interfaces/WorkoutUnit";
-import { WorkoutService } from "../../services/workout.service";
 
 @Component({
   selector: 'app-client-schedule',
@@ -52,7 +51,6 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
   constructor(
     private clientService: ClientService,
     private personalPlanService: PersonalPlanService,
-    private workoutService: WorkoutService,
     private snackBar: MatSnackBar
   ) {}
 

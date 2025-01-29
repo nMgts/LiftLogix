@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Nowy Raport</h2>
+
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Opis raportu</mat-label>
+    <textarea matInput [(ngModel)]="reportDescription" placeholder="Wprowadź opis raportu"></textarea>
+  </mat-form-field>
+
+  <mat-card>
+    <mat-card-title>Status Treningu</mat-card-title>
+    <mat-card-content>
+      <mat-checkbox [(ngModel)]="isWorkoutDone" (change)="changeNotDone()">Trening wykonany</mat-checkbox>
+      <mat-checkbox [(ngModel)]="isWorkoutNotDone" (change)="changeDone()">Trening niewykonany</mat-checkbox>
+    </mat-card-content>
+  </mat-card>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="warn" (click)="cancel()">Anuluj</button>
+  <button mat-raised-button color="primary" (click)="saveReport()">Zapisz</button>
+</mat-dialog-actions>

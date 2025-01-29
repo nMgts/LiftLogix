@@ -101,6 +101,17 @@ public class ReportService {
         return dto;
     }
 
+    public ReportDTO findByWorkoutUnitId(long id, Authentication authentication) {
+        Report report = reportRepository.findByWorkoutUnitId(id).getFirst();
+        ReportDTO dto = reportDTOMapper.mapEntityToDTO(report);
+
+        if (!checkAccess(dto, authentication)) {
+            throw new AuthorizationException("You are not authorized");
+        }
+
+        return dto;
+    }
+
     public ReportDTO updateReport(ReportDTO dto, Authentication authentication) {
         if (!checkAccess(dto, authentication)) {
             throw new AuthorizationException("You are not authorized");
