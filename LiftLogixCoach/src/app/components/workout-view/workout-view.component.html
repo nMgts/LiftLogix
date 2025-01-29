@@ -4,7 +4,8 @@
 
   <h1 class="view-header" *ngIf="!isPersonalPlan">Plan</h1>
 
-  <div class="tables-container" [ngClass]="{'personal-plan': (isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)}">
+  <div class="tables-container"
+       [ngClass]="{'personal-plan': (isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)}">
     <div class="meso-macro-tables-container">
       <div class="macrocycle-container" *ngIf="mesocycles.length > 1">
         <h1>Makrocykl</h1>
@@ -73,10 +74,10 @@
       </div>
     </div>
 
-    <div class="microcycle-container">
+    <div class="microcycle-container" *ngIf="!isPersonalPlan">
       <h1>Mikrocykl</h1>
 
-      <div class="microcycle-table" [ngClass]="{'personal-plan' : isPersonalPlan && window.innerWidth > 1023 && !isFullScreen}">
+      <div class="microcycle-table">
         <table>
           <thead>
           <tr>
@@ -93,9 +94,46 @@
               <div class="cell-content" *ngIf="cell !== 0">
                 <div class="workout-names">
                   <span *ngFor="let workout of getWorkoutsForDay(cell)" class="workout-letter" (click)="selectWorkout(workout.name)"
-                        [ngClass]="{'highlighted-letter': workout === selectedWorkout}">
+                        [ngClass]="{
+                          'highlighted-letter': (workout === selectedWorkout && !isPersonalPlan)
+                        }">
                     {{ getWorkoutInitials(workout.name) }}
                   </span>
+                </div>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="microcycle-container" *ngIf="isPersonalPlan">
+      <h1>Mikrocykl</h1>
+
+      <div class="microcycle-table" [ngClass]="{'personal-plan' : isPersonalPlan && window.innerWidth > 1023 && !isFullScreen}">
+        <table>
+          <thead>
+          <tr>
+            <th *ngFor="let day of daysInWeek">{{ day }}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let row of microcycleTable">
+            <td *ngFor="let cell of row"
+                [ngClass]="{
+                    'hidden-cell': cell === 0,
+                    'active-cell': cell !== 0,
+                  }">
+              <div class="cell-content" *ngIf="cell !== 0">
+                <div class="workout-names">
+                    <span *ngFor="let workout of getWorkoutUnitsForDay(cell)" class="workout-letter"
+                          (click)="selectWorkoutUnit(workout.name, cell + microcycleTable.indexOf(row) * 7)"
+                          [ngClass]="{
+                            'highlighted-letter': workout === selectedWorkoutUnit && cell + microcycleTable.indexOf(row) * 7 === selectedDay
+                          }">
+                      {{ getWorkoutInitials(workout.name) }}
+                    </span>
                 </div>
               </div>
             </td>

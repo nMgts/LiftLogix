@@ -40,6 +40,7 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
       if (this.clientId !== null) {
         this.loadPlan(this.clientId);
         this.loadClientPlans(this.clientId);
+        this.choice = '';
       }
     });
   }

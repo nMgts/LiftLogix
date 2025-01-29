@@ -90,6 +90,7 @@ import { DeleteReportDialogComponent } from './components/delete-report-dialog/d
 import { ReportDetailsDialogComponent } from './components/report-details-dialog/report-details-dialog.component';
 import { CreateReportDialogComponent } from './components/create-report-dialog/create-report-dialog.component';
 import { CustomPaginatorIntl } from "./providers/paginator";
+import { EditWorkoutComponent } from './components/edit-workout/edit-workout.component';
 
 @NgModule({
   declarations: [
@@ -152,7 +153,8 @@ import { CustomPaginatorIntl } from "./providers/paginator";
     ScheduleTutorialComponent,
     DeleteReportDialogComponent,
     ReportDetailsDialogComponent,
-    CreateReportDialogComponent
+    CreateReportDialogComponent,
+    EditWorkoutComponent
   ],
     imports: [
         BrowserModule,

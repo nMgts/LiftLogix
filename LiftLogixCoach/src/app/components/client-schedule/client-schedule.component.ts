@@ -47,6 +47,7 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
 
   selectedPlan: PersonalPlan | null = null;
   selectedWorkoutId: number = 0;
+  isEditingWorkout: boolean = false;
 
   constructor(
     private clientService: ClientService,
@@ -59,6 +60,9 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
       this.clientId = clientId;
       if (this.clientId !== null) {
         this.loadWorkouts(this.clientId);
+        this.clickedDay = null;
+        this.selectedWorkoutId = 0;
+        this.selectedPlan = null;
       }
     });
 
@@ -70,11 +74,8 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
   }
 
   loadCalendar() {
-    const dt = new Date();
-
-    if (this.nav !== 0) {
-      dt.setMonth(new Date().getMonth() + this.nav);
-    }
+    const today = new Date();
+    const dt = new Date(today.getFullYear(), today.getMonth() + this.nav, 1);
 
     const month = dt.getMonth();
     const year = dt.getFullYear();
@@ -222,9 +223,15 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
     )
   }
 
+  editWorkout(workoutId: number) {
+    this.isEditingWorkout = true;
+    this.viewWorkout(workoutId);
+  }
+
   closeWorkoutView() {
     this.selectedWorkoutId = 0;
     this.selectedPlan = null;
+    this.isEditingWorkout = false;
   }
 
   onUpdate() {

@@ -946,6 +946,8 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
 
   closeDropdown() {
     this.dropdownOpen = false;
+    this.microcycleCellDropdownVisible = false;
+    this.activeCell = null;
   }
 
   detectTouchDevice() {

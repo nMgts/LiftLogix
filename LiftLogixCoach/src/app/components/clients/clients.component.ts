@@ -101,7 +101,8 @@ export class ClientsComponent implements OnChanges {
     this.isFullScreen = !this.isFullScreen;
   }
 
-  toggleDropdown(client: Client) {
+  toggleDropdown(client: Client, event: Event) {
+    event.stopPropagation();
     if (this.dropdownOpenClientId === client.id) {
       this.dropdownOpenClientId = null;
     } else {
@@ -109,11 +110,17 @@ export class ClientsComponent implements OnChanges {
     }
   }
 
+  closeDropdown(event: Event) {
+    event.stopPropagation();
+    this.dropdownOpenClientId = null;
+  }
+
   showComponent(component: string, clientId: number, event: Event) {
     event.stopPropagation();
     this.selectedComponent = component;
     this.selectedClientId = clientId;
     this.clientService.setSelectedClientId(clientId);
+    this.closeDropdown(event);
   }
 
   clearSelectedComponent() {

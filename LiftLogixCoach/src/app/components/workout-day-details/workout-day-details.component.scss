@@ -56,6 +56,16 @@
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+          }
+
+          .first-row, .second-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            gap: 16px;
+            width: 100%;
+            flex-wrap: wrap;
           }
 
           mat-slide-toggle {

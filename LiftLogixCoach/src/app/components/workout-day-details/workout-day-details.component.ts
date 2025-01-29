@@ -19,6 +19,7 @@ export class WorkoutDayDetailsComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
   @Output() update = new EventEmitter<void>();
   @Output() viewWorkoutEvent = new EventEmitter<number>();
+  @Output() editWorkoutEvent = new EventEmitter<number>();
   @Input() day!: Day;
 
   protected readonly window = window;
@@ -38,6 +39,10 @@ export class WorkoutDayDetailsComponent implements OnInit {
 
   viewWorkout(workout: WorkoutUnit) {
     this.viewWorkoutEvent.emit(workout.id);
+  }
+
+  editWorkout(workout: WorkoutUnit) {
+    this.editWorkoutEvent.emit(workout.id);
   }
 
   checkReports() {

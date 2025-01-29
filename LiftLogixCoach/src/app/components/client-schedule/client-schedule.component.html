@@ -77,12 +77,20 @@
                          (update)="onUpdate()"
                          (close)="closeDayDetails()"
                          (viewWorkoutEvent)="viewWorkout($event)"
+                         (editWorkoutEvent)="editWorkout($event)"
                          id="workout-day-details">
 </app-workout-day-details>
 
-<app-workout-view *ngIf="selectedWorkoutId !== 0 && selectedPlan"
+<app-workout-view *ngIf="selectedWorkoutId !== 0 && selectedPlan && !isEditingWorkout"
                   [personalPlan]="selectedPlan"
                   [workoutId]="selectedWorkoutId"
                   [isPersonalPlan] = true
+                  [isFullScreen]="isFullScreen"
                   (goBack)="closeWorkoutView()">
 </app-workout-view>
+
+<app-edit-workout *ngIf="selectedWorkoutId !== 0 && isEditingWorkout"
+                  [workoutId]="selectedWorkoutId"
+                  [isFullScreen]="isFullScreen"
+                  (goBack)="closeWorkoutView()">
+</app-edit-workout>

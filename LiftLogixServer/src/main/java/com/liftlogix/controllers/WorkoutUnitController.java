@@ -1,6 +1,7 @@
 package com.liftlogix.controllers;
 
 import com.liftlogix.dto.ChangeDateRequest;
+import com.liftlogix.dto.WorkoutUnitDTO;
 import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.exceptions.TimeConflictException;
 import com.liftlogix.models.users.User;
@@ -18,18 +19,16 @@ import org.springframework.web.bind.annotation.*;
 public class WorkoutUnitController {
     private final WorkoutUnitService workoutUnitService;
 
-    /*
-    @GetMapping("/get/{id}")
-    public ResponseEntity<?> getWorkout(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getWorkout(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
         try {
-            return ResponseEntity.ok(workoutService.getWorkout(id));
+            return ResponseEntity.ok(workoutUnitService.getWorkout(id, currentUser));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
-    */
 
     @PatchMapping("/toggle-individual/{id}")
     public ResponseEntity<String> toggleIndividual(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
@@ -60,6 +59,20 @@ public class WorkoutUnitController {
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> editWorkout(@RequestBody WorkoutUnitDTO workout, @AuthenticationPrincipal User currentUser) {
+        try {
+            return ResponseEntity.ok(workoutUnitService.editWorkout(workout, currentUser));
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
