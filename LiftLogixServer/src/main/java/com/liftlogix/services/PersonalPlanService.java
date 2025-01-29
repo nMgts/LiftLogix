@@ -31,6 +31,7 @@ public class PersonalPlanService {
     private final PersonalPlanDTOMapper personalPlanDTOMapper;
     private final BasicPersonalPlanDTOMapper basicPersonalPlanDTOMapper;
     private final CoachSchedulerService coachSchedulerService;
+    private final ReportService reportService;
 
     public List<BasicPersonalPlanDTO> getAllClientPlans(Long clientId, User user) {
         List<PersonalPlan> personalPlans = personalPlanRepository.findByClientId(clientId);
@@ -152,6 +153,14 @@ public class PersonalPlanService {
         Client client = plan.getClient();
         if (!Objects.equals(client.getCoach().getEmail(), user.getEmail()) && !user.getRole().equals(Role.ADMIN)) {
             throw new AuthorizationException("You are not authorized");
+        }
+
+        for (Mesocycle mesocycle : plan.getMesocycles()) {
+            for (Microcycle microcycle : mesocycle.getMicrocycles()) {
+                for (WorkoutUnit workoutUnit : microcycle.getWorkoutUnits()) {
+                    reportService.deleteReportForWU(workoutUnit.getId());
+                }
+            }
         }
 
         personalPlanRepository.deleteById(id);

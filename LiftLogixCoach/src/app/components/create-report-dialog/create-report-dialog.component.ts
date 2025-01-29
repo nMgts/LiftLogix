@@ -30,7 +30,9 @@ export class CreateReportDialogComponent implements OnInit, OnDestroy {
     private clientService: ClientService,
     private snackBar: MatSnackBar,
     private renderer: Renderer2
-  ) {}
+  ) {
+    console.log(this.data.workoutUnitId)
+  }
 
   ngOnInit() {
     const token = localStorage.getItem('token') || '';

@@ -5,6 +5,8 @@ import { ClientService } from "../../services/client.service";
 import { PersonalPlanService } from "../../services/personal-plan.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { BasicPersonalPlan } from "../../interfaces/BasicPersonalPlan";
+import { ConfirmDialogComponent } from "../confirm-dialog/confirm-dialog.component";
+import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   selector: 'app-client-plan',
@@ -28,7 +30,8 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
   constructor(
     private clientService: ClientService,
     private personalPlanService: PersonalPlanService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -76,14 +79,31 @@ export class ClientPlanComponent implements OnInit, OnDestroy {
 
   deletePlan(planId: number) {
     const token = localStorage.getItem('token') || '';
-    this.personalPlanService.deletePlan(planId, token).subscribe(
-      () => {
-        this.plans = this.plans.filter(plan => plan.id !== planId);
-      },
-      () => {
-        this.openSnackBar('Nie udało się usunąć planu');
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Czy na pewno chcesz usunąć plan?',
+        message: 'Spowoduje to usunięcie wszystkich raportów dla treningów tego planu.',
+        confirmText: 'Usuń',
+        cancelText: 'Anuluj'
       }
-    )
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        const token = localStorage.getItem('token') || '';
+        this.personalPlanService.deletePlan(planId, token).subscribe(
+          () => {
+            this.plans = this.plans.filter(plan => plan.id !== planId);
+            this.openSnackBar('Plan został usunięty');
+          },
+          () => {
+            this.openSnackBar('Nie udało się usunąć planu');
+          }
+        );
+      }
+    });
   }
 
   createNewPlan() {

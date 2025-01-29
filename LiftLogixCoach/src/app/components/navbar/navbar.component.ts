@@ -166,7 +166,6 @@ export class NavbarComponent implements OnInit {
   }
 
   countUnreadMessages(): number {
-    console.log(this.messages);
     return this.messages.filter(message => !message.read && message.senderId !== this.userEmail).length;
   }
 

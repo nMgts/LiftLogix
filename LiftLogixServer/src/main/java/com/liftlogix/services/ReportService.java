@@ -134,6 +134,13 @@ public class ReportService {
         reportRepository.delete(report);
     }
 
+    public void deleteReportForWU(long wuId) {
+        List<Report> reports = reportRepository.findByWorkoutUnitId(wuId);
+        if (!reports.isEmpty()) {
+            reportRepository.delete(reports.getFirst());
+        }
+    }
+
     private boolean checkAccess(ReportDTO dto, Authentication authentication) {
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
