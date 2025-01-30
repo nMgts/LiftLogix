@@ -1,4 +1,4 @@
-import {Component, HostListener, Input, OnInit, ViewContainerRef} from '@angular/core';
+import { Component, HostListener, Input, OnInit, ViewContainerRef } from '@angular/core';
 import { addDays, format, startOfWeek } from "date-fns";
 import { SchedulerService } from "../../services/scheduler.service";
 import { SchedulerItem } from "../../interfaces/SchedulerItem";
@@ -6,6 +6,12 @@ import { CoachSchedulerService } from "../../services/coach-scheduler.service";
 import { Overlay, OverlayRef } from "@angular/cdk/overlay";
 import { ComponentPortal } from "@angular/cdk/portal";
 import { OptionsTooltipComponent } from "../options-tooltip/options-tooltip.component";
+import { PersonalPlan } from "../../interfaces/PersonalPlan";
+import { PersonalPlanService } from "../../services/personal-plan.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import {WorkoutDateChangeDialogComponent} from "../workout-date-change-dialog/workout-date-change-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
+import {WorkoutService} from "../../services/workout.service";
 
 @Component({
   selector: 'app-weekly-schedule',
@@ -25,6 +31,10 @@ export class WeeklyScheduleComponent implements OnInit {
   protected readonly window = window;
   private overlayRef: OverlayRef | null = null;
 
+  workoutId: number = 0;
+  plan: PersonalPlan | null = null;
+  isEditingWorkout: boolean = false;
+
   protected readonly parseFloat = parseFloat;
   protected readonly console = console;
 
@@ -38,8 +48,12 @@ export class WeeklyScheduleComponent implements OnInit {
   constructor(
     private coachSchedulerService: CoachSchedulerService,
     private schedulerService: SchedulerService,
+    private personalPlanService: PersonalPlanService,
+    private workoutService: WorkoutService,
     private overlay: Overlay,
-    private viewContainerRef: ViewContainerRef
+    private viewContainerRef: ViewContainerRef,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -85,6 +99,26 @@ export class WeeklyScheduleComponent implements OnInit {
     const tooltipRef = this.overlayRef.attach(tooltipPortal);
 
     tooltipRef.instance.item = item;
+
+    tooltipRef.instance.viewWorkoutEvent.subscribe((item: SchedulerItem) => {
+      this.viewWorkout(item.workoutUnitId);
+      this.hideOptionsTooltip();
+    });
+
+    tooltipRef.instance.editWorkoutEvent.subscribe((item: SchedulerItem) => {
+      this.editWorkout(item.workoutUnitId);
+      this.hideOptionsTooltip();
+    });
+
+    tooltipRef.instance.changeWorkoutDateEvent.subscribe((item: SchedulerItem) => {
+      this.changeWorkoutDate(item.workoutUnitId);
+      this.hideOptionsTooltip();
+    });
+
+    tooltipRef.instance.changeToIndividualEvent.subscribe((item: SchedulerItem) => {
+      this.changeWorkoutToIndividual(item.workoutUnitId);
+      this.hideOptionsTooltip();
+    });
 
     this.overlayRef.backdropClick().subscribe(() => this.hideOptionsTooltip());
   }
@@ -279,5 +313,85 @@ export class WeeklyScheduleComponent implements OnInit {
     return itemDate.getDate() === dayDate.getDate() &&
       itemDate.getMonth() === dayDate.getMonth() &&
       itemDate.getFullYear() === dayDate.getFullYear();
+  }
+
+  viewWorkout(workoutId: number) {
+    this.workoutId = workoutId;
+    const token = localStorage.getItem('token') || '';
+    this.personalPlanService.getPersonalPlanByWorkout(workoutId, token).subscribe(
+      (plan) => {
+        this.plan = plan;
+      },
+      () => {
+        this.openSnackBar('Nie udało się wczytać planu');
+      }
+    );
+  }
+
+  editWorkout(workoutId: number) {
+    this.workoutId = workoutId;
+    this.isEditingWorkout = true;
+  }
+
+  changeWorkoutDate(workoutId: number) {
+    const token = localStorage.getItem('token') || '';
+    this.workoutService.getWorkout(workoutId, token).subscribe(
+      workout => {
+        const dialogRef = this.dialog.open(WorkoutDateChangeDialogComponent, {
+          data: {
+            workoutId: workout.id,
+            oldDate: workout.date,
+            duration: workout.duration
+          }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            const token = localStorage.getItem('token') || '';
+            this.workoutService.changeDate(result.workoutId, result.newDate, result.duration, token).subscribe(
+              () => {
+                this.loadSchedulerData();
+                this.openSnackBar('Data treningu została zmieniona');
+              },
+              (error) => {
+                if (error.status === 409) {
+                  this.openSnackBar('Konflikt: W podanym przedziale czasowym posiadasz już trening personalny lub klient ma zapisany inny trening');
+                } else {
+                  this.openSnackBar('Błąd przy zmianie daty treningu');
+                }
+              }
+            );
+          }
+        });
+      }
+    );
+  }
+
+  changeWorkoutToIndividual(workoutId: number) {
+    const token = localStorage.getItem('token') || '';
+    this.workoutService.toggleIndividual(workoutId, token).subscribe(
+      () => {
+        this.loadSchedulerData();
+        this.openSnackBar('Trening został zmieniony na indywidualny');
+      }, error => {
+        if (error.status === 409) {
+          this.openSnackBar('Konflikt: W podanym przedziale czasowym posiadasz już trening personalny.');
+        } else {
+          this.openSnackBar('Błąd przy zmianie statusu treningu');
+        }
+      }
+    )
+  }
+
+  private openSnackBar(message: string): void {
+    this.snackBar.open(message, 'Zamknij', {
+      duration: 3000,
+      verticalPosition: 'top'
+    });
+  }
+
+  goBack() {
+    this.workoutId = 0;
+    this.isEditingWorkout = false;
   }
 }

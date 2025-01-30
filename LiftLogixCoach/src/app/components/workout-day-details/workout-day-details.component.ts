@@ -146,7 +146,7 @@ export class WorkoutDayDetailsComponent implements OnInit {
   }
 
   private openSnackBar(message: string): void {
-    this.snackBar.open(message, 'Close', {
+    this.snackBar.open(message, 'Zamknij', {
       duration: 3000,
       verticalPosition: 'top'
     });

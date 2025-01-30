@@ -52,6 +52,10 @@ export class EditWorkoutComponent implements OnInit {
   saveWorkout() {
     const token = localStorage.getItem('token') || '';
 
+    if (!this.validateWorkout()) {
+      return;
+    }
+
     if (this.workout.workoutExercises.length == 0) {
       this.openSnackBar('Trening nie może być pusty');
       return;
@@ -296,6 +300,14 @@ export class EditWorkoutComponent implements OnInit {
     } else {
       return '';
     }
+  }
+
+  validateWorkout() {
+    if (this.workout.workoutExercises.length < 1) {
+      this.openSnackBar('Błąd - znaleziono puste treningi')
+      return false;
+    }
+    return true;
   }
 
   private openSnackBar(message: string): void {

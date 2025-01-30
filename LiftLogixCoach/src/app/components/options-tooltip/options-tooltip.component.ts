@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SchedulerItem } from "../../interfaces/SchedulerItem";
 
 @Component({
@@ -8,20 +8,32 @@ import { SchedulerItem } from "../../interfaces/SchedulerItem";
 })
 export class OptionsTooltipComponent {
   @Input() item: SchedulerItem | null = null;
+  @Output() editWorkoutEvent = new EventEmitter<SchedulerItem>();
+  @Output() viewWorkoutEvent = new EventEmitter<SchedulerItem>();
+  @Output() changeWorkoutDateEvent = new EventEmitter<SchedulerItem>();
+  @Output() changeToIndividualEvent = new EventEmitter<SchedulerItem>();
 
   viewWorkout() {
-    console.log('Podgląd');
+    if (this.item) {
+      this.viewWorkoutEvent.emit(this.item);
+    }
   }
 
   editWorkout() {
-    console.log('Edytuj');
+    if (this.item) {
+      this.editWorkoutEvent.emit(this.item);
+    }
   }
 
   changeWorkoutDate() {
-    console.log('Zmień datę');
+    if (this.item) {
+      this.changeWorkoutDateEvent.emit(this.item);
+    }
   }
 
   changeToIndividual() {
-    console.log('Zmień na trening indywidualny');
+    if (this.item) {
+      this.changeToIndividualEvent.emit(this.item);
+    }
   }
 }

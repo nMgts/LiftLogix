@@ -1,4 +1,4 @@
-<div class="scheduler-container" (click)="hideOptionsTooltip()">
+<div class="scheduler-container" (click)="hideOptionsTooltip()" *ngIf="workoutId === 0">
 
   <div class="navigation-panel" *ngIf="isBoxExpanded">
     <button (click)="prevWeek()">←</button>
@@ -44,3 +44,17 @@
     </table>
   </div>
 </div>
+
+<app-workout-view *ngIf="workoutId !== 0 && plan"
+                  [personalPlan]="plan"
+                  [workoutId]="workoutId"
+                  [isPersonalPlan] = true
+                  [isFullScreen]= true
+                  (goBack)="goBack()">
+</app-workout-view>
+
+<app-edit-workout *ngIf="workoutId !== 0 && isEditingWorkout"
+                  [workoutId]="workoutId"
+                  [isFullScreen]="true"
+                  (goBack)="goBack()">
+</app-edit-workout>

@@ -220,7 +220,7 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
       () => {
         this.openSnackBar('Nie udało się wczytać planu');
       }
-    )
+    );
   }
 
   editWorkout(workoutId: number) {
