@@ -1,8 +1,10 @@
 package com.liftlogix.controllers;
 
 import com.liftlogix.dto.PersonalPlanDTO;
+import com.liftlogix.dto.ShiftWorkoutDatesRequest;
 import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.exceptions.NoActivePlanException;
+import com.liftlogix.exceptions.TimeConflictException;
 import com.liftlogix.models.users.User;
 import com.liftlogix.services.ExcelService;
 import com.liftlogix.services.PersonalPlanService;
@@ -148,6 +150,28 @@ public class PersonalPlanController {
         } catch (AuthorizationException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @PutMapping("/shift-dates")
+    public ResponseEntity<?> shiftWorkoutsDates(@RequestBody ShiftWorkoutDatesRequest request, @AuthenticationPrincipal User currentUser) {
+        try {
+            personalPlanService.shiftWorkoutDates(
+                    request.getPersonalPlanDTO(),
+                    request.getStartDate(),
+                    request.getEndDate(),
+                    request.getShift(),
+                    currentUser
+            );
+            return ResponseEntity.ok().body("{\"message\": \"Workout dates shifted successfully\"}");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (TimeConflictException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");

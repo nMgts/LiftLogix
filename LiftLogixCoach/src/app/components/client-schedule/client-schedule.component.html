@@ -68,8 +68,12 @@
       </div>
     </div>
 
+    <div class="button-container">
+      <button mat-raised-button color="accent" class="shift-button" (click)="openShiftWorkoutsDialog()">
+        Przesuń treningi
+      </button>
+    </div>
   </div>
-
 </div>
 
 <app-workout-day-details *ngIf="clickedDay && clickedDay.events.length > 0 && selectedWorkoutId == 0 && !selectedPlan"

@@ -1,0 +1,15 @@
+mat-form-field {
+  width: 100%;
+  padding-top: 10px;
+  margin-bottom: 15px;
+}
+
+mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+button {
+  min-width: 100px;
+}

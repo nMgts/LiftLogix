@@ -18,6 +18,7 @@ export class PersonalPlanService {
   private getByWorkoutUrl = 'http://localhost:8080/api/personal-plan/workout';
   private editUrl = 'http://localhost:8080/api/personal-plan/edit';
   private exportUrl = 'http://localhost:8080/api/personal-plan/export';
+  private shiftDatesUrl = 'http://localhost:8080/api/personal-plan/shift-dates';
 
   constructor(private http: HttpClient) {}
 
@@ -79,6 +80,16 @@ export class PersonalPlanService {
         }
       })
     );
+  }
+
+  shiftWorkoutDates(request: {
+    personalPlanDTO: PersonalPlan;
+    startDate: string;
+    endDate: string;
+    shift: number;
+  }, token: string): Observable<any> {
+    const headers = this.createHeaders(token);
+    return this.http.put('http://localhost:8080/api/personal-plan/shift-dates', request, { headers: headers });
   }
 
   private extractFilename(contentDisposition: string | null): string {

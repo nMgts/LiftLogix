@@ -393,3 +393,13 @@ button {
 .non-individual-workout {
   background-color: #28A745;
 }
+
+.button-container {
+  width: 100%;
+  display: flex;
+}
+
+.shift-button {
+  margin: 5px auto 0 auto;
+  width: 160px;
+}

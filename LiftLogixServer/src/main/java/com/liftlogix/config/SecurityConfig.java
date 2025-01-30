@@ -71,7 +71,7 @@ public class SecurityConfig {
                                 "/api/plans/export/{id}", "/api/plans/copy/{id}",
                                 "/api/personal-plan/is-active/{client_id}", "/api/personal-plan/deactivate/{plan_id}", "/api/personal-plan/create",
                                 "/api/personal-plan/all/{client_id}", "/api/personal-plan/delete/{id}", "/api/personal-plan/details/{id}",
-                                "/api/personal-plan/edit",
+                                "/api/personal-plan/edit", "/api/personal-plan/shift-dates",
                                 "/api/workout/{id}", "/api/workout/toggle-individual/{id}", "/api/workout/set-date", "/api/workout/update",
                                 "/api/diet/{client_id}", "/api/diet/update",
                                 "/api/report/delete/{id}")

@@ -223,6 +223,38 @@ public class PersonalPlanService {
         return plan.getName();
     }
 
+    @Transactional
+    public void shiftWorkoutDates(PersonalPlanDTO personalPlanDTO, LocalDate startDate, LocalDate endDate, int shift, User user) {
+        PersonalPlan personalPlan = personalPlanRepository.findById(personalPlanDTO.getId()).orElseThrow(
+                () -> new EntityNotFoundException("Personal plan not found")
+        );
+
+        Coach coach = personalPlan.getClient().getCoach();
+        if (!Objects.equals(coach.getEmail(), user.getEmail()) && !user.getRole().equals(Role.ADMIN)) {
+            throw new AuthorizationException("You are not authorized");
+        }
+
+        for (Mesocycle mesocycle : personalPlan.getMesocycles()) {
+            for (Microcycle microcycle : mesocycle.getMicrocycles()) {
+                for (WorkoutUnit workoutUnit : microcycle.getWorkoutUnits()) {
+                    if (workoutUnit.getDate() != null) {
+                        LocalDate workoutDate = workoutUnit.getDate().toLocalDate();
+                        LocalDateTime newDate = workoutUnit.getDate().plusDays(shift);
+
+                        if (!workoutUnit.isIndividual()) {
+                            coachSchedulerService.onChangeWorkoutDate(workoutUnit.getId(), newDate, workoutUnit.getDuration());
+                        }
+
+                        if (!workoutDate.isBefore(startDate) && !workoutDate.isAfter(endDate)) {
+                            workoutUnit.setDate(newDate);
+                        }
+                    }
+                }
+            }
+        }
+        personalPlanRepository.save(personalPlan);
+    }
+
     private void setWorkoutDatesForPlan(PersonalPlanDTO personalPlanDTO) {
         LocalDate currentDate = personalPlanDTO.getStartDate();
         int dayCount = 0;

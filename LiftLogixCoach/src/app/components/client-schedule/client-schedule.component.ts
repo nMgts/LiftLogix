@@ -6,6 +6,8 @@ import { Subscription } from "rxjs";
 import { PersonalPlan } from "../../interfaces/PersonalPlan";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { WorkoutUnit } from "../../interfaces/WorkoutUnit";
+import { MatDialog } from "@angular/material/dialog";
+import { ShiftWorkoutsDialogComponent } from "../shift-workouts-dialog/shift-workouts-dialog.component";
 
 @Component({
   selector: 'app-client-schedule',
@@ -52,6 +54,7 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
   constructor(
     private clientService: ClientService,
     private personalPlanService: PersonalPlanService,
+    private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
 
@@ -238,6 +241,27 @@ export class ClientScheduleComponent implements OnInit, OnDestroy {
     if (this.clientId) {
       this.loadWorkouts(this.clientId);
     }
+  }
+
+  openShiftWorkoutsDialog() {
+    const token = localStorage.getItem("token") || "";
+    this.personalPlanService.getActivePlan(this.clientId!, token).subscribe(
+      (personalPlan: PersonalPlan) => {
+        const dialogRef = this.dialog.open(ShiftWorkoutsDialogComponent, {
+          width: "400px",
+          data: { personalPlan },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            this.loadWorkouts(this.clientId!);
+          }
+        });
+      },
+      (error) => {
+        console.error("Błąd podczas pobierania planu:", error);
+      }
+    );
   }
 
   private openSnackBar(message: string): void {

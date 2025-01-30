@@ -9,9 +9,9 @@ import { OptionsTooltipComponent } from "../options-tooltip/options-tooltip.comp
 import { PersonalPlan } from "../../interfaces/PersonalPlan";
 import { PersonalPlanService } from "../../services/personal-plan.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import {WorkoutDateChangeDialogComponent} from "../workout-date-change-dialog/workout-date-change-dialog.component";
-import {MatDialog} from "@angular/material/dialog";
-import {WorkoutService} from "../../services/workout.service";
+import { WorkoutDateChangeDialogComponent } from "../workout-date-change-dialog/workout-date-change-dialog.component";
+import { MatDialog } from "@angular/material/dialog";
+import { WorkoutService } from "../../services/workout.service";
 
 @Component({
   selector: 'app-weekly-schedule',

@@ -91,6 +91,7 @@ import { ReportDetailsDialogComponent } from './components/report-details-dialog
 import { CreateReportDialogComponent } from './components/create-report-dialog/create-report-dialog.component';
 import { CustomPaginatorIntl } from "./providers/paginator";
 import { EditWorkoutComponent } from './components/edit-workout/edit-workout.component';
+import { ShiftWorkoutsDialogComponent } from './components/shift-workouts-dialog/shift-workouts-dialog.component';
 
 @NgModule({
   declarations: [
@@ -154,7 +155,8 @@ import { EditWorkoutComponent } from './components/edit-workout/edit-workout.com
     DeleteReportDialogComponent,
     ReportDetailsDialogComponent,
     CreateReportDialogComponent,
-    EditWorkoutComponent
+    EditWorkoutComponent,
+    ShiftWorkoutsDialogComponent
   ],
     imports: [
         BrowserModule,
