@@ -6,12 +6,23 @@
 
   <div *ngIf="showAdvancedOptions" class="micro-meso-info">Mezocykl: {{ getMesocycleIndex() + 1 }}, Mikrocykl: {{ getMicrocycleIndex() + 1 }}</div>
 
-  <mat-form-field class="workout-name-container" appearance="fill">
+  <mat-form-field *ngIf="!personalPlan" class="workout-name-container" appearance="fill">
     <mat-label>Wybierz jednostkę treningową</mat-label>
     <mat-select [(ngModel)]="selectedWorkout" (selectionChange)="selectWorkout($event.value)">
       <mat-option *ngFor="let workout of selectedMicrocycle.workouts" [value]="workout">
         {{ workout.name }}
         <mat-icon (click)="removeWorkout(workout, $event)">delete</mat-icon>
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="personalPlan" class="workout-name-container" appearance="fill">
+    <mat-label>Wybierz jednostkę treningową</mat-label>
+    <mat-select [(ngModel)]="selectedWorkoutUnit" (selectionChange)="selectWorkout($event.value)">
+      <mat-option *ngFor="let workout of selectedMicrocycle.workoutUnits" [value]="workout">
+        {{ workout.name }}
+        <span *ngIf="workout.microcycleDay !== -1"> (Dzień {{ workout.microcycleDay }}) </span>
+        <mat-icon (click)="removeWorkoutUnit(workout, $event)">delete</mat-icon>
       </mat-option>
     </mat-select>
   </mat-form-field>
@@ -107,8 +118,154 @@
 
     </tr>
     </thead>
-    <tbody>
-    <tr *ngFor="let exercise of selectedWorkout.workoutExercises">
+    <tbody *ngIf="!personalPlan">
+      <tr *ngFor="let exercise of selectedWorkout.workoutExercises">
+        <td class="exercise-name-cell" (click)="openEditExerciseNameDialog(exercise.exerciseId)">
+          {{ exercise.exerciseName }}
+          <mat-icon class="info-icon" (click)="openExerciseDetails(exercise.exerciseId, $event)">info</mat-icon>
+        </td>
+        <td *ngIf="window.innerWidth > 499" (click)="editCell(exercise, 'series')">
+          <ng-container *ngIf="!isEditing(exercise, 'series'); else editSeries">
+            {{ exercise.series || '' }}
+          </ng-container>
+          <ng-template #editSeries>
+            <input #inputElement
+                   [(ngModel)]="exercise.series"
+                   (focus)="selectAllText($event)"
+                   (blur)="validateSeries(exercise)"
+                   (keydown.enter)="validateSeries(exercise)"
+                   type="number" min="0"/>
+          </ng-template>
+        </td>
+        <td class="repetitions-cell" *ngIf="window.innerWidth > 499" (click)="editCell(exercise, 'repetitions')">
+          <ng-container *ngIf="!isEditing(exercise, 'repetitions'); else editRepetitions">
+            {{ formatRepetitions(exercise) }}
+          </ng-container>
+          <ng-template #editRepetitions>
+            <div class="repetitions-inputs">
+              <input #inputElement
+                     [(ngModel)]="exercise.repetitionsFrom"
+                     (click)="selectAllText($event);"
+                     (blur)="validateRepetitions(exercise); endEditIfNotFocusedOnOtherInput('repetitions', $event)"
+                     (keydown.enter)="validateRepetitions(exercise); endEdit()"
+                     tabindex="1" placeholder="od" type="number"/>
+              -
+              <input [(ngModel)]="exercise.repetitionsTo"
+                     (click)="selectAllText($event);"
+                     (blur)="validateRepetitions(exercise); endEditIfNotFocusedOnOtherInput('repetitions', $event)"
+                     (keydown.enter)="validateRepetitions(exercise); endEdit()"
+                     tabindex="2" placeholder="do" type="number" />
+            </div>
+          </ng-template>
+        </td>
+        <td class="weight-cell" *ngIf="window.innerWidth > 499" (click)="editCell(exercise, 'weight')">
+          <ng-container *ngIf="!isEditing(exercise, 'weight'); else editWeight">
+            {{ exercise.weight ? exercise.weight + 'kg' : '' }}
+          </ng-container>
+          <ng-template #editWeight>
+            <input #inputElement
+                   [(ngModel)]="exercise.weight"
+                   (focus)="selectAllText($event)"
+                   (blur)="validateWeight(exercise)"
+                   (keydown.enter)="validateWeight(exercise)"
+                   type="number" min="0" step="0.01"/>
+          </ng-template>
+        </td>
+        <td *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)"
+            (click)="editCell(exercise, 'percentage')">
+          <ng-container *ngIf="!isEditing(exercise, 'percentage'); else editPercentage">
+            {{ exercise.percentage ? exercise.percentage + '%' : '' }}
+          </ng-container>
+          <ng-template #editPercentage>
+            <input #inputElement
+                   [(ngModel)]="exercise.percentage"
+                   (focus)="selectAllText($event)"
+                   (blur)="validatePercentage(exercise)"
+                   (keydown.enter)="validatePercentage(exercise)"
+                   type="number" min="0" step="0.1"/>
+          </ng-template>
+        </td>
+        <td *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)"
+            (click)="editCell(exercise, 'tempo')">
+          <ng-container *ngIf="!isEditing(exercise, 'tempo'); else editTempo">
+            {{ exercise.tempo || '' }}
+          </ng-container>
+          <ng-template #editTempo>
+            <input #inputElement
+                   [(ngModel)]="exercise.tempo"
+                   (focus)="selectAllText($event)"
+                   (blur)="validateTempo(exercise)"
+                   (keydown.enter)="validateTempo(exercise)"
+                   (input)="onTempoInput($event, exercise)"
+                   placeholder="1-1-1-1"/>
+          </ng-template>
+        </td>
+        <td *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)"
+            (click)="editCell(exercise, 'rpe')">
+          <ng-container *ngIf="!isEditing(exercise, 'rpe'); else editRpe">
+            {{ exercise.rpe || '' }}
+          </ng-container>
+          <ng-template #editRpe>
+            <input #inputElement
+                   [(ngModel)]="exercise.rpe"
+                   (focus)="selectAllText($event)"
+                   (blur)="validateRpe(exercise)"
+                   (keydown.enter)="endEdit()"
+                   type="number" min="1" max="10" step="0.5"/>
+          </ng-template>
+        </td>
+        <td *ngIf="showAdvancedOptions && window.innerWidth > 999 && !(isPersonalPlan && window.innerWidth > 1023 && !isFullScreen)"
+            class="break-cell" (click)="editCell(exercise, 'break')">
+          <ng-container *ngIf="!isEditing(exercise, 'break'); else editBreak">
+            {{ exercise.breakTime.value ? exercise.breakTime.value + exercise.breakTime.unit : '' }}
+          </ng-container>
+          <ng-template #editBreak>
+            <div class="break-input">
+              <input #inputElement
+                     [(ngModel)]="exercise.breakTime.value"
+                     (focus)="selectAllText($event)"
+                     (blur)="validateBreak(exercise); endEditIfNotFocusedOnOtherInput('break', $event)"
+                     (keydown.enter)="validateBreak(exercise); endEdit()"
+                     tabindex="1" type="number" min="0"/>
+              <select [(ngModel)]="exercise.breakTime.unit"
+                      (click)="$event.stopPropagation()"
+                      (blur)="validateBreak(exercise); endEditIfNotFocusedOnOtherInput('break', $event)"
+                      (keydown.enter)="validateBreak(exercise); endEdit()"
+                      tabindex="2">
+                <option value="s">s</option>
+                <option value="min">min</option>
+              </select>
+            </div>
+          </ng-template>
+        </td>
+        <td class="workout-exercise-details-column"
+            *ngIf="(window.innerWidth < 1000 && showAdvancedOptions)
+            || window.innerWidth < 500
+            || (isPersonalPlan && window.innerWidth > 1023 && showAdvancedOptions && !isFullScreen)">
+          <mat-icon class="options-icon" (click)="openExerciseOptionsDialog(exercise)">more_vert</mat-icon>
+        </td>
+        <td class="delete-column">
+          <mat-icon class="delete-icon" (click)="removeExercise(exercise)">delete</mat-icon>
+        </td>
+      </tr>
+
+      <tr class="add-exercise-row">
+        <td [attr.colspan]=
+              "(isPersonalPlan && !isFullScreen && window.innerWidth > 1023) ?
+                 4 : showAdvancedOptions
+                  ? (window.innerWidth < 500
+                      ? 1
+                      : (window.innerWidth < 1000 ? 4 : 8))
+                  : (window.innerWidth < 500 ? 1 : 4)">
+          <button mat-raised-button color="primary" (click)="openAddExerciseDialog()">
+            <mat-icon>add</mat-icon> Dodaj ćwiczenie
+          </button>
+        </td>
+      </tr>
+    </tbody>
+
+    <tbody *ngIf="personalPlan">
+    <tr *ngFor="let exercise of selectedWorkoutUnit?.workoutExercises">
       <td class="exercise-name-cell" (click)="openEditExerciseNameDialog(exercise.exerciseId)">
         {{ exercise.exerciseName }}
         <mat-icon class="info-icon" (click)="openExerciseDetails(exercise.exerciseId, $event)">info</mat-icon>
@@ -229,8 +386,8 @@
       </td>
       <td class="workout-exercise-details-column"
           *ngIf="(window.innerWidth < 1000 && showAdvancedOptions)
-          || window.innerWidth < 500
-          || (isPersonalPlan && window.innerWidth > 1023 && showAdvancedOptions && !isFullScreen)">
+            || window.innerWidth < 500
+            || (isPersonalPlan && window.innerWidth > 1023 && showAdvancedOptions && !isFullScreen)">
         <mat-icon class="options-icon" (click)="openExerciseOptionsDialog(exercise)">more_vert</mat-icon>
       </td>
       <td class="delete-column">
@@ -241,11 +398,11 @@
     <tr class="add-exercise-row">
       <td [attr.colspan]=
             "(isPersonalPlan && !isFullScreen && window.innerWidth > 1023) ?
-               4 : showAdvancedOptions
-                ? (window.innerWidth < 500
-                    ? 1
-                    : (window.innerWidth < 1000 ? 4 : 8))
-                : (window.innerWidth < 500 ? 1 : 4)">
+                 4 : showAdvancedOptions
+                  ? (window.innerWidth < 500
+                      ? 1
+                      : (window.innerWidth < 1000 ? 4 : 8))
+                  : (window.innerWidth < 500 ? 1 : 4)">
         <button mat-raised-button color="primary" (click)="openAddExerciseDialog()">
           <mat-icon>add</mat-icon> Dodaj ćwiczenie
         </button>
@@ -263,7 +420,7 @@
                     : (window.innerWidth < 1000 ? 4 : 8))
                 : (window.innerWidth < 500 ? 1 : 4)">
         <div class="delete-exercises">
-          <button *ngIf="selectedWorkout.workoutExercises.length > 0" mat-raised-button color="accent"
+          <button *ngIf="selectedWorkoutUnit && selectedWorkoutUnit.workoutExercises.length > 0" mat-raised-button color="accent"
                   (click)="removeAllExercises()">
             <mat-icon>delete</mat-icon> Wyczyść ćwiczenia
           </button>
@@ -311,16 +468,33 @@
               'active-cell': cell !== 0,
               'touch-device': isTouchDevice}">
             <div class="cell-content" *ngIf="cell !== 0">
-              <div class="workout-names">
-                <span *ngFor="let workout of getWorkoutsForDay(cell)" class="workout-letter" (click)="removeWorkoutFromMicrocycle(workout, cell)">
+              <div class="workout-names" *ngIf="!personalPlan">
+                <span *ngFor="let workout of getWorkoutsForDay(cell)" class="workout-letter"
+                      (click)="removeWorkoutFromMicrocycle(workout, cell)">
                   {{ getWorkoutInitials(workout.name) }}
                 </span>
                 <span class="plus-icon" (click)="toggleMicrocycleCellDropdown($event, cell)">+</span>
               </div>
 
-              <div class="microcycle-cell-dropdown-menu" #dropdown *ngIf="microcycleCellDropdownVisible && activeCell === cell">
+              <div class="workout-names" *ngIf="personalPlan">
+                <span *ngFor="let workout of getWorkoutUnitsForDay(cell)" class="workout-letter"
+                      (click)="removeWorkoutUnitFromMicrocycle(workout)">
+                  {{ getWorkoutInitials(workout.name) }}
+                </span>
+                <span class="plus-icon" (click)="toggleMicrocycleCellDropdown($event, cell)">+</span>
+              </div>
+
+              <div class="microcycle-cell-dropdown-menu" #dropdown
+                   *ngIf="microcycleCellDropdownVisible && activeCell === cell && !personalPlan">
                 <ul>
                   <li *ngFor="let workout of selectedMicrocycle.workouts" (click)="addWorkoutToMicrocycle(workout, cell)">{{ workout.name }}</li>
+                </ul>
+              </div>
+
+              <div class="microcycle-cell-dropdown-menu" #dropdown
+                   *ngIf="microcycleCellDropdownVisible && activeCell === cell && personalPlan">
+                <ul>
+                  <li *ngFor="let workout of selectedMicrocycle.workoutUnits" (click)="addWorkoutUnitToMicrocycle(workout, cell)">{{ workout.name }}</li>
                 </ul>
               </div>
             </div>

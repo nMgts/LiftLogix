@@ -55,8 +55,18 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     workoutExercises: [],
     days: []
   }
+  exampleWorkoutUnit: WorkoutUnit = {
+    id: 0,
+    name: 'Trening A',
+    workoutExercises: [],
+    date: '1970-01-01T00:00:00',
+    individual: true,
+    duration: 60,
+    microcycleDay: -1
+  }
 
   selectedWorkout = this.exampleWorkout;
+  selectedWorkoutUnit: WorkoutUnit | null = null;
 
   editingExercise: any = null;
   editingField: string = '';
@@ -138,32 +148,16 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
 
   loadPersonalPlan() {
     this.macrocycle = { mesocycles: this.personalPlan.mesocycles };
-    this.macrocycle.mesocycles.forEach(mesocycle => {
-        mesocycle.microcycles.forEach(microcycle => {
-            microcycle.workoutUnits.forEach(workoutUnit => {
-                const workout: Workout = {
-                  id: 0,
-                  name: workoutUnit.name,
-                  workoutExercises: workoutUnit.workoutExercises,
-                  days: [workoutUnit.microcycleDay]
-                };
-
-                const existingWorkout = microcycle.workouts.find(w => w.name === workout.name);
-                if (existingWorkout) {
-                  existingWorkout.days.push(workoutUnit.microcycleDay);
-                } else {
-                  microcycle.workouts.push(workout);
-                }
-              })
-            microcycle.workoutUnits = [];
-          })
-      })
     this.selectMesocycle(0);
     this.generateMicrocycleTable();
   }
 
   updatePersonalPlan() {
     const token = localStorage.getItem('token') || '';
+    this.deleteNotAssignedWorkoutUnits();
+    if (!this.validateWorkoutUnits()) {
+      return;
+    }
 
     const personalPlan: PersonalPlan = _.cloneDeep(this.personalPlan);
 
@@ -179,7 +173,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
               id: 0,
               name: workout.name,
               workoutExercises: workout.workoutExercises,
-              date: "1970-01-01T00:00:00",
+              date: '1970-01-01T00:00:00',
               individual: true,
               duration: 60,
               microcycleDay: day
@@ -285,22 +279,43 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   }
 
   createNewWorkout() {
-    const newWorkout: Workout = {
-      id: 0,
-      name: this.generateWorkoutName(),
-      workoutExercises: [],
-      days: []
-    };
-    this.selectedMicrocycle.workouts.push(newWorkout);
-    this.selectedWorkout = newWorkout;
+    if (!this.personalPlan) {
+      const newWorkout: Workout = {
+        id: 0,
+        name: this.generateWorkoutName(),
+        workoutExercises: [],
+        days: []
+      };
+      this.selectedMicrocycle.workouts.push(newWorkout);
+      this.selectedWorkout = newWorkout;
+    }
+    else {
+      const newWorkout: WorkoutUnit = {
+        id: 0,
+        name: this.generateWorkoutName(),
+        workoutExercises: [],
+        date: '1970-01-01T00:00:00',
+        individual: true,
+        duration: 60,
+        microcycleDay: -1,
+      };
+      this.selectedMicrocycle.workoutUnits.push(newWorkout);
+      this.selectedWorkoutUnit = newWorkout;
+    }
   }
 
   generateWorkoutName(): string {
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-    const uniqueBaseNames = new Set(
-      this.selectedMicrocycle.workouts.map(workout => workout.name.replace(/\d*$/, ''))
-    );
+    let uniqueBaseNames;
+    if (!this.personalPlan) {
+      uniqueBaseNames = new Set<string>(
+        this.selectedMicrocycle.workouts.map(workout => workout.name.replace(/\d*$/, '')))
+    }
+    else {
+      uniqueBaseNames = new Set<string>(
+        this.selectedMicrocycle.workoutUnits.map(workout => workout.name.replace(/\d*$/, '')))
+    }
 
     const workoutCount = uniqueBaseNames.size;
     let name;
@@ -342,6 +357,27 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     }
   }
 
+  removeWorkoutUnit(workout: WorkoutUnit, event: Event) {
+    event.stopPropagation();
+
+    if (this.selectedMicrocycle.workouts.length > 1) {
+      const index = this.selectedMicrocycle.workoutUnits.indexOf(workout);
+      if (index !== -1) {
+        this.selectedMicrocycle.workouts.splice(index, 1);
+
+        this.updateWorkoutNames();
+
+        if (this.selectedWorkoutUnit === workout) {
+          this.selectedWorkoutUnit = this.selectedMicrocycle.workoutUnits.reduce((min, w) =>
+            w.microcycleDay < min.microcycleDay ? w : min
+          );
+        }
+      }
+    } else {
+      this.openSnackBar("Nie można usunąć wszystkich treningów");
+    }
+  }
+
   updateWorkoutNames() {
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const uniqueWorkouts: { [key: string]: Workout[] } = {};
@@ -374,20 +410,41 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.selectedWorkout.workoutExercises.push({
-          exerciseId: result.exerciseId,
-          exerciseName: result.exerciseName,
-          exerciseType: result.exerciseType,
-          difficultyFactor: result.difficultyFactor,
-          series: null,
-          repetitionsFrom: null,
-          repetitionsTo: null,
-          weight: null,
-          percentage: null,
-          tempo: '1-0-1-0',
-          rpe: null,
-          breakTime: {value: null, unit: 's'}
-        });
+        if (!this.personalPlan) {
+          this.selectedWorkout.workoutExercises.push({
+            exerciseId: result.exerciseId,
+            exerciseName: result.exerciseName,
+            exerciseType: result.exerciseType,
+            difficultyFactor: result.difficultyFactor,
+            series: null,
+            repetitionsFrom: null,
+            repetitionsTo: null,
+            weight: null,
+            percentage: null,
+            tempo: '1-0-1-0',
+            rpe: null,
+            breakTime: {value: null, unit: 's'}
+          });
+        }
+
+        else {
+          if (this.selectedWorkoutUnit) {
+            this.selectedWorkoutUnit.workoutExercises.push({
+              exerciseId: result.exerciseId,
+              exerciseName: result.exerciseName,
+              exerciseType: result.exerciseType,
+              difficultyFactor: result.difficultyFactor,
+              series: null,
+              repetitionsFrom: null,
+              repetitionsTo: null,
+              weight: null,
+              percentage: null,
+              tempo: '1-0-1-0',
+              rpe: null,
+              breakTime: {value: null, unit: 's'}
+            });
+          }
+        }
       }
     });
   }
@@ -405,17 +462,35 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          const index = this.selectedWorkout.workoutExercises.findIndex(e => e.exerciseId === exerciseId);
-          if (index !== -1) {
-            const updatedWorkoutExercises = [...this.selectedWorkout.workoutExercises];
-            updatedWorkoutExercises[index] = {
-              ...this.selectedWorkout.workoutExercises[index],
-              exerciseId: result.exerciseId,
-              exerciseName: result.exerciseName,
-              exerciseType: result.exerciseType,
-              difficultyFactor: result.difficultyFactor
-            };
-            this.selectedWorkout.workoutExercises = updatedWorkoutExercises;
+          if (!this.personalPlan) {
+            const index = this.selectedWorkout.workoutExercises.findIndex(e => e.exerciseId === exerciseId);
+            if (index !== -1) {
+              const updatedWorkoutExercises = [...this.selectedWorkout.workoutExercises];
+              updatedWorkoutExercises[index] = {
+                ...this.selectedWorkout.workoutExercises[index],
+                exerciseId: result.exerciseId,
+                exerciseName: result.exerciseName,
+                exerciseType: result.exerciseType,
+                difficultyFactor: result.difficultyFactor
+              };
+              this.selectedWorkout.workoutExercises = updatedWorkoutExercises;
+            }
+          }
+          else {
+            if (this.selectedWorkoutUnit) {
+              const index = this.selectedWorkoutUnit.workoutExercises.findIndex(e => e.exerciseId === exerciseId);
+              if (index !== -1) {
+                const updatedWorkoutExercises = [...this.selectedWorkoutUnit.workoutExercises];
+                updatedWorkoutExercises[index] = {
+                  ...this.selectedWorkoutUnit.workoutExercises[index],
+                  exerciseId: result.exerciseId,
+                  exerciseName: result.exerciseName,
+                  exerciseType: result.exerciseType,
+                  difficultyFactor: result.difficultyFactor
+                };
+                this.selectedWorkoutUnit.workoutExercises = updatedWorkoutExercises;
+              }
+            }
           }
         }
       });
@@ -424,11 +499,25 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
 
 
   removeExercise(exercise: any): void {
-    this.selectedWorkout.workoutExercises = this.selectedWorkout.workoutExercises.filter(e => e !== exercise);
+    if (!this.personalPlan) {
+      this.selectedWorkout.workoutExercises = this.selectedWorkout.workoutExercises.filter(e => e !== exercise);
+    }
+    else {
+      if (this.selectedWorkoutUnit) {
+        this.selectedWorkoutUnit.workoutExercises = this.selectedWorkoutUnit.workoutExercises.filter(e => e !== exercise);
+      }
+    }
   }
 
   removeAllExercises(): void {
-    this.selectedWorkout.workoutExercises = [];
+    if (!this.personalPlan) {
+      this.selectedWorkout.workoutExercises = [];
+    }
+    else {
+      if (this.selectedWorkoutUnit) {
+        this.selectedWorkout.workoutExercises = [];
+      }
+    }
   }
 
   openExerciseDetails(exerciseId: number, event: Event): void {
@@ -448,45 +537,97 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   }
 
   duplicateWorkout(): void {
-    const workoutNamePattern = new RegExp(`^(${this.selectedWorkout.name.replace(/\d*$/, '')})(\\d*)$`);
+    let workoutNamePattern;
+    if (!this.personalPlan) {
+      workoutNamePattern = new RegExp(`^(${this.selectedWorkout.name.replace(/\d*$/, '')})(\\d*)$`);
+    }
+    else {
+      // @ts-ignore
+      workoutNamePattern = new RegExp(`^(${this.selectedWorkoutUnit.name.replace(/\d*$/, '')})(\\d*)$`);
+    }
     let maxNumber = 0;
 
-    this.selectedMicrocycle.workouts.forEach(workout => {
-      const match = workout.name.match(workoutNamePattern);
-      if (match) {
-        const number = match[2] ? parseInt(match[2]) : 0;
-        if (number > maxNumber) {
-          maxNumber = number;
+    if (!this.personalPlan) {
+      this.selectedMicrocycle.workouts.forEach(workout => {
+        const match = workout.name.match(workoutNamePattern);
+        if (match) {
+          const number = match[2] ? parseInt(match[2]) : 0;
+          if (number > maxNumber) {
+            maxNumber = number;
+          }
         }
+      });
+
+      if (maxNumber === 0 && !/\d+$/.test(this.selectedWorkout.name)) {
+        this.selectedWorkout.name += '1';
+        maxNumber = 1;
       }
-    });
 
-    if (maxNumber === 0 && !/\d+$/.test(this.selectedWorkout.name)) {
-      this.selectedWorkout.name += '1';
-      maxNumber = 1;
+      const newWorkout: Workout = {
+        id: 0,
+        name: `${this.selectedWorkout.name.replace(/\d+$/, '')}${maxNumber + 1}`,
+        workoutExercises: this.selectedWorkout.workoutExercises.map(exercise => ({
+          exerciseId: exercise.exerciseId,
+          exerciseName: exercise.exerciseName,
+          exerciseType: exercise.exerciseType,
+          difficultyFactor: exercise.difficultyFactor,
+          series: exercise.series,
+          repetitionsFrom: exercise.repetitionsFrom,
+          repetitionsTo: exercise.repetitionsTo,
+          weight: exercise.weight,
+          percentage: exercise.percentage,
+          tempo: exercise.tempo,
+          rpe: exercise.rpe,
+          breakTime: { ...exercise.breakTime }
+        })),
+        days: []
+      };
+
+      this.selectedMicrocycle.workouts.push(newWorkout);
     }
+    else {
+      this.selectedMicrocycle.workoutUnits.forEach(workout => {
+        const match = workout.name.match(workoutNamePattern);
+        if (match) {
+          const number = match[2] ? parseInt(match[2]) : 0;
+          if (number > maxNumber) {
+            maxNumber = number;
+          }
+        }
+      });
 
-    const newWorkout: Workout = {
-      id: 0,
-      name: `${this.selectedWorkout.name.replace(/\d+$/, '')}${maxNumber + 1}`,
-      workoutExercises: this.selectedWorkout.workoutExercises.map(exercise => ({
-        exerciseId: exercise.exerciseId,
-        exerciseName: exercise.exerciseName,
-        exerciseType: exercise.exerciseType,
-        difficultyFactor: exercise.difficultyFactor,
-        series: exercise.series,
-        repetitionsFrom: exercise.repetitionsFrom,
-        repetitionsTo: exercise.repetitionsTo,
-        weight: exercise.weight,
-        percentage: exercise.percentage,
-        tempo: exercise.tempo,
-        rpe: exercise.rpe,
-        breakTime: { ...exercise.breakTime }
-      })),
-      days: []
-    };
+      if (this.selectedWorkoutUnit) {
+        if (maxNumber === 0 && !/\d+$/.test(this.selectedWorkoutUnit.name)) {
+          this.selectedWorkoutUnit.name += '1';
+          maxNumber = 1;
+        }
 
-    this.selectedMicrocycle.workouts.push(newWorkout);
+        const newWorkout: WorkoutUnit = {
+          id: 0,
+          name: `${this.selectedWorkoutUnit.name.replace(/\d+$/, '')}${maxNumber + 1}`,
+          workoutExercises: this.selectedWorkoutUnit.workoutExercises.map(exercise => ({
+            exerciseId: exercise.exerciseId,
+            exerciseName: exercise.exerciseName,
+            exerciseType: exercise.exerciseType,
+            difficultyFactor: exercise.difficultyFactor,
+            series: exercise.series,
+            repetitionsFrom: exercise.repetitionsFrom,
+            repetitionsTo: exercise.repetitionsTo,
+            weight: exercise.weight,
+            percentage: exercise.percentage,
+            tempo: exercise.tempo,
+            rpe: exercise.rpe,
+            breakTime: { ...exercise.breakTime }
+          })),
+          date: '1970-01-01T00:00:00',
+          individual: true,
+          duration: 60,
+          microcycleDay: -1
+        };
+
+        this.selectedMicrocycle.workoutUnits.push(newWorkout);
+      }
+    }
   }
 
   openExerciseOptionsDialog(exercise: WorkoutExercise): void {
@@ -500,9 +641,19 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const { exercise: updatedExercise } = result;
-        const index = this.selectedWorkout.workoutExercises.findIndex(e => e.exerciseId === updatedExercise.exerciseId);
-        if (index !== -1) {
-          this.selectedWorkout.workoutExercises[index] = { ...this.selectedWorkout.workoutExercises[index], ...updatedExercise };
+        if (!this.personalPlan) {
+          const index = this.selectedWorkout.workoutExercises.findIndex(e => e.exerciseId === updatedExercise.exerciseId);
+          if (index !== -1) {
+            this.selectedWorkout.workoutExercises[index] = { ...this.selectedWorkout.workoutExercises[index], ...updatedExercise };
+          }
+        }
+        else {
+          if (this.selectedWorkoutUnit) {
+            const index = this.selectedWorkoutUnit.workoutExercises.findIndex(e => e.exerciseId === updatedExercise.exerciseId);
+            if (index !== -1) {
+              this.selectedWorkoutUnit.workoutExercises[index] = { ...this.selectedWorkoutUnit.workoutExercises[index], ...updatedExercise };
+            }
+          }
         }
       }
     });
@@ -523,6 +674,16 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     return result;
   }
 
+  validateWorkoutUnits() {
+    let result = true;
+    if (!this.validateEmptyWorkoutUnits()) {
+      result = false;
+      this.openSnackBar('Błąd - znaleziono puste treningi');
+    }
+
+    return result;
+  }
+
   validateWorkoutDays() {
     let found = false;
     for (let mesocycle of this.macrocycle.mesocycles) {
@@ -537,10 +698,31 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     return found;
   }
 
+  deleteNotAssignedWorkoutUnits() {
+    for (let mesocycle of this.macrocycle.mesocycles) {
+      for (let microcycle of mesocycle.microcycles) {
+        microcycle.workoutUnits = microcycle.workoutUnits.filter(workout => workout.microcycleDay >= 1);
+      }
+    }
+  }
+
   validateEmptyWorkouts() {
     for (let mesocycle of this.macrocycle.mesocycles) {
       for (let microcycle of mesocycle.microcycles) {
         for (let workout of microcycle.workouts) {
+          if (workout.workoutExercises.length == 0) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  validateEmptyWorkoutUnits() {
+    for (let mesocycle of this.macrocycle.mesocycles) {
+      for (let microcycle of mesocycle.microcycles) {
+        for (let workout of microcycle.workoutUnits) {
           if (workout.workoutExercises.length == 0) {
             return false;
           }
@@ -564,9 +746,18 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     this.generateMicrocycleTable();
     this.selectedMicrocycle.length = value;
 
-    this.selectedMicrocycle.workouts.forEach(workout => {
-      workout.days = workout.days.filter(day => day <= value);
-    });
+    if (!this.personalPlan) {
+      this.selectedMicrocycle.workouts.forEach(workout => {
+        workout.days = workout.days.filter(day => day <= value);
+      });
+    }
+    else {
+      this.selectedMicrocycle.workoutUnits.forEach(workout => {
+        if (workout.microcycleDay > value) {
+          workout.microcycleDay = -1;
+        }
+      })
+    }
   }
 
   generateMicrocycleTable() {
@@ -605,9 +796,30 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     }
   }
 
+  addWorkoutUnitToMicrocycle(workout: WorkoutUnit, day: number) {
+    const newWorkout = {
+      ...workout,
+      microcycleDay: day,
+      workoutExercises: workout.workoutExercises.map(exercise => ({
+        ...exercise,
+        exerciseId: exercise.exerciseId,
+        exerciseName: exercise.exerciseName,
+        break: { ...exercise.breakTime }
+      })),
+    };
+
+    this.selectedMicrocycle.workoutUnits.push(newWorkout);
+  }
+
   getWorkoutsForDay(day: number): Workout[] {
     return this.selectedMicrocycle.workouts
       .filter(workout => workout.days.includes(day))
+      .map(workout => workout);
+  }
+
+  getWorkoutUnitsForDay(day: number): WorkoutUnit[] {
+    return this.selectedMicrocycle.workoutUnits
+      .filter(workout => workout.microcycleDay === day)
       .map(workout => workout);
   }
 
@@ -617,6 +829,10 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
 
   removeWorkoutFromMicrocycle(workout: Workout, day: number): void {
     workout.days = workout.days.filter(d => d !== day);
+  }
+
+  removeWorkoutUnitFromMicrocycle(workout: WorkoutUnit): void {
+    workout.microcycleDay = -1;
   }
 
   /** Mesoocycle Methods **/
@@ -633,22 +849,42 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
     const difference = this.microcycleCount - this.selectedMesocycle.microcycles.length;
 
     if (difference > 0) {
-      for (let i = 0; i < difference; i++) {
-        const newMicrocycle: Microcycle = {
-          length: this.selectedMicrocycle.length,
-          workouts: this.selectedMicrocycle.workouts.map(workout => ({
-            ...workout,
-            workoutExercises: workout.workoutExercises.map(exercise => ({
-              ...exercise,
-              exerciseId: exercise.exerciseId,
-              exerciseName: exercise.exerciseName,
-              break: { ...exercise.breakTime }
+      if (!this.personalPlan) {
+        for (let i = 0; i < difference; i++) {
+          const newMicrocycle: Microcycle = {
+            length: this.selectedMicrocycle.length,
+            workouts: this.selectedMicrocycle.workouts.map(workout => ({
+              ...workout,
+              workoutExercises: workout.workoutExercises.map(exercise => ({
+                ...exercise,
+                exerciseId: exercise.exerciseId,
+                exerciseName: exercise.exerciseName,
+                break: { ...exercise.breakTime }
+              })),
+              days: [...workout.days]
             })),
-            days: [...workout.days]
-          })),
-          workoutUnits: []
-        };
-        this.selectedMesocycle.microcycles.push(newMicrocycle);
+            workoutUnits: []
+          };
+          this.selectedMesocycle.microcycles.push(newMicrocycle);
+        }
+      }
+      else {
+        for (let i = 0; i < difference; i++) {
+          const newMicrocycle: Microcycle = {
+            length: this.selectedMicrocycle.length,
+            workouts: [],
+            workoutUnits: this.selectedMicrocycle.workoutUnits.map(workout => ({
+              ...workout,
+              workoutExercises: workout.workoutExercises.map(exercise => ({
+                ...exercise,
+                exerciseId: exercise.exerciseId,
+                exerciseName: exercise.exerciseName,
+                break: { ...exercise.breakTime }
+              })),
+            }))
+          };
+          this.selectedMesocycle.microcycles.push(newMicrocycle);
+        }
       }
     } else if (difference < 0) {
       this.selectedMesocycle.microcycles.splice(difference);
@@ -657,7 +893,16 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
 
   selectMicrocycle(index: number) {
     this.selectedMicrocycle = this.selectedMesocycle.microcycles[index];
-    this.selectedWorkout = this.selectedMicrocycle.workouts[0];
+
+    if (!this.personalPlan) {
+      this.selectedWorkout = this.selectedMicrocycle.workouts[0];
+    }
+    else {
+      this.selectedWorkoutUnit = this.selectedMicrocycle.workoutUnits.reduce((min, w) =>
+        w.microcycleDay < min.microcycleDay ? w : min
+      );
+    }
+
     this.microcycleLength = this.selectedMicrocycle.length;
     this.generateMicrocycleTable();
   }
@@ -670,11 +915,32 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
       change = true;
     }
 
-    this.selectedMesocycle.microcycles[index] = {
-      length: 7,
-      workouts: [this.exampleWorkout],
-      workoutUnits: []
-    };
+    if (!this.personalPlan) {
+      this.selectedMesocycle.microcycles[index] = {
+        length: 7,
+        workouts: [{
+          id: 0,
+          name: 'Trening A',
+          workoutExercises: [],
+          days: []
+        }],
+        workoutUnits: []
+      };
+    }
+    else {
+      this.selectedMesocycle.microcycles[index] = {
+        length: 7,
+        workouts: [],
+        workoutUnits: [{
+          id: 0,
+          name: 'Trening A',
+          workoutExercises: [],
+          date: '1970-01-01T00:00:00',
+          individual: true,
+          duration: 60,
+          microcycleDay: -1 }]
+      };
+    }
 
     if (change) this.selectMicrocycle(index);
   }
@@ -686,7 +952,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
       this.selectedMesocycle.microcycles.splice(index, 1);
       this.microcycleCount--;
       if (index == selectedIndex) {
-        this.selectedMicrocycle = this.selectedMesocycle.microcycles[0];
+        this.selectMicrocycle(0);
         this.microcycleLength = this.selectedMicrocycle.length;
         this.generateMicrocycleTable();
       }
@@ -710,23 +976,43 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
 
     if (difference > 0) {
       for (let i = 0; i < difference; i++) {
-        const newMesocycle: Mesocycle = {
-          microcycles: this.selectedMesocycle.microcycles.map(microcycle => ({
-            length: microcycle.length,
-            workouts: microcycle.workouts.map(workout => ({
-              ...workout,
-              workoutExercises: workout.workoutExercises.map(exercise => ({
-                ...exercise,
-                exerciseId: exercise.exerciseId,
-                exerciseName: exercise.exerciseName,
-                break: { ...exercise.breakTime }
+        if (!this.personalPlan) {
+          const newMesocycle: Mesocycle = {
+            microcycles: this.selectedMesocycle.microcycles.map(microcycle => ({
+              length: microcycle.length,
+              workouts: microcycle.workouts.map(workout => ({
+                ...workout,
+                workoutExercises: workout.workoutExercises.map(exercise => ({
+                  ...exercise,
+                  exerciseId: exercise.exerciseId,
+                  exerciseName: exercise.exerciseName,
+                  break: { ...exercise.breakTime }
+                })),
+                days: [...workout.days]
               })),
-              days: [...workout.days]
-            })),
-            workoutUnits: []
-          }))
-        };
-        this.macrocycle.mesocycles.push(newMesocycle);
+              workoutUnits: []
+            }))
+          };
+          this.macrocycle.mesocycles.push(newMesocycle);
+        }
+        else {
+          const newMesocycle: Mesocycle = {
+            microcycles: this.selectedMesocycle.microcycles.map(microcycle => ({
+              length: microcycle.length,
+              workouts: [],
+              workoutUnits: microcycle.workoutUnits.map(workout => ({
+                ...workout,
+                workoutExercises: workout.workoutExercises.map(exercise => ({
+                  ...exercise,
+                  exerciseId: exercise.exerciseId,
+                  exerciseName: exercise.exerciseName,
+                  break: { ...exercise.breakTime }
+                })),
+              })),
+            }))
+          };
+          this.macrocycle.mesocycles.push(newMesocycle);
+        }
       }
     } else if (difference < 0) {
       this.macrocycle.mesocycles.splice(difference);
@@ -736,7 +1022,13 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
   selectMesocycle(index: number) {
     this.selectedMesocycle = this.macrocycle.mesocycles[index];
     this.selectedMicrocycle = this.selectedMesocycle.microcycles[0];
-    this.selectedWorkout = this.selectedMicrocycle.workouts[0];
+    if (!this.personalPlan) {
+      this.selectedWorkout = this.selectedMicrocycle.workouts[0];
+    } else {
+      this.selectedWorkoutUnit = this.selectedMicrocycle.workoutUnits.reduce((min, w) =>
+        w.microcycleDay < min.microcycleDay ? w : min
+      );
+    }
     this.microcycleLength = this.selectedMicrocycle.length;
     this.microcycleCount = this.selectedMesocycle.microcycles.length;
   }
@@ -749,9 +1041,37 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
       change = true;
     }
 
-    this.macrocycle.mesocycles[index] = {
-      microcycles: [this.exampleMicrocycle]
-    };
+    if (!this.personalPlan) {
+      this.macrocycle.mesocycles[index] = {
+        microcycles: [{
+          length: 7,
+          workouts: [{
+            id: 0,
+            name: 'Trening A',
+            workoutExercises: [],
+            days: []
+          }],
+          workoutUnits: []
+        }]
+      };
+    }
+    else {
+      this.macrocycle.mesocycles[index] = {
+        microcycles: [{
+          length: 7,
+          workouts: [],
+          workoutUnits: [{
+            id: 0,
+            name: 'Trening A',
+            workoutExercises: [],
+            date: '1970-01-01T00:00:00',
+            individual: true,
+            duration: 60,
+            microcycleDay: -1
+          }]
+        }]
+      };
+    }
 
     if (change) this.selectMesocycle(index);
   }
@@ -763,8 +1083,7 @@ export class WorkoutCreatorComponent implements OnInit, OnDestroy {
       this.macrocycle.mesocycles.splice(index, 1);
       this.mesocycleCount--;
       if (index == selectedIndex) {
-        this.selectedMesocycle = this.macrocycle.mesocycles[0];
-        this.selectMicrocycle(0);
+        this.selectMesocycle(0);
         this.microcycleCount = this.selectedMesocycle.microcycles.length;
       }
     } else {
