@@ -20,6 +20,19 @@ import org.springframework.web.bind.annotation.*;
 public class ApplicationController {
     private final ApplicationService applicationService;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getApplication(@PathVariable long id,  Authentication authentication) {
+        try {
+            return ResponseEntity.ok(applicationService.getApplication(id, authentication));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (AuthorizationException e) {
+          return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
     @GetMapping("/mine")
     public ResponseEntity<?> getMyApplications(Authentication authentication) {
         try {

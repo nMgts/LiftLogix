@@ -4,6 +4,7 @@ import com.liftlogix.convert.ReportDTOMapper;
 import com.liftlogix.dto.ReportDTO;
 import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.models.Report;
+import com.liftlogix.models.notification.NotificationType;
 import com.liftlogix.models.plans.Mesocycle;
 import com.liftlogix.models.plans.Microcycle;
 import com.liftlogix.models.plans.PersonalPlan;
@@ -24,6 +25,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class ReportService {
+    private final NotificationService notificationService;
     private final ReportRepository reportRepository;
     private final UserRepository userRepository;
     private final ClientRepository clientRepository;
@@ -117,8 +119,13 @@ public class ReportService {
             throw new AuthorizationException("You are not authorized");
         }
 
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
         Report report = reportDTOMapper.mapDTOToEntity(dto);
         reportRepository.save(report);
+
+        sendNotificationIfClient(user, dto.getId());
         return dto;
     }
 
@@ -157,5 +164,21 @@ public class ReportService {
             return dto.getClientEmail().equals(authentication.getName());
         }
         return true;
+    }
+
+    private void sendNotificationIfClient(User user, long reportId) {
+        if (user.getRole() == Role.CLIENT) {
+            Client client = clientRepository.findByEmail(user.getEmail())
+                    .orElseThrow(() -> new EntityNotFoundException("Client not found"));
+            Coach coach = client.getCoach();
+            if (coach != null) {
+                notificationService.createNotification(
+                        client.getEmail(),
+                        coach.getEmail(),
+                        reportId,
+                        NotificationType.REPORT
+                );
+            }
+        }
     }
 }

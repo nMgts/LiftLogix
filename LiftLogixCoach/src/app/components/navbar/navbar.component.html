@@ -5,7 +5,21 @@
   </div>
   <div class="navbar-right">
 
-    <i class="icon notifications-icon">🔔</i>
+    <div class="notifications-menu">
+      <i class="icon notifications-icon" (click)="toggleNotifications()">🔔</i>
+      <span *ngIf="countUnreadNotifications() > 0" class="unread-count">{{ countUnreadNotifications() }}</span>
+      <div class="notifications-dropdown" *ngIf="notificationsOpen" #messagesDropdown (scroll)="onScroll($event)">
+        <div class="notification-item"
+             *ngFor="let notification of notifications" [ngClass]="{'unread': getNotificationClass(notification)}"
+             (click)="markNotificationAsRead(notification); openNotificationDetails(notification)">
+          <div class="notification-content">
+            <p class="notification-header"> {{getNotificationType(notification)}} </p>
+            <p class="notification-text"> {{getNotificationText(notification)}} </p>
+            <span class="date">{{ notification.timestamp | date:'dd-MM-yyyy HH:mm' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="messages-menu">
       <i class="icon messages-icon" (click)="toggleMessages()">✉️</i>

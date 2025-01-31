@@ -8,6 +8,12 @@ import { SecurityOptionsDialogComponent } from "../security-options-dialog/secur
 import { ChatService } from "../../services/chat.service";
 import { ChatMessage } from "../../interfaces/ChatMessage";
 import { User } from "../../interfaces/User";
+import { NotificationService } from "../../services/notification.service";
+import { Notification } from "../../interfaces/Notification";
+import { ReportDetailsDialogComponent } from "../report-details-dialog/report-details-dialog.component";
+import { ReportService } from "../../services/report.service";
+import { ApplicationService } from "../../services/application.service";
+import { ApplicationDetailsDialogComponent } from "../application-details-dialog/application-details-dialog.component";
 
 @Component({
   selector: 'app-navbar',
@@ -20,6 +26,7 @@ export class NavbarComponent implements OnInit {
   scrollTimeout: any;
 
   menuOpen = false;
+  notificationsOpen = false;
   messagesOpen = false;
   settingsOpen = false;
   image: SafeUrl = '';
@@ -29,10 +36,15 @@ export class NavbarComponent implements OnInit {
   usersMap: Map<string, [User, SafeUrl]> = new Map();
   openedChat: string = '';
 
+  notifications: Notification[] = [];
+
   constructor(
     private authService: AuthService,
     private userService: UserService,
     private chatService: ChatService,
+    private notificationService: NotificationService,
+    private reportService: ReportService,
+    private applicationService: ApplicationService,
     private dialog: MatDialog,
     private sanitizer: DomSanitizer,
     private renderer: Renderer2
@@ -55,6 +67,14 @@ export class NavbarComponent implements OnInit {
     this.chatService.getMessageObservable().subscribe(message => {
       this.handleNewMessage(message);
     });
+
+    this.notificationService.connectToNotification(this.userEmail);
+
+    this.loadNotifications();
+
+    this.notificationService.getNotificationObservable().subscribe(notification => {
+      this.handleNewNotification(notification);
+    })
   }
 
   loadImage() {
@@ -80,7 +100,6 @@ export class NavbarComponent implements OnInit {
         (message.recipientId === senderId && message.senderId === recipientId)
     );
 
-
     newMessage.read = this.openedChat === newMessage.senderId;
 
     if (existingMessageIndex !== -1) {
@@ -90,21 +109,47 @@ export class NavbarComponent implements OnInit {
     }
   }
 
+  handleNewNotification(newNotification: Notification) {
+    this.notifications.push(newNotification);
+  }
+
   toggleMenu() {
+    if (this.notificationsOpen) {
+      this.markAllNotificationsAsRead();
+    }
     this.menuOpen = !this.menuOpen;
+    this.notificationsOpen = false;
     this.settingsOpen = false;
     this.messagesOpen = false;
   }
 
   toggleSettings() {
+    if (this.notificationsOpen) {
+      this.markAllNotificationsAsRead();
+    }
     this.settingsOpen = !this.settingsOpen;
     this.menuOpen = false;
+    this.notificationsOpen = false;
     this.messagesOpen = false;
   }
 
   toggleMessages() {
+    if (this.notificationsOpen) {
+      this.markAllNotificationsAsRead();
+    }
     this.messagesOpen = !this.messagesOpen;
     this.settingsOpen = false;
+    this.notificationsOpen = false;
+    this.menuOpen = false;
+  }
+
+  toggleNotifications() {
+    if (this.notificationsOpen) {
+      this.markAllNotificationsAsRead();
+    }
+    this.notificationsOpen = !this.notificationsOpen;
+    this.settingsOpen = false;
+    this.messagesOpen = false;
     this.menuOpen = false;
   }
 
@@ -118,16 +163,75 @@ export class NavbarComponent implements OnInit {
     }
   }
 
+  openNotificationDetails(notification: Notification) {
+    const token = localStorage.getItem('token') || '';
+    switch (notification.type) {
+      case 'REPORT':
+        this.reportService.getReportById(notification.itemId, token).subscribe(
+          report => {
+            this.dialog.open(ReportDetailsDialogComponent, {
+              width: '600px',
+              data: report
+            })
+          }, () => {
+            console.error('Error during opening report');
+          }
+        )
+        this.toggleNotifications();
+        break;
+      case 'APPLICATION':
+        this.applicationService.getApplication(notification.itemId, token).subscribe(
+          application => {
+            this.dialog.open(ApplicationDetailsDialogComponent, {
+              data: application,
+              width: '600px'
+            });
+          }, () => {
+            console.error('Error during opening application');
+          }
+        )
+        this.toggleNotifications();
+        break;
+      default:
+        break;
+    }
+  }
+
   markMessageAsRead(message: ChatMessage) {
     message.read = true;
   }
 
+  markNotificationAsRead(notification: Notification) {
+    notification.read = true;
+    this.notificationService.markNotificationAsRead(notification.id).subscribe(
+      () => console.log('Notification marked successfully'),
+      () => console.error('Error during marking notification as read')
+    );
+  }
+
+  markAllNotificationsAsRead() {
+    this.notificationService.markAllNotificationsAsRead(this.userEmail).subscribe(
+      () => {
+        this.notifications.forEach(notification => notification.read = true);
+      }, () => {
+        console.error("Error during marking notifications");
+      }
+    );
+  }
+
   loadMessages() {
-    const senderId = localStorage.getItem('email') || '';
-    this.chatService.fetchRecentChatMessages(senderId).subscribe(
+    this.chatService.fetchRecentChatMessages(this.userEmail).subscribe(
       (messages) => {
         this.messages = messages;
         this.loadUsersForMessages(messages);
+      }
+    )
+  }
+
+  loadNotifications() {
+    this.notificationService.fetchRecentNotifications(this.userEmail).subscribe(
+      (notifications) => {
+        this.notifications = notifications;
       }
     )
   }
@@ -165,8 +269,38 @@ export class NavbarComponent implements OnInit {
     return !message.read && message.senderId !== localStorage.getItem('email');
   }
 
-  countUnreadMessages(): number {
+  countUnreadMessages() {
     return this.messages.filter(message => !message.read && message.senderId !== this.userEmail).length;
+  }
+
+  getNotificationClass(notification: Notification) {
+    return !notification.read;
+  }
+
+  countUnreadNotifications() {
+    return this.notifications.filter(notification => !notification.read).length;
+  }
+
+  getNotificationType(notification: Notification) {
+    switch (notification.type) {
+      case 'REPORT':
+        return 'Raport';
+      case 'APPLICATION':
+        return 'Zgłoszenie';
+      default:
+        return 'Powiadomienie';
+    }
+  }
+
+  getNotificationText(notification: Notification) {
+    switch (notification.type) {
+      case 'REPORT':
+        return `Klient ${notification.senderId} stworzył/edytował raport.`
+      case 'APPLICATION':
+        return `Otrzymano nowe zgłoszenie od ${notification.senderId}`
+      default:
+        return '';
+    }
   }
 
   getUserEntry(senderId: string, recipientId: string) {

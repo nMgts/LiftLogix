@@ -7,6 +7,7 @@ import {Observable, Subject} from "rxjs";
   providedIn: 'root'
 })
 export class ApplicationService {
+  private baseUrl = 'http://localhost:8080/api/application';
   private getUrl = 'http://localhost:8080/api/application/mine';
   private acceptUrl = 'http://localhost:8080/api/application/accept';
   private rejectUrl = 'http://localhost:8080/api/application/reject'
@@ -18,6 +19,11 @@ export class ApplicationService {
 
   notifyClientsQuantityUpdate() {
     this.clientsQuantityUpdatedSource.next();
+  }
+
+  getApplication(id: number, token: string): Observable<Application> {
+    const headers = this.createHeaders(token);
+    return this.http.get<Application>(`${this.baseUrl}/${id}`, { headers: headers });
   }
 
   getMyApplications(token: string): Observable<Application[]> {

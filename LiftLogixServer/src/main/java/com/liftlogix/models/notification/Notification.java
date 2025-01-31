@@ -1,4 +1,4 @@
-package com.liftlogix.models.chat;
+package com.liftlogix.models.notification;
 
 import jakarta.persistence.Id;
 import lombok.*;
@@ -8,18 +8,18 @@ import java.util.Date;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Document
-public class ChatMessage {
+public class Notification {
 
     @Id
     private String id;
-    private String chatId;
+    private NotificationType type;
     private String senderId;
     private String recipientId;
-    private String content;
+    private long itemId;
     private Date timestamp;
     private boolean read;
 }

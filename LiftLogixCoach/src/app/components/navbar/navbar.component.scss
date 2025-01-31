@@ -204,9 +204,15 @@
   }
 }
 
-/*  Messages Dropdown  */
+/* Notifications and Messages Dropdowns */
 
-.messages-menu {
+.notifications-menu {
+  position: relative;
+
+
+}
+
+.messages-menu, .notifications-menu {
   position: relative;
 
   .unread-count {
@@ -226,7 +232,7 @@
   }
 }
 
-.messages-dropdown {
+.messages-dropdown, .notifications-dropdown {
   position: absolute;
   top: 50px;
   right: -130px;
@@ -236,7 +242,7 @@
   z-index: 1000;
   overflow: auto;
 
-  .message-item {
+  .message-item, .notification-item {
     display: flex;
     padding: 10px;
     align-items: center;
@@ -264,18 +270,28 @@
       }
     }
 
-    .message-content {
+
+    .message-content, .notification-content {
       flex-grow: 1;
       display: flex;
       flex-direction: column;
       justify-items: center;
 
-      .user-name {
+      .notification-text {
+        font-size: 12px;
+        color: black;
+      }
+
+      .user-name, .notification-header {
         font-weight: bold;
         font-size: 14px;
         margin-top: 0;
         margin-bottom: 5px;
         color: black;
+      }
+
+      .notification-header {
+        margin-bottom: 2px;
       }
 
       .message-text {

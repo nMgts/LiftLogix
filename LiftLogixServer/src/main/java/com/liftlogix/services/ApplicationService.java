@@ -6,12 +6,16 @@ import com.liftlogix.exceptions.ApplicationIsNotActiveException;
 import com.liftlogix.exceptions.AuthorizationException;
 import com.liftlogix.exceptions.ClientAlreadyAssignedException;
 import com.liftlogix.models.Application;
+import com.liftlogix.models.notification.NotificationType;
 import com.liftlogix.models.users.Client;
 import com.liftlogix.models.users.Coach;
+import com.liftlogix.models.users.User;
 import com.liftlogix.repositories.ApplicationRepository;
 import com.liftlogix.repositories.ClientRepository;
 import com.liftlogix.repositories.CoachRepository;
+import com.liftlogix.repositories.UserRepository;
 import com.liftlogix.types.ApplicationStatus;
+import com.liftlogix.types.Role;
 import com.liftlogix.util.JWTUtils;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -34,6 +38,25 @@ public class ApplicationService {
     private final ApplicationDTOMapper applicationDTOMapper;
     private final JWTUtils jwtUtils;
     private final ClientService clientService;
+    private final NotificationService notificationService;
+    private final UserRepository userRepository;
+
+    public ApplicationDTO getApplication(long id, Authentication authentication) {
+        Application application = applicationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Application not found"));
+
+        String username = authentication.getName();
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        if (!user.getRole().equals(Role.ADMIN)
+                && !username.equals(application.getCoach().getEmail())
+                && !username.equals(application.getClient().getEmail())) {
+            throw new AuthorizationException("You are not authorized");
+        }
+
+        return applicationDTOMapper.mapEntityToDTO(application);
+    }
 
     public List<ApplicationDTO> getMyApplications(Authentication authentication) {
         String username = authentication.getName();
@@ -90,7 +113,12 @@ public class ApplicationService {
                 application.setSubmitted_date(LocalDateTime.now());
 
                 applicationRepository.save(application);
-                return applicationDTOMapper.mapEntityToDTO(application);
+                ApplicationDTO dto = applicationDTOMapper.mapEntityToDTO(application);
+                notificationService.createNotification(
+                        client.getEmail(), coach.getEmail(), dto.getId(), NotificationType.APPLICATION
+                );
+
+                return dto;
             }
             throw new EntityNotFoundException("Coach not found");
         }

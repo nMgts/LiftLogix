@@ -96,8 +96,11 @@ public class SecurityConfig {
                                 "/api/personal-plan/workout/{workout_id}", "/api/personal-plan/export/{id}",
                                 "/api/workout/get/{id}",
                                 "/api/user/{email}",
+                                "/api/application/{id}",
                                 "/api/chat/messages/{senderId}/{recipientId}", "/api/chat/messages/{senderId}/{recipientId}/read", "/messages/recent/{senderId}",
-                                "/api/report/all", "/api/report/{id}", "/api/report/update", "/api/report/wu/{id}")
+                                "/api/report/all", "/api/report/{id}", "/api/report/update", "/api/report/wu/{id}",
+                                "/api/notification/{userId}", "/api/notification/mark-as-read/{id}", "/api/notification/mark-as-read/all/{recipientId}",
+                                "/api/notification/send-notification")
                         .authenticated()
 
                         // Other endpoints
