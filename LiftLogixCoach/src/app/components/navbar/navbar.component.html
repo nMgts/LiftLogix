@@ -10,7 +10,7 @@
       <span *ngIf="countUnreadNotifications() > 0" class="unread-count">{{ countUnreadNotifications() }}</span>
       <div class="notifications-dropdown" *ngIf="notificationsOpen" #messagesDropdown (scroll)="onScroll($event)">
         <div class="notification-item"
-             *ngFor="let notification of notifications" [ngClass]="{'unread': getNotificationClass(notification)}"
+             *ngFor="let notification of notifications.slice().reverse()" [ngClass]="{'unread': getNotificationClass(notification)}"
              (click)="markNotificationAsRead(notification); openNotificationDetails(notification)">
           <div class="notification-content">
             <p class="notification-header"> {{getNotificationType(notification)}} </p>
@@ -18,6 +18,7 @@
             <span class="date">{{ notification.timestamp | date:'dd-MM-yyyy HH:mm' }}</span>
           </div>
         </div>
+        <div class="no-items-text" *ngIf="notifications.length === 0">Brak powiadomień</div>
       </div>
     </div>
 
@@ -37,6 +38,7 @@
             <span class="date">{{ message.timestamp | date:'dd-MM-yyyy HH:mm' }}</span>
           </div>
         </div>
+        <div class="no-items-text" *ngIf="messages.length === 0">Brak wiadomości</div>
       </div>
     </div>
 

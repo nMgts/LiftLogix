@@ -18,10 +18,6 @@ export class NotificationService {
 
   constructor(private http: HttpClient) {}
 
-  getNotifications() {
-
-  }
-
   connectToNotification(userId: string) {
     if (this.stompClient && this.stompClient.connected) {
       return;
@@ -54,9 +50,6 @@ export class NotificationService {
   }
 
   fetchRecentNotifications(userId: string): Observable<Notification[]> {
-    /*
-    ZROOOOBIĆ RECENT W BACKEND
-     */
     const headers = this.createHeaders();
     return this.http.get<Notification[]>(`${this.baseUrl}/${userId}`, { headers: headers });
   }

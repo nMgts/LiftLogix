@@ -242,6 +242,14 @@
   z-index: 1000;
   overflow: auto;
 
+  .no-items-text {
+    text-align: center;
+    color: grey;
+    background-color: white;
+    padding: 10px;
+    font-size: 14px;
+  }
+
   .message-item, .notification-item {
     display: flex;
     padding: 10px;
@@ -269,7 +277,6 @@
         height: 36px;
       }
     }
-
 
     .message-content, .notification-content {
       flex-grow: 1;
@@ -310,4 +317,9 @@
       }
     }
   }
+}
+
+.notifications-dropdown {
+  width: 200px;
+  right: -95px;
 }

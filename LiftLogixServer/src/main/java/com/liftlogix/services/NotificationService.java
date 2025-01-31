@@ -7,8 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -36,7 +35,20 @@ public class NotificationService {
     }
 
     public List<Notification> getNotificationsForUser(String recipientId) {
-        return notificationRepository.findByRecipientIdOrderByTimestampDesc(recipientId);
+        List<Notification> allNotifications = notificationRepository.findByRecipientIdOrderByTimestampDesc(recipientId);
+
+        Map<String, Notification> latestNotificationsMap = new HashMap<>();
+
+        for (Notification notification : allNotifications) {
+            String key = notification.getType() + "_" + notification.getItemId();
+
+            if (!latestNotificationsMap.containsKey(key) ||
+                    notification.getTimestamp().after(latestNotificationsMap.get(key).getTimestamp())) {
+                latestNotificationsMap.put(key, notification);
+            }
+        }
+
+        return new ArrayList<>(latestNotificationsMap.values());
     }
 
     public void markAsRead(String notificationId) {
@@ -50,6 +62,7 @@ public class NotificationService {
         List<Notification> notifications = notificationRepository.findByRecipientIdOrderByTimestampDesc(recipientId);
         for (Notification notification : notifications) {
             notification.setRead(true);
+            notificationRepository.save(notification);
         }
     }
 }
