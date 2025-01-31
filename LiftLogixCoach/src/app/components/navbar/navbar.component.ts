@@ -110,6 +110,12 @@ export class NavbarComponent implements OnInit {
   }
 
   handleNewNotification(newNotification: Notification) {
+    this.notifications = this.notifications.filter(
+      notification =>
+        notification.type !== newNotification.type ||
+        notification.itemId !== newNotification.itemId
+    );
+
     this.notifications.push(newNotification);
   }
 

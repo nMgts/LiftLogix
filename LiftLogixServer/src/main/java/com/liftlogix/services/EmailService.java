@@ -105,7 +105,7 @@ public class EmailService {
         userRepository.save(user);
 
         try {
-            sendConfirmationEmail(optUser.get()); // Tutaj podłączę jakieś darmowe api jak znajdę
+            sendConfirmationEmail(optUser.get());
         } catch (MailSendException e) {
             user.setEmail(currentEmail);
             user.setEmail_confirmed(true);
@@ -118,8 +118,8 @@ public class EmailService {
     public void sendPasswordResetEmail(String to, String resetUrl) {
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(to);
-        email.setSubject("Password Reset Request");
-        email.setText("To reset your password, click the link below:\n" + resetUrl);
+        email.setSubject("Resetowanie hasła");
+        email.setText("By zresetować hasło kliknij w podany link:\n" + resetUrl);
         mailSender.send(email);
     }
 
@@ -130,6 +130,14 @@ public class EmailService {
         mailMessage.setText("Aby potwierdzić swój adres e-mail, proszę kliknąć tutaj:\n"
                 + "http://localhost:4200/confirm-mail?token=" + user.getConfirmationToken());
         mailSender.send(mailMessage);
+    }
+
+    public void sendEmail(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+        mailSender.send(message);
     }
 
     private String generateVerificationCode() {

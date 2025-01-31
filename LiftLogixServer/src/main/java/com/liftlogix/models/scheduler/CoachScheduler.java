@@ -21,6 +21,6 @@ public class CoachScheduler {
     @JoinColumn(name = "coach_id", nullable = false)
     private Coach coach;
 
-    @OneToMany(mappedBy = "coachScheduler", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "coachScheduler", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<SchedulerItem> schedulerItems;
 }

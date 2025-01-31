@@ -8,6 +8,7 @@ import { SchedulerItem } from "../../interfaces/SchedulerItem";
 })
 export class OptionsTooltipComponent {
   @Input() item: SchedulerItem | null = null;
+  @Input() isBoxExpanded = false;
   @Output() editWorkoutEvent = new EventEmitter<SchedulerItem>();
   @Output() viewWorkoutEvent = new EventEmitter<SchedulerItem>();
   @Output() changeWorkoutDateEvent = new EventEmitter<SchedulerItem>();

@@ -99,6 +99,7 @@ export class WeeklyScheduleComponent implements OnInit {
     const tooltipRef = this.overlayRef.attach(tooltipPortal);
 
     tooltipRef.instance.item = item;
+    tooltipRef.instance.isBoxExpanded = this.isBoxExpanded
 
     tooltipRef.instance.viewWorkoutEvent.subscribe((item: SchedulerItem) => {
       this.viewWorkout(item.workoutUnitId);
