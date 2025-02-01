@@ -78,7 +78,7 @@ import java.util.Map;
                     if (isValidRole(role)) {
                         getUserDetails();
                     } else {
-                        Toast.makeText(getApplicationContext(), "Login failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Błedny e-mail lub hasło", Toast.LENGTH_SHORT).show();
                         editor.clear();
                         editor.apply();
                     }

@@ -1,13 +1,17 @@
 package com.liftlogixclient.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class User {
     private long id;
     private String first_name;
     private String last_name;
     private String email;
     private String role;
-    private boolean assignedToCoach;
-    private long coach_id;
+    @SerializedName("twoFactorAuth")
+    private Boolean twoFactorAuth;
+    private Boolean assignedToCoach;
+    private Long coach_id;
 
     public long getId() {
         return id;

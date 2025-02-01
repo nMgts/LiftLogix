@@ -2,6 +2,7 @@ package com.liftlogixclient;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +19,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import com.liftlogixclient.dto.UserRegisterDTO;
 import com.liftlogixclient.helpers.StringHelper;
 import com.liftlogixclient.models.User;
@@ -73,16 +75,28 @@ public class RegisterActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 RegisterResponse registerResponse = gson.fromJson(response, RegisterResponse.class);
 
+                if (registerResponse == null) {
+                    Toast.makeText(RegisterActivity.this, "Błąd deserializacji odpowiedzi serwera", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 if (registerResponse.getStatusCode() == 200) {
                     first_name.setText(null);
                     last_name.setText(null);
                     email.setText(null);
                     password.setText(null);
                     confirm.setText(null);
-                    Toast.makeText(RegisterActivity.this, "Register Successful", Toast.LENGTH_LONG).show();
-                } else {
-                    String errorMessage = registerResponse.getMessage();
-                    Toast.makeText(RegisterActivity.this, "Registration Un-Successful: " + errorMessage, Toast.LENGTH_LONG).show();
+                    Toast.makeText(RegisterActivity.this, "Rejestracja udana, potwierdź swój adres email", Toast.LENGTH_LONG).show();
+                } else if (registerResponse.getStatusCode() == 409) {
+                    first_name.setText(null);
+                    last_name.setText(null);
+                    email.setText(null);
+                    password.setText(null);
+                    confirm.setText(null);
+                    Toast.makeText(RegisterActivity.this, "Podany adres e-mail jest zajęty", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Toast.makeText(RegisterActivity.this, "Wystąpił nieoczekiwany błąd", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -178,8 +192,13 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private static class RegisterResponse {
+        @SerializedName("statusCode")
         private int statusCode;
+
+        @SerializedName("message")
         private String message;
+
+        @SerializedName("user")
         private User user;
 
         public int getStatusCode() {
@@ -194,5 +213,4 @@ public class RegisterActivity extends AppCompatActivity {
             return user;
         }
     }
-
 }

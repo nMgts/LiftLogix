@@ -8,8 +8,8 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface OpinionDTOMapper {
 
-    @Mapping(source = "coach.id", target = "coach_id")
-    @Mapping(source = "client.id", target = "coach_id")
+    @Mapping(source = "coach.id", target = "coachId")
+    @Mapping(source = "client.id", target = "clientId")
     OpinionDTO mapEntityToDTO(Opinion opinion);
 
     @Mapping(target = "coach", ignore = true)
