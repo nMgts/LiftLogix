@@ -9,11 +9,9 @@ import com.liftlogix.models.Application;
 import com.liftlogix.models.notification.NotificationType;
 import com.liftlogix.models.users.Client;
 import com.liftlogix.models.users.Coach;
+import com.liftlogix.models.users.CoachClientHistory;
 import com.liftlogix.models.users.User;
-import com.liftlogix.repositories.ApplicationRepository;
-import com.liftlogix.repositories.ClientRepository;
-import com.liftlogix.repositories.CoachRepository;
-import com.liftlogix.repositories.UserRepository;
+import com.liftlogix.repositories.*;
 import com.liftlogix.types.ApplicationStatus;
 import com.liftlogix.types.Role;
 import com.liftlogix.util.JWTUtils;
@@ -40,6 +38,7 @@ public class ApplicationService {
     private final ClientService clientService;
     private final NotificationService notificationService;
     private final UserRepository userRepository;
+    private final CoachClientHistoryRepository coachClientHistoryRepository;
 
     public ApplicationDTO getApplication(long id, Authentication authentication) {
         Application application = applicationRepository.findById(id)
@@ -146,6 +145,14 @@ public class ApplicationService {
 
         application.setStatus(ApplicationStatus.ACCEPTED);
         applicationRepository.save(application);
+
+        if (!coachClientHistoryRepository.existsByCoachAndClient(coach, client)) {
+            CoachClientHistory history = new CoachClientHistory();
+            history.setCoach(coach);
+            history.setClient(client);
+            history.setAssignedAt(LocalDateTime.now());
+            coachClientHistoryRepository.save(history);
+        }
     }
 
     public void rejectApplication(long application_id, Authentication authentication) {

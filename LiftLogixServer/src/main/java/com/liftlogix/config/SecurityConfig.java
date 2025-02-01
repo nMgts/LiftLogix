@@ -58,7 +58,10 @@ public class SecurityConfig {
                         .hasAuthority("COACH")
 
                         // Client endpoints
-                        .requestMatchers("/api/application/create")
+                        .requestMatchers(
+                                "/api/application/create",
+                                "/api/coach-client-history/exists",
+                                "/api/opinion/add")
                         .hasAuthority("CLIENT")
 
                         // Admin and coach endpoints
@@ -100,7 +103,8 @@ public class SecurityConfig {
                                 "/api/chat/messages/{senderId}/{recipientId}", "/api/chat/messages/{senderId}/{recipientId}/read", "/messages/recent/{senderId}",
                                 "/api/report/all", "/api/report/{id}", "/api/report/update", "/api/report/wu/{id}",
                                 "/api/notification/{userId}", "/api/notification/mark-as-read/{id}", "/api/notification/mark-as-read/all/{recipientId}",
-                                "/api/notification/send-notification")
+                                "/api/notification/send-notification",
+                                "/api/opinion/all/{coachId}", "/api/opinion/average/{coachId}")
                         .authenticated()
 
                         // Other endpoints
