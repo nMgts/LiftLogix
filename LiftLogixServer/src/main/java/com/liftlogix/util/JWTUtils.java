@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class JWTUtils {
     private final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static final Long ACCESS_EXPIRATION_TIME = 900000L; // 15 minutes //test 30000L
+    private static final Long CLIENT_EXPIRATION_TIME = 86400000L * 30 * 365 * 10;
     private static final Long SHORT_REFRESH_EXPIRATION_TIME = 86400000L; // 1 day //test 60000L
     private static final Long LONG_REFRESH_EXPIRATION_TIME = 86400000L * 30; // 30 days
 
@@ -32,11 +33,18 @@ public class JWTUtils {
                 .collect(Collectors.toList()));
         claims.put("token_type", "access");
 
+        Date expirationTime = new Date(System.currentTimeMillis() + ACCESS_EXPIRATION_TIME); // Tymczasowe rozwiązanie dla apki mobilnej
+        if (userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(role -> role.equals("CLIENT"))) {
+            expirationTime = new Date(System.currentTimeMillis() + CLIENT_EXPIRATION_TIME);
+        }
+
         return Jwts.builder()
                 .claims(claims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + ACCESS_EXPIRATION_TIME))
+                .expiration(expirationTime)
                 .signWith(key)
                 .compact();
     }

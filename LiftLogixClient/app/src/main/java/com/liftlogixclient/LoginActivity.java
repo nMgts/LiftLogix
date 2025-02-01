@@ -48,6 +48,7 @@ import java.util.Map;
 
     public void authenticateUser() {
         if (!validateEmail() || !validatePassword()) {
+            Toast.makeText(getApplicationContext(), "Błedny e-mail lub hasło", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -84,15 +85,26 @@ import java.util.Map;
                     }
 
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    try {
+                        int errorCode = jsonObject.getInt("statusCode");
+                        String errorMessage = jsonObject.getString("error");
+                        if (errorCode == 500) {
+                            if (errorMessage.equals("Bad credentials")) {
+                                Toast.makeText(getApplicationContext(), "Błedny e-mail lub hasło", Toast.LENGTH_SHORT).show();
+                            }
+                            if (errorMessage.equals("User is not confirmed")) {
+                                Toast.makeText(getApplicationContext(), "Adres e-mail nie jest potwierdzony", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    } catch (Exception exception) {
+                        Toast.makeText(getApplicationContext(), "Wystąpił nieoczekiwany błąd", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                volleyError.printStackTrace();
-                System.out.println(volleyError.getMessage());
-                Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "Wystąpił nieoczekiwany błąd", Toast.LENGTH_LONG).show();
             }
         });
         queue.add(jsonObjectRequest);
@@ -128,13 +140,13 @@ import java.util.Map;
                             editor.putLong("coach_id", coachId);
                             editor.apply();
 
-                            Toast.makeText(getApplicationContext(), "Welcome " + firstName, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Witaj " + firstName, Toast.LENGTH_SHORT).show();
 
                             Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                             startActivity(intent);
                             finish();
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(), "Wystąpił nieoczekiwany błąd", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, new Response.ErrorListener() {

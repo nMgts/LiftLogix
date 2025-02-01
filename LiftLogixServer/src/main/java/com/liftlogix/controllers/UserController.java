@@ -4,9 +4,12 @@ import com.liftlogix.convert.UserDTOMapper;
 import com.liftlogix.dto.PasswordResetRequest;
 import com.liftlogix.dto.ReqRes;
 import com.liftlogix.dto.UserDTO;
+import com.liftlogix.models.users.Client;
 import com.liftlogix.models.users.User;
+import com.liftlogix.repositories.ClientRepository;
 import com.liftlogix.repositories.UserRepository;
 import com.liftlogix.services.*;
+import com.liftlogix.types.Role;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.Cache;
@@ -33,6 +36,7 @@ public class UserController {
     private final UserDetailsService userDetailsService;
     private final UserDTOMapper userDTOMapper;
     private final UserRepository userRepository;
+    private final ClientRepository clientRepository;
     private final PasswordEncoder passwordEncoder;
     private final CacheManager cacheManager;
 
@@ -44,6 +48,20 @@ public class UserController {
 
         if (userDetails != null) {
             UserDTO userDTO = userDTOMapper.mapUserToDTO((User) userDetails);
+
+            if (((User) userDetails).getRole().equals(Role.CLIENT)) {
+                Client client = clientRepository.findByEmail(userEmail).orElse(null);
+                if (client != null) {
+                    userDTO.setAssignedToCoach(client.isAssignedToCoach());
+
+                    if (client.isAssignedToCoach()) {
+                        userDTO.setCoach_id(client.getCoach().getId());
+                    } else {
+                        userDTO.setCoach_id(0L);
+                    }
+                }
+            }
+
             return ResponseEntity.ok(userDTO);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
