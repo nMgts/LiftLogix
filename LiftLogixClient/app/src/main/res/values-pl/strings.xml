@@ -4,7 +4,7 @@
     <string name="log_in">Zaloguj</string>
     <string name="username">E-mail</string>
     <string name="password">Hasło</string>
-    <string name="forgot_your_password">Zapomniałeś hasło?</string>
+    <string name="forgot_your_password">Zapomniałeś hasła?</string>
     <string name="login">Zaloguj</string>
     <string name="don_t_have_an_account">Nie masz konta?</string>
     <string name="register_now">Zarejestruj się!</string>
@@ -21,7 +21,7 @@
     <string name="my_plan">MÓJ PLAN</string>
     <string name="exercise_library">ĆWICZENIA</string>
     <string name="my_progress">PROGRES</string>
-    <string name="logout">WYLOGUJ</string>
+    <string name="diet">DIETA</string>
     <string name="exercises">ĆWICZENIA</string>
     <string name="exercises_lib">ĆWICZENIA</string>
     <string name="description">Opis</string>

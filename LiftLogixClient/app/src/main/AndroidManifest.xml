@@ -19,6 +19,13 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".SendApplicationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RatingActivity"
+            android:exported="false"
+            android:theme="@style/Theme.LiftLogixClient" />
+        <activity
             android:name=".ExerciseDetailsActivity"
             android:exported="false"
             android:parentActivityName=".ExerciseListActivity" />

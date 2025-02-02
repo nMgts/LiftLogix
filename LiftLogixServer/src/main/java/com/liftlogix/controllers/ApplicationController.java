@@ -33,6 +33,17 @@ public class ApplicationController {
         }
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<?> getClientApplications(Authentication authentication) {
+        try {
+            return ResponseEntity.ok(applicationService.getClientApplications(authentication));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
     @GetMapping("/mine")
     public ResponseEntity<?> getMyApplications(Authentication authentication) {
         try {

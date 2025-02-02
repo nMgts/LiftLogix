@@ -59,7 +59,7 @@ public class SecurityConfig {
 
                         // Client endpoints
                         .requestMatchers(
-                                "/api/application/create",
+                                "/api/application/create", "/api/application/my",
                                 "/api/coach-client-history/exists",
                                 "/api/opinion/add")
                         .hasAuthority("CLIENT")

@@ -57,6 +57,17 @@ public class ApplicationService {
         return applicationDTOMapper.mapEntityToDTO(application);
     }
 
+    public List<ApplicationDTO> getClientApplications(Authentication authentication) {
+        String username = authentication.getName();
+        Client client = clientRepository.findByEmail(username)
+                .orElseThrow(() -> new EntityNotFoundException("Client not found"));
+
+        List<Application> applications = applicationRepository.findByClient(client);
+        return applications.stream()
+                .map(applicationDTOMapper::mapEntityToDTO)
+                .collect(Collectors.toList());
+    }
+
     public List<ApplicationDTO> getMyApplications(Authentication authentication) {
         String username = authentication.getName();
         Coach coach = coachRepository.findByEmail(username)
@@ -100,7 +111,7 @@ public class ApplicationService {
 
                 Optional<Application> existingApplication =
                         applicationRepository.findByClientAndCoach(client, coach);
-                if (existingApplication.isPresent()) {
+                if (existingApplication.isPresent() && !existingApplication.get().getStatus().equals(ApplicationStatus.REJECTED)) {
                     throw new EntityExistsException("Application already exists for this client and coach");
                 }
 
@@ -145,6 +156,9 @@ public class ApplicationService {
 
         application.setStatus(ApplicationStatus.ACCEPTED);
         applicationRepository.save(application);
+
+        List<Application> otherApplications = applicationRepository.findByClient(client);
+        applicationRepository.deleteAll(otherApplications);
 
         if (!coachClientHistoryRepository.existsByCoachAndClient(coach, client)) {
             CoachClientHistory history = new CoachClientHistory();

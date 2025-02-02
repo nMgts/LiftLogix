@@ -2,6 +2,8 @@ package com.liftlogixclient.adapter;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,7 +14,9 @@ import com.liftlogixclient.R;
 public class CoachHolder extends RecyclerView.ViewHolder {
 
     TextView first_name, last_name, description;
-    Button signUpButton, unsubscribeButton;
+    RatingBar ratingBar;
+    ImageButton seeMoreButton;
+    Button signUpButton;
 
     public CoachHolder(@NonNull View itemView) {
         super(itemView);
@@ -20,7 +24,8 @@ public class CoachHolder extends RecyclerView.ViewHolder {
         last_name = itemView.findViewById(R.id.coachListItem_lastName);
         description = itemView.findViewById(R.id.coachListItem_description);
 
+        ratingBar = itemView.findViewById(R.id.coachListItem_rating);
+        seeMoreButton = itemView.findViewById(R.id.seeMoreButton);
         signUpButton = itemView.findViewById(R.id.signUpButton);
-        unsubscribeButton = itemView.findViewById(R.id.unsubscribeButton);
     }
 }

@@ -15,10 +15,6 @@ public interface CoachApi {
     @GET("/api/coach/all")
     Call<List<Coach>> getAllCoaches(@Header("Authorization") String token);
 
-    @POST("/api/client/assign/{client_id}/{coach_id}")
-    Call<Void> assignUserToCoach(@Header("Authorization") String token, @Path("client_id") long userId, @Path("coach_id") long coachId);
-
-    @POST("/api/client/unsubscribe/{client_id}")
-    Call<Void> unsubscribeFromCoach(@Header("Authorization") String token, @Path("client_id") long userId);
-
+    @GET("/api/coach/{id}")
+    Call<Coach> findCoachById(@Header("Authorization") String token, @Path("id") long id);
 }
