@@ -2,7 +2,6 @@ package com.liftlogix.controllers;
 
 import com.liftlogix.exceptions.EmailAlreadyConfirmedException;
 import com.liftlogix.services.EmailService;
-import com.liftlogix.services.UserManagementService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

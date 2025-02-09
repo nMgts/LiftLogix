@@ -1,7 +1,6 @@
 package com.liftlogix.controllers;
 
 import com.liftlogix.dto.ReqRes;
-import com.liftlogix.services.EmailService;
 import com.liftlogix.services.UserManagementService;
 import com.liftlogix.services.UserService;
 import com.liftlogix.types.Role;
