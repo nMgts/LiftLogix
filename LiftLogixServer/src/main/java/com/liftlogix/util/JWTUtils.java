@@ -9,8 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -33,7 +31,7 @@ public class JWTUtils {
                 .collect(Collectors.toList()));
         claims.put("token_type", "access");
 
-        Date expirationTime = new Date(System.currentTimeMillis() + ACCESS_EXPIRATION_TIME); // Tymczasowe rozwiązanie dla apki mobilnej
+        Date expirationTime = new Date(System.currentTimeMillis() + ACCESS_EXPIRATION_TIME);
         if (userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .anyMatch(role -> role.equals("CLIENT"))) {

@@ -1,40 +1,24 @@
 package com.liftlogix.mappers;
 
-import com.liftlogix.convert.BreakDTOMapper;
-import com.liftlogix.convert.ExerciseAliasDTOMapper;
-import com.liftlogix.convert.ExerciseDTOMapper;
-import com.liftlogix.convert.WorkoutExerciseDTOMapper;
+import com.liftlogix.convert.*;
 import com.liftlogix.dto.WorkoutExerciseDTO;
 import com.liftlogix.models.plans.WorkoutExercise;
 import com.liftlogix.dto.ExerciseDTO;
 import com.liftlogix.dto.BreakDTO;
 import com.liftlogix.models.exercises.Exercise;
 import com.liftlogix.models.plans.Break;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 import com.liftlogix.types.TimeUnit;
-import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SpringBootTest
 public class WorkoutExerciseDTOMapperTest {
 
-    @InjectMocks
-    private ExerciseDTOMapper exerciseDTOMapper = Mappers.getMapper(ExerciseDTOMapper.class);
-    @InjectMocks
-    private BreakDTOMapper breakDTOMapper = Mappers.getMapper(BreakDTOMapper.class);
-    @InjectMocks
-    private ExerciseAliasDTOMapper exerciseAliasDTOMapper = Mappers.getMapper(ExerciseAliasDTOMapper.class);
-
-    @InjectMocks
-    private WorkoutExerciseDTOMapper mapper = Mappers.getMapper(WorkoutExerciseDTOMapper.class);
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+    @Autowired
+    private WorkoutExerciseDTOMapper workoutExerciseDTOMapper;
 
     @Test
     public void shouldMapEntityToDTO() {
@@ -58,7 +42,7 @@ public class WorkoutExerciseDTOMapperTest {
         entity.setBreakTime(breakTime);
 
         // When
-        WorkoutExerciseDTO dto = mapper.mapEntityToDTO(entity);
+        WorkoutExerciseDTO dto = workoutExerciseDTOMapper.mapEntityToDTO(entity);
 
         // Then
         assertEquals(1L, dto.getId());
@@ -96,7 +80,7 @@ public class WorkoutExerciseDTOMapperTest {
         dto.setBreakTime(breakDTO);
 
         // When
-        WorkoutExercise entity = mapper.mapDTOToEntity(dto);
+        WorkoutExercise entity = workoutExerciseDTOMapper.mapDTOToEntity(dto);
 
         // Then
         assertEquals(1L, entity.getId());

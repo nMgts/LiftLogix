@@ -4,9 +4,6 @@ import com.liftlogix.exceptions.EmailAlreadyConfirmedException;
 import com.liftlogix.services.EmailService;
 import com.liftlogix.services.UserManagementService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +17,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class EmailController {
     private final EmailService emailService;
-    private final UserManagementService userManagementService;
 
     @PutMapping("/confirm")
     public ResponseEntity<String> confirmEmail(@RequestParam("token") String token) {
@@ -58,7 +54,6 @@ public class EmailController {
     }
 
     @PutMapping("/update-email")
-
     public ResponseEntity<String> updateEmail(@RequestBody Map<String, String> request,  Authentication authentication) {
         String currentEmail = request.get("currentEmail");
         String newEmail = request.get("newEmail");
