@@ -72,6 +72,8 @@ public class DietService {
             return client.getCoach().getId() == user.getId();
         } else if (user.getRole() == Role.ADMIN) return true;
         else {
+            System.out.println(user.getId());
+            System.out.println(client.getId());
             return user.getId() == client.getId();
         }
     }

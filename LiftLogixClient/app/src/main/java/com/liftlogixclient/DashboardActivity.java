@@ -15,7 +15,7 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-
+/*
         CardView logout = findViewById(R.id.cardViewLogout);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -23,7 +23,7 @@ public class DashboardActivity extends AppCompatActivity {
                 logout(v);
             }
         });
-
+*/
         CardView coachesList = findViewById(R.id.cardViewRegistration);
         coachesList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,6 +39,16 @@ public class DashboardActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(DashboardActivity.this, ExerciseListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        CardView dietCard = findViewById(R.id.cardViewDiet);
+        dietCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DashboardActivity.this, DietActivity.class);
                 startActivity(intent);
                 finish();
             }
