@@ -43,6 +43,13 @@ public class ExerciseService {
                 .collect(Collectors.toList());
     }
 
+    public List<ExerciseDTO> getAllFullExercises() {
+        List<Exercise> exercises = exerciseRepository.findAll();
+        return exercises.stream()
+                .map(exerciseDTOMapper::mapExerciseToDTO)
+                .collect(Collectors.toList());
+    }
+
     public List<ExerciseDTO> searchExercisesByAlias(String alias) {
         String[] keywords = alias.toLowerCase().trim().split("\\s+");
 

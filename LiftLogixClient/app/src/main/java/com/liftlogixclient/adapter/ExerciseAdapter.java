@@ -1,6 +1,9 @@
 package com.liftlogixclient.adapter;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,21 +41,16 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseHolder> {
         holder.textViewName.setText(exercise.getName());
 
         String base64Image = exercise.getImage();
-        if (base64Image != null && base64Image.startsWith("/9j/")) {
-            String imageData = "data:image/jpeg;base64," + base64Image;
+        if (base64Image != null && base64Image.startsWith("data:image")) {
+            // Usuń prefix "data:image/png;base64," lub "data:image/jpeg;base64,"
+            String cleanBase64 = base64Image.substring(base64Image.indexOf(",") + 1);
 
-            RequestOptions requestOptions = new RequestOptions()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .downsample(DownsampleStrategy.AT_MOST) // Ustaw jakość obrazu
-                    .override(600, 600); // Ustaw preferowane wymiary obrazu
+            byte[] decodedString = Base64.decode(cleanBase64, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
-            Glide.with(holder.itemView.getContext())
-                    .load(imageData)
-                    .apply(requestOptions)
-                    .into(holder.imageView);
+            holder.imageView.setImageBitmap(decodedByte);
         } else {
-            // Obsługa przypadku, gdy dane base64 są nieprawidłowe
-            //holder.imageView.setImageResource(R.drawable.placeholder); //
+            holder.imageView.setImageResource(R.mipmap.placeholder);
         }
 
         holder.itemView.setOnClickListener(v -> {

@@ -40,6 +40,11 @@ public class ExerciseController {
         return ResponseEntity.ok(exerciseService.getAllExercises());
     }
 
+    @GetMapping("/all/full")
+    public ResponseEntity<List<ExerciseDTO>> getAllFullExercises() {
+        return ResponseEntity.ok(exerciseService.getAllFullExercises());
+    }
+
     @GetMapping("/searchByAlias")
     public ResponseEntity<List<ExerciseDTO>> searchExercisesByAlias(@RequestParam String alias) {
         List<ExerciseDTO> exercises = exerciseService.searchExercisesByAlias(alias);

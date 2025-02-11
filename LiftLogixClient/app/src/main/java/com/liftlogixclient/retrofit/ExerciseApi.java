@@ -16,7 +16,7 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface ExerciseApi {
-    @GET("/api/exercise/all")
+    @GET("/api/exercise/all/full")
     Call<List<Exercise>> getAllExercises(@Header("Authorization") String token);
 
     @GET("/api/exercise/{id}")

@@ -61,7 +61,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/application/create", "/api/application/my",
                                 "/api/coach-client-history/exists",
-                                "/api/opinion/add")
+                                "/api/opinion/add",
+                                "/api/exercise/all/full")
                         .hasAuthority("CLIENT")
 
                         // Admin and coach endpoints
