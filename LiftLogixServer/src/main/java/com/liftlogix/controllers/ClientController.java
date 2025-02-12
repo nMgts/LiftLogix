@@ -60,7 +60,7 @@ public class ClientController {
         }
     }
 
-    @PostMapping("unsubscribe/{client_id}")
+    @PostMapping("/unsubscribe/{client_id}")
     public ResponseEntity<String> unsubscribeUserFromCoach(@PathVariable long client_id, Authentication authentication) {
         try {
             clientService.unsubscribeClientFromCoach(client_id, authentication);

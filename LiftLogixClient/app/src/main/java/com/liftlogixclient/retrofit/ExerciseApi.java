@@ -18,10 +18,4 @@ import retrofit2.http.Path;
 public interface ExerciseApi {
     @GET("/api/exercise/all/full")
     Call<List<Exercise>> getAllExercises(@Header("Authorization") String token);
-
-    @GET("/api/exercise/{id}")
-    Call<Exercise> getExerciseDetails(@Header("Authorization") String token, @Path("id") Long id);
-
-    @GET("exercises/image/{id}")
-    Call<ResponseBody> getImage(@Header("Authorization") String token, @Path("id") Long id);
 }

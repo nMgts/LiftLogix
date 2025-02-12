@@ -1,6 +1,7 @@
 package com.liftlogixclient.models;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Opinion {
     private Long id;
@@ -56,5 +57,10 @@ public class Opinion {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getFormattedDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return createdAt.format(formatter);
     }
 }

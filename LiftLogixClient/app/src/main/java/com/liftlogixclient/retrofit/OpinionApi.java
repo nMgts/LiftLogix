@@ -29,6 +29,6 @@ public interface OpinionApi {
     @POST("/api/opinion/add")
     Call<ResponseBody> addOpinion(
             @Header("Authorization") String token,
-            @Body Opinion opinionDTO
+            @Body Opinion opinion
     );
 }

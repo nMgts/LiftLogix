@@ -19,6 +19,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".AddOpinionActivity"
+            android:exported="false" />
+        <activity
             android:name=".DietActivity"
             android:exported="false" />
         <activity

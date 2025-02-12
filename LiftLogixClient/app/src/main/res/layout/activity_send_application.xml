@@ -4,7 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SendApplicationActivity">
+    tools:context=".SendApplicationActivity"
+    android:background="@drawable/abstract_pattern">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/sendApp_fab"
+        android:src="@drawable/baseline_arrow_back_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:backgroundTint="#4A165F"
+        android:layout_margin="6dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
     <!-- Opis zgłoszenia -->
     <EditText
@@ -15,7 +26,8 @@
         android:layout_margin="16dp"
         android:inputType="textMultiLine"
         android:lines="5"
-        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/card_color"
+        app:layout_constraintTop_toBottomOf="@id/sendApp_fab"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -26,6 +38,7 @@
         android:layout_height="wrap_content"
         android:text="Wyślij"
         android:layout_margin="16dp"
+        app:backgroundTint="#4A165F"
         app:layout_constraintTop_toBottomOf="@id/descriptionEditText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

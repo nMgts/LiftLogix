@@ -52,9 +52,9 @@ public class UserController {
             if (((User) userDetails).getRole().equals(Role.CLIENT)) {
                 Client client = clientRepository.findByEmail(userEmail).orElse(null);
                 if (client != null) {
-                    userDTO.setAssignedToCoach(client.isAssignedToCoach());
+                    userDTO.setAssignedToCoach(client.getCoach() != null);
 
-                    if (client.isAssignedToCoach()) {
+                    if (userDTO.getAssignedToCoach()) {
                         userDTO.setCoach_id(client.getCoach().getId());
                     } else {
                         userDTO.setCoach_id(0L);

@@ -20,6 +20,7 @@ import com.liftlogixclient.retrofit.CoachApi;
 import com.liftlogixclient.retrofit.OpinionApi;
 import com.liftlogixclient.retrofit.RetrofitService;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,15 +50,8 @@ public class CoachesActivity extends AppCompatActivity {
         coach_id = preferences.getLong("coach_id", -1);
         token = preferences.getString("accessToken", "");
 
-        //Toast.makeText(CoachesActivity.this, user_id + " " + isAssigned + " " + coach_id, Toast.LENGTH_SHORT).show();
-
-        if (isAssigned) {
-            recyclerView = findViewById(R.id.coachList_rv);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        } else {
-            recyclerView = findViewById(R.id.coachList_rv);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        }
+        recyclerView = findViewById(R.id.coachList_rv);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         FloatingActionButton floatingActionButton = findViewById(R.id.coachList_fab);
         floatingActionButton.setOnClickListener(view -> {
@@ -76,7 +70,17 @@ public class CoachesActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<List<Coach>> call, Response<List<Coach>> response) {
                         if (response.isSuccessful()) {
-                            coachList = response.body();
+                            List<Coach> responseList = response.body();
+                            if (isAssigned && responseList != null) {
+                                for (int i = 0; i < responseList.size(); i++) {
+                                    if (responseList.get(i).getId() == coach_id) {
+                                        Coach assignedCoach = responseList.remove(i);
+                                        responseList.add(0, assignedCoach);
+                                        break;
+                                    }
+                                }
+                            }
+                            coachList = responseList;
                             loadApplications();
                         } else {
                             Toast.makeText(CoachesActivity.this, "Nie udało się wczytać trenerów!", Toast.LENGTH_SHORT).show();
@@ -100,6 +104,7 @@ public class CoachesActivity extends AppCompatActivity {
                     public void onResponse(Call<List<Application>> call, Response<List<Application>> response) {
                         if (response.isSuccessful()) {
                             applicationList = response.body();
+
                             loadCoachRatings();
                         } else {
                             Toast.makeText(CoachesActivity.this, "Nie udało się wczytać wniosków!", Toast.LENGTH_SHORT).show();

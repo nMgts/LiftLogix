@@ -46,16 +46,19 @@ public class OpinionAdapter extends RecyclerView.Adapter<OpinionAdapter.OpinionV
     public static class OpinionViewHolder extends RecyclerView.ViewHolder {
         private TextView opinionDescription;
         private TextView opinionRating;
+        private TextView opinionDate;
 
         public OpinionViewHolder(View itemView) {
             super(itemView);
             opinionDescription = itemView.findViewById(R.id.opinionDescription);
             opinionRating = itemView.findViewById(R.id.opinionRating);
+            opinionDate = itemView.findViewById(R.id.opinionDate);
         }
 
         public void bind(Opinion opinion) {
             opinionDescription.setText(opinion.getDescription());
             opinionRating.setText(String.valueOf(opinion.getRating()));
+            opinionDate.setText(opinion.getFormattedDate());
         }
     }
 }

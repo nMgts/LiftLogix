@@ -6,61 +6,73 @@
     android:layout_height="wrap_content"
     android:padding="16dp">
 
+    <!-- Zdjęcie trenera w lewym górnym rogu -->
+    <ImageView
+        android:id="@+id/coachListItem_image"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@mipmap/default_profile_round"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="8dp"/>
+
+    <!-- Kontener na imię i nazwisko, który dopasowuje się do wysokości zdjęcia -->
     <LinearLayout
-        android:id="@+id/textContainer"
+        android:id="@+id/nameContainer"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_height="64dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:background="@color/card_color"
         android:padding="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginBottom="8dp">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="4dp">
-
-            <TextView
-                android:id="@+id/coachListItem_firstName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/first_name"
-                android:textSize="21sp"
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                android:layout_marginEnd="8dp"/>
-
-            <TextView
-                android:id="@+id/coachListItem_lastName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/last_name"
-                android:textSize="21sp"
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                android:layout_marginStart="8dp"/>
-        </LinearLayout>
+        app:layout_constraintStart_toEndOf="@+id/coachListItem_image"
+        app:layout_constraintTop_toTopOf="@+id/coachListItem_image"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
-            android:id="@+id/coachListItem_description"
+            android:id="@+id/coachListItem_firstName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/description"
-            android:textSize="17sp"
+            android:text="@string/first_name"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:id="@+id/coachListItem_lastName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/last_name"
+            android:textSize="21sp"
+            android:textStyle="bold"
             android:textColor="@color/white"/>
     </LinearLayout>
 
+    <!-- Opis trenera pod imieniem i nazwiskiem -->
+    <TextView
+        android:id="@+id/coachListItem_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/description"
+        android:textSize="17sp"
+        android:textColor="@color/white"
+        android:background="@color/card_color"
+        android:padding="5dp"
+        app:layout_constraintStart_toStartOf="@+id/nameContainer"
+        app:layout_constraintTop_toBottomOf="@+id/nameContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+       />
+
+    <!-- Ocena i przycisk "Zobacz więcej" -->
     <LinearLayout
         android:id="@+id/ratingContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@color/card_color"
-        app:layout_constraintTop_toBottomOf="@+id/textContainer"
+        app:layout_constraintTop_toBottomOf="@+id/coachListItem_description"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:paddingTop="8dp"
@@ -90,11 +102,27 @@
             app:tint="@color/white" />
     </LinearLayout>
 
+    <!-- Przycisk zgłoszenia -->
     <Button
         android:id="@+id/signUpButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Wyślij zgłoszenie"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/violet"
+        app:layout_constraintTop_toBottomOf="@+id/ratingContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="12dp"/>
+
+    <Button
+        android:id="@+id/signOffButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Wypisz się"
         android:textSize="14sp"
         android:textStyle="bold"
         android:textColor="@color/white"

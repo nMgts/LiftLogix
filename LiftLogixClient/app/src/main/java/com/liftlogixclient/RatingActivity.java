@@ -1,7 +1,11 @@
 package com.liftlogixclient;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -12,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.liftlogixclient.adapter.OpinionAdapter;
 import com.liftlogixclient.models.Opinion;
 import com.liftlogixclient.retrofit.CoachClientHistoryApi;
@@ -27,37 +32,52 @@ import retrofit2.Response;
 public class RatingActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private OpinionAdapter opinionAdapter;
-    private long coachId;
+    private long coachId, clientId;
     private String token;
+    private boolean clientHasOpinion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rating);
 
+        FloatingActionButton floatingActionButton = findViewById(R.id.ratingList_fab);
+        floatingActionButton.setOnClickListener(view -> {
+            Intent intent = new Intent(this, CoachesActivity.class);
+            startActivity(intent);
+        });
+
         coachId = getIntent().getLongExtra("coachId", -1);
-        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        token = sharedPreferences.getString("token", "");
+        clientId = getIntent().getLongExtra("clientId", -1);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        token = preferences.getString("accessToken", "");
 
         recyclerView = findViewById(R.id.recyclerViewOpinions);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         loadOpinions();
-        loadHistory();
     }
-
-
 
     private void loadOpinions() {
         RetrofitService retrofitService = new RetrofitService();
         OpinionApi opinionApi = retrofitService.getRetrofit().create(OpinionApi.class);
-        Call<List<Opinion>> call = opinionApi.getOpinionsByCoach("Bearer " + token, coachId);
-        call.enqueue(new Callback<List<Opinion>>() {
+        opinionApi.getOpinionsByCoach(("Bearer " + token), coachId)
+            .enqueue(new Callback<List<Opinion>>() {
             @Override
             public void onResponse(Call<List<Opinion>> call, Response<List<Opinion>> response) {
                 List<Opinion> opinions = response.body();
                 opinionAdapter = new OpinionAdapter(opinions);
                 recyclerView.setAdapter(opinionAdapter);
+
+                if (opinions != null && !opinions.isEmpty()) {
+                    for (Opinion opinion : opinions) {
+                        if (opinion.getClientId() == clientId) {
+                            clientHasOpinion = true;
+                            break;
+                        }
+                    }
+                }
+                loadHistory();
             }
 
             @Override
@@ -77,6 +97,18 @@ public class RatingActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     boolean historyExists = response.body() != null && response.body();
                     opinionAdapter.setHistoryExists(historyExists);
+
+                    if (!clientHasOpinion && historyExists) {
+                        Button addOpinionButton = findViewById(R.id.addOpinionButton);
+
+                        addOpinionButton.setVisibility(View.VISIBLE);
+                        addOpinionButton.setOnClickListener(view -> {
+                            Intent intent = new Intent(RatingActivity.this, AddOpinionActivity.class);
+                            intent.putExtra("coachId", coachId);
+                            intent.putExtra("clientId", clientId);
+                            startActivity(intent);
+                        });
+                    }
                 }
             }
 

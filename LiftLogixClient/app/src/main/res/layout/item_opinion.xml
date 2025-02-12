@@ -30,8 +30,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ocena"
+            android:layout_marginTop="5dp"
             android:textSize="14sp"
-            android:textColor="@color/dimgray" />
+            android:textColor="@color/white" />
+
+        <!-- Data opinii -->
+        <TextView
+            android:id="@+id/opinionDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Data opinii"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:layout_marginTop="8dp" />
+
 
     </LinearLayout>
 
